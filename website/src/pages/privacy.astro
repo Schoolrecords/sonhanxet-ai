@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Chính sách Bảo mật · Sổ nhận xét - AI"
+  description="Cam kết bảo mật dữ liệu học sinh và giáo viên của extension Sổ nhận xét - AI."
+>
+  <article class="prose">
+    <h1>Chính sách Bảo mật</h1>
+    <div class="meta">
+      <strong>Hiệu lực từ:</strong> 15/05/2026 ·
+      <strong>Phiên bản:</strong> 1.0 ·
+      <strong>Áp dụng cho:</strong> Chrome Extension "Sổ nhận xét - AI" (mọi phiên bản)
+    </div>
+
+    <div class="callout">
+      <strong>Tóm tắt 30 giây</strong>
+      <ul style="margin: 12px 0 0 20px;">
+        <li>Chúng tôi <strong>KHÔNG thu thập</strong> tên, điểm hay bất kỳ thông tin nào của học sinh.</li>
+        <li>Dữ liệu học sinh <strong>KHÔNG rời máy</strong> của thầy/cô. Mọi nhận xét được sinh cục bộ trong trình duyệt.</li>
+        <li>Chỉ có <strong>3 thông tin</strong> rời máy GV: số điện thoại GV, mã kích hoạt, và device fingerprint — tất cả chỉ để xác thực license.</li>
+        <li>Extension là <strong>mã nguồn mở</strong> — bất kỳ ai cũng có thể kiểm tra code.</li>
+      </ul>
+    </div>
+
+    <h2>1. Chúng tôi là ai</h2>
+    <p>
+      "Sổ nhận xét - AI" được phát triển và vận hành bởi <strong>Chung Trần</strong> (Phó Hiệu trưởng Trường Tiểu học Diễn Liên, xã Quảng Châu, tỉnh Nghệ An), với tư cách cá nhân, phục vụ cộng đồng giáo viên tiểu học sử dụng hệ thống Vnedu.
+    </p>
+    <p>Liên hệ: <a href="mailto:chungsongthinh@gmail.com" style="color: var(--primary); text-decoration: underline;">chungsongthinh@gmail.com</a></p>
+
+    <h2>2. Dữ liệu chúng tôi KHÔNG thu thập</h2>
+    <p>Extension <strong>không gửi đi</strong> bất kỳ thông tin nào sau đây:</p>
+    <ul>
+      <li>Tên học sinh</li>
+      <li>Điểm số, đánh giá học lực</li>
+      <li>Tên lớp, tên trường, tên môn cụ thể của lớp</li>
+      <li>Danh sách phụ huynh</li>
+      <li>Bất kỳ nội dung nào hiển thị trên trang Vnedu</li>
+    </ul>
+    <p>
+      Tất cả việc đọc dữ liệu HS và sinh nhận xét diễn ra <strong>hoàn toàn cục bộ</strong> trong trình duyệt Chrome của giáo viên. Không có máy chủ trung gian nào nhận được dữ liệu này.
+    </p>
+
+    <h2>3. Dữ liệu chúng tôi CÓ thu thập (cho mục đích kích hoạt license)</h2>
+    <p>Khi GV đăng ký và kích hoạt mã sử dụng, hệ thống license của chúng tôi (Google Apps Script + Google Sheet do tác giả tự host) lưu các thông tin sau:</p>
+    <table>
+      <thead>
+        <tr><th>Trường</th><th>Mục đích</th><th>Ai thấy được</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Họ tên GV (do GV tự nhập)</td><td>Hiển thị trong sheet quản trị để admin xác nhận đã chuyển khoản</td><td>Chỉ admin (tác giả)</td></tr>
+        <tr><td>Số điện thoại GV</td><td>Định danh GV để đăng nhập + reset thiết bị khi cần</td><td>Chỉ admin</td></tr>
+        <tr><td>Mã kích hoạt 6 ký tự (server sinh)</td><td>Khớp với nội dung chuyển khoản</td><td>Chỉ admin</td></tr>
+        <tr><td>Device fingerprint (hash SHA-256)</td><td>Chống chia sẻ mã giữa nhiều máy</td><td>Chỉ admin</td></tr>
+        <tr><td>Ngày đăng ký / thanh toán / kích hoạt / hết hạn</td><td>Quản lý vòng đời license</td><td>Chỉ admin</td></tr>
+        <tr><td>Lần check cuối</td><td>Phát hiện bất thường (ví dụ nhiều máy cùng mã)</td><td>Chỉ admin</td></tr>
+      </tbody>
+    </table>
+    <p>
+      <strong>Lưu ý:</strong> Các thông tin này lưu trong Google Sheet riêng của tác giả, không chia sẻ cho bên thứ 3, không bán, không dùng cho mục đích quảng cáo. Sheet chỉ dùng để quản trị license — tương tự sổ đăng ký khách hàng của một cửa hàng nhỏ.
+    </p>
+
+    <h2>4. Quyền (permissions) extension yêu cầu</h2>
+    <table>
+      <thead><tr><th>Permission</th><th>Vì sao cần</th></tr></thead>
+      <tbody>
+        <tr><td><code>storage</code></td><td>Lưu cài đặt cá nhân GV (font-size sidebar, tuỳ chọn template) và cache mã kích hoạt</td></tr>
+        <tr><td><code>host_permissions: *.vnedu.vn</code></td><td>Đọc/ghi DOM trang Vnedu để sinh và áp dụng nhận xét</td></tr>
+        <tr><td><code>host_permissions: script.google.com</code></td><td>Gọi license server để xác thực kích hoạt</td></tr>
+      </tbody>
+    </table>
+    <p>Extension <strong>KHÔNG yêu cầu</strong> các permission nhạy cảm như <code>tabs</code>, <code>cookies</code>, <code>webRequest</code>, <code>history</code>, hay <code>geolocation</code>.</p>
+
+    <h2>5. Bên thứ 3</h2>
+    <p>Extension không chia sẻ dữ liệu với bên thứ 3 nào.</p>
+    <p>
+      Hạ tầng license sử dụng dịch vụ của Google (Google Apps Script, Google Sheets) — tức là chỉ Google (với tư cách nhà cung cấp hạ tầng) có thể về mặt kỹ thuật thấy traffic đến server. Vui lòng tham khảo <a href="https://policies.google.com/privacy" style="color: var(--primary); text-decoration: underline;">Chính sách Bảo mật của Google</a> nếu quan tâm.
+    </p>
+
+    <h2>6. Quyền của giáo viên</h2>
+    <p>Bất kỳ lúc nào, GV có quyền:</p>
+    <ul>
+      <li><strong>Yêu cầu xoá toàn bộ thông tin</strong> đăng ký license — gửi yêu cầu qua email; tác giả sẽ xoá trong vòng 7 ngày.</li>
+      <li><strong>Yêu cầu export</strong> dữ liệu liên quan đến mình.</li>
+      <li><strong>Yêu cầu reset thiết bị</strong> khi đổi máy hoặc cài lại Windows.</li>
+      <li><strong>Gỡ extension</strong> bất cứ lúc nào qua <code>chrome://extensions/</code> — sau khi gỡ, không còn bất kỳ kết nối nào từ máy GV đến hệ thống.</li>
+    </ul>
+
+    <h2>7. Trẻ em (COPPA & Luật Việt Nam)</h2>
+    <p>
+      Extension này dành cho <strong>giáo viên</strong> (người trưởng thành), <strong>không</strong> dành cho học sinh. Mặc dù extension đọc tên HS trên màn hình GV để sinh nhận xét, các thông tin đó:
+    </p>
+    <ul>
+      <li>Không bao giờ rời máy của GV</li>
+      <li>Không được lưu lại sau khi GV đóng tab Vnedu</li>
+      <li>Không liên kết với bất kỳ định danh nào của HS</li>
+    </ul>
+    <p>Vì không có dữ liệu trẻ em nào được thu thập hoặc truyền đi, sản phẩm tuân thủ tinh thần của COPPA và Luật An toàn Thông tin Trẻ em Việt Nam.</p>
+
+    <h2>8. Bảo mật kỹ thuật</h2>
+    <ul>
+      <li>Toàn bộ giao tiếp với license server qua <strong>HTTPS</strong>.</li>
+      <li>Device fingerprint là <strong>hash 1 chiều</strong> (SHA-256) — không thể giải ngược ra thông tin nguyên gốc.</li>
+      <li>Mã nguồn extension <strong>mở</strong> — bất kỳ ai cũng có thể audit.</li>
+    </ul>
+
+    <h2>9. Thay đổi chính sách</h2>
+    <p>Khi có thay đổi chính sách, phiên bản mới sẽ được publish tại URL này cùng với ngày hiệu lực. Thay đổi quan trọng (mở rộng phạm vi thu thập) sẽ được thông báo trực tiếp trong sidebar trước khi áp dụng.</p>
+
+    <h2>10. Liên hệ</h2>
+    <p>Mọi câu hỏi về Chính sách Bảo mật:</p>
+    <ul>
+      <li>Email: <a href="mailto:chungsongthinh@gmail.com" style="color: var(--primary); text-decoration: underline;">chungsongthinh@gmail.com</a></li>
+      <li>Tác giả: Chung Trần — Trường Tiểu học Diễn Liên, xã Quảng Châu, tỉnh Nghệ An</li>
+    </ul>
+
+    <p style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-style: italic;">
+      Tài liệu này được viết bằng ngôn ngữ đơn giản nhất có thể. Nếu thầy/cô đọc thấy đoạn nào khó hiểu, vui lòng phản hồi để cải thiện.
+    </p>
+  </article>
+</BaseLayout>

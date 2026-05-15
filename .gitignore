@@ -1,0 +1,45 @@
+# ====== Astro / Node ======
+**/node_modules/
+**/dist/
+**/.astro/
+**/.cache/
+**/build/
+
+# ====== Environment / Secrets ======
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+
+# ====== OS / Editor ======
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.vscode/
+.idea/
+*.swp
+*~
+
+# ====== Claude Code local state ======
+.claude/
+
+# ====== Internal / Sensitive (không public) ======
+PROMPT_COGIAO_AI_TIEP_TUC.md
+license/qr.png
+license/client.js
+
+# ====== Logs ======
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ====== Astro typegen ======
+.astro/
+
+# ====== Optional: ignore OneDrive temp ======
+*.tmp
+~$*

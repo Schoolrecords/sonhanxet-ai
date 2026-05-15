@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Trợ lý sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học trên Vnedu — theo TT27/2020, thông tin học sinh chỉ ở máy thầy cô.',
+  ogImage = '/og-image.png',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site).toString()} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="vi_VN" />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site).toString()} />
+
+    <meta name="theme-color" content="#2B4F9E" />
+    <meta name="author" content="Chung Trần — Trường Tiểu học Diễn Liên" />
+
+    <!-- Google Fonts: Be Vietnam Pro (tối ưu cho tiếng Việt) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a href="/" class="logo">
+          <span class="logo-mark">S</span>
+          <span>Sổ nhận xét <span style="color: var(--brand-600); font-weight: 800;">· AI</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="/#tinh-nang"><span class="nav-icon">✨</span> Tính năng</a>
+          <a href="/#video"><span class="nav-icon">🎬</span> Video</a>
+          <a href="/#bao-mat"><span class="nav-icon">🔒</span> Bảo mật</a>
+          <a href="/#cai-dat"><span class="nav-icon">📥</span> Cài đặt</a>
+          <a href="/#faq"><span class="nav-icon">💬</span> FAQ</a>
+          <a href="/#cai-dat" class="btn btn-primary nav-cta">⬇ Cài cho Chrome</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>Sổ nhận xét - AI</h4>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 12px;">
+              Trợ lý sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học trên Vnedu. <br />
+              Phát triển bởi giáo viên cho giáo viên.
+            </p>
+            <p style="color: rgba(255,255,255,0.5); font-size: 13px;">
+              Chung Trần — Phó Hiệu trưởng <br />
+              Trường Tiểu học Diễn Liên, xã Quảng Châu, tỉnh Nghệ An
+            </p>
+          </div>
+          <div>
+            <h4>Sản phẩm</h4>
+            <a href="/#tinh-nang">Tính năng</a>
+            <a href="/#video">Video hướng dẫn</a>
+            <a href="/#cai-dat">Hướng dẫn cài</a>
+            <a href="/#faq">Câu hỏi thường gặp</a>
+          </div>
+          <div>
+            <h4>Pháp lý & Liên hệ</h4>
+            <a href="/privacy">Chính sách bảo mật</a>
+            <a href="mailto:chungsongthinh@gmail.com">Email tác giả</a>
+            <a href="#">Zalo hỗ trợ</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div>© 2026 Sổ nhận xét - AI · Dành cho giáo viên Tiểu học</div>
+          <div>EduTech_CT_0913031073</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

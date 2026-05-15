@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "Sổ nhận xét - AI",
+  "version": "0.1.26",
+  "description": "Trợ lý sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học (TT27/2020). Môn học: 4 tier T+/T/H/C. NL/PC: 3 mức T/Đ/C — TỰ ĐỘNG suy cả 13 trường từ điểm môn, GV click badge để override khi cần.",
+  "author": "Phát triển bởi giáo viên cho giáo viên",
+
+  "permissions": [
+    "storage"
+  ],
+
+  "host_permissions": [
+    "*://*.vnedu.vn/*",
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.vnedu.vn/*"],
+      "js": [
+        "engine/engine.js",
+        "content/vnedu-adapter.js",
+        "content/content-script.js"
+      ],
+      "css": ["content/sidebar-inject.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sidebar/sidebar.html",
+        "sidebar/sidebar.css",
+        "sidebar/sidebar.js",
+        "engine/engine.js",
+        "engine/data/*.json",
+        "license/client.js",
+        "license/qr.png"
+      ],
+      "matches": ["*://*.vnedu.vn/*"]
+    }
+  ],
+
+  "action": {
+    "default_title": "Sổ nhận xét - AI · Click để mở/đóng bảng bên",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

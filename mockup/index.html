@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sổ nhận xét AI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+    /* ======== RESET ======== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #ECEEF2;
+        color: #1F2937;
+        font-size: 14px;
+        line-height: 1.4;
+        -webkit-font-smoothing: antialiased;
+    }
+    body { padding: 24px; min-height: 100vh; }
+    button, div, span, i { font-family: inherit; }
+
+    /* ======== PANEL ======== */
+    .panel {
+        width: 420px;
+        background: #FFFFFF;
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+    }
+
+    /* ======== HEADER ======== */
+    .header {
+        background-color: #2B4F9E;
+        background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px);
+        background-size: 22px 22px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .logo-box {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex-shrink: 0;
+    }
+    .ai-star {
+        position: absolute;
+        bottom: -3px;
+        right: -3px;
+        width: 16px;
+        height: 16px;
+        background: #FFC107;
+        border: 2px solid #2B4F9E;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .header-text { flex: 1; min-width: 0; }
+    .header-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #FFFFFF !important;
+        letter-spacing: 0.1px;
+    }
+    .header-sub {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.75) !important;
+        margin-top: 2px;
+    }
+    .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(255, 255, 255, 0.20);
+        border: 1.5px solid rgba(255, 255, 255, 0.50);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .icon-btn:hover { background-color: rgba(255, 255, 255, 0.32); }
+    .icon-btn i { font-size: 18px; color: #FFFFFF !important; }
+
+    /* ======== TABS ======== */
+    .tabs {
+        display: flex;
+        background: #FFFFFF;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    .tab {
+        flex: 1;
+        padding: 13px 16px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border-bottom: 2px solid transparent;
+        transition: background 0.12s;
+    }
+    .tab i { font-size: 16px; color: #2B4F9E !important; }
+    .tab span { color: #2B4F9E !important; font-weight: 700 !important; }
+    .tab:hover { background: #F8F9FB; }
+    .tab.active { border-bottom-color: #2B4F9E; }
+
+    /* ======== BODY ======== */
+    .body { padding: 1.25rem 1.5rem; }
+
+    /* ======== SYNC BAR ======== */
+    .sync-bar {
+        background: #F4F5F7;
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .sync-bar i { font-size: 16px; color: #2B4F9E !important; }
+    .sync-text {
+        flex: 1;
+        font-size: 13px;
+        color: #2B4F9E !important;
+        font-weight: 600;
+    }
+    .sync-badge {
+        background: #E6F1FB;
+        color: #0C447C !important;
+        padding: 3px 9px;
+        border-radius: 11px;
+        font-size: 10.5px;
+        font-weight: 600;
+    }
+
+    /* ======== DETECTION CARD ======== */
+    .detect-card {
+        background: #E6F1FB;
+        border: 1px solid #85B7EB;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+    }
+    .detect-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #0C447C !important;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+    .detect-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #042C53 !important;
+        margin-bottom: 9px;
+    }
+    .detect-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+        background: #FFFFFF;
+        border: 1px solid #85B7EB;
+        color: #185FA5 !important;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11.5px;
+        font-weight: 500;
+    }
+
+    /* ======== STATS ======== */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .stat {
+        text-align: center;
+        padding: 10px 4px;
+        background: #FAFBFC;
+        border: 1px solid #EEF0F3;
+        border-radius: 8px;
+    }
+    .stat-label {
+        font-size: 11px;
+        color: #6B7280 !important;
+        margin-bottom: 4px;
+    }
+    .stat-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
+    .stat-value.navy { color: #2B4F9E !important; }
+    .stat-value.orange { color: #BA7517 !important; }
+    .stat-value.green { color: #3B6D11 !important; }
+
+    /* ======== LIST HEADER ======== */
+    .list-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+    .list-header-text { flex: 1; color: #6B7280 !important; font-weight: 500; }
+    .progress-wrap { display: flex; align-items: center; gap: 6px; }
+    .progress-bar {
+        width: 64px;
+        height: 4px;
+        background: #E5E7EB;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: #2B4F9E;
+        width: 87.5%;
+        border-radius: 2px;
+    }
+    .progress-text { font-size: 11px; color: #6B7280 !important; font-weight: 600; }
+
+    /* ======== FILTER CHIPS ======== */
+    .chips {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .chip {
+        padding: 5px 12px;
+        border: 1px solid #D1D5DB;
+        border-radius: 16px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #FFFFFF;
+        color: #4B5563 !important;
+        transition: all 0.12s;
+    }
+    .chip:hover { border-color: #2B4F9E; color: #2B4F9E !important; }
+    .chip.active {
+        background: #2B4F9E !important;
+        color: #FFFFFF !important;
+        border-color: #2B4F9E;
+        font-weight: 600;
+    }
+
+    /* ======== STUDENT CARDS ======== */
+    .students {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .student-card {
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        padding: 11px 12px;
+        background: #FFFFFF;
+        transition: border-color 0.12s;
+    }
+    .student-card:hover { border-color: #C5D2E8; }
+    .student-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 8px;
+    }
+    .student-stt {
+        width: 16px;
+        font-size: 12px;
+        color: #9CA3AF !important;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .student-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .student-name {
+        flex: 1;
+        font-weight: 600;
+        font-size: 13.5px;
+        color: #1F2937 !important;
+    }
+    .badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .badge.tot_xs { background: #E1F5EE !important; color: #085041 !important; }
+    .badge.tot     { background: #E6F1FB !important; color: #0C447C !important; }
+    .badge.ht      { background: #FAEEDA !important; color: #633806 !important; }
+    .badge.cht     { background: #FCEBEB !important; color: #791F1F !important; }
+
+    .student-text {
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #374151 !important;
+        padding-left: 35px;
+        margin-bottom: 6px;
+    }
+    .student-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 35px;
+    }
+    .student-meta-text {
+        font-size: 11px;
+        color: #9CA3AF !important;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .student-meta-text i { font-size: 13px; }
+    .student-actions { display: flex; gap: 4px; }
+    .mini-btn {
+        width: 26px;
+        height: 26px;
+        border: 1px solid #E5E7EB;
+        background: #FFFFFF;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.12s;
+    }
+    .mini-btn i { font-size: 13px; color: #6B7280 !important; }
+    .mini-btn:hover { border-color: #2B4F9E; }
+    .mini-btn:hover i { color: #2B4F9E !important; }
+
+    /* ======== ACTION BUTTONS ======== */
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 6px;
+    }
+    .action-btn {
+        padding: 12px 16px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        transition: filter 0.12s;
+    }
+    .action-btn:hover { filter: brightness(1.05); }
+    .action-btn.primary {
+        background-color: #2B4F9E;
+        border: none;
+        box-shadow: 0 2px 6px rgba(43, 79, 158, 0.25);
+    }
+    .action-btn.secondary {
+        background-color: #FFFFFF;
+        border: 2px solid #2B4F9E;
+    }
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+    <!-- ======== HEADER ======== -->
+    <div class="header">
+        <div class="logo-box">
+            <!-- Cuốn sổ -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 19a2 2 0 0 1 2-2h14"/>
+                <path d="M5 4h14a1 1 0 0 1 1 1v15a2 2 0 0 0 -2 -2h-13a1 1 0 0 1 -1 -1z"/>
+                <path d="M9 8h6"/>
+                <path d="M9 12h4"/>
+            </svg>
+            <!-- Ngôi sao AI -->
+            <div class="ai-star">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="#FFFFFF">
+                    <path d="M12 2.5l2.59 6.36L21.5 9.5l-5.25 4.55L17.82 21 12 17.27 6.18 21l1.57-6.95L2.5 9.5l6.91-.64L12 2.5z"/>
+                </svg>
+            </div>
+        </div>
+        <div class="header-text">
+            <div class="header-title">Sổ nhận xét AI</div>
+            <div class="header-sub">Trợ lý sinh nhận xét cuối kỳ · Vnedu</div>
+        </div>
+        <div class="header-actions">
+            <div class="icon-btn" title="Cài đặt"><i class="ti ti-settings"></i></div>
+            <div class="icon-btn" title="Đóng"><i class="ti ti-x"></i></div>
+        </div>
+    </div>
+
+    <!-- ======== TABS ======== -->
+    <div class="tabs">
+        <div class="tab active">
+            <i class="ti ti-message-2"></i>
+            <span>Sinh nhận xét</span>
+        </div>
+        <div class="tab">
+            <i class="ti ti-database"></i>
+            <span>Cache điểm</span>
+        </div>
+    </div>
+
+    <!-- ======== BODY ======== -->
+    <div class="body">
+
+        <!-- 1. Sync bar -->
+        <div class="sync-bar">
+            <i class="ti ti-refresh"></i>
+            <span class="sync-text">Cập nhật dữ liệu từ Vnedu</span>
+            <span class="sync-badge">Vừa cập nhật</span>
+        </div>
+
+        <!-- 2. Detection card -->
+        <div class="detect-card">
+            <div class="detect-label">ĐÃ PHÁT HIỆN</div>
+            <div class="detect-title">Sổ nhận xét môn — Lớp 1A</div>
+            <div class="detect-tags">
+                <span class="pill">Tiếng Việt</span>
+                <span class="pill">Học kỳ 2</span>
+            </div>
+        </div>
+
+        <!-- 3. Stats grid -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Tổng học sinh</div>
+                <div class="stat-value navy">32</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Cần sinh</div>
+                <div class="stat-value orange">4</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Đã có nhận xét</div>
+                <div class="stat-value green">28</div>
+            </div>
+        </div>
+
+        <!-- 4. List header -->
+        <div class="list-header">
+            <div class="list-header-text">Danh sách cần sinh nhận xét (4 HS)</div>
+            <div class="progress-wrap">
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+                <span class="progress-text">28/32</span>
+            </div>
+        </div>
+
+        <!-- 5. Filter chips -->
+        <div class="chips">
+            <div class="chip active">Tất cả</div>
+            <div class="chip">Xuất sắc</div>
+            <div class="chip">Hoàn thành</div>
+            <div class="chip">Chưa HT</div>
+        </div>
+
+        <!-- 6. Student cards -->
+        <div class="students">
+
+            <!-- HS 1: Bảo An — T+ -->
+            <div class="student-card">
+                <div class="student-row">
+                    <div class="student-stt">1</div>
+                    <div class="student-avatar" style="background:#E1F5EE; color:#085041">BA</div>
+                    <div class="student-name">Ngô Thị Bảo An</div>
+                    <div class="badge tot_xs">9 · T+</div>
+                </div>
+                <div class="student-text">Em đọc lưu loát diễn cảm, viết văn hay, vốn từ phong phú và mạch lạc.</div>
+                <div class="student-meta">
+                    <div class="student-meta-text"><i class="ti ti-text-size"></i> 16 từ</div>
+                    <div class="student-actions">
+                        <div class="mini-btn" title="Sửa nhận xét"><i class="ti ti-edit"></i></div>
+                        <div class="mini-btn" title="Sinh lại"><i class="ti ti-refresh"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HS 2: Trường An — T (8) -->
+            <div class="student-card">
+                <div class="student-row">
+                    <div class="student-stt">2</div>
+                    <div class="student-avatar" style="background:#E6F1FB; color:#0C447C">TA</div>
+                    <div class="student-name">Trần Đức Trường An</div>
+                    <div class="badge tot">8 · T</div>
+                </div>
+                <div class="student-text">Em đọc đúng tốc độ, viết chính tả chính xác và trình bày khoa học.</div>
+                <div class="student-meta">
+                    <div class="student-meta-text"><i class="ti ti-text-size"></i> 15 từ</div>
+                    <div class="student-actions">
+                        <div class="mini-btn" title="Sửa nhận xét"><i class="ti ti-edit"></i></div>
+                        <div class="mini-btn" title="Sinh lại"><i class="ti ti-refresh"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HS 3: Khánh An — T (7) -->
+            <div class="student-card">
+                <div class="student-row">
+                    <div class="student-stt">3</div>
+                    <div class="student-avatar" style="background:#FAEEDA; color:#633806">KA</div>
+                    <div class="student-name">Võ Khánh An</div>
+                    <div class="badge ht">7 · T</div>
+                </div>
+                <div class="student-text">Em yêu thích môn học, đọc viết khá tốt, mạnh dạn phát biểu ý kiến.</div>
+                <div class="student-meta">
+                    <div class="student-meta-text"><i class="ti ti-text-size"></i> 15 từ</div>
+                    <div class="student-actions">
+                        <div class="mini-btn" title="Sửa nhận xét"><i class="ti ti-edit"></i></div>
+                        <div class="mini-btn" title="Sinh lại"><i class="ti ti-refresh"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HS 4: Quỳnh Anh — C -->
+            <div class="student-card">
+                <div class="student-row">
+                    <div class="student-stt">4</div>
+                    <div class="student-avatar" style="background:#FCEBEB; color:#791F1F">QA</div>
+                    <div class="student-name">Nguyễn Quỳnh Anh</div>
+                    <div class="badge cht">3 · C</div>
+                </div>
+                <div class="student-text">Em cần luyện đọc to rõ và viết đúng chính tả các từ thường gặp.</div>
+                <div class="student-meta">
+                    <div class="student-meta-text"><i class="ti ti-text-size"></i> 15 từ</div>
+                    <div class="student-actions">
+                        <div class="mini-btn" title="Sửa nhận xét"><i class="ti ti-edit"></i></div>
+                        <div class="mini-btn" title="Sinh lại"><i class="ti ti-refresh"></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 7. Action buttons (DIV để tránh user-agent override) -->
+        <div class="actions">
+            <div class="action-btn primary">
+                <i class="ti ti-sparkles" style="color:#FFFFFF; font-size:16px"></i>
+                <span style="color:#FFFFFF; font-weight:700">Sinh nhận xét cho 4 học sinh</span>
+            </div>
+            <div class="action-btn secondary">
+                <i class="ti ti-check" style="color:#2B4F9E; font-size:16px"></i>
+                <span style="color:#2B4F9E; font-weight:700">Áp dụng tất cả vào Vnedu</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

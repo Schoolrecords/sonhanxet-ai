@@ -1,0 +1,427 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// TODO: Sau khi extension được duyệt trên Chrome Web Store,
+// thay "#cai-dat" bằng URL CWS thật.
+const CHROME_STORE_URL = "#cai-dat";
+
+// ====== VIDEO HƯỚNG DẪN ======
+// Để bật video, thay `youtubeId: null` bằng ID YouTube thật (vd "dQw4w9WgXcQ")
+// Lấy ID từ URL YouTube: https://youtu.be/<ID>  hoặc  https://www.youtube.com/watch?v=<ID>
+const featuredVideo = {
+  title: "Bắt đầu trong 90 giây — từ cài đặt đến nhận xét đầu tiên",
+  description: "Video này dành cho thầy/cô lần đầu sử dụng. Xem 1 lần là làm được, không cần đọc tài liệu.",
+  duration: "1:30",
+  tag: "Bắt đầu nhanh",
+  youtubeId: null, // ← thay bằng ID YouTube khi đã có video
+};
+
+const videos = [
+  {
+    title: "Sinh nhận xét môn học cho cả lớp 35 HS",
+    duration: "2:15",
+    tag: "Nhận xét môn",
+    youtubeId: null,
+  },
+  {
+    title: "Sinh nhận xét Năng lực & Phẩm chất (NL/PC)",
+    duration: "3:00",
+    tag: "Nhận xét NL/PC",
+    youtubeId: null,
+  },
+];
+
+// ====== FEATURES ======
+const features = [
+  {
+    icon: "📝",
+    title: "Sinh nhận xét môn học",
+    desc: "12 môn được hỗ trợ riêng: Tiếng Việt, Toán, TNXH, Khoa học, Sử-Địa, Đạo đức, Tin học, Tiếng Anh, GDTC, Âm nhạc, Mĩ thuật, HĐTN. 4 mức T+/T/H/C, văn bản đa dạng tránh trùng lặp."
+  },
+  {
+    icon: "🎯",
+    title: "Tự suy NL/PC",
+    desc: "13 trường Năng lực - Phẩm chất tự động suy từ điểm các môn. GV chỉ cần click badge để override khi muốn đổi mức."
+  },
+  {
+    icon: "⚡",
+    title: "Áp dụng 1 click",
+    desc: "Preview toàn bộ nhận xét trong sidebar. Bấm “Áp dụng” → chữ tự ghi vào textarea Vnedu. GV chỉ bấm Lưu là xong."
+  },
+  {
+    icon: "📐",
+    title: "Đúng Thông tư 27",
+    desc: "Tuân thủ TT27/2020/TT-BGDĐT về đánh giá HS tiểu học. Văn phong sư phạm, dùng từ phù hợp lứa tuổi."
+  },
+  {
+    icon: "🌐",
+    title: "Hoạt động offline",
+    desc: "Sau khi cài và kích hoạt, không cần mạng để sinh nhận xét. Mọi thứ chạy ngay trong trình duyệt của thầy cô."
+  },
+  {
+    icon: "🔄",
+    title: "Cập nhật thường xuyên",
+    desc: "Vnedu đổi giao diện? Có template mới? Extension cập nhật qua Chrome Web Store, GV không cần làm gì."
+  }
+];
+
+// ====== FAQ ======
+const faqs = [
+  {
+    q: "Cài đặt có mất thời gian không? Tôi không rành công nghệ.",
+    a: "Chỉ 2 cú click: Bấm “Cài cho Chrome” trên web này → bấm “Add to Chrome” trên cửa sổ Google → xong. Tổng cộng ~30 giây. Không cần biết “developer mode” hay giải nén file gì cả."
+  },
+  {
+    q: "Dữ liệu học sinh của tôi có bị gửi đi đâu không?",
+    a: "Không. Tuyệt đối không. Tên HS, điểm số, đánh giá — tất cả chỉ tồn tại trong trình duyệt của thầy/cô và biến mất khi đóng tab. Extension không có server, không có database lưu thông tin HS. Chỉ 3 thông tin của riêng GV (SĐT, mã kích hoạt, hash máy) rời máy — chỉ để xác thực thanh toán license."
+  },
+  {
+    q: "Trường tôi dùng Vnedu phiên bản mới, có dùng được không?",
+    a: "Có. Extension đang hỗ trợ Vnedu v5 (phiên bản hiện hành tính đến 2026). Nếu Vnedu cập nhật giao diện làm extension không nhận diện được module, bấm nút “Quét lại” trong sidebar. Nếu vẫn không được, gửi screenshot Console cho tác giả qua Zalo — thường update trong 1-2 ngày."
+  },
+  {
+    q: "Đổi máy / cài lại Windows thì sao? Có phải mua mã mới không?",
+    a: "Không. Nhắn Zalo cho admin, gửi SĐT đã đăng ký, admin sẽ reset thiết bị trong vài phút. Dùng lại mã cũ trên máy mới, không tốn thêm phí. Mã có giá trị 1 năm kể từ ngày kích hoạt."
+  },
+  {
+    q: "Tôi có thể chia sẻ mã cho đồng nghiệp không?",
+    a: "Mỗi mã chỉ kích hoạt được trên 1 máy tại 1 thời điểm. Nếu phát hiện chia sẻ (cùng mã đăng nhập trên nhiều máy khác nhau liên tục), mã sẽ bị khoá. Đồng nghiệp muốn dùng vui lòng đăng ký mã riêng — chi phí rất hợp lý so với hàng chục giờ ngồi viết nhận xét bằng tay."
+  },
+  {
+    q: "Giáo viên có sửa được lời nhận xét đã sinh không?",
+    a: "Hoàn toàn được — và đây là tinh thần thiết kế cốt lõi: AI lo phần lặp lại nặng nhọc, GV nắm quyền quyết định cuối cùng. Có 2 cách sửa: (1) Ngay trong sidebar trước khi áp dụng — click vào nhận xét bất kỳ để chỉnh từ ngữ, độ dài, hoặc thêm chi tiết riêng cho từng HS; (2) Sau khi đã áp dụng vào Vnedu — sửa trực tiếp trong textarea Vnedu như bình thường rồi bấm Lưu. Mọi chỉnh sửa của GV được ưu tiên tuyệt đối."
+  },
+  {
+    q: "Nếu Chrome update lớn làm extension không chạy thì sao?",
+    a: "Extension dùng Manifest V3 (chuẩn hiện hành của Chrome), tương thích lâu dài. Khi Chrome có thay đổi đột ngột, bản update mới sẽ được đẩy qua Chrome Web Store trong vòng vài ngày, GV không cần làm gì."
+  }
+];
+---
+
+<BaseLayout title="Sổ nhận xét - AI · Trợ lý sinh nhận xét cuối kỳ cho GV tiểu học">
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Cho giáo viên tiểu học · Vnedu</span>
+        <h1 class="text-balance">
+          Nhận xét cuối kỳ cho <span class="highlight">35 học sinh</span><br />
+          xong trong <span class="underline-gold">5 phút</span>
+        </h1>
+        <p class="hero-sub text-pretty">
+          Trợ lý AI tự động đọc bảng điểm Vnedu và sinh nhận xét theo Thông tư 27/2020 cho cả lớp. Thông tin học sinh chỉ ở lại máy thầy cô — không gửi đi đâu cả.
+        </p>
+        <div class="hero-cta">
+          <a href={CHROME_STORE_URL} class="btn btn-primary btn-lg">
+            <span style="font-size: 18px;">⬇</span> Cài đặt cho Chrome
+          </a>
+          <a href="#video" class="btn btn-ghost btn-lg">
+            ▶ Xem video 90 giây
+          </a>
+        </div>
+        <div class="hero-trust">
+          <span><span class="check">✓</span> Miễn phí cài đặt</span>
+          <span><span class="check">✓</span> Chỉ ở máy thầy cô</span>
+          <span><span class="check">✓</span> Mã nguồn mở</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="float-card float-card-1">
+          <div class="icon">✓</div>
+          <div>
+            <div class="label">35 nhận xét</div>
+            <div class="sub">Đã sinh xong</div>
+          </div>
+        </div>
+
+        <div class="mock-browser">
+          <div class="mock-browser-bar">
+            <span class="mock-dot"></span>
+            <span class="mock-dot"></span>
+            <span class="mock-dot"></span>
+            <div class="mock-url">vnedu.vn/so-nhan-xet</div>
+          </div>
+          <div class="mock-content">
+            <div class="mock-left">
+              <div class="mock-left-title">Sổ điểm → Sổ nhận xét · Lớp 4A · Toán · HK1</div>
+              <div class="mock-row"><span class="num">1</span><span class="name">Nguyễn Văn An</span><span class="grade t-plus">T+</span></div>
+              <div class="mock-row"><span class="num">2</span><span class="name">Trần Thị Bình</span><span class="grade t">T</span></div>
+              <div class="mock-row"><span class="num">3</span><span class="name">Lê Hoàng Cường</span><span class="grade t">T</span></div>
+              <div class="mock-row"><span class="num">4</span><span class="name">Phạm Mai Dung</span><span class="grade h">H</span></div>
+              <div class="mock-row"><span class="num">5</span><span class="name">Vũ Minh Đức</span><span class="grade t-plus">T+</span></div>
+              <div class="mock-row"><span class="num">6</span><span class="name">Hoàng Thị Em</span><span class="grade t">T</span></div>
+              <div class="mock-row"><span class="num">7</span><span class="name">Đặng Văn Phúc</span><span class="grade h">H</span></div>
+            </div>
+            <div class="mock-sidebar">
+              <div class="mock-sidebar-title">🧠 Sổ nhận xét - AI</div>
+              <div class="mock-sidebar-sub">Phát hiện 35 HS · Toán HK1</div>
+              <div class="mock-sidebar-btn">Sinh nhận xét →</div>
+              <div class="mock-comment">
+                <div class="who">An <span class="badge">T+</span></div>
+                Hoàn thành tốt môn Toán, tính toán nhanh và chính xác.
+              </div>
+              <div class="mock-comment">
+                <div class="who">Bình <span class="badge">T</span></div>
+                Nắm vững kiến thức cơ bản, vận dụng tốt vào bài tập.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="float-card float-card-2">
+          <div class="icon">🔒</div>
+          <div>
+            <div class="label">Riêng tư 100%</div>
+            <div class="sub">Chỉ ở máy thầy cô</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== STATS STRIP ============== -->
+  <section class="stats-strip" style="padding: 56px 0;">
+    <div class="container">
+      <div class="stats-grid">
+        <div>
+          <div class="stat-value">5 phút</div>
+          <div class="stat-label">cho cả lớp 35 HS</div>
+        </div>
+        <div>
+          <div class="stat-value">12 môn</div>
+          <div class="stat-label">được hỗ trợ riêng</div>
+        </div>
+        <div>
+          <div class="stat-value">13 mục</div>
+          <div class="stat-label">đánh giá NL/PC auto-fill</div>
+        </div>
+        <div>
+          <div class="stat-value">0 server</div>
+          <div class="stat-label">thông tin HS chỉ ở máy thầy cô</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== PROBLEM ============== -->
+  <section class="section-canvas">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Vấn đề</span>
+        <h2 class="text-balance">Mỗi cuối học kỳ, thầy/cô đối mặt với...</h2>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon-wrap">⏰</div>
+          <h3>3-4 giờ mỗi lớp</h3>
+          <p>Một lớp 35 HS × 8 môn × NL/PC = vài trăm câu nhận xét phải viết tay. Cuối kỳ ai cũng kiệt sức.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon-wrap">🔁</div>
+          <h3>Câu chữ lặp đi lặp lại</h3>
+          <p>Càng viết về cuối càng khó nghĩ ra cách diễn đạt khác — dễ trùng giữa các HS, khó tránh.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon-wrap">😓</div>
+          <h3>Áp lực thời gian</h3>
+          <p>Vừa hoàn tất sổ điểm, vừa coi thi, vừa họp PHHS — đầu óc không còn sức cho nhận xét.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FEATURES ============== -->
+  <section id="tinh-nang">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Giải pháp</span>
+        <h2 class="text-balance">Để AI lo phần lặp lại — thầy cô chỉ chỉnh câu nào không hài lòng</h2>
+        <p class="text-pretty">Extension đọc bảng điểm Vnedu, sinh nhận xét, GV xem trước rồi áp dụng. Không thay thế GV — chỉ tăng tốc 30 lần.</p>
+      </div>
+      <div class="features-grid">
+        {features.map(f => (
+          <div class="feature">
+            <div class="feature-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== VIDEO HƯỚNG DẪN ============== -->
+  <section id="video" class="video-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Video hướng dẫn</span>
+        <h2 class="text-balance">Xem cách dùng, không cần đọc</h2>
+        <p class="text-pretty">Mỗi video dưới 3 phút — vừa đủ để thầy cô tự làm theo. Quay bằng giọng tiếng Việt chuẩn, có phụ đề.</p>
+      </div>
+
+      <!-- Video featured -->
+      <article class="video-featured">
+        <div class="video-featured-content">
+          <div class="video-player">
+            {featuredVideo.youtubeId ? (
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${featuredVideo.youtubeId}?rel=0&modestbranding=1`}
+                title={featuredVideo.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              />
+            ) : (
+              <div class="video-placeholder">
+                <div class="video-play-icon">▶</div>
+                <div class="video-placeholder-text">Video sẽ được đăng tại đây</div>
+              </div>
+            )}
+            <div class="video-duration">{featuredVideo.duration}</div>
+          </div>
+          <div class="video-meta">
+            <span class="video-tag">{featuredVideo.tag}</span>
+            <h3>{featuredVideo.title}</h3>
+            <p>{featuredVideo.description}</p>
+            <a href={CHROME_STORE_URL} class="btn btn-primary" style="align-self: flex-start;">
+              Sẵn sàng — Cài đặt ngay
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Video grid -->
+      <div class="video-grid">
+        {videos.map(v => (
+          <article class="video-card">
+            <div class="video-player">
+              {v.youtubeId ? (
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0&modestbranding=1`}
+                  title={v.title}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                />
+              ) : (
+                <div class="video-placeholder">
+                  <div class="video-play-icon">▶</div>
+                  <div class="video-placeholder-text">Coming soon</div>
+                </div>
+              )}
+              <div class="video-duration">{v.duration}</div>
+            </div>
+            <div class="video-meta">
+              <span class="video-tag">{v.tag}</span>
+              <h4>{v.title}</h4>
+              <div class="video-info">
+                <span>⏱ {v.duration}</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== SECURITY ============== -->
+  <section id="bao-mat" class="section-dark">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Cam kết bảo mật</span>
+        <h2 class="text-balance">Dữ liệu học sinh là dữ liệu nhạy cảm — chúng tôi xử lý đúng tinh thần đó</h2>
+      </div>
+      <div class="security-grid">
+        <div class="security-card">
+          <div class="icon-wrap">🔒</div>
+          <h3>Không server</h3>
+          <p>Tên HS, điểm số chỉ tồn tại trong tab Chrome. Đóng tab là biến mất.</p>
+        </div>
+        <div class="security-card">
+          <div class="icon-wrap">📂</div>
+          <h3>Mã nguồn mở</h3>
+          <p>Toàn bộ code công khai. Thầy cô có kiến thức kỹ thuật đều kiểm tra được.</p>
+        </div>
+        <div class="security-card">
+          <div class="icon-wrap">🛂</div>
+          <h3>Permission tối thiểu</h3>
+          <p>Chỉ truy cập đúng 2 trang: vnedu.vn và license server.</p>
+        </div>
+        <div class="security-card">
+          <div class="icon-wrap">🇻🇳</div>
+          <h3>Made in Việt Nam</h3>
+          <p>Phát triển bởi 1 GV tiểu học người Việt. Không công ty ngoại.</p>
+        </div>
+      </div>
+      <div class="security-callout">
+        Đọc <a href="/privacy"><strong>Chính sách Bảo mật đầy đủ</strong></a> để biết chi tiết những gì chúng tôi (không) thu thập.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== INSTALL STEPS ============== -->
+  <section id="cai-dat" class="section-canvas">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Cài đặt</span>
+        <h2 class="text-balance">3 bước · ~30 giây · không cần biết kỹ thuật</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>Bấm "Cài cho Chrome"</h3>
+          <p>Nút bên dưới mở Chrome Web Store. Tại đó bấm <kbd>Add to Chrome</kbd> → <kbd>Add extension</kbd>. Xong, có icon trên thanh công cụ.</p>
+        </div>
+        <div class="step">
+          <h3>Mở Vnedu, vào Sổ nhận xét</h3>
+          <p>Đăng nhập Vnedu như bình thường. Vào <kbd>Sổ điểm → Sổ nhận xét</kbd>, chọn lớp, môn, học kỳ. <strong>Sidebar tự xuất hiện bên phải.</strong></p>
+        </div>
+        <div class="step">
+          <h3>Đăng ký mã & bắt đầu</h3>
+          <p>Lần đầu, sidebar hướng dẫn đăng ký mã & kích hoạt ngay trong app. Từ lần sau, mở Vnedu là dùng được ngay.</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 56px;">
+        <a href={CHROME_STORE_URL} class="btn btn-primary btn-lg">
+          ⬇ Cài đặt cho Chrome
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FAQ ============== -->
+  <section id="faq" class="section-canvas">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Câu hỏi thường gặp</span>
+        <h2 class="text-balance">Mọi thắc mắc, giải đáp ở đây</h2>
+      </div>
+      <div class="faq-list">
+        {faqs.map(f => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FINAL CTA ============== -->
+  <section class="section-dark">
+    <div class="container cta-final">
+      <h2 class="text-balance">Sẵn sàng giảm 95% thời gian viết nhận xét?</h2>
+      <p class="text-pretty">Cài đặt mất 30 giây. Lần đầu sinh nhận xét cho 1 lớp mất 5 phút. Sau đó không thể quay lại cách cũ.</p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href={CHROME_STORE_URL} class="btn btn-primary btn-lg">
+          ⬇ Cài đặt cho Chrome — Miễn phí
+        </a>
+        <a href="#video" class="btn btn-outline-light btn-lg">
+          ▶ Xem video trước
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

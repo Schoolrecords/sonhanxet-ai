@@ -1,0 +1,48 @@
+#cogiao-ai-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    height: 100vh;
+    z-index: 999999;
+    border-left: 1px solid #d4d4d4;
+    background: white;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+#cogiao-ai-sidebar.cogiao-ai-hidden {
+    transform: translateX(380px);
+}
+
+#cogiao-ai-toggle {
+    position: fixed;
+    top: 50%;
+    right: 380px;
+    transform: translate(50%, -50%);
+    z-index: 999998;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1D9E75;
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: right 0.3s ease;
+}
+
+#cogiao-ai-sidebar.cogiao-ai-hidden ~ #cogiao-ai-toggle {
+    right: 0;
+}
+
+#cogiao-ai-toggle:hover {
+    background: #0F6E56;
+}
+
+.cogiao-ai-filled {
+    background-color: #E1F5EE !important;
+    transition: background-color 0.3s ease;
+}
