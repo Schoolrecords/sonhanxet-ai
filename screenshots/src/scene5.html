@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Scene 5 — Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1280px; height: 800px;
+    font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+    overflow: hidden;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    background: #0A1230;
+  }
+  .frame {
+    width: 1280px; height: 800px;
+    background:
+      radial-gradient(800px 400px at 15% 20%, rgba(65, 105, 201, 0.35), transparent 60%),
+      radial-gradient(600px 300px at 85% 100%, rgba(255, 193, 7, 0.12), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.08) 1.5px, transparent 1.5px),
+      radial-gradient(800px 400px at 15% 20%, rgba(65, 105, 201, 0.35), transparent 60%),
+      radial-gradient(600px 300px at 85% 100%, rgba(255, 193, 7, 0.12), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-size: 28px 28px, auto, auto, auto;
+    position: relative;
+    padding: 64px 80px;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .brand-mark {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(255,255,255,0.25) 1.2px, transparent 1.2px),
+      linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-size: 10px 10px, 100%;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 22px;
+    color: white;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .brand-mark::after {
+    content: '';
+    position: absolute;
+    width: 15px; height: 15px;
+    background: #FFC107;
+    border-radius: 50%;
+    bottom: -3px;
+    right: -3px;
+    border: 2.5px solid #0A1230;
+  }
+  .brand-text { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+  .brand-text .ai { color: #FFC107; font-weight: 800; }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #FFC107;
+    background: rgba(255, 193, 7, 0.10);
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    margin-top: 36px;
+    width: fit-content;
+  }
+  .eyebrow::before {
+    content: ''; width: 7px; height: 7px;
+    background: #FFC107; border-radius: 50%;
+  }
+
+  h1 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-top: 24px;
+    max-width: 980px;
+  }
+  h1 .gold {
+    background: linear-gradient(135deg, #FFC107, #FFD54F);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub {
+    font-size: 20px;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.45;
+    margin-top: 20px;
+    max-width: 880px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 32px 30px;
+    backdrop-filter: blur(8px);
+  }
+  .card-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,193,7,0.25), rgba(255,193,7,0.1));
+    border: 1px solid rgba(255,193,7,0.35);
+    color: #FFC107;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+  .card-desc {
+    font-size: 15px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.55;
+  }
+
+  .footer-strip {
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    background: rgba(255,193,7,0.10);
+    border: 1px solid rgba(255,193,7,0.25);
+    border-radius: 14px;
+  }
+  .footer-strip .left { font-size: 16px; color: rgba(255,255,255,0.92); font-weight: 500; }
+  .footer-strip .left strong { color: #FFC107; font-weight: 800; }
+  .footer-strip .right { font-size: 14px; color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div class="brand-text">Sổ nhận xét<span class="ai"> · AI</span></div>
+  </div>
+
+  <span class="eyebrow">Cam kết bảo mật</span>
+
+  <h1>Thông tin học sinh là dữ liệu nhạy cảm —<br/>chúng tôi <span class="gold">xử lý đúng tinh thần đó</span>.</h1>
+
+  <p class="sub">Trợ lý sinh nhận xét cho giáo viên tiểu học — chạy ngay trong trình duyệt của thầy cô, không gửi thông tin học sinh ra bất kỳ đâu.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-icon">🔒</div>
+      <div class="card-title">Chỉ ở máy thầy cô</div>
+      <div class="card-desc">Tên HS, điểm số, đánh giá chỉ tồn tại trong tab Chrome. Đóng tab là biến mất, không lưu lại đâu.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚫</div>
+      <div class="card-title">Không server, không cloud</div>
+      <div class="card-desc">Không có database trung tâm lưu thông tin HS. Không gửi dữ liệu nào ra ngoài máy của giáo viên.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📂</div>
+      <div class="card-title">Mã nguồn mở</div>
+      <div class="card-desc">Toàn bộ code công khai trên GitHub. Thầy cô có kiến thức kỹ thuật đều kiểm tra được cam kết bảo mật.</div>
+    </div>
+  </div>
+
+  <div class="footer-strip">
+    <div class="left">Tuân thủ <strong>Thông tư 27/2020/TT-BGDĐT</strong> · Phát triển bởi giáo viên cho giáo viên</div>
+    <div class="right">EduTech_CT_0913031073</div>
+  </div>
+</div>
+</body>
+</html>

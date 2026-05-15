@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
   "version": "0.1.26",
-  "description": "Trợ lý sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học (TT27/2020). Môn học: 4 tier T+/T/H/C. NL/PC: 3 mức T/Đ/C — TỰ ĐỘNG suy cả 13 trường từ điểm môn, GV click badge để override khi cần.",
+  "description": "Sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học trên Vnedu — theo Thông tư 27/2020.",
   "author": "Phát triển bởi giáo viên cho giáo viên",
 
   "permissions": [

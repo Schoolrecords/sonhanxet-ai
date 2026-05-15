@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Scene 4 — NL/PC Override</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+<style>
+  .nlpc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+    padding: 18px 24px;
+    background: white;
+    flex: 1;
+    overflow: hidden;
+  }
+  .nl-card {
+    background: #FAFBFD;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 11px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    position: relative;
+  }
+  .nl-card .group {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #6B7280;
+    margin-bottom: 2px;
+  }
+  .nl-card .name {
+    font-weight: 600;
+    color: #1F2937;
+    font-size: 13px;
+  }
+  .badge-grp { display: flex; gap: 4px; align-items: center; }
+  .b {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 13px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+  }
+  .b.active.t-plus { background: #10B981; color: white; border-color: #047857; box-shadow: 0 2px 6px rgba(16,185,129,0.3); }
+  .b.active.t { background: #4169C9; color: white; border-color: #1E40AF; box-shadow: 0 2px 6px rgba(65,105,201,0.3); }
+  .b.active.h { background: #F59E0B; color: white; border-color: #B45309; box-shadow: 0 2px 6px rgba(245,158,11,0.3); }
+  .b.active.c { background: #EF4444; color: white; border-color: #B91C1C; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
+  .b.inactive { background: white; color: #9CA3AF; border-color: #E5E7EB; }
+  .ai-tag {
+    position: absolute;
+    top: -7px;
+    right: 10px;
+    background: linear-gradient(135deg, #FFD54F, #FFC107);
+    color: #142450;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1.5px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 2px 4px rgba(255,193,7,0.4);
+  }
+  .nl-card.editing {
+    border-color: #4169C9;
+    background: linear-gradient(180deg, #fff, #F4F6FB);
+    box-shadow: 0 4px 14px rgba(43,79,158,0.18);
+  }
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    margin-top: 6px;
+    background: white;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    box-shadow: 0 12px 24px rgba(15,23,42,0.12);
+    z-index: 10;
+    padding: 5px;
+    display: flex;
+    gap: 5px;
+  }
+  .dd-opt {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dd-opt.current { background: #DBEAFE; color: #1E40AF; }
+  .dd-opt:hover { background: #F3F4F6; }
+  .pcnl-header {
+    padding: 16px 24px 10px;
+    border-bottom: 1px solid #E5E7EB;
+    background: white;
+  }
+  .pcnl-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 4px;
+  }
+  .pcnl-header p { font-size: 12px; color: #6B7280; }
+  .student-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #DBEAFE;
+    color: #1E40AF;
+    padding: 4px 10px 4px 6px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .student-pill .ic {
+    width: 18px; height: 18px;
+    background: #1E40AF;
+    color: white;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="vnedu">
+    <div class="vnedu-bar">
+      <div class="vnedu-logo">Vnedu</div>
+      <div class="vnedu-bar-nav">
+        <span>Trang chủ</span><span>Sổ điểm</span><span>Hồ sơ HS</span><span>Báo cáo</span>
+      </div>
+      <div class="vnedu-bar-right"><span>Cô Nguyễn Thị X</span></div>
+    </div>
+    <div class="bc"><strong>Hồ sơ HS</strong> › <strong>Phẩm chất - Năng lực</strong> › Lớp 4A · HK1 · 2025-2026</div>
+    <div class="pcnl-header">
+      <h2>Đánh giá Phẩm chất - Năng lực
+        <span class="student-pill"><span class="ic">A</span>Nguyễn Văn An (HS001)</span>
+      </h2>
+      <p>13 mục đánh giá theo Thông tư 27/2020 · 3 mức: <strong style="color:#10B981;">T (Tốt)</strong> · <strong style="color:#F59E0B;">Đ (Đạt)</strong> · <strong style="color:#EF4444;">C (Cần cố gắng)</strong></p>
+    </div>
+    <div class="nlpc-grid">
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực chung</div>
+          <div class="name">Tự chủ và tự học</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực chung</div>
+          <div class="name">Giao tiếp và hợp tác</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực chung</div>
+          <div class="name">Giải quyết vấn đề & sáng tạo</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực đặc thù</div>
+          <div class="name">Ngôn ngữ</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực đặc thù</div>
+          <div class="name">Tính toán</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card editing">
+        <div>
+          <div class="group">Năng lực đặc thù</div>
+          <div class="name">Khoa học</div>
+        </div>
+        <div class="badge-grp"><div class="b active h">Đ</div></div>
+        <div class="ai-tag">GV chỉnh</div>
+        <div class="dropdown">
+          <div class="dd-opt">T</div>
+          <div class="dd-opt current">Đ ✓</div>
+          <div class="dd-opt">C</div>
+        </div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực đặc thù</div>
+          <div class="name">Tin học</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Năng lực đặc thù</div>
+          <div class="name">Thẩm mỹ</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Phẩm chất</div>
+          <div class="name">Yêu nước</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Phẩm chất</div>
+          <div class="name">Nhân ái</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Phẩm chất</div>
+          <div class="name">Chăm chỉ</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Phẩm chất</div>
+          <div class="name">Trung thực</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+      <div class="nl-card">
+        <div>
+          <div class="group">Phẩm chất</div>
+          <div class="name">Trách nhiệm</div>
+        </div>
+        <div class="badge-grp"><div class="b active t-plus">T</div></div>
+        <div class="ai-tag">AI ✨</div>
+      </div>
+    </div>
+    <div class="vnedu-foot">
+      <button class="btn btn-primary">Lưu</button>
+      <button class="btn">HS tiếp theo →</button>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-title">
+        <div class="sb-mark">S</div>
+        <div>
+          <div class="sb-title-text">Sổ nhận xét<span class="ai"> · AI</span></div>
+          <div class="sb-title-sub">Module Phẩm chất - Năng lực</div>
+        </div>
+      </div>
+      <div class="sb-status-bar">
+        <div class="sb-status-dot"></div>
+        <span>Đã suy 13/13 mục từ điểm môn của HS</span>
+      </div>
+    </div>
+    <div class="sb-body">
+      <div class="sb-section-title">Kết quả tự suy</div>
+      <div class="sb-detection" style="text-align:left; padding:16px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="flex:1;">
+            <div class="num" style="font-size: 36px;">13/13</div>
+            <div class="label">mục đánh giá đã suy</div>
+          </div>
+          <div style="width:64px; height:64px; border-radius:50%; background:conic-gradient(#10B981 0% 92%, #F59E0B 92% 100%); display:grid; place-items:center;">
+            <div style="width:48px; height:48px; background:white; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:11px; color:#1F2937;">92%<br>T</div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-section-title">Cách hoạt động</div>
+      <div style="background:white; border:1px solid #E5E7EB; border-radius:10px; padding:14px; font-size:12px; color:#374151; line-height:1.6;">
+        <div style="margin-bottom:10px;">
+          <strong style="color:#1F2937;">1.</strong> AI đọc điểm các môn của HS từ Sổ điểm Vnedu
+        </div>
+        <div style="margin-bottom:10px;">
+          <strong style="color:#1F2937;">2.</strong> Tự suy mức T/Đ/C cho 13 mục đánh giá NL/PC theo TT27
+        </div>
+        <div>
+          <strong style="color:#1F2937;">3.</strong> GV xem lại, <strong style="color:#4169C9;">click badge để override</strong> nếu muốn đổi mức
+        </div>
+      </div>
+      <div style="margin-top:14px; padding:12px; background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); border-radius:10px; font-size:12px; color:#92400E;">
+        💡 GV vừa override mục <strong>"Khoa học"</strong>: T → Đ
+      </div>
+    </div>
+    <div class="sb-foot">
+      <strong>Sổ nhận xét - AI</strong>
+      <span>EduTech_CT</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

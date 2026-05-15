@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Small Promo 440x280</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 440px; height: 280px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    overflow: hidden;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(400px 200px at 20% 30%, rgba(65, 105, 201, 0.4), transparent 60%),
+      radial-gradient(300px 150px at 100% 100%, rgba(255, 193, 7, 0.18), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px),
+      radial-gradient(400px 200px at 20% 30%, rgba(65, 105, 201, 0.4), transparent 60%),
+      radial-gradient(300px 150px at 100% 100%, rgba(255, 193, 7, 0.18), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-size: 22px 22px, auto, auto, auto;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .brand-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(255,255,255,0.3) 1px, transparent 1px),
+      linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-size: 7px 7px, 100%;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .brand-mark::after {
+    content: '';
+    position: absolute;
+    width: 10px; height: 10px;
+    background: #FFC107;
+    border-radius: 50%;
+    bottom: -2px;
+    right: -2px;
+    border: 2px solid #0A1230;
+  }
+  .brand-text { font-weight: 700; font-size: 14px; letter-spacing: -0.01em; }
+  .brand-text .ai { color: #FFC107; font-weight: 800; }
+
+  .eyebrow {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #FFC107;
+    margin-top: 12px;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: #FFC107;
+    border-radius: 50%;
+    margin-right: 7px;
+    vertical-align: middle;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-top: 6px;
+  }
+  h1 .gold {
+    background: linear-gradient(135deg, #FFC107, #FFD54F);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .sub {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.4;
+    margin-top: 10px;
+  }
+
+  .footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+  }
+  .badge {
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.35);
+    color: #FFC107;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 10.5px;
+  }
+  .url {
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div class="brand-text">Sổ nhận xét<span class="ai"> · AI</span></div>
+  </div>
+  <span class="eyebrow">Cho GV tiểu học · Vnedu</span>
+  <h1>Nhận xét cuối kỳ<br><span class="gold">35 HS</span> trong 5 phút</h1>
+  <p class="sub">Trợ lý AI sinh nhận xét theo TT27 — thông tin HS chỉ ở máy thầy cô.</p>
+  <div class="footer">
+    <span class="badge">✓ Miễn phí cài đặt</span>
+    <span class="url">EduTech_CT</span>
+  </div>
+</body>
+</html>

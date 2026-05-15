@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Marquee Promo 1400x560</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1400px; height: 560px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    overflow: hidden;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(800px 400px at 10% 30%, rgba(65, 105, 201, 0.4), transparent 60%),
+      radial-gradient(600px 300px at 90% 100%, rgba(255, 193, 7, 0.15), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.07) 1.5px, transparent 1.5px),
+      radial-gradient(800px 400px at 10% 30%, rgba(65, 105, 201, 0.4), transparent 60%),
+      radial-gradient(600px 300px at 90% 100%, rgba(255, 193, 7, 0.15), transparent 60%),
+      linear-gradient(135deg, #0A1230 0%, #1E3A7A 100%);
+    background-size: 28px 28px, auto, auto, auto;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    padding: 64px 80px;
+    gap: 60px;
+  }
+
+  .left { z-index: 2; }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .brand-mark {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(255,255,255,0.25) 1.2px, transparent 1.2px),
+      linear-gradient(135deg, #4169C9, #2B4F9E);
+    background-size: 10px 10px, 100%;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 22px;
+    color: white;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .brand-mark::after {
+    content: '';
+    position: absolute;
+    width: 15px; height: 15px;
+    background: #FFC107;
+    border-radius: 50%;
+    bottom: -3px;
+    right: -3px;
+    border: 2.5px solid #0A1230;
+  }
+  .brand-text { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+  .brand-text .ai { color: #FFC107; font-weight: 800; }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #FFC107;
+    background: rgba(255, 193, 7, 0.10);
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    margin-bottom: 22px;
+  }
+  .eyebrow::before {
+    content: ''; width: 6px; height: 6px;
+    background: #FFC107; border-radius: 50%;
+  }
+
+  h1 {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin-bottom: 22px;
+  }
+  h1 .gold {
+    background: linear-gradient(135deg, #FFC107, #FFD54F);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(255,193,7,0.25));
+  }
+
+  .sub {
+    font-size: 19px;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.5;
+    margin-bottom: 28px;
+    max-width: 580px;
+  }
+
+  .chips {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+  }
+  .chip .ic {
+    color: #10B981;
+    font-weight: 800;
+  }
+
+  /* Right: mockup browser */
+  .right {
+    position: relative;
+    perspective: 1500px;
+    z-index: 1;
+  }
+  .mock {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    overflow: hidden;
+    transform: rotateY(-7deg) rotateX(3deg);
+    width: 540px;
+    height: 380px;
+    margin-left: auto;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .mock-bar {
+    background: #F3F4F6;
+    padding: 10px 14px;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .mock-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mock-dot:nth-child(1) { background: #EF4444; }
+  .mock-dot:nth-child(2) { background: #F59E0B; }
+  .mock-dot:nth-child(3) { background: #10B981; }
+  .mock-url {
+    flex: 1; background: #fff; border: 1px solid #E5E7EB;
+    border-radius: 6px; margin-left: 12px;
+    padding: 4px 12px; font-size: 11px; color: #9CA3AF;
+    font-family: ui-monospace, monospace;
+  }
+  .mock-body {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    min-height: 340px;
+  }
+  .mock-left {
+    padding: 14px 16px;
+    background: white;
+    color: #1F2937;
+  }
+  .mock-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #E5E7EB;
+    padding-bottom: 8px;
+  }
+  .mock-row {
+    display: grid;
+    grid-template-columns: 20px 1fr 40px;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 11px;
+    border-bottom: 1px solid #F3F4F6;
+    align-items: center;
+    color: #374151;
+  }
+  .mock-row .stt { color: #9CA3AF; }
+  .mock-row .name { font-weight: 500; }
+  .mock-row .g {
+    text-align: center;
+    font-weight: 700;
+    font-size: 9.5px;
+    padding: 1.5px 6px;
+    border-radius: 999px;
+  }
+  .mock-row .g.tp { background: #D1FAE5; color: #065F46; }
+  .mock-row .g.t { background: #DBEAFE; color: #1E40AF; }
+  .mock-row .g.h { background: #FEF3C7; color: #92400E; }
+
+  .mock-side {
+    background: linear-gradient(180deg, #1E3A7A, #2B4F9E);
+    background-image:
+      radial-gradient(circle at 30% 25%, rgba(255,255,255,0.12) 1px, transparent 1px),
+      linear-gradient(180deg, #1E3A7A, #2B4F9E);
+    background-size: 14px 14px, 100%;
+    padding: 14px 12px;
+    color: white;
+  }
+  .mock-side-title {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .mock-side-sub {
+    font-size: 9px;
+    opacity: 0.75;
+    margin-bottom: 12px;
+  }
+  .mock-cta {
+    background: linear-gradient(180deg, #FFD54F, #FFC107);
+    color: #142450;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(255,193,7,0.3);
+  }
+  .mock-pre {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 7px 8px;
+    font-size: 9px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .mock-pre .who {
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .mock-pre .b {
+    background: #FFC107;
+    color: #142450;
+    padding: 0px 5px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div class="brand-text">Sổ nhận xét<span class="ai"> · AI</span></div>
+    </div>
+    <span class="eyebrow">Cho giáo viên tiểu học · Vnedu</span>
+    <h1>Nhận xét cuối kỳ cho <span class="gold">35 học sinh</span><br/>xong trong 5 phút</h1>
+    <p class="sub">Trợ lý AI sinh nhận xét theo Thông tư 27/2020 — thông tin HS chỉ ở máy thầy cô, không gửi đi đâu cả.</p>
+    <div class="chips">
+      <div class="chip"><span class="ic">✓</span> Miễn phí cài đặt</div>
+      <div class="chip"><span class="ic">✓</span> Mã nguồn mở</div>
+      <div class="chip"><span class="ic">✓</span> Bảo mật tuyệt đối</div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="mock">
+      <div class="mock-bar">
+        <span class="mock-dot"></span>
+        <span class="mock-dot"></span>
+        <span class="mock-dot"></span>
+        <div class="mock-url">vnedu.vn/so-nhan-xet</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-left">
+          <div class="mock-title">Sổ nhận xét · Lớp 4A · Toán · HK1</div>
+          <div class="mock-row"><span class="stt">1</span><span class="name">Nguyễn Văn An</span><span class="g tp">T+</span></div>
+          <div class="mock-row"><span class="stt">2</span><span class="name">Trần Thị Bình</span><span class="g t">T</span></div>
+          <div class="mock-row"><span class="stt">3</span><span class="name">Lê Hoàng Cường</span><span class="g t">T</span></div>
+          <div class="mock-row"><span class="stt">4</span><span class="name">Phạm Mai Dung</span><span class="g h">H</span></div>
+          <div class="mock-row"><span class="stt">5</span><span class="name">Vũ Minh Đức</span><span class="g tp">T+</span></div>
+          <div class="mock-row"><span class="stt">6</span><span class="name">Hoàng Thị Em</span><span class="g t">T</span></div>
+          <div class="mock-row"><span class="stt">7</span><span class="name">Đặng Văn Phúc</span><span class="g h">H</span></div>
+        </div>
+        <div class="mock-side">
+          <div class="mock-side-title">🧠 Sổ nhận xét · AI</div>
+          <div class="mock-side-sub">Phát hiện 35 HS · Toán</div>
+          <div class="mock-cta">Sinh nhận xét →</div>
+          <div class="mock-pre">
+            <div class="who">An <span class="b">T+</span></div>
+            Hoàn thành tốt môn Toán, tính toán nhanh và chính xác.
+          </div>
+          <div class="mock-pre">
+            <div class="who">Bình <span class="b">T</span></div>
+            Nắm vững kiến thức cơ bản, vận dụng tốt vào bài tập.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
