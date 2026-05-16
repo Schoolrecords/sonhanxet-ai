@@ -449,3 +449,134 @@ tin_hoc:   { label: 'Năng lực Tin học',  section: 'nang_luc_dac_thu',
 
 - 2026-05-16: Apply 4 file (engine.js + data.json + sidebar.js + vnedu-adapter.js), JS+JSON syntax OK
 - TBD: User test local trên Vnedu lớp 1A, 3A, 5C
+
+---
+
+## BUG-009 — Sidebar không phát hiện khi Vnedu chuyển lớp/khối (Critical)
+
+**Phát hiện**: 2026-05-16 (phiên 3), user test V.01 trên Vnedu thật
+**File**: `content/vnedu-adapter.js`
+**Function**: `getContext`, `_parseContextFromActivePanel`, `_parseContextFromTextBar`
+**Phiên bản**: V.01 (manifest 1.0) → fix trong V.02 (manifest 1.1)
+**Mức độ**: 🔴 Critical — sidebar hiển thị thông tin SAI lớp
+
+### Hiện tượng
+
+1. User đang ở **Lớp 5A** → mở Phẩm chất - Năng lực ghi học bạ → sidebar hiển thị "Lớp 5A · Học kỳ 2" ✓
+2. User chuyển Khối từ 5 → 1, Lớp từ 5A → 1A trong cùng tab NLPC
+3. Vnedu update form: hiển thị HS của 1A (Ngô Thị Bảo An, Trần Đức Trường An, ...) ✓
+4. **Sidebar VẪN HIỂN THỊ "Lớp 5A"** ✗ — không phát hiện chuyển lớp
+
+### Root cause
+
+Vnedu Ext.js dùng cardpanel SPA: khi chuyển lớp, KHÔNG destroy panel cũ mà chỉ
+ẩn bằng `position:absolute; left:-9999px`. Panel cũ vẫn ở trong DOM cùng đầy đủ
+`<select>` Khối/Lớp/Học kỳ với value cũ "5A".
+
+3 path trong `getContext()` đều có bug:
+
+1. **Path 1 — direct `<select>`**: `allSelects.filter(s => this._isInActivePanel(s))`.
+   `_isInActivePanel` chỉ check rect của BẢN THÂN `<select>`. Nhưng Ext.js render
+   `<select>` thật ở `left:-1000px` (textmetrics) bên trong panel active → rect.right
+   ≤ 0 → lọc HẾT cả select active. activeSelects rỗng → bỏ qua.
+
+2. **Path 2 — `_parseContextFromActivePanel`**: tìm marker visible, đi UP đến panel
+   `>= 600x400` có chứa `<select>`. Vì marker chỉ tồn tại trong active card, nên
+   ancestor walk có thể chạm tới container GROUPING (chứa cả active 1A panel + hidden
+   5A panel). Khi `bestPanel.querySelectorAll('select')` chạy, lấy CẢ select của 5A
+   ẩn. Loop dùng `result.lop = result.lop || value` → match đầu tiên (5A) thắng.
+
+3. **Path 3 — `_parseContextFromTextBar`**: `document.body.innerText` INCLUDE text
+   từ panel ẩn ở `left:-9999px` (innerText chỉ loại `display:none`, KHÔNG loại
+   off-screen). Regex `/Lớp:\s*(\d+\w?)/` match `Lớp: 5A` đầu DOM order trước
+   `Lớp: 1A`.
+
+### Fix (V.02)
+
+**3 thay đổi trong `content/vnedu-adapter.js`**:
+
+1. **Thêm helper `_isInActiveCard(el)`**: walk UP toàn bộ ancestors, với mỗi
+   ancestor `>= 100x100` kiểm tra rect.right > 0 và display ≠ none. Cứng nhắc hơn
+   `_isInActivePanel` (chỉ check element trực tiếp) — bắt được trường hợp `<select>`
+   ở textmetrics bên trong card ACTIVE (cho qua) vs bên trong card ẨN (loại).
+
+2. **`getContext()` Path 1**: thay `_isInActivePanel` → `_isInActiveCard` cho filter
+   `<select>`. Bây giờ activeSelects KHÔNG còn rỗng → select của card active 1A
+   được dùng → ctx.lop = "1A" ngay từ Path 1.
+
+3. **`_parseContextFromActivePanel()` Path 2 step 3**: filter `selects` qua
+   `_isInActiveCard` → loại select của 5A ẩn. Thêm fallback parse innerText của
+   **active card** (qua `_findActiveCardAround(markerEl)`) khi không có select.
+
+4. **`_parseContextFromTextBar()` Path 3**: dùng `_findActiveCardAround` để scope
+   innerText vào card active, chỉ fall back `document.body.innerText` khi không
+   có marker.
+
+5. **Thêm helpers**: `_findActiveCardAround`, `_parseLopKhoiHocKyFromText_`,
+   `_findVisibleLeafByText_`.
+
+### Test acceptance
+
+- ⏳ Lớp 5A → chuyển sang 1A → sidebar update "Lớp 1A · Học kỳ 2" trong < 2s
+- ⏳ Lớp 1A → chuyển sang 3A → sidebar update "Lớp 3A · Học kỳ 2" + NLPC 18 mục
+- ⏳ Lớp 3A → chuyển sang 5C → sidebar update "Lớp 5C"
+- ⏳ Console DevTools: `[NLPC-DBG] getContext result {lop:"1A", ...}` (KHÔNG còn 5A)
+- ⏳ Regression: Sổ NX môn vẫn detect đúng lớp
+
+### Fix log
+
+- 2026-05-16: Phân tích 3 path bug, thêm `_isInActiveCard`, sửa cả 3 path. JS syntax OK
+- 2026-05-16: User test V.02 vẫn lỗi → V.03 đổi chiến lược dùng `_parseContextFromVisibleValues` quét `<input>`/leaf text VISIBLE qua `_isOnTop` strict. Pass test cơ bản.
+
+---
+
+## BUG-010 — detectModule fail khi có window SoNX cũ minimized + auto-save click nhầm nút (Critical)
+
+**Phát hiện**: 2026-05-16, user test V.03 trên Vnedu thật + console DevTools
+**File**: `content/vnedu-adapter.js`, `content/content-script.js`
+**Function**: `_isNLPCFormActive`, `detectModule`, `findLuuButton`, `autoSaveVnedu`
+**Phiên bản**: V.03 (manifest 1.2) → fix trong V.04 (manifest 1.3)
+**Mức độ**: 🔴 Critical — sidebar hiển thị sai module/lớp + "Lưu vào Vnedu" lưu nhầm lớp
+
+### Hiện tượng
+
+1. **Detect module sai**: User ở NLPC Lớp 5C, sidebar báo "Sổ nhận xét môn — Lớp 4A · Giáo dục thể chất"
+2. **Save click nhầm**: User ở NLPC Lớp 4C, bấm "Lưu vào Vnedu" → Vnedu báo "Bạn đã lưu dữ liệu điểm thành công" (lưu cho lớp khác)
+3. **Chrome extensions báo "Lỗi"**: `console.warn` từ content-script bị Chrome đánh dấu là extension error
+
+### Root cause
+
+Console log cho thấy: `[VneduAdapter] detectModule: marker NLPC · header="..." · result= null` → marker NLPC ĐÃ visible, nhưng `_isNLPCFormActive()` trả false → detectModule fall through sang SoNX → bắt nhằm header "Nhận xét cuối kỳ" của window 4A/1A minimized trong Ext.js Desktop taskbar.
+
+3 root cause cụ thể:
+
+1. **`_isNLPCFormActive` dựa vào đếm `<textarea>`**: Vnedu version cụ thể render NLPC fields KHÔNG bằng `<textarea>` chuẩn → filter `_isInActivePanel` trả 0 textarea → return false → detectModule sai.
+
+2. **`findLuuButton` không filter active card**: Quét toàn DOM tìm nút "Lưu"/"Ghi". Window Sổ NX 4A minimized vẫn có nút "Lưu" trong DOM (offsetWidth > 0 vì Ext.js không destroy) → match candidate → click → save lớp sai.
+
+3. **Sidebar bouncing sau save**: Vnedu sau click "Lưu" có thể navigate tạm sang window khác (Sổ NX 1A) → watcher fire `checkModuleChange` → detect sai module → sidebar nhảy view.
+
+### Fix (V.04)
+
+**1. `_isNLPCFormActive` rewrite** — đếm visible NLPC labels qua `_isVisible` strict (`_isOnTop` / elementFromPoint) thay cho textarea structure assumption. Đáng tin cậy hơn với mọi version Vnedu DOM.
+
+**2. `detectModule` TRUST marker** — khi NLPC/SoNX marker đã pass `_isVisible` strict (top-most), trả về module luôn, KHÔNG gate qua `_isXFormActive` (chỉ dùng để diagnostic). Marker visibility = window đang active.
+
+**3. `findLuuButton` thêm filter** — qua `_isInActiveCard(el)` để loại nút trong window minimized. Sort candidate: ưu tiên `_isVisible` strict (top-most thực sự đang hiển thị) trước priority.
+
+**4. `autoSaveVnedu` thêm suppression** — set `_suppressUpdatesUntil = Date.now() + 3000` trước khi click. `checkModuleChange` skip nếu trong 3s này → sidebar giữ nguyên context, không bị bouncing.
+
+**5. Đổi `console.warn` → comment** — Chrome không còn flag "Lỗi" trong chrome://extensions.
+
+### Test acceptance
+
+- ⏳ Console không còn dòng `result= null` cho NLPC marker
+- ⏳ Mở Sổ NX môn 4A → chuyển sang NLPC 5C → sidebar hiện đúng "NLPC Lớp 5C"
+- ⏳ NLPC 4C → bấm "Lưu vào Vnedu" → Vnedu lưu nhận xét 4C (KHÔNG lưu nhầm 1A)
+- ⏳ Sau khi lưu xong, sidebar GIỮ NGUYÊN view NLPC 4C trong 3s, không nhảy sang Sổ NX
+- ⏳ chrome://extensions không còn nút "Lỗi" đỏ
+
+### Fix log
+
+- 2026-05-16: V.03 fix `_isInActiveCard` + scope textBar. User test vẫn sai → V.04 đổi sang đếm visible labels + trust marker + suppress save
+- 2026-05-16: User test V.04 OK ("kết quả khá tốt"). Submit CWS thay v0.1.26.

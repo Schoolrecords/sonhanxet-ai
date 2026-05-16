@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
-  "version": "1.0",
+  "version": "1.3",
   "description": "Sinh nhận xét cuối kỳ tự động cho giáo viên tiểu học trên Vnedu — theo Thông tư 27/2020.",
   "author": "Phát triển bởi giáo viên cho giáo viên",
 
