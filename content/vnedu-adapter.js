@@ -101,6 +101,38 @@ window.VneduAdapter = {
         return true;
     },
 
+    /**
+     * BUG-009 fix: Kiểm tra element nằm trong CARD đang active (không thuộc card cũ
+     * bị Ext.js giấu bằng position:absolute; left:-9999px).
+     *
+     * Khác với _isInActivePanel (chỉ check rect của BẢN THÂN element):
+     *   - Walk UP toàn bộ ancestors
+     *   - Với mỗi ancestor có kích thước đáng kể (>=100x100), kiểm tra có off-screen không
+     *   - Một ancestor lệch trái (rect.right <= 0) → element thuộc card ẩn → false
+     *
+     * Cần thiết vì Ext.js thường giấu cả CARD ngoài chứ không giấu trực tiếp <select>:
+     * <select> ở left:-1000px (textmetrics) bên trong card active vẫn coi là valid;
+     * cùng <select> bên trong card ẩn ở left:-9999px thì KHÔNG valid.
+     */
+    _isInActiveCard(el) {
+        if (!el) return false;
+        let p = el.parentElement;
+        let hops = 0;
+        while (p && p !== document.body && hops < 30) {
+            hops++;
+            const style = window.getComputedStyle(p);
+            if (style.display === 'none' || style.visibility === 'hidden') return false;
+            const r = p.getBoundingClientRect();
+            // Chỉ check ancestor "panel-like" có size đáng kể, bỏ qua các wrapper nhỏ
+            if (r.width >= 100 && r.height >= 100) {
+                if (r.right <= 0) return false;                       // lệch hẳn ra trái
+                if (r.left >= window.innerWidth * 3) return false;    // lệch quá xa phải
+            }
+            p = p.parentElement;
+        }
+        return true;
+    },
+
     detectModule() {
         // v0.1.25: Detect bằng MARKER ĐẶC TRƯNG strict-visible (top-most trong viewport).
         // Vnedu SPA Ext.js giữ panel cũ trong DOM, header chung "[2025-2026] Sổ điểm" hoặc
@@ -112,18 +144,23 @@ window.VneduAdapter = {
         // Cả 2 đều phải vượt _isVisible (có _isOnTop kiểm element top-most) → card cũ
         // bị z-index dưới sẽ FAIL _isOnTop → không match.
 
+        // BUG-010 fix: TRUST marker visibility. Marker qua _findStrictVisibleText_ đã
+        // pass _isVisible strict (gồm _isOnTop / elementFromPoint) → window đó đang
+        // ACTIVE và TOP. Form active check (_isNLPCFormActive) chỉ dùng để LOG warning,
+        // không gate. Lý do: Vnedu có nhiều version DOM khác nhau → form check brittle.
         const nlpcMarker = this._findStrictVisibleText_(/Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ|Năng lực ghi học bạ/i);
         if (nlpcMarker) {
-            const r = this._isNLPCFormActive() ? 'nlpc' : null;
-            this._logDetectOnce_('marker NLPC', nlpcMarker, r);
-            return r;
+            // BUG-010: Trust marker visibility (đã pass _isVisible strict / _isOnTop).
+            // Đổi console.warn → console.log để Chrome không đánh dấu "Lỗi" trong
+            // chrome://extensions cho user.
+            this._logDetectOnce_('marker NLPC', nlpcMarker, 'nlpc');
+            return 'nlpc';
         }
 
         const soNXMarker = this._findStrictVisibleText_(/^Nhận xét cuối kỳ$/i);
         if (soNXMarker) {
-            const r = this._isSoNXActive() ? 'so-nhan-xet' : null;
-            this._logDetectOnce_('marker SoNX', soNXMarker, r);
-            return r;
+            this._logDetectOnce_('marker SoNX', soNXMarker, 'so-nhan-xet');
+            return 'so-nhan-xet';
         }
 
         // Fallback chỉ chạy nếu KHÔNG tìm thấy marker nào — rất ít khi cần.
@@ -149,6 +186,26 @@ window.VneduAdapter = {
             return text;
         }
         return '';
+    },
+
+    /**
+     * BUG-009 helper: tìm phần tử LEAF đầu tiên VISIBLE chứa text match pattern.
+     * Trả về element (khác _findStrictVisibleText_ chỉ trả text string).
+     */
+    _findVisibleLeafByText_(textOrPattern) {
+        const pattern = textOrPattern instanceof RegExp
+            ? textOrPattern
+            : new RegExp(String(textOrPattern).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+        const els = document.querySelectorAll('div, span, h1, h2, h3, h4, td, th, b, strong, a, label, legend, p');
+        for (const el of els) {
+            if (el.children.length > 0) continue;
+            const text = (el.textContent || '').trim();
+            if (!text || text.length > 80) continue;
+            if (!pattern.test(text)) continue;
+            if (!this._isVisible(el)) continue;
+            return el;
+        }
+        return null;
     },
 
     // Log chỉ khi kết quả detect đổi, tránh tràn console
@@ -183,41 +240,42 @@ window.VneduAdapter = {
     },
 
     /**
-     * NLPC active = có ≥4 label đặc trưng NLPC nằm GẦN textarea VISIBLE (cùng container).
+     * NLPC active = ≥4 label đặc trưng NLPC VISIBLE leaf (strict _isOnTop check)
+     *
+     * BUG-010 fix: Cách cũ đếm textarea + walk previousElementSibling tìm label →
+     * brittle với Vnedu version có cấu trúc DOM khác (ví dụ NLPC fields render bằng
+     * Ext.js component thay vì <textarea> trần). Cách mới đếm leaf elements visible
+     * (qua _isVisible strict — pass _isOnTop → loại label của window minimized).
      */
     _isNLPCFormActive() {
         const NLPC_LABELS = [
             'Tự chủ và tự học', 'Giao tiếp và hợp tác', 'GQVĐ', 'Giải quyết vấn đề',
             'Yêu nước', 'Nhân ái', 'Trung thực', 'Trách nhiệm',
             'Ngôn ngữ', 'Tính toán', 'Khoa học', 'Thẩm mĩ', 'Thẩm mỹ', 'Thể chất',
-            'Năng lực đặc thù'
+            'Năng lực đặc thù', 'Năng lực chung', 'GQVĐ và sáng tạo'
         ];
 
-        // Lấy tất cả textarea VISIBLE (strict — bypass panel ẩn của tab cũ)
-        const visibleTextareas = Array.from(document.querySelectorAll('textarea'))
-            .filter(ta => this._isInActivePanel(ta))
-            .filter(ta => !ta.closest('#cogiao-ai-sidebar'));
-
-        if (visibleTextareas.length < 5) return false; // NLPC có 16 textarea, ít nhất phải >5
-
-        // Đếm số label NLPC tìm thấy gần các textarea visible này
-        let labelCount = 0;
         const seen = new Set();
-        for (const ta of visibleTextareas) {
-            // Lấy text trong vòng 2-3 element trước textarea (label thường đứng trên)
-            let el = ta;
-            for (let depth = 0; depth < 5; depth++) {
-                el = el.previousElementSibling || el.parentElement;
-                if (!el) break;
-                const text = (el.textContent || '').trim();
-                if (text.length > 200) continue;
-                for (const label of NLPC_LABELS) {
-                    if (!seen.has(label) && text.includes(label)) {
+        let labelCount = 0;
+        const els = document.querySelectorAll('div, span, label, td, th, b, strong, p, legend');
+        for (const el of els) {
+            if (el.children.length > 0) continue;
+            const text = (el.textContent || '').trim();
+            if (!text || text.length > 50) continue;
+            // Match label cho phép có/không có colon, có/không space
+            for (const label of NLPC_LABELS) {
+                if (seen.has(label)) continue;
+                if (text === label
+                    || text === label + ':'
+                    || text === label + ': '
+                    || text.replace(/[:：]\s*$/, '') === label) {
+                    if (this._isVisible(el)) {
                         seen.add(label);
                         labelCount++;
+                        if (labelCount >= 4) return true;
                     }
+                    break;
                 }
-                if (labelCount >= 4) return true;
             }
         }
         return labelCount >= 4;
@@ -257,28 +315,37 @@ window.VneduAdapter = {
     getContext() {
         const ctx = { khoi: '', lop: '', mon: '', hocKy: '', kyDanhGia: '' };
 
-        // BUG-007 fix: Vnedu Ext.js SPA giữ select của panel cũ trong DOM (vd "Sổ điểm
-        // lớp 1A" còn nguyên sau khi đã chuyển sang "Học bạ lớp 5A"). Cần lọc bằng
-        // _isInActivePanel để chỉ lấy select của panel ACTIVE.
-        const allSelects = Array.from(document.querySelectorAll('select'));
-        const activeSelects = allSelects.filter(s => this._isInActivePanel(s));
+        // BUG-009 v2 PRIMARY: Vnedu Ext.js dùng <input> + combobox ảo, không phải
+        // <select>. Tìm <input>/leaf text VISIBLE (qua _isOnTop check via
+        // elementFromPoint) khớp pattern lớp/khối/học kỳ. Card ẩn (visibility:hidden,
+        // display:none, hoặc nằm dưới z-index) sẽ FAIL _isVisible → bị loại tự nhiên.
+        const visibleVals = this._parseContextFromVisibleValues();
+        ctx.lop = ctx.lop || visibleVals.lop;
+        ctx.khoi = ctx.khoi || visibleVals.khoi;
+        ctx.hocKy = ctx.hocKy || visibleVals.hocKy;
+        ctx.mon = ctx.mon || visibleVals.mon;
 
-        for (const sel of activeSelects) {
-            const label = this._findLabelFor(sel);
-            const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
-            if (!value) continue;
+        // BUG-007/008/009 fallback: <select> based detection (cho trường hợp Vnedu
+        // version cũ vẫn dùng <select>). Lọc bằng _isInActiveCard.
+        if (!ctx.lop || !ctx.mon) {
+            const allSelects = Array.from(document.querySelectorAll('select'));
+            const activeSelects = allSelects.filter(s => this._isInActiveCard(s));
 
-            const labelLower = label.toLowerCase();
-            if (/môn/i.test(labelLower)) ctx.mon = value;
-            else if (/^lớp/i.test(labelLower)) ctx.lop = value;
-            else if (/khối/i.test(labelLower)) ctx.khoi = value;
-            else if (/học kỳ|^kỳ:/i.test(labelLower)) ctx.hocKy = value;
-            else if (/cuối kỳ|giữa kỳ/i.test(value)) ctx.kyDanhGia = value;
+            for (const sel of activeSelects) {
+                const label = this._findLabelFor(sel);
+                const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
+                if (!value) continue;
+
+                const labelLower = label.toLowerCase();
+                if (/môn/i.test(labelLower)) ctx.mon = ctx.mon || value;
+                else if (/^lớp/i.test(labelLower)) ctx.lop = ctx.lop || value;
+                else if (/khối/i.test(labelLower)) ctx.khoi = ctx.khoi || value;
+                else if (/học kỳ|^kỳ:/i.test(labelLower)) ctx.hocKy = ctx.hocKy || value;
+                else if (/cuối kỳ|giữa kỳ/i.test(value)) ctx.kyDanhGia = ctx.kyDanhGia || value;
+            }
         }
 
-        // BUG-008 fix: Ext.js ẩn <select> thật (dùng dropdown ảo) → activeSelects rỗng.
-        // Fallback dùng text scope theo ACTIVE PANEL (chứa marker NLPC hoặc Sổ NX),
-        // tránh lấy text "Lớp: 1A" từ panel cũ ẩn của tab Sổ điểm.
+        // Fallback: scope theo panel chứa marker visible (NLPC hoặc Sổ NX).
         if (!ctx.lop || !ctx.mon) {
             const scoped = this._parseContextFromActivePanel();
             if (scoped) {
@@ -289,7 +356,7 @@ window.VneduAdapter = {
             }
         }
 
-        // Fallback cuối: parse toàn body (kém chính xác, chỉ dùng khi không tìm được panel)
+        // Fallback cuối: parse innerText nhưng SCOPE theo active card.
         if (!ctx.lop || !ctx.mon) {
             const fallback = this._parseContextFromTextBar();
             if (fallback) {
@@ -299,10 +366,68 @@ window.VneduAdapter = {
             }
         }
 
-        // [NLPC-DBG] log context cuối cùng
-        console.log('[NLPC-DBG] getContext result', ctx);
+        // [NLPC-DBG] log context cuối cùng + source
+        console.log('[NLPC-DBG] getContext result', ctx, '· primary(visibleVals):', visibleVals);
 
         return ctx;
+    },
+
+    /**
+     * BUG-009 v2: Tìm Lớp/Khối/Học kỳ/Môn bằng cách scan <input>/leaf text VISIBLE
+     * khớp pattern. Đây là cách reliable nhất cho Vnedu Ext.js vì:
+     *   - Ext.js render dropdown bằng <input readonly> + combobox ảo, value hiển thị
+     *     LIVE → input.value của combobox active luôn đúng giá trị đang chọn
+     *   - _isVisible dùng _isOnTop (elementFromPoint) → loại element của card ẩn dù
+     *     ẩn bằng visibility:hidden, display:none, z-index hoặc left:-9999px
+     *
+     * Pattern:
+     *   - lop: "5C", "1A", ... (số 1-5 + 1 chữ cái)
+     *   - khoi: "Khối 5", "Khối 1", ...
+     *   - hocKy: "Học kỳ 2", "Học kỳ 1"
+     *   - mon: "Toán", "Tiếng Việt", "TNXH", ... (cần label context để khớp đúng)
+     */
+    _parseContextFromVisibleValues() {
+        const result = { lop: '', khoi: '', hocKy: '', mon: '' };
+
+        const patterns = {
+            lop: /^[1-5][A-ZĐĂÂÊÔƠƯa-zđăâêôơư][0-9]?$/,
+            khoi: /^Kh[ốo]i\s+[1-5]$/i,
+            hocKy: /^H[ọo]c\s+k[ỳy]\s+[12]$/i
+        };
+
+        // 1. <input> visible với value khớp pattern
+        const inputs = document.querySelectorAll('input');
+        for (const inp of inputs) {
+            const val = (inp.value || '').trim();
+            if (!val || val.length > 15) continue;
+            for (const key of Object.keys(patterns)) {
+                if (result[key]) continue;
+                if (!patterns[key].test(val)) continue;
+                if (!this._isVisible(inp)) continue;
+                result[key] = val;
+            }
+            if (result.lop && result.khoi && result.hocKy) break;
+        }
+
+        // 2. Leaf text element visible với text khớp pattern (Ext.js đôi khi render
+        // value bằng <div class="x-btn-inner"> thay vì <input>)
+        if (!result.lop || !result.khoi || !result.hocKy) {
+            const els = document.querySelectorAll('div, span, td, b, strong, button, a');
+            for (const el of els) {
+                if (el.children.length > 0) continue;
+                const text = (el.textContent || '').trim();
+                if (!text || text.length > 15) continue;
+                for (const key of Object.keys(patterns)) {
+                    if (result[key]) continue;
+                    if (!patterns[key].test(text)) continue;
+                    if (!this._isVisible(el)) continue;
+                    result[key] = text;
+                }
+                if (result.lop && result.khoi && result.hocKy) break;
+            }
+        }
+
+        return result;
     },
 
     /**
@@ -361,10 +486,13 @@ window.VneduAdapter = {
             return null;
         }
 
-        // 3. Scope select trong panel active (KHÔNG cần filter _isInActivePanel vì
-        // panel cũ ẩn không có marker visible nên không vào tới đây)
+        // 3. Scope select trong panel active. BUG-009: bestPanel có thể là ancestor
+        // chứa CẢ card active (1A) và card ẩn (5A) — Ext.js wrap nhiều cardpanel ở
+        // cùng container. Phải filter từng select bằng _isInActiveCard để bỏ select
+        // của card ẩn left:-9999px.
         const result = { khoi: '', lop: '', mon: '', hocKy: '' };
-        const selects = bestPanel.querySelectorAll('select');
+        const allSelects = bestPanel.querySelectorAll('select');
+        const selects = Array.from(allSelects).filter(s => this._isInActiveCard(s));
         for (const sel of selects) {
             const label = this._findLabelFor(sel);
             const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
@@ -376,16 +504,102 @@ window.VneduAdapter = {
             else if (/học kỳ|^kỳ:/i.test(labelLower)) result.hocKy = result.hocKy || value;
         }
 
+        // BUG-009 fallback: nếu select trong active card không cho ra kết quả
+        // (Ext.js có thể không có <select> ở mọi card), parse innerText của
+        // CARD ACTIVE thay vì toàn document. Cần tìm ancestor "card active" sát
+        // nhất quanh marker (size đủ chứa header + body, KHÔNG ancestor lớn quá
+        // gom luôn card ẩn).
+        if (!result.lop || !result.mon || !result.hocKy) {
+            const activeCard = this._findActiveCardAround(markerEl);
+            if (activeCard) {
+                const cardText = activeCard.innerText || '';
+                const fromText = this._parseLopKhoiHocKyFromText_(cardText);
+                result.lop = result.lop || fromText.lop;
+                result.mon = result.mon || fromText.mon;
+                result.hocKy = result.hocKy || fromText.hocKy;
+                result.khoi = result.khoi || fromText.khoi;
+            }
+        }
+
         console.log('[NLPC-DBG] _parseContextFromActivePanel result', {
             panelSize: { w: Math.round(bestPanel.getBoundingClientRect().width), h: Math.round(bestPanel.getBoundingClientRect().height) },
-            selectCount: selects.length,
+            activeSelectCount: selects.length,
+            totalSelectCount: allSelects.length,
             result
         });
         return result;
     },
 
+    /**
+     * BUG-009 helper: từ marker visible, đi UP tìm ancestor "card active":
+     *   - Là phần tử có rect.width >= 600 (đủ chứa toolbar Lớp/Khối)
+     *   - KHÔNG chứa card ẩn nào ở left:-9999px bên trong nó
+     *   - Vẫn pass _isInActiveCard (mọi ancestor visible)
+     * Đây là ancestor "đủ nhỏ" để innerText chỉ bao trùm card hiện tại.
+     */
+    _findActiveCardAround(markerEl) {
+        if (!markerEl) return null;
+        let p = markerEl.parentElement;
+        let candidate = null;
+        let hops = 0;
+        while (p && p !== document.body && hops < 30) {
+            hops++;
+            const r = p.getBoundingClientRect();
+            if (r.width >= 600 && r.height >= 200 && r.right > 0 && r.left < window.innerWidth * 2) {
+                // Kiểm tra: ancestor này có bao trùm card ẩn không?
+                const hiddenSibling = Array.from(p.querySelectorAll('[id^="ext-"], div, section'))
+                    .some(c => {
+                        if (c === p) return false;
+                        const cr = c.getBoundingClientRect();
+                        // Phần tử con đáng kể nằm hẳn bên trái → là card ẩn
+                        return cr.width >= 400 && cr.height >= 200 && cr.right <= 0;
+                    });
+                if (!hiddenSibling) {
+                    candidate = p;
+                    // tiếp tục đi lên, nếu ancestor lớn hơn cũng "sạch" thì lấy
+                } else {
+                    // ancestor này đã gom card ẩn → dừng, lấy candidate trước đó
+                    break;
+                }
+            }
+            p = p.parentElement;
+        }
+        return candidate;
+    },
+
+    /**
+     * BUG-009 helper: parse Lớp / Khối / Học kỳ / Môn từ text string (đã scope sẵn).
+     */
+    _parseLopKhoiHocKyFromText_(text) {
+        const result = { lop: '', khoi: '', hocKy: '', mon: '' };
+        if (!text) return result;
+        const lopMatch = text.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?)/);
+        if (lopMatch) result.lop = lopMatch[1];
+        const khoiMatch = text.match(/Kh[ốo]i:?\s*(Kh[ốo]i\s*[0-9]+|[0-9]+)/i);
+        if (khoiMatch) result.khoi = khoiMatch[1].trim();
+        const hkMatch = text.match(/H[ọo]c\s*k[ỳy]\s*([12])/i);
+        if (hkMatch) result.hocKy = 'Học kỳ ' + hkMatch[1];
+        return result;
+    },
+
     _parseContextFromTextBar() {
-        const allText = document.body.innerText || '';
+        // BUG-009: document.body.innerText INCLUDE text của panel ẩn (Ext.js
+        // dùng position:absolute; left:-9999px, KHÔNG dùng display:none) → regex
+        // có thể match "Lớp: 5A" stale của card cũ trước "Lớp: 1A" hiện tại.
+        // Fix: ưu tiên scope vào active card (tìm qua marker visible). Nếu không
+        // có marker (chưa vào NLPC/Sổ NX), fall back document.body.innerText —
+        // chấp nhận rủi ro vì lúc này thường ở trang khác chưa cần context lớp.
+        let allText = '';
+        const marker = this._findStrictVisibleText_(
+            /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ|Năng lực ghi học bạ|^Nhận xét cuối kỳ$/i
+        );
+        if (marker) {
+            // marker là string đã visible; tìm element của nó qua _findStrictVisibleElement_
+            const markerEl = this._findVisibleLeafByText_(marker);
+            const activeCard = markerEl ? this._findActiveCardAround(markerEl) : null;
+            if (activeCard) allText = activeCard.innerText || '';
+        }
+        if (!allText) allText = document.body.innerText || '';
 
         const result = { lop: '', mon: '', hocKy: '' };
 
@@ -580,6 +794,10 @@ window.VneduAdapter = {
             if (el.offsetWidth === 0 || el.offsetHeight === 0) continue;
             if (el.disabled) continue;
 
+            // BUG-010 fix: phải qua _isInActiveCard — loại nút "Lưu" của window
+            // Sổ NX cũ minimized trong taskbar Ext.js (sẽ save NHẦM lớp cũ).
+            if (!this._isInActiveCard(el)) continue;
+
             const text = (el.value || el.textContent || el.title || '').trim();
             const lower = text.toLowerCase();
 
@@ -592,7 +810,15 @@ window.VneduAdapter = {
             }
         }
 
-        candidates.sort((a, b) => b.priority - a.priority);
+        // BUG-010: ưu tiên candidate _isVisible strict (top-most) — nút Lưu đang
+        // hiển thị thực tế trên màn hình, không phải nút của window khác.
+        candidates.forEach(c => {
+            c.topMost = this._isVisible(c.el);
+        });
+        candidates.sort((a, b) => {
+            if (a.topMost !== b.topMost) return a.topMost ? -1 : 1;
+            return b.priority - a.priority;
+        });
 
         for (const c of candidates) {
             if (c.el.tagName === 'BUTTON' || c.el.tagName === 'INPUT' || c.el.tagName === 'A') {

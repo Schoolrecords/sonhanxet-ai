@@ -153,8 +153,14 @@
         console.log('[Sổ nhận xét - AI] Watcher active — MutationObserver + polling 1.5s + input/change');
     }
 
+    let _suppressUpdatesUntil = 0;  // BUG-010: suppress watcher updates trong 3s sau Lưu
+
     function checkModuleChange() {
         if (!window.VneduAdapter) return;
+        // BUG-010: Khi vừa autoSave, Vnedu có thể navigate tạm sang window khác
+        // (Sổ NX môn cũ) trong DOM → tránh sidebar bị bouncing sang module/lớp sai
+        // bằng cách suppress detection trong 3s.
+        if (Date.now() < _suppressUpdatesUntil) return;
         const current = window.VneduAdapter.detectModule();
 
         let contextKey = current || 'null';
@@ -324,6 +330,9 @@
     }
 
     function autoSaveVnedu() {
+        // BUG-010: Lock watcher trong 3s — tránh Vnedu navigate tạm sau save làm
+        // sidebar nhảy sang lớp/module sai.
+        _suppressUpdatesUntil = Date.now() + 3000;
         const result = window.VneduAdapter.clickLuuButton();
         const iframe = document.getElementById(SIDEBAR_ID);
         iframe?.contentWindow.postMessage({
