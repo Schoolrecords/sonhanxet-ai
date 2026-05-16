@@ -43,3 +43,6 @@ pnpm-debug.log*
 # ====== Optional: ignore OneDrive temp ======
 *.tmp
 ~$*
+
+# ====== Build artifacts ======
+sonhanxet-ai-v*.zip

@@ -36,12 +36,15 @@
     // GV override bằng click badge cycle T → Đ → C
     let nlpcStudents = [];           // [{stt, hoVaTen, isSelected}]
     let nlpcSelectedStt = null;      // stt HS đang chọn
+    let nlpcUserSelectedAt = 0;      // BUG-002 fix: timestamp user chọn qua dropdown (chống auto-revert)
     let nlpcAutoSuggestions = null;  // NLPCMapper kết quả: { tu_chu_tu_hoc:{grade,badge,...}, ... }
     let nlpcOverrides = {};          // GV override: { tu_chu_tu_hoc: 'cht', ... } (overlay lên auto)
     let nlpcGenerated = null;        // payload sau khi tạo nhận xét text từ engine
 
-    // Định nghĩa 13 field mapping với section + autoKey trong NLPCMapper output
-    // (toàn bộ key trùng với NLPC_FIELD_RULES trong engine.js)
+    // BUG-006: Định nghĩa 15 field (NL chung 3 + NL đặc thù 5–7 + PC 5).
+    // Lớp 1-2: 5 NL đặc thù (16 mục tổng). Lớp 3-5: 7 NL đặc thù (18 mục tổng — thêm
+    // Công nghệ + Tin học theo TT27/2020 + CT GDPT 2018).
+    // grade=null nghĩa là dùng cho mọi lớp; grade='3+' nghĩa là chỉ lớp 3-5.
     const NLPC_FIELD_DEFS = {
         nang_luc_chung: [
             { key: 'tu_chu_tu_hoc', label: 'Tự chủ và tự học' },
@@ -53,7 +56,9 @@
             { key: 'tinh_toan', label: 'Tính toán' },
             { key: 'khoa_hoc', label: 'Khoa học' },
             { key: 'tham_mi', label: 'Thẩm mĩ' },
-            { key: 'the_chat', label: 'Thể chất' }
+            { key: 'the_chat', label: 'Thể chất' },
+            { key: 'cong_nghe', label: 'Công nghệ', minGrade: 3 },
+            { key: 'tin_hoc', label: 'Tin học', minGrade: 3 }
         ],
         pham_chat: [
             { key: 'yeu_nuoc', label: 'Yêu nước' },
@@ -63,6 +68,24 @@
             { key: 'trach_nhiem', label: 'Trách nhiệm' }
         ]
     };
+
+    /** BUG-006: Detect lớp 1-5 từ chuỗi như "3A", "Lớp 5C", "5C-Khối 5". Trả null nếu không nhận diện được. */
+    function getGradeLevel(lop) {
+        if (!lop) return null;
+        const m = String(lop).match(/[1-5]/);
+        return m ? parseInt(m[0]) : null;
+    }
+
+    /** BUG-006: Lọc field defs theo grade level. Field có minGrade=N chỉ hiển thị khi grade >= N. */
+    function getActiveFieldDefs(sec) {
+        const grade = getGradeLevel(currentContext?.lop);
+        const defs = NLPC_FIELD_DEFS[sec] || [];
+        return defs.filter(def => {
+            if (def.minGrade == null) return true;
+            if (grade == null) return false;  // không xác định được lớp → ẩn field có ràng buộc grade
+            return grade >= def.minGrade;
+        });
+    }
 
     /** Lấy grade thực tế của 1 field: override (nếu GV đã click) hoặc suggestion auto */
     function getEffectiveGrade(fieldKey) {
@@ -545,12 +568,13 @@
 
     function renderSoNhanXetView() {
         const ctx = currentContext || {};
+        const monDisplay = formatMonDisplay(ctx.mon);
 
         document.getElementById('ctx-box').innerHTML = `
             <div class="context-label">Đã phát hiện:</div>
             <div class="context-title">Sổ nhận xét môn — Lớp ${escapeHtml(ctx.lop || '?')}</div>
             <div class="context-pills">
-                ${ctx.mon ? `<span class="pill">${escapeHtml(ctx.mon)}</span>` : ''}
+                ${monDisplay ? `<span class="pill">${escapeHtml(monDisplay)}</span>` : ''}
                 ${ctx.hocKy ? `<span class="pill">${escapeHtml(ctx.hocKy)}</span>` : ''}
                 ${ctx.kyDanhGia ? `<span class="pill">${escapeHtml(ctx.kyDanhGia)}</span>` : ''}
             </div>
@@ -655,18 +679,22 @@
     function mapSubjectName(name) {
         if (!name) return null;
         const lower = name.toLowerCase();
-        if (lower.includes('tiếng việt')) return 'tieng-viet';
+        // BUG-003/004 fix: nhận thêm dạng viết tắt (TN-XH, TNXH, LSĐL, GDTC, HĐTN...)
+        if (lower.includes('tiếng việt') || lower === 'tv') return 'tieng-viet';
         if (lower.includes('toán')) return 'toan';
-        if (lower.includes('tự nhiên') || lower.includes('xã hội')) return 'tnxh';
-        if (lower.includes('khoa học')) return 'khoahoc';
-        if (lower.includes('lịch sử') || lower.includes('địa lí')) return 'lichsudia';
-        if (lower.includes('đạo đức')) return 'daoduc';
-        if (lower.includes('tin học')) return 'tinhoc';
-        if (lower.includes('tiếng anh') || lower.includes('ngoại ngữ')) return 'tienganh';
-        if (lower.includes('thể chất')) return 'gdtc';
-        if (lower.includes('âm nhạc')) return 'amnhac';
-        if (lower.includes('mĩ thuật') || lower.includes('mỹ thuật')) return 'mithuat';
-        if (lower.includes('trải nghiệm') || lower.includes('hđtn')) return 'htn';
+        if (lower.includes('tự nhiên') || lower.includes('xã hội') ||
+            /^tn[\s\-]*xh$/.test(lower) || lower === 'tnxh' || lower === 'tn') return 'tnxh';
+        if (lower.includes('khoa học') || lower === 'kh') return 'khoahoc';
+        if (lower.includes('lịch sử') || lower.includes('địa lí') ||
+            /^ls[\s\-]*đl$/.test(lower) || lower === 'lsdl') return 'lichsudia';
+        if (lower.includes('đạo đức') || lower === 'đđ' || lower === 'dd') return 'daoduc';
+        if (lower.includes('tin học') || lower === 'th' ||
+            /^th[\s\-]*cn$/.test(lower)) return 'tinhoc';
+        if (lower.includes('tiếng anh') || lower.includes('ngoại ngữ') || lower === 'ta') return 'tienganh';
+        if (lower.includes('thể chất') || lower === 'gdtc' || lower.includes('giáo dục thể')) return 'gdtc';
+        if (lower.includes('âm nhạc') || lower === 'ân' || lower === 'an') return 'amnhac';
+        if (lower.includes('mĩ thuật') || lower.includes('mỹ thuật') || lower === 'mt') return 'mithuat';
+        if (lower.includes('trải nghiệm') || lower.includes('hđtn') || lower === 'htn') return 'htn';
         return null;
     }
 
@@ -919,19 +947,42 @@
         `;
 
         // Populate dropdown HS
+        // BUG-002 fix: KHÔNG dùng s.isSelected để set attribute "selected" trong HTML
+        // (sẽ override lựa chọn của user mỗi khi rescan). Dùng nlpcSelectedStt thay.
         const sel = document.getElementById('nlpc-student-select');
         sel.innerHTML = '<option value="">— Chọn học sinh —</option>' +
             nlpcStudents.map(s =>
-                `<option value="${s.stt}" ${s.isSelected ? 'selected' : ''}>${s.stt}. ${escapeHtml(s.hoVaTen)}</option>`
+                `<option value="${s.stt}">${s.stt}. ${escapeHtml(s.hoVaTen)}</option>`
             ).join('');
 
-        // Auto-select HS Vnedu đang highlight nếu có
+        // BUG-002 fix: 3 trường hợp:
+        //   A. Lần đầu (nlpcSelectedStt null) → auto-detect từ Vnedu
+        //   B. User VỪA chọn qua dropdown (<3s) → giữ user's choice, KHÔNG auto-revert
+        //   C. Đã hết grace period → follow Vnedu (user có thể đã click trực tiếp trong Vnedu)
         const auto = nlpcStudents.find(s => s.isSelected);
-        if (auto && nlpcSelectedStt !== auto.stt) {
+        const userRecentlySelected = Date.now() - nlpcUserSelectedAt < 3000;
+
+        if (nlpcSelectedStt === null || nlpcSelectedStt === undefined) {
+            // A: Lần đầu render
+            if (auto) {
+                nlpcSelectedStt = auto.stt;
+                sel.value = auto.stt;
+                loadNLPCForStudent(auto.stt);
+            }
+        } else if (userRecentlySelected) {
+            // B: User vừa chủ động chọn — giữ lựa chọn, không auto-update
+            if (nlpcStudents.find(s => s.stt === nlpcSelectedStt)) {
+                sel.value = nlpcSelectedStt;
+            } else {
+                nlpcSelectedStt = null;
+                sel.value = '';
+            }
+        } else if (auto && nlpcSelectedStt !== auto.stt) {
+            // C: User có thể đã click HS khác trực tiếp trong Vnedu → sync sidebar theo
             nlpcSelectedStt = auto.stt;
             sel.value = auto.stt;
             loadNLPCForStudent(auto.stt);
-        } else if (nlpcSelectedStt) {
+        } else {
             sel.value = nlpcSelectedStt;
         }
 
@@ -940,6 +991,7 @@
 
     async function selectNLPCStudent(stt) {
         nlpcSelectedStt = stt;
+        nlpcUserSelectedAt = Date.now();  // BUG-002 fix: đánh dấu user vừa chủ động chọn
         const hs = nlpcStudents.find(s => s.stt === stt);
         if (!hs) return;
 
@@ -1000,7 +1052,7 @@
                 (sec === 'nang_luc_chung' ? 'nlc' :
                  sec === 'nang_luc_dac_thu' ? 'nldt' : 'pc'));
             const fieldsEl = secEl.querySelector('.nlpc-fields');
-            const defs = NLPC_FIELD_DEFS[sec];
+            const defs = getActiveFieldDefs(sec);  // BUG-006: lọc theo lớp
 
             fieldsEl.innerHTML = defs.map(def => renderOneNLPCField(sec, def)).join('');
         }
@@ -1087,25 +1139,30 @@
             }
         }
 
-        // Build danhGia object cho engine.sinhNLPCDayDu — gom grade hiệu lực của 13 trường
+        // Build danhGia object cho engine.sinhNLPCDayDu — chỉ gom grade của các field
+        // ACTIVE theo lớp (BUG-006: lớp 1-2 KHÔNG gồm cong_nghe + tin_hoc)
         const danhGia = { nang_luc_chung: {}, nang_luc_dac_thu: {}, pham_chat: {} };
         for (const sec of Object.keys(NLPC_FIELD_DEFS)) {
-            for (const def of NLPC_FIELD_DEFS[sec]) {
+            for (const def of getActiveFieldDefs(sec)) {
                 danhGia[sec][def.key] = getEffectiveGrade(def.key);
             }
         }
 
         engine.options.gvLa = settings.gvLa;
         const hs = nlpcStudents.find(s => s.stt === nlpcSelectedStt);
+        const gradeLevel = getGradeLevel(currentContext?.lop);
 
         try {
             // engine.sinhNLPCDayDu trả 3 section, mỗi section có 'Nhận xét chung' + N trường con
-            const result = engine.sinhNLPCDayDu({ hoVaTen: hs.hoVaTen }, danhGia);
+            const result = engine.sinhNLPCDayDu(
+                { hoVaTen: hs.hoVaTen, gradeLevel },
+                danhGia
+            );
             nlpcGenerated = convertGeneratedToPayload(result);
 
             renderNLPCPreview(nlpcGenerated);
             document.getElementById('nlpc-btn-apply').disabled = false;
-            showToast(`Đã tạo ${countNonEmpty(nlpcGenerated)} nhận xét cho ${hs.hoVaTen}`);
+            showToast(`Đã tạo nhận xét cho ${hs.hoVaTen}`);
         } catch (e) {
             console.error('[Sidebar] generateNLPCText lỗi:', e);
             alert('Lỗi tạo nhận xét NLPC: ' + e.message);
@@ -1127,6 +1184,8 @@
             'Năng lực khoa học': 'khoa_hoc',
             'Năng lực thẩm mĩ': 'tham_mi',
             'Năng lực thể chất': 'the_chat',
+            'Năng lực công nghệ': 'cong_nghe',
+            'Năng lực tin học': 'tin_hoc',
             'Yêu nước': 'yeu_nuoc',
             'Nhân ái': 'nhan_ai',
             'Chăm chỉ': 'cham_chi',
@@ -1183,23 +1242,45 @@
 
     function applyNLPCToVnedu() {
         if (!nlpcGenerated) {
-            showToast('Chưa tạo nhận xét. Bấm "Tạo 16 nhận xét" trước.');
+            showToast('Chưa tạo nhận xét. Bấm "Tạo nhận xét" trước.');
             return;
         }
+        // BUG-005 fix: gắn tên HS vào payload để adapter verify trước khi điền
+        const hs = nlpcStudents.find(s => s.stt === nlpcSelectedStt);
         parent.postMessage({
             type: 'COGIAO_APPLY_NLPC',
-            payload: nlpcGenerated
+            payload: { ...nlpcGenerated, _expectedHS: hs?.hoVaTen }
         }, '*');
     }
 
-    function handleNLPCApplyResult({ success, failed, detail }) {
-        // v0.1.22: reuse modal result giống nhận xét môn học → có nút "Lưu vào Vnedu"
+    function handleNLPCApplyResult({ success, failed, detail, error, expected, actual }) {
         const modal = document.getElementById('result-modal');
         const titleEl = document.getElementById('modal-title');
         const msgEl = document.getElementById('modal-message');
         const noteEl = modal.querySelector('.modal-note');
         const cancelBtn = document.getElementById('modal-cancel');
         const confirmBtn = document.getElementById('modal-confirm');
+
+        // BUG-005: HS mismatch — Vnedu form đang hiển thị HS KHÁC với HS chọn trong sidebar
+        if (error === 'hs_mismatch' || error === 'no_active_hs') {
+            modal.querySelector('.modal').classList.add('error');
+            titleEl.textContent = '⚠ HS không khớp — KHÔNG ghi nhận xét';
+            msgEl.innerHTML = `
+                <div style="text-align:left">
+                  <p style="margin-bottom:8px"><strong>Sidebar đang chọn:</strong> ${escapeHtml(expected || '?')}</p>
+                  <p style="margin-bottom:8px"><strong>Vnedu đang hiển thị:</strong> ${escapeHtml(actual || '?')}</p>
+                  <p style="margin-bottom:8px;color:#b94a48"><strong>Đã ngăn ghi nhận xét</strong> để tránh lưu nhầm vào HS khác.</p>
+                  <p style="font-size:12px;color:#555">Cách khắc phục: trong panel <strong>bên trái Vnedu</strong>, click vào HS <strong>${escapeHtml(expected || '?')}</strong> để Vnedu load form đúng. Sau đó bấm "Áp dụng" lại.</p>
+                </div>
+            `;
+            if (noteEl) noteEl.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            confirmBtn.textContent = 'Đã hiểu';
+            confirmBtn.onclick = closeModal;
+            modal.style.display = 'flex';
+            return;
+        }
+
         const total = success + failed;
 
         if (failed === 0) {
@@ -1519,6 +1600,18 @@
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
+    }
+
+    /**
+     * BUG-003 fix: Hiển thị tên môn cho gọn.
+     * - "TN-XH" → "TNXH" (bỏ dấu '-' khi 2 chữ cái viết tắt liền)
+     * - "Lịch sử - Địa lí" → giữ nguyên (có space hai bên dấu '-')
+     * - Tên thường → giữ nguyên
+     */
+    function formatMonDisplay(raw) {
+        if (!raw) return '';
+        // Bỏ dấu '-' chỉ khi hai bên KHÔNG có khoảng trắng (vd "TN-XH" → "TNXH")
+        return raw.replace(/(\S)-(\S)/g, '$1$2').trim();
     }
 
     init();

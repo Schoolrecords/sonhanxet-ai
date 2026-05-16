@@ -182,7 +182,13 @@ class NhanXetEngineV2 {
 
         const mucNLDT = tongHopMuc(danhGia.nang_luc_dac_thu || {});
         result.nang_luc_dac_thu['Nhận xét chung'] = pickFrom(nlpc.nang_luc_dac_thu.nhan_xet_chung, mucNLDT);
-        for (const key of ['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat']) {
+        // BUG-006 fix: Lớp 3-5 có thêm 2 mục Công nghệ + Tin học (TT27 quy định)
+        const nldtKeys = ['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat'];
+        const gradeLevel = hsContext?.gradeLevel;
+        if (gradeLevel !== null && gradeLevel !== undefined && gradeLevel >= 3) {
+            nldtKeys.push('cong_nghe', 'tin_hoc');
+        }
+        for (const key of nldtKeys) {
             const mucDo = (danhGia.nang_luc_dac_thu || {})[key] || 'ht';
             result.nang_luc_dac_thu[this._getNLDTLabel(key)] = pickFrom(nlpc.nang_luc_dac_thu[key], mucDo);
         }
@@ -211,7 +217,9 @@ class NhanXetEngineV2 {
             tinh_toan: 'Năng lực tính toán',
             khoa_hoc: 'Năng lực khoa học',
             tham_mi: 'Năng lực thẩm mĩ',
-            the_chat: 'Năng lực thể chất'
+            the_chat: 'Năng lực thể chất',
+            cong_nghe: 'Năng lực công nghệ',
+            tin_hoc: 'Năng lực tin học'
         }[key] || key;
     }
 
@@ -329,6 +337,8 @@ const SUBJECT_NAME_MAP = Object.freeze({
     'tu nhien va xa hoi': 'tnxh',
     'tu nhien xa hoi': 'tnxh',
     'tnxh': 'tnxh',
+    'tn xh': 'tnxh',          // BUG-003 fix: "TN-XH" → normalize "tn xh"
+    'tn': 'tnxh',             // BUG-003 fix: fallback nếu vẫn bị cắt thành "TN"
     'khoa hoc': 'khoa-hoc',
     'kh': 'khoa-hoc',
     'lich su va dia li': 'lich-su-dia',
@@ -364,8 +374,12 @@ class CacheManager {
     static normalizeSubject(subjectRaw) {
         if (!subjectRaw || typeof subjectRaw !== 'string') return null;
 
+        // BUG-005 fix: strip parenthetical suffix vd "Tin học và Công nghệ (Tin học)"
+        // → "Tin học và Công nghệ" để match alias chuẩn
+        let cleaned = subjectRaw.replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+
         // Nếu đã là key chuẩn thì trả luôn
-        const trimmed = subjectRaw.trim().toLowerCase();
+        const trimmed = cleaned.toLowerCase();
         if (VALID_SUBJECTS.includes(trimmed)) return trimmed;
 
         // Bỏ dấu tiếng Việt + ký tự đặc biệt
@@ -377,7 +391,17 @@ class CacheManager {
             .replace(/\s+/g, ' ')
             .trim();
 
-        return SUBJECT_NAME_MAP[noAccent] || null;
+        if (SUBJECT_NAME_MAP[noAccent]) return SUBJECT_NAME_MAP[noAccent];
+
+        // Fallback: substring match — ưu tiên alias dài nhất để tránh false-positive
+        // (vd "tieng anh" includes "an" → tránh match nhầm "am-nhac")
+        const sortedAliases = Object.keys(SUBJECT_NAME_MAP).sort((a, b) => b.length - a.length);
+        for (const alias of sortedAliases) {
+            if (alias.length >= 4 && noAccent.includes(alias)) {
+                return SUBJECT_NAME_MAP[alias];
+            }
+        }
+        return null;
     }
 
     /**
@@ -805,6 +829,18 @@ const NLPC_FIELD_RULES = Object.freeze({
         label: 'Năng lực Thể chất',
         section: 'nang_luc_dac_thu',
         sources: [{ key: 'gd-the-chap', label: 'GDTC' }]
+    },
+    // BUG-006: Lớp 3-5 thêm Công nghệ + Tin học (TT27/2020 + CT GDPT 2018).
+    // Cả 2 NL cùng derive từ môn "Tin học và Công nghệ" (subject key 'tin-hoc').
+    cong_nghe: {
+        label: 'Năng lực Công nghệ',
+        section: 'nang_luc_dac_thu',
+        sources: [{ key: 'tin-hoc', label: 'Tin-CN' }]
+    },
+    tin_hoc: {
+        label: 'Năng lực Tin học',
+        section: 'nang_luc_dac_thu',
+        sources: [{ key: 'tin-hoc', label: 'Tin-CN' }]
     },
 
     // PHẨM CHẤT (5 trường)

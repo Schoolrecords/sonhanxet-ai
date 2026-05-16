@@ -291,8 +291,38 @@ window.VneduAdapter = {
         const lopMatch = allText.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?)/);
         if (lopMatch) result.lop = lopMatch[1];
 
-        const monMatch = allText.match(/M[ôo]n(?:\s*h[ọo]c)?:\s*([^-\n\r]+?)(?:\s*-|\s*H[ọo]c k[ỳy]|\s*$)/);
-        if (monMatch) result.mon = monMatch[1].trim();
+        // BUG-003 + BUG-004 fix: parse môn theo từng line riêng để tránh lazy regex
+        // "ăn lẹm" qua label kế tiếp khi value rỗng. Ưu tiên "Môn học: ..." (specific)
+        // trước "Môn: ..." (generic). Có sanity check rejects label keywords.
+        const lines = allText.split(/[\n\r]+/);
+        const isLabelKeyword = (s) =>
+            /^\s*(H[ọo]c\s*k[ỳy]|Kh[ốo]i|L[ớo]p|Cu[ốo]i\s*k[ỳy]|Gi[ữu]a\s*k[ỳy]|M[ôo]n)\s*[:.]?\s*$/i.test(s);
+        const extractMon = (line, pattern) => {
+            const m = line.match(pattern);
+            if (!m) return null;
+            let val = m[1].trim();
+            // Cắt tất cả phần trailing bắt đầu từ " - Học kỳ" hoặc " Học kỳ" (dù có số hay không)
+            val = val.split(/\s+-\s+H[ọo]c\s*k[ỳy]/i)[0].trim();
+            val = val.replace(/\s+H[ọo]c\s*k[ỳy].*$/i, '').trim();
+            // Cắt phần trailing nếu có nhiều label trên cùng dòng (vd " Cuối kỳ", " Giữa kỳ")
+            val = val.replace(/\s+(Cu[ốo]i|Gi[ữu]a)\s*k[ỳy].*$/i, '').trim();
+            if (!val || val.length < 2) return null;
+            if (isLabelKeyword(val)) return null;
+            return val;
+        };
+
+        // Pass 1: "Môn học: ..." (specific — page heading thường dùng dạng này)
+        for (const line of lines) {
+            const v = extractMon(line, /M[ôo]n\s+h[ọo]c:\s*(.+)$/i);
+            if (v) { result.mon = v; break; }
+        }
+        // Pass 2: "Môn: ..." fallback (header bar dropdown)
+        if (!result.mon) {
+            for (const line of lines) {
+                const v = extractMon(line, /M[ôo]n:\s*(.+)$/i);
+                if (v) { result.mon = v; break; }
+            }
+        }
 
         const hkMatch = allText.match(/H[ọo]c k[ỳy]\s*([12])/i);
         if (hkMatch) result.hocKy = 'Học kỳ ' + hkMatch[1];
@@ -387,8 +417,11 @@ window.VneduAdapter = {
             }
 
             // Đọc mức chữ từ TD text trực tiếp (Vnedu đôi khi render mức không qua input)
+            // BUG-001 fix: skip cells[0..3] vì là STT + Họ và tên — tránh tên HS "Đạt"
+            // bị parseMucDat_ nhầm thành mức "Đ" (Đạt). Cells mục đánh giá nằm sau ngày sinh.
             if (mucDat === null) {
-                for (const cell of cells) {
+                for (let ci = 4; ci < cells.length; ci++) {
+                    const cell = cells[ci];
                     if (cell.querySelector('input, textarea, select')) continue;
                     const t = (cell.textContent || '').trim();
                     if (!t || t.length > 4) continue;
@@ -600,12 +633,14 @@ window.VneduAdapter = {
     /* ====================================================================
      * v0.1.7 — NLPC FORM (Phẩm chất + Năng lực ghi học bạ)
      *
-     * Form NLPC có 16 textarea cho 1 HS được chọn:
+     * Form NLPC có 16 textarea (lớp 1-2) hoặc 18 textarea (lớp 3-5) cho 1 HS:
      *   NL chung (4): Nhận xét chung, Tự chủ và tự học, Giao tiếp và hợp tác, GQVĐ
-     *   NL đặc thù (6): Nhận xét chung, Ngôn ngữ, Tính toán, Khoa học, Thẩm mĩ, Thể chất
+     *   NL đặc thù (6 hoặc 8):
+     *     - Lớp 1-2: Nhận xét chung, Ngôn ngữ, Tính toán, Khoa học, Thẩm mĩ, Thể chất
+     *     - Lớp 3-5: thêm Công nghệ + Tin học (BUG-006, theo TT27/2020 + CT GDPT 2018)
      *   PC (6): Nhận xét chung, Yêu nước, Nhân ái, Chăm chỉ, Trung thực, Trách nhiệm
      *
-     * UX Vnedu: GV chọn HS từ danh sách bên trái → 16 textarea bên phải hiển thị.
+     * UX Vnedu: GV chọn HS từ danh sách bên trái → các textarea bên phải hiển thị.
      * ================================================================== */
 
     /**
@@ -626,6 +661,9 @@ window.VneduAdapter = {
         'thẩm mĩ': 'tham_mi',
         'thẩm mỹ': 'tham_mi',
         'thể chất': 'the_chat',
+        // BUG-006: Lớp 3-5 có thêm Công nghệ + Tin học (TT27)
+        'công nghệ': 'cong_nghe',
+        'tin học': 'tin_hoc',
         // Phẩm chất
         'yêu nước': 'yeu_nuoc',
         'nhân ái': 'nhan_ai',
@@ -911,7 +949,7 @@ window.VneduAdapter = {
             result.nang_luc_dac_thu.fields.chung = ta;
         } else if (['tu_chu_tu_hoc', 'giao_tiep_hop_tac', 'giai_quyet_van_de'].includes(fieldKey)) {
             result.nang_luc_chung.fields[fieldKey] = ta;
-        } else if (['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat'].includes(fieldKey)) {
+        } else if (['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat', 'cong_nghe', 'tin_hoc'].includes(fieldKey)) {
             result.nang_luc_dac_thu.fields[fieldKey] = ta;
         } else if (['yeu_nuoc', 'nhan_ai', 'cham_chi', 'trung_thuc', 'trach_nhiem'].includes(fieldKey)) {
             result.pham_chat.fields[fieldKey] = ta;
@@ -919,15 +957,39 @@ window.VneduAdapter = {
     },
 
     /**
-     * Fill 16 textarea NLPC từ payload do sidebar gửi sang.
+     * Fill 16 (lớp 1-2) hoặc 18 (lớp 3-5) textarea NLPC từ payload do sidebar gửi sang.
      *
      * @param payload {
      *   nang_luc_chung: { chung, tu_chu_tu_hoc, giao_tiep_hop_tac, giai_quyet_van_de },
-     *   nang_luc_dac_thu: { chung, ngon_ngu, tinh_toan, khoa_hoc, tham_mi, the_chat },
+     *   nang_luc_dac_thu: { chung, ngon_ngu, tinh_toan, khoa_hoc, tham_mi, the_chat,
+     *                       cong_nghe?, tin_hoc? },
      *   pham_chat: { chung, yeu_nuoc, nhan_ai, cham_chi, trung_thuc, trach_nhiem }
      * }
      */
     fillNLPCFields(payload) {
+        // BUG-005 fix: Verify Vnedu's currently selected HS matches expected
+        // Tránh lưu nhầm nhận xét của HS A vào form HS B do click Vnedu row fail
+        if (payload && payload._expectedHS) {
+            const students = this.getNLPCStudentList();
+            const current = students.find(s => s.isSelected);
+            if (!current) {
+                return {
+                    success: 0, failed: 0, detail: [],
+                    error: 'no_active_hs',
+                    expected: payload._expectedHS,
+                    actual: '(không xác định)'
+                };
+            }
+            if (current.hoVaTen !== payload._expectedHS) {
+                return {
+                    success: 0, failed: 0, detail: [],
+                    error: 'hs_mismatch',
+                    expected: payload._expectedHS,
+                    actual: current.hoVaTen
+                };
+            }
+        }
+
         const fields = this.findNLPCFields();
         let success = 0, failed = 0;
         const detail = [];

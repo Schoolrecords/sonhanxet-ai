@@ -580,6 +580,40 @@
           "Em ngoan và chuyên cần, cần luyện tập thể dục thường xuyên để khỏe hơn.",
           "Em đã có cố gắng, cần kiên trì vận động và rèn luyện sức khỏe hàng ngày."
         ]
+      },
+      "cong_nghe": {
+        "tot": [
+          "Em hiểu biết tốt về công nghệ, biết sử dụng đồ dùng an toàn và đúng cách.",
+          "Em sáng tạo trong thực hành công nghệ, hoàn thành sản phẩm khéo léo.",
+          "Em có tư duy kĩ thuật tốt, biết quan sát và làm theo quy trình chính xác.",
+          "Em yêu thích môn Công nghệ, vận dụng kiến thức vào cuộc sống hằng ngày."
+        ],
+        "ht": [
+          "Em đã biết sử dụng đồ dùng học tập và đồ dùng gia đình an toàn.",
+          "Em hoàn thành các bài thực hành Công nghệ theo hướng dẫn của thầy cô.",
+          "Em có ý thức giữ gìn đồ dùng, biết làm theo các bước quy trình đơn giản."
+        ],
+        "cht": [
+          "Em ngoan và chuyên cần, cần luyện kĩ năng sử dụng đồ dùng và làm theo quy trình.",
+          "Em đã có cố gắng, cần cẩn thận hơn khi thực hành và giữ gìn đồ dùng."
+        ]
+      },
+      "tin_hoc": {
+        "tot": [
+          "Em sử dụng máy tính thành thạo, làm quen tốt với các phần mềm học tập.",
+          "Em có tư duy tin học tốt, thao tác chuột bàn phím nhanh và chính xác.",
+          "Em yêu thích môn Tin học, biết khai thác thông tin an toàn và hiệu quả.",
+          "Em vận dụng kiến thức tin học vào học tập, có nhiều sáng tạo trong giờ học."
+        ],
+        "ht": [
+          "Em đã làm quen với máy tính, thực hiện được các thao tác cơ bản theo yêu cầu.",
+          "Em sử dụng được chuột và bàn phím, hoàn thành các bài tập tin học trên lớp.",
+          "Em có ý thức tốt khi học Tin học, biết bảo quản thiết bị và bật/tắt đúng cách."
+        ],
+        "cht": [
+          "Em ngoan và chuyên cần, cần luyện thao tác chuột bàn phím và làm bài thực hành.",
+          "Em đã có cố gắng, cần mạnh dạn thao tác máy tính theo hướng dẫn của thầy cô."
+        ]
       }
     },
     "pham_chat": {

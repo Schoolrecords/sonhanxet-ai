@@ -586,6 +586,18 @@ body {
     flex-shrink: 0;
 }
 
+.copyright {
+    font-size: 10px;
+    color: #042C53;
+    text-align: center;
+    margin-top: 4px;
+    letter-spacing: 0.2px;
+}
+
+.copyright.on-dark {
+    color: #FFFFFF;
+}
+
 .settings-section {
     padding: 16px;
     border-bottom: 0.5px solid #d4d4d4;
