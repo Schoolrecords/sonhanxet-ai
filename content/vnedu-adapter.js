@@ -263,14 +263,6 @@ window.VneduAdapter = {
         const allSelects = Array.from(document.querySelectorAll('select'));
         const activeSelects = allSelects.filter(s => this._isInActivePanel(s));
 
-        // [NLPC-DBG] log chênh lệch để chẩn đoán nếu vẫn sai
-        if (allSelects.length !== activeSelects.length) {
-            console.log('[NLPC-DBG] getContext: lọc selects', {
-                total: allSelects.length, active: activeSelects.length,
-                ignored: allSelects.length - activeSelects.length
-            });
-        }
-
         for (const sel of activeSelects) {
             const label = this._findLabelFor(sel);
             const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
@@ -284,6 +276,20 @@ window.VneduAdapter = {
             else if (/cuối kỳ|giữa kỳ/i.test(value)) ctx.kyDanhGia = value;
         }
 
+        // BUG-008 fix: Ext.js ẩn <select> thật (dùng dropdown ảo) → activeSelects rỗng.
+        // Fallback dùng text scope theo ACTIVE PANEL (chứa marker NLPC hoặc Sổ NX),
+        // tránh lấy text "Lớp: 1A" từ panel cũ ẩn của tab Sổ điểm.
+        if (!ctx.lop || !ctx.mon) {
+            const scoped = this._parseContextFromActivePanel();
+            if (scoped) {
+                ctx.lop = ctx.lop || scoped.lop;
+                ctx.mon = ctx.mon || scoped.mon;
+                ctx.hocKy = ctx.hocKy || scoped.hocKy;
+                ctx.khoi = ctx.khoi || scoped.khoi;
+            }
+        }
+
+        // Fallback cuối: parse toàn body (kém chính xác, chỉ dùng khi không tìm được panel)
         if (!ctx.lop || !ctx.mon) {
             const fallback = this._parseContextFromTextBar();
             if (fallback) {
@@ -297,6 +303,68 @@ window.VneduAdapter = {
         console.log('[NLPC-DBG] getContext result', ctx);
 
         return ctx;
+    },
+
+    /**
+     * BUG-008: Parse Khối/Lớp/Học kỳ/Môn từ text của ACTIVE PANEL.
+     *
+     * Tìm element marker đặc trưng cho trang đang active (NLPC hoặc Sổ NX), đi lên
+     * ancestor đến panel container đủ lớn, lấy innerText của panel đó (KHÔNG bao gồm
+     * text của panel ẩn vì innerText skip element hidden) → parse Lớp/Khối/Học kỳ.
+     */
+    _parseContextFromActivePanel() {
+        // 1. Tìm marker element NLPC hoặc Sổ NX đang VISIBLE
+        const patterns = [
+            /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ/i,
+            /Năng lực ghi học bạ/i,
+            /^Nhận xét cuối kỳ$/i
+        ];
+        const candidates = document.querySelectorAll('div, span, h1, h2, h3, h4, td, th, b, strong, a, label, legend, p');
+        let markerEl = null;
+        for (const el of candidates) {
+            if (el.children.length > 0) continue;
+            const text = (el.textContent || '').trim();
+            if (!text || text.length > 80) continue;
+            if (!patterns.some(p => p.test(text))) continue;
+            if (!this._isVisible(el)) continue;
+            markerEl = el;
+            break;
+        }
+        if (!markerEl) {
+            console.log('[NLPC-DBG] _parseContextFromActivePanel: không tìm thấy marker visible');
+            return null;
+        }
+
+        // 2. Đi lên ancestor cho đến khi text container chứa cả marker và "Lớp:"
+        let node = markerEl.parentElement;
+        let foundText = '';
+        while (node && node !== document.body) {
+            const text = node.innerText || '';
+            // Container active phải chứa marker và label "Lớp:" cùng dòng/cùng panel
+            if (/L[ớo]p\s*:/i.test(text) && text.length < 50000) {
+                foundText = text;
+                break;
+            }
+            node = node.parentElement;
+        }
+        if (!foundText) {
+            console.log('[NLPC-DBG] _parseContextFromActivePanel: không tìm thấy ancestor chứa "Lớp:"');
+            return null;
+        }
+
+        // 3. Parse Khối / Lớp / Học kỳ / Môn từ text của panel active
+        const result = { khoi: '', lop: '', mon: '', hocKy: '' };
+        const khoiM = foundText.match(/Kh[ốo]i\s*:\s*Kh[ốo]i\s*(\d+)|Kh[ốo]i\s*:\s*(\d+)/i);
+        if (khoiM) result.khoi = 'Khối ' + (khoiM[1] || khoiM[2]);
+        const lopM = foundText.match(/L[ớo]p\s*:\s*([0-9]+[A-Za-zÀ-ỹ]?)/i);
+        if (lopM) result.lop = lopM[1];
+        const hkM = foundText.match(/H[ọo]c\s*k[ỳy]\s*:\s*H[ọo]c\s*k[ỳy]\s*(\d+)|H[ọo]c\s*k[ỳy]\s*:\s*(\d+)/i);
+        if (hkM) result.hocKy = 'Học kỳ ' + (hkM[1] || hkM[2]);
+        const monM = foundText.match(/M[ôo]n\s*(?:h[ọo]c)?\s*:\s*([^\n\r]+?)(?:\s+(?:H[ọo]c\s*k[ỳy]|Cu[ốo]i|Gi[ữu]a|\n|$))/i);
+        if (monM) result.mon = monM[1].trim();
+
+        console.log('[NLPC-DBG] _parseContextFromActivePanel result', result);
+        return result;
     },
 
     _parseContextFromTextBar() {
