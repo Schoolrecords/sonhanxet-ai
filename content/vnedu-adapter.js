@@ -306,14 +306,16 @@ window.VneduAdapter = {
     },
 
     /**
-     * BUG-008: Parse Khối/Lớp/Học kỳ/Môn từ text của ACTIVE PANEL.
+     * BUG-008 v2: Scope <select> theo PANEL chứa marker visible.
      *
-     * Tìm element marker đặc trưng cho trang đang active (NLPC hoặc Sổ NX), đi lên
-     * ancestor đến panel container đủ lớn, lấy innerText của panel đó (KHÔNG bao gồm
-     * text của panel ẩn vì innerText skip element hidden) → parse Lớp/Khối/Học kỳ.
+     * Vnedu Ext.js ẩn panel cũ bằng position:absolute + left:-9999px → innerText vẫn
+     * include text panel ẩn (KHÁC với display:none). Vì vậy không thể parse innerText
+     * an toàn. Cách clean: tìm marker visible → đi UP ancestor đến panel Ext.js đủ
+     * lớn → trong panel đó scope querySelectorAll('select') (panel ẩn không chứa
+     * marker visible nên không bị scan).
      */
     _parseContextFromActivePanel() {
-        // 1. Tìm marker element NLPC hoặc Sổ NX đang VISIBLE
+        // 1. Tìm marker element NLPC hoặc Sổ NX đang VISIBLE (strict _isOnTop check)
         const patterns = [
             /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ/i,
             /Năng lực ghi học bạ/i,
@@ -335,35 +337,50 @@ window.VneduAdapter = {
             return null;
         }
 
-        // 2. Đi lên ancestor cho đến khi text container chứa cả marker và "Lớp:"
-        let node = markerEl.parentElement;
-        let foundText = '';
-        while (node && node !== document.body) {
-            const text = node.innerText || '';
-            // Container active phải chứa marker và label "Lớp:" cùng dòng/cùng panel
-            if (/L[ớo]p\s*:/i.test(text) && text.length < 50000) {
-                foundText = text;
-                break;
+        // 2. Đi UP ancestor tìm PANEL CONTAINER đủ lớn (chứa marker + header Lớp/Khối)
+        // Strategy: panel đủ lớn để chứa cả header bar và form body (>= 600x400 px),
+        // và KHÔNG nằm ngoài viewport (loại panel cũ left:-9999px).
+        let panel = markerEl.parentElement;
+        let bestPanel = null;
+        while (panel && panel !== document.body) {
+            const r = panel.getBoundingClientRect();
+            // Panel candidate: đủ lớn + nằm trong/gần viewport
+            if (r.width >= 600 && r.height >= 400 && r.right > 0 && r.left < window.innerWidth * 2) {
+                // Có chứa select không? Nếu có thì là panel chứa header
+                const hasSelect = panel.querySelector('select');
+                if (hasSelect) {
+                    bestPanel = panel;
+                    break;
+                }
             }
-            node = node.parentElement;
+            panel = panel.parentElement;
         }
-        if (!foundText) {
-            console.log('[NLPC-DBG] _parseContextFromActivePanel: không tìm thấy ancestor chứa "Lớp:"');
+
+        if (!bestPanel) {
+            console.log('[NLPC-DBG] _parseContextFromActivePanel: không tìm thấy panel ancestor có select');
             return null;
         }
 
-        // 3. Parse Khối / Lớp / Học kỳ / Môn từ text của panel active
+        // 3. Scope select trong panel active (KHÔNG cần filter _isInActivePanel vì
+        // panel cũ ẩn không có marker visible nên không vào tới đây)
         const result = { khoi: '', lop: '', mon: '', hocKy: '' };
-        const khoiM = foundText.match(/Kh[ốo]i\s*:\s*Kh[ốo]i\s*(\d+)|Kh[ốo]i\s*:\s*(\d+)/i);
-        if (khoiM) result.khoi = 'Khối ' + (khoiM[1] || khoiM[2]);
-        const lopM = foundText.match(/L[ớo]p\s*:\s*([0-9]+[A-Za-zÀ-ỹ]?)/i);
-        if (lopM) result.lop = lopM[1];
-        const hkM = foundText.match(/H[ọo]c\s*k[ỳy]\s*:\s*H[ọo]c\s*k[ỳy]\s*(\d+)|H[ọo]c\s*k[ỳy]\s*:\s*(\d+)/i);
-        if (hkM) result.hocKy = 'Học kỳ ' + (hkM[1] || hkM[2]);
-        const monM = foundText.match(/M[ôo]n\s*(?:h[ọo]c)?\s*:\s*([^\n\r]+?)(?:\s+(?:H[ọo]c\s*k[ỳy]|Cu[ốo]i|Gi[ữu]a|\n|$))/i);
-        if (monM) result.mon = monM[1].trim();
+        const selects = bestPanel.querySelectorAll('select');
+        for (const sel of selects) {
+            const label = this._findLabelFor(sel);
+            const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
+            if (!value) continue;
+            const labelLower = label.toLowerCase();
+            if (/môn/i.test(labelLower)) result.mon = result.mon || value;
+            else if (/^lớp/i.test(labelLower)) result.lop = result.lop || value;
+            else if (/khối/i.test(labelLower)) result.khoi = result.khoi || value;
+            else if (/học kỳ|^kỳ:/i.test(labelLower)) result.hocKy = result.hocKy || value;
+        }
 
-        console.log('[NLPC-DBG] _parseContextFromActivePanel result', result);
+        console.log('[NLPC-DBG] _parseContextFromActivePanel result', {
+            panelSize: { w: Math.round(bestPanel.getBoundingClientRect().width), h: Math.round(bestPanel.getBoundingClientRect().height) },
+            selectCount: selects.length,
+            result
+        });
         return result;
     },
 
