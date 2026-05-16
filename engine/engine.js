@@ -182,10 +182,11 @@ class NhanXetEngineV2 {
 
         const mucNLDT = tongHopMuc(danhGia.nang_luc_dac_thu || {});
         result.nang_luc_dac_thu['Nhận xét chung'] = pickFrom(nlpc.nang_luc_dac_thu.nhan_xet_chung, mucNLDT);
-        // BUG-006 fix: Lớp 3-5 có thêm 2 mục Công nghệ + Tin học (TT27 quy định)
+        // BUG-006 fix: Lớp 3-5 có thêm 2 mục Công nghệ + Tin học (TT27 quy định).
+        // V.01 fix: nếu KHÔNG detect được gradeLevel → MẶC ĐỊNH thêm (an toàn cho lớp 3-5).
         const nldtKeys = ['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat'];
         const gradeLevel = hsContext?.gradeLevel;
-        if (gradeLevel !== null && gradeLevel !== undefined && gradeLevel >= 3) {
+        if (gradeLevel == null || gradeLevel >= 3) {
             nldtKeys.push('cong_nghe', 'tin_hoc');
         }
         for (const key of nldtKeys) {

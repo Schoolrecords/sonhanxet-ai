@@ -967,12 +967,25 @@ window.VneduAdapter = {
      * }
      */
     fillNLPCFields(payload) {
+        // [NLPC-DBG] V.01 - log payload nhận được
+        console.log('[NLPC-DBG] fillNLPCFields ENTRY', {
+            expectedHS: payload?._expectedHS,
+            payload_summary: {
+                nlc_keys: Object.keys(payload?.nang_luc_chung || {}),
+                nldt_keys: Object.keys(payload?.nang_luc_dac_thu || {}),
+                pc_keys: Object.keys(payload?.pham_chat || {})
+            }
+        });
+
         // BUG-005 fix: Verify Vnedu's currently selected HS matches expected
         // Tránh lưu nhầm nhận xét của HS A vào form HS B do click Vnedu row fail
         if (payload && payload._expectedHS) {
             const students = this.getNLPCStudentList();
             const current = students.find(s => s.isSelected);
             if (!current) {
+                console.warn('[NLPC-DBG] fillNLPCFields ABORT: no active HS in Vnedu', {
+                    expected: payload._expectedHS, totalStudents: students.length
+                });
                 return {
                     success: 0, failed: 0, detail: [],
                     error: 'no_active_hs',
@@ -981,6 +994,9 @@ window.VneduAdapter = {
                 };
             }
             if (current.hoVaTen !== payload._expectedHS) {
+                console.warn('[NLPC-DBG] fillNLPCFields ABORT: HS mismatch', {
+                    expected: payload._expectedHS, actual: current.hoVaTen
+                });
                 return {
                     success: 0, failed: 0, detail: [],
                     error: 'hs_mismatch',
@@ -991,6 +1007,13 @@ window.VneduAdapter = {
         }
 
         const fields = this.findNLPCFields();
+        // [NLPC-DBG] log textarea đã match được cho từng section
+        console.log('[NLPC-DBG] findNLPCFields result', {
+            nlc_fields: Object.keys(fields.nang_luc_chung.fields),
+            nldt_fields: Object.keys(fields.nang_luc_dac_thu.fields),
+            pc_fields: Object.keys(fields.pham_chat.fields)
+        });
+
         let success = 0, failed = 0;
         const detail = [];
 
@@ -1003,6 +1026,7 @@ window.VneduAdapter = {
                 if (!ta) {
                     failed++;
                     detail.push({ section: sec, key, status: 'no_textarea' });
+                    console.warn(`[NLPC-DBG] no_textarea: ${sec}.${key} — không có textarea matching`);
                     continue;
                 }
                 const ok = this.fillTextarea(ta, text);
@@ -1012,10 +1036,12 @@ window.VneduAdapter = {
                 } else {
                     failed++;
                     detail.push({ section: sec, key, status: 'fill_failed' });
+                    console.warn(`[NLPC-DBG] fill_failed: ${sec}.${key}`);
                 }
             }
         }
 
+        console.log(`[NLPC-DBG] fillNLPCFields EXIT — success=${success} failed=${failed}`, detail);
         return { success, failed, detail };
     },
 

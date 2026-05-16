@@ -76,13 +76,15 @@
         return m ? parseInt(m[0]) : null;
     }
 
-    /** BUG-006: Lọc field defs theo grade level. Field có minGrade=N chỉ hiển thị khi grade >= N. */
+    /** BUG-006: Lọc field defs theo grade level. Field có minGrade=N chỉ hiển thị khi grade >= N.
+     *  V.01 fix: KHÔNG detect được lớp → MẶC ĐỊNH HIỂN THỊ ĐỦ (an toàn cho lớp 3-5, lớp 1-2
+     *  thừa 2 ô Vnedu không có → adapter sẽ skip, không gây lỗi). */
     function getActiveFieldDefs(sec) {
         const grade = getGradeLevel(currentContext?.lop);
         const defs = NLPC_FIELD_DEFS[sec] || [];
         return defs.filter(def => {
             if (def.minGrade == null) return true;
-            if (grade == null) return false;  // không xác định được lớp → ẩn field có ràng buộc grade
+            if (grade == null) return true;  // ← default SHOW khi không xác định được lớp
             return grade >= def.minGrade;
         });
     }
@@ -941,6 +943,15 @@
     function renderNLPCView() {
         const ctx = currentContext || {};
 
+        // [NLPC-DBG] V.01 - render view
+        console.log('[NLPC-DBG] renderNLPCView ENTRY', {
+            ctx_lop: ctx.lop, ctx_hocKy: ctx.hocKy, ctx_module: ctx.module,
+            studentCount: nlpcStudents.length,
+            students: nlpcStudents.map(s => ({ stt: s.stt, name: s.hoVaTen, sel: s.isSelected })),
+            selectedStt: nlpcSelectedStt,
+            gradeLevel: getGradeLevel(ctx.lop)
+        });
+
         document.getElementById('nlpc-context-box').innerHTML = `
             <strong>Phẩm chất - Năng lực ghi học bạ</strong> · Lớp ${escapeHtml(ctx.lop || '?')}
             ${ctx.hocKy ? ' · ' + escapeHtml(ctx.hocKy) : ''}
@@ -1006,7 +1017,11 @@
 
     async function loadNLPCForStudent(stt) {
         const hs = nlpcStudents.find(s => s.stt === stt);
-        if (!hs) return;
+        if (!hs) {
+            console.warn('[NLPC-DBG] loadNLPCForStudent: stt không tìm thấy HS', { stt, total: nlpcStudents.length });
+            return;
+        }
+        console.log('[NLPC-DBG] loadNLPCForStudent', { stt, name: hs.hoVaTen, className: (currentContext||{}).lop });
 
         // Reset override khi đổi HS — tránh leak giữa các HS
         nlpcOverrides = {};
@@ -1247,6 +1262,15 @@
         }
         // BUG-005 fix: gắn tên HS vào payload để adapter verify trước khi điền
         const hs = nlpcStudents.find(s => s.stt === nlpcSelectedStt);
+        // [NLPC-DBG] log payload trước khi gửi cho adapter
+        console.log('[NLPC-DBG] applyNLPCToVnedu SEND', {
+            expectedHS: hs?.hoVaTen,
+            payload_keys: {
+                nlc: Object.keys(nlpcGenerated.nang_luc_chung || {}),
+                nldt: Object.keys(nlpcGenerated.nang_luc_dac_thu || {}),
+                pc: Object.keys(nlpcGenerated.pham_chat || {})
+            }
+        });
         parent.postMessage({
             type: 'COGIAO_APPLY_NLPC',
             payload: { ...nlpcGenerated, _expectedHS: hs?.hoVaTen }
