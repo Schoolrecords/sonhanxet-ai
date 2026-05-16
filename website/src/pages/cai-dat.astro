@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Đổi sang `true` + điền `cwsUrl` sau khi Chrome Web Store approve V.01
+const cwsApproved = false;
+const cwsUrl = 'https://chromewebstore.google.com/detail/so-nhan-xet-ai/REPLACE_WITH_REAL_ID';
+
+const zipUrl = '/sonhanxet-ai-v1.0.zip';
+const zipSizeKB = 461;
+const supportPhone = '0913031073';
+const supportEmail = 'chungsongthinh@gmail.com';
+---
+
+<BaseLayout
+  title="Cài đặt Sổ nhận xét - AI · V.01"
+  description="Hướng dẫn cài đặt Sổ nhận xét - AI cho Chrome — 6 bước đơn giản, dùng được ngay trong khi chờ Chrome Web Store duyệt."
+>
+  <section style="padding: 80px 0 40px;">
+    <div class="container" style="max-width: var(--container-narrow);">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="eyebrow">📥 Cài đặt khẩn cấp · V.01</span>
+        <h1 style="font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; color: var(--brand-700); margin: 16px 0 12px; letter-spacing: -0.02em;">
+          Cài Sổ nhận xét - AI cho Chrome
+        </h1>
+        <p style="font-size: 1.125rem; color: var(--ink-500); max-width: 640px; margin: 0 auto;">
+          Bản chính thức <strong>V.01</strong> sẵn sàng dùng cho cuối kỳ. 6 bước đơn giản — chỉ mất 2 phút.
+        </p>
+      </div>
+
+      {!cwsApproved && (
+        <div class="prose" style="max-width: 100%; margin-bottom: 40px;">
+          <div class="callout" style="background: #FFF8DC; border-left: 4px solid var(--gold-600);">
+            <strong>⏳ Đang chờ Chrome Web Store duyệt</strong>
+            <p style="margin: 8px 0 0; color: var(--ink-700);">
+              Bản V.01 đã gửi Google duyệt, dự kiến 1-7 ngày. Trong thời gian chờ, thầy/cô tải file bên dưới và làm theo 6 bước để dùng được <strong>ngay hôm nay</strong>. Sau khi Google duyệt xong, trang này sẽ có thêm nút "Cài qua Chrome Web Store" — cách cài cũ vẫn dùng được bình thường.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 40px; text-align: center; box-shadow: var(--shadow-md); margin-bottom: 64px;">
+        {cwsApproved ? (
+          <>
+            <div style="font-size: 14px; color: var(--success); font-weight: 600; margin-bottom: 12px;">✓ Đã có trên Chrome Web Store</div>
+            <h2 style="font-size: 1.5rem; color: var(--brand-700); margin-bottom: 20px;">Cách 1 (khuyến nghị): Cài qua Chrome Web Store</h2>
+            <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg" style="font-size: 17px;">
+              🌐 Cài qua Chrome Web Store
+            </a>
+            <p style="font-size: 14px; color: var(--ink-400); margin-top: 16px;">Khuyến khích dùng cách này — Chrome sẽ tự cập nhật bản mới khi có.</p>
+            <div style="height: 1px; background: var(--border); margin: 32px 0;"></div>
+            <h3 style="font-size: 1.25rem; color: var(--brand-700); margin-bottom: 12px;">Cách 2: Cài thủ công (cho ai chưa cài được qua CWS)</h3>
+          </>
+        ) : (
+          <h2 style="font-size: 1.5rem; color: var(--brand-700); margin-bottom: 20px;">Bước 1: Tải file cài đặt</h2>
+        )}
+        <a href={zipUrl} download class="btn btn-primary btn-lg" style="font-size: 17px;">
+          📥 Tải Sổ nhận xét - AI V.01 ({zipSizeKB} KB)
+        </a>
+        <p style="font-size: 14px; color: var(--ink-400); margin-top: 16px;">
+          File <code style="background: var(--canvas-2); padding: 2px 8px; border-radius: 4px;">sonhanxet-ai-v1.0.zip</code> · Tương thích Chrome trên Windows, Mac, Linux
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="font-size: 1.75rem; color: var(--brand-700); margin-bottom: 12px;">6 bước cài đặt</h2>
+        <p style="color: var(--ink-500);">Làm theo đúng thứ tự — chỉ 2 phút là xong.</p>
+      </div>
+
+      <div class="steps" style="margin-bottom: 64px;">
+        <div class="step">
+          <h3>Tải file zip về máy</h3>
+          <p>Bấm nút <strong>"Tải Sổ nhận xét - AI"</strong> ở trên. File sẽ tải về thư mục <kbd>Downloads</kbd> trên máy.</p>
+        </div>
+
+        <div class="step">
+          <h3>Giải nén file zip</h3>
+          <p>Click chuột phải vào file <code>sonhanxet-ai-v1.0.zip</code> → chọn <strong>"Giải nén tất cả"</strong> (Extract All) → chọn nơi giải nén (vd Desktop).</p>
+          <p style="font-size: 13px; color: var(--ink-400);">⚠ Lưu ý: giữ folder vừa giải nén, không xoá. Chrome đọc trực tiếp từ folder này.</p>
+        </div>
+
+        <div class="step">
+          <h3>Mở trang Tiện ích Chrome</h3>
+          <p>Mở Chrome → copy đường dẫn này dán vào thanh địa chỉ rồi Enter:</p>
+          <p><kbd>chrome://extensions</kbd></p>
+        </div>
+
+        <div class="step">
+          <h3>Bật "Chế độ nhà phát triển"</h3>
+          <p>Tìm công tắc <strong>"Chế độ nhà phát triển"</strong> (Developer mode) ở <strong>góc trên bên phải</strong> → gạt sang <strong>BẬT</strong>.</p>
+        </div>
+
+        <div class="step">
+          <h3>Tải tiện ích đã giải nén</h3>
+          <p>Bấm nút <strong>"Tải tiện ích đã giải nén"</strong> (Load unpacked) ở góc trên bên trái → chọn đúng <strong>FOLDER đã giải nén ở bước 2</strong> (KHÔNG chọn file .zip).</p>
+        </div>
+
+        <div class="step">
+          <h3>Dùng ngay trên Vnedu</h3>
+          <p>Đăng nhập <a href="https://vnedu.vn" target="_blank" rel="noopener">Vnedu</a> → vào <strong>Sổ điểm → Sổ nhận xét</strong> → biểu tượng Sổ nhận xét - AI sẽ hiện bên phải. Bấm để mở bảng điều khiển.</p>
+        </div>
+      </div>
+
+      <div class="prose" style="max-width: 100%;">
+        <h2 style="font-size: 1.75rem; text-align: center; margin-bottom: 24px;">Khắc phục sự cố thường gặp</h2>
+
+        <div class="callout" style="margin-bottom: 16px;">
+          <strong>❓ Chrome hiện cảnh báo "Vô hiệu hoá tiện ích chế độ nhà phát triển"</strong>
+          <p style="margin: 8px 0 0; color: var(--ink-700);">
+            Đây là cảnh báo bình thường khi cài thủ công. Chọn <strong>"Giữ tiện ích"</strong> (Keep extension). Sau khi Google duyệt xong V.01 trên Chrome Web Store, cảnh báo này sẽ không còn.
+          </p>
+        </div>
+
+        <div class="callout" style="margin-bottom: 16px;">
+          <strong>❓ Không thấy biểu tượng tiện ích trên trang Vnedu</strong>
+          <p style="margin: 8px 0 0; color: var(--ink-700);">
+            Vào lại <kbd>chrome://extensions</kbd> → kiểm tra "Sổ nhận xét - AI" đã được BẬT chưa. Nếu rồi, thử F5 lại trang Vnedu. Chắc chắn đã đăng nhập Vnedu và đang ở trang <strong>Sổ điểm/Sổ nhận xét</strong>.
+          </p>
+        </div>
+
+        <div class="callout" style="margin-bottom: 16px;">
+          <strong>❓ Tiện ích biến mất sau khi tắt Chrome</strong>
+          <p style="margin: 8px 0 0; color: var(--ink-700);">
+            Kiểm tra <strong>folder đã giải nén</strong> còn nguyên không. Nếu lỡ xoá hoặc đổi chỗ folder, Chrome sẽ bỏ tiện ích. Cần làm lại từ bước 5 với folder mới.
+          </p>
+        </div>
+
+        <div class="callout">
+          <strong>❓ Lỗi khác — cần hỗ trợ trực tiếp</strong>
+          <p style="margin: 8px 0 0; color: var(--ink-700);">
+            Gọi/Zalo: <strong><a href={`tel:${supportPhone}`} style="color: var(--brand-600);">{supportPhone}</a></strong> (Chung Trần) hoặc email <a href={`mailto:${supportEmail}`} style="color: var(--brand-600);">{supportEmail}</a>. Gửi kèm ảnh chụp màn hình để được hỗ trợ nhanh.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--border); color: var(--ink-400); font-size: 14px;">
+        <p style="margin-bottom: 8px;">Sổ nhận xét - AI · V.01</p>
+        <p>© 2026 Bản quyền thuộc ChungTran · {supportPhone}</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

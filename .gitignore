@@ -46,3 +46,5 @@ pnpm-debug.log*
 
 # ====== Build artifacts ======
 sonhanxet-ai-v*.zip
+# Ngoại lệ: zip trong website/public là asset phục vụ cho trang cài đặt khẩn cấp
+!website/public/sonhanxet-ai-v*.zip
