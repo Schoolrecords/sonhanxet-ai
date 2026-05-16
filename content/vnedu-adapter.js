@@ -257,8 +257,21 @@ window.VneduAdapter = {
     getContext() {
         const ctx = { khoi: '', lop: '', mon: '', hocKy: '', kyDanhGia: '' };
 
-        const selects = document.querySelectorAll('select');
-        for (const sel of selects) {
+        // BUG-007 fix: Vnedu Ext.js SPA giữ select của panel cũ trong DOM (vd "Sổ điểm
+        // lớp 1A" còn nguyên sau khi đã chuyển sang "Học bạ lớp 5A"). Cần lọc bằng
+        // _isInActivePanel để chỉ lấy select của panel ACTIVE.
+        const allSelects = Array.from(document.querySelectorAll('select'));
+        const activeSelects = allSelects.filter(s => this._isInActivePanel(s));
+
+        // [NLPC-DBG] log chênh lệch để chẩn đoán nếu vẫn sai
+        if (allSelects.length !== activeSelects.length) {
+            console.log('[NLPC-DBG] getContext: lọc selects', {
+                total: allSelects.length, active: activeSelects.length,
+                ignored: allSelects.length - activeSelects.length
+            });
+        }
+
+        for (const sel of activeSelects) {
             const label = this._findLabelFor(sel);
             const value = sel.options[sel.selectedIndex]?.textContent?.trim() || '';
             if (!value) continue;
@@ -279,6 +292,9 @@ window.VneduAdapter = {
                 ctx.hocKy = ctx.hocKy || fallback.hocKy;
             }
         }
+
+        // [NLPC-DBG] log context cuối cùng
+        console.log('[NLPC-DBG] getContext result', ctx);
 
         return ctx;
     },
