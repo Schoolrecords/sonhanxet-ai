@@ -38,32 +38,44 @@ const features = [
   {
     icon: "📝",
     title: "Sinh nhận xét môn học",
-    desc: "12 môn được hỗ trợ riêng: Tiếng Việt, Toán, TNXH, Khoa học, Sử-Địa, Đạo đức, Tin học, Tiếng Anh, GDTC, Âm nhạc, Mĩ thuật, HĐTN. 4 mức T+/T/H/C, văn bản đa dạng tránh trùng lặp."
+    desc: "Hỗ trợ nhận xét theo từng môn/hoạt động: Tiếng Việt, Toán, Tự nhiên và Xã hội, Khoa học, Lịch sử và Địa lí, Đạo đức, Tin học, Tiếng Anh, GDTC, Âm nhạc, Mĩ thuật, Hoạt động trải nghiệm. Nội dung đa dạng, hạn chế trùng lặp.",
+    accent: "#2B4F9E",
+    accentBg: "#E6EBF5"
   },
   {
     icon: "🎯",
-    title: "Tự suy NL/PC",
-    desc: "13 trường Năng lực - Phẩm chất tự động suy từ điểm các môn. GV chỉ cần click badge để override khi muốn đổi mức."
+    title: "Gợi ý nhận xét NL-PC",
+    desc: "Tự động gợi ý nhận xét Năng lực, Phẩm chất dựa trên kết quả học tập và rèn luyện. Giáo viên có thể chọn, chỉnh sửa hoặc thay đổi mức nhận xét khi cần.",
+    accent: "#B8860B",
+    accentBg: "#FFF8DC"
   },
   {
     icon: "⚡",
-    title: "Áp dụng 1 click",
-    desc: "Preview toàn bộ nhận xét trong sidebar. Bấm “Áp dụng” → chữ tự ghi vào textarea Vnedu. GV chỉ bấm Lưu là xong."
+    title: "Áp dụng nhanh vào Vnedu",
+    desc: "Xem trước toàn bộ nhận xét trong sidebar. Khi đồng ý, bấm “Áp dụng” để đưa nhận xét vào ô tương ứng trên Vnedu. Giáo viên kiểm tra lại và bấm Lưu.",
+    accent: "#EA580C",
+    accentBg: "#FFEDD5"
   },
   {
     icon: "📐",
-    title: "Đúng Thông tư 27",
-    desc: "Tuân thủ TT27/2020/TT-BGDĐT về đánh giá HS tiểu học. Văn phong sư phạm, dùng từ phù hợp lứa tuổi."
+    title: "Bám sát Thông tư 27",
+    desc: "Gợi ý nhận xét theo tinh thần TT27/2020/TT-BGDĐT: rõ mức độ đạt được, dùng từ phù hợp lứa tuổi, giáo viên có thể chỉnh sửa trước khi lưu.",
+    accent: "#7C3AED",
+    accentBg: "#EDE9FE"
   },
   {
     icon: "🌐",
-    title: "Hoạt động offline",
-    desc: "Sau khi cài và kích hoạt, không cần mạng để sinh nhận xét. Mọi thứ chạy ngay trong trình duyệt của thầy cô."
+    title: "Chạy trực tiếp trên trình duyệt",
+    desc: "Sau khi cài đặt, tiện ích hoạt động ngay trên Vnedu, không cần mở thêm phần mềm. Thao tác gọn, nhanh, phù hợp với công việc cuối kỳ.",
+    accent: "#0891B2",
+    accentBg: "#CFFAFE"
   },
   {
     icon: "🔄",
     title: "Cập nhật thường xuyên",
-    desc: "Vnedu đổi giao diện? Có template mới? Extension cập nhật qua Chrome Web Store, GV không cần làm gì."
+    desc: "Khi Vnedu thay đổi giao diện hoặc có mẫu nhận xét mới, tiện ích được cập nhật qua Chrome Web Store. Giáo viên chỉ cần sử dụng phiên bản mới nhất.",
+    accent: "#059669",
+    accentBg: "#D1FAE5"
   }
 ];
 
@@ -275,7 +287,7 @@ const faqs = [
       </div>
       <div class="features-grid">
         {features.map(f => (
-          <div class="feature">
+          <div class="feature" style={`--feat-accent: ${f.accent}; --feat-accent-bg: ${f.accentBg};`}>
             <div class="feature-icon">{f.icon}</div>
             <h3>{f.title}</h3>
             <p>{f.desc}</p>

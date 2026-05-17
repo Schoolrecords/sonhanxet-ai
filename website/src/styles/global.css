@@ -800,8 +800,8 @@ section { padding: var(--section-y) 0; position: relative; }
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--brand-600), var(--gold-500));
+  height: 3px;
+  background: var(--feat-accent, linear-gradient(90deg, var(--brand-600), var(--gold-500)));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s var(--ease-out);
@@ -816,8 +816,8 @@ section { padding: var(--section-y) 0; position: relative; }
 .feature-icon {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, var(--brand-50), var(--brand-100));
-  color: var(--brand-700);
+  background: var(--feat-accent-bg, linear-gradient(135deg, var(--brand-50), var(--brand-100)));
+  color: var(--feat-accent, var(--brand-700));
   border-radius: 14px;
   display: grid;
   place-items: center;
