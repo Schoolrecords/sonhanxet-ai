@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "framework": "TT27/2020 + CT GDPT 2018 — phân kỳ Giữa HK1 / Cuối HK1 / Giữa HK2",
     "tiers_per_ky": {
       "tot_xs": "Điểm 9-10. Xếp loại Vnedu: T.",
@@ -8,1519 +8,1519 @@
       "ht": "Điểm 5-6. Xếp loại Vnedu: H.",
       "cht": "Điểm <5. Xếp loại Vnedu: C."
     },
-    "ky_descriptions": {
-      "ghk1": "Giữa HK1 — sau ~8 tuần học, ngữ điệu 'bước vào năm học', 'đầu năm', 'sau hơn 1 tháng học'.",
-      "chk1": "Cuối HK1 — kết thúc HK1, ngữ điệu 'qua một học kì', 'trong HK1', 'kết thúc học kì I'.",
-      "ghk2": "Giữa HK2 — sau Tết ~giữa HK2, ngữ điệu 'bước vào HK2', 'tiếp nối HK1', 'sau kì nghỉ Tết'."
+    "ky_content_focus": {
+      "ghk1": "Kĩ năng nhập môn của kỳ, bám CT GDPT 2018 nội dung 1/2 đầu HK1.",
+      "chk1": "Kĩ năng cơ bản đã thành thạo, hoàn thành chương trình HK1.",
+      "ghk2": "Kĩ năng mở rộng, nâng cao và vận dụng phối hợp 1/2 đầu HK2."
     },
-    "note": "V2.0 — Nếu sidebar không truyền ky hoặc ky='chk2', engine fallback về pool flat ở nhanxet-ngan.json."
+    "style_note": "Phrases KHÔNG mở đầu bằng cụm thời gian (Bước vào HK2/Sau nghỉ Tết/Đầu năm/...). Bắt đầu 'Em...' + kĩ năng môn học + nội dung CT GDPT 2018. Style giống pool Cuối HK2 trong nhanxet-ngan.json."
   },
   "subjects": {
     "tieng-viet": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em đọc lưu loát diễn cảm và viết câu hay so với bạn cùng lứa.",
-          "Đầu năm học, em đã thể hiện năng khiếu Tiếng Việt rõ rệt và vốn từ phong phú.",
-          "Sau hơn một tháng học, em đọc trôi chảy, viết câu giàu hình ảnh và mạch lạc.",
-          "Em khởi đầu năm học rất tốt, đọc diễn cảm và viết bài sáng tạo hơn các bạn.",
-          "Đầu năm học em đã nắm vững chính tả, đọc to rõ ràng và phát biểu tự tin.",
-          "Em vào học nhanh, đọc viết Tiếng Việt thành thạo ngay từ những tuần đầu năm.",
-          "Bước vào năm học, em có vốn từ phong phú và biết kể chuyện rất sinh động."
+          "Em đọc trơn thành thạo, viết chữ đẹp đúng nét và nắm chắc bảng chữ cái.",
+          "Em có vốn từ phong phú so với lứa tuổi, đọc to rõ và viết câu rất đúng.",
+          "Em ghép vần nhanh, đọc thành tiếng diễn cảm và viết chính tả không sai lỗi.",
+          "Em phát âm rõ ràng, viết câu đầy đủ ý và biết kể chuyện sinh động.",
+          "Em đọc hiểu nội dung bài nhanh, trả lời câu hỏi mạch lạc và sáng tạo.",
+          "Em viết chữ đẹp đều nét, đặt câu đúng ngữ pháp và giàu hình ảnh.",
+          "Em có năng khiếu Tiếng Việt, hăng hái phát biểu và đọc diễn cảm rất tốt."
         ],
         "tot": [
-          "Bước vào năm học, em đọc rõ ràng lưu loát và viết câu đúng ngữ pháp.",
-          "Sau hơn một tháng học, em đã quen với chương trình và viết chính tả khá đúng.",
-          "Đầu năm học em đọc to rõ, viết câu đầy đủ ý và hăng hái phát biểu.",
-          "Em có khởi đầu năm học tốt, đọc viết Tiếng Việt đạt yêu cầu của chương trình.",
-          "Trong những tuần đầu, em đã nắm được chữ viết và đọc hiểu bài cô giao.",
-          "Em vào năm học khá tự tin, viết chính tả đúng và đọc trôi chảy đoạn văn ngắn.",
-          "Bước vào năm học, em mạnh dạn phát biểu và viết bài theo mẫu khá tốt."
+          "Em đọc trơn tốt từng câu, viết chính tả đúng và trình bày sạch đẹp.",
+          "Em ghép vần đúng, đọc to rõ ràng và viết được câu theo mẫu của cô.",
+          "Em viết chữ đều nét, biết đặt câu đầy đủ ý và đọc bài trôi chảy.",
+          "Em phát âm khá chuẩn, hăng hái phát biểu và viết chính tả ít sai.",
+          "Em đọc thành tiếng to rõ, hiểu nội dung bài và trả lời được câu hỏi.",
+          "Em có ý thức học tập, viết câu đúng ngữ pháp và biết dùng dấu câu.",
+          "Em kể lại được câu chuyện ngắn, viết chữ rõ ràng và sạch đẹp."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với chương trình và đọc được các bài cơ bản.",
-          "Sau hơn một tháng, em đọc và viết được các câu đơn giản theo cô hướng dẫn.",
-          "Đầu năm học em đã có ý thức học tập, viết chính tả các từ thường gặp.",
-          "Em đang dần quen với cách học Tiếng Việt mới, đọc và viết đạt yêu cầu cơ bản.",
-          "Trong những tuần đầu, em đã đọc được bài tập đọc và viết câu theo mẫu của cô.",
-          "Em vào năm học đều đặn, có tiến bộ trong đọc và viết so với cuối năm trước.",
-          "Bước vào năm học, em chăm chú nghe giảng và làm bài tập đọc viết đúng yêu cầu."
+          "Em đã đọc trơn được các tiếng, viết được chữ cái theo mẫu của cô.",
+          "Em ghép được vần đơn giản, viết chính tả các từ thường gặp.",
+          "Em đọc to bài tập đọc, viết câu ngắn theo gợi ý của cô giáo.",
+          "Em đã thuộc bảng chữ cái, viết được tên mình và các chữ quen thuộc.",
+          "Em chăm chú nghe giảng, đọc theo cô và viết được câu đơn giản.",
+          "Em có tiến bộ trong đọc viết, trình bày bài tương đối sạch sẽ.",
+          "Em biết nghe và lặp lại câu, viết được các từ theo mẫu chính tả."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện đọc trơn và viết các nét chữ cơ bản nhiều hơn.",
-          "Đầu năm học, em hãy nhờ thầy cô và gia đình hướng dẫn thêm bảng chữ cái và ghép vần.",
-          "Em cần làm quen lại với cách đọc viết, hãy luyện đánh vần các từ ngắn mỗi ngày.",
-          "Em đã chuyên cần đi học những tuần đầu, cần luyện viết hoa và viết thường đúng quy tắc.",
-          "Sau hơn một tháng, em cần đọc thêm sách truyện và luyện chép chính tả ở nhà.",
-          "Cô tin em sẽ tiến bộ, hãy mạnh dạn hỏi cô khi gặp từ chưa hiểu nghĩa.",
-          "Đầu năm em hãy luyện đọc to một đoạn văn ngắn mỗi tối cùng cha mẹ."
+          "Em cần ôn lại bảng chữ cái và luyện đọc trơn từng tiếng mỗi ngày.",
+          "Em hãy luyện ghép vần các từ ngắn và viết lại các chữ cái cơ bản.",
+          "Em ngoan và lễ phép, cần luyện viết các nét cơ bản và đọc to từng tiếng.",
+          "Em chăm chú nghe giảng, hãy nhờ cô và gia đình hướng dẫn đọc bài cũ.",
+          "Em đã có cố gắng, hãy mạnh dạn đọc to và đánh vần khi gặp từ mới.",
+          "Cô tin em sẽ tiến bộ, hãy luyện viết hoa - viết thường đúng quy tắc.",
+          "Em hãy đọc to 1 đoạn ngắn cùng gia đình mỗi tối để mau biết đọc."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc học kì I, em đọc diễn cảm xuất sắc, viết văn giàu hình ảnh và mạch lạc.",
-          "Trong học kì I, em nắm vững ngữ pháp chính tả, đọc viết thành thạo và sáng tạo.",
-          "Qua một học kì, em có vốn từ phong phú và biết viết đoạn văn có ý mới lạ.",
-          "Hết HK1, em đọc hiểu sâu, viết bài giàu cảm xúc và lập luận chặt chẽ.",
-          "Trong HK1, em xuất sắc cả 4 kĩ năng nghe nói đọc viết Tiếng Việt.",
-          "Kết thúc HK1, em đọc to rõ diễn cảm, viết chữ đẹp và vốn từ rất phong phú.",
-          "Qua một học kì học tập, em là tấm gương sáng về môn Tiếng Việt cho cả lớp."
+          "Em đọc diễn cảm các bài tập đọc, viết đoạn văn ngắn giàu hình ảnh và sáng tạo.",
+          "Em có vốn từ phong phú, viết chính tả đúng và kể chuyện rất sinh động.",
+          "Em nắm vững ngữ pháp, đọc hiểu sâu nội dung và viết câu mạch lạc.",
+          "Em viết chữ đẹp đều nét, đặt câu giàu ý nghĩa và biết dùng từ hay.",
+          "Em đọc thành thạo và nhanh, hăng hái phát biểu xây dựng bài.",
+          "Em có năng khiếu Tiếng Việt, viết đoạn văn ngắn lôi cuốn và đầy cảm xúc.",
+          "Em nghe nói đọc viết đều xuất sắc, vận dụng từ ngữ rất linh hoạt."
         ],
         "tot": [
-          "Kết thúc HK1, em đọc rõ ràng lưu loát và viết câu đúng ngữ pháp mạch lạc.",
-          "Trong học kì I, em viết chính tả đúng và biết diễn đạt ý rõ ràng dễ hiểu.",
-          "Qua một học kì, em đọc trôi chảy, viết đoạn văn theo chủ đề khá tốt.",
-          "Hết HK1, em hăng hái phát biểu xây dựng bài và viết bài sạch đẹp.",
-          "Kết thúc HK1, em có vốn từ ngày càng phong phú, đặt câu đúng và rõ ý.",
-          "Trong HK1, em yêu thích môn học, đọc viết Tiếng Việt đều khá lưu loát.",
-          "Qua một học kì, em đã nắm chắc chính tả và viết được đoạn văn theo gợi ý."
+          "Em đọc trôi chảy bài tập đọc, viết được đoạn văn ngắn theo chủ đề.",
+          "Em viết chính tả đúng và trình bày sạch đẹp, biết kể lại nội dung bài đọc.",
+          "Em có vốn từ ngày càng phong phú, đặt câu đúng ngữ pháp rõ ý.",
+          "Em đọc to rõ ràng, viết chữ đẹp và sử dụng dấu câu khá đúng.",
+          "Em hăng hái phát biểu xây dựng bài và biết trả lời câu hỏi mạch lạc.",
+          "Em viết được câu theo mẫu, kể lại được câu chuyện ngắn đã học.",
+          "Em có ý thức học tập tốt, đọc viết Tiếng Việt khá thành thạo trên lớp."
         ],
         "ht": [
-          "Kết thúc HK1, em đã đọc rõ ràng và viết được câu theo yêu cầu cơ bản.",
-          "Trong học kì I, em có nhiều tiến bộ trong đọc và viết so với đầu năm.",
-          "Qua một học kì, em đọc trôi chảy hơn và viết được câu đầy đủ ý theo mẫu.",
-          "Hết HK1, em chăm chỉ học tập, đọc và viết đạt yêu cầu cơ bản trên lớp.",
-          "Kết thúc HK1, em đã hoàn thành các bài đọc viết, chữ viết ngày càng đẹp hơn.",
-          "Trong HK1, em có ý thức học tập, đọc và viết theo đúng yêu cầu chương trình.",
-          "Qua một học kì, em viết chính tả khá đúng và biết viết câu theo mẫu được học."
+          "Em đã đọc được bài tập đọc, viết câu đúng theo yêu cầu cơ bản.",
+          "Em có tiến bộ trong đọc viết, chữ viết ngày càng đẹp hơn trước.",
+          "Em viết chính tả khá đúng, kể được nội dung chính của bài đọc.",
+          "Em chăm chỉ học tập, đọc và viết các đoạn ngắn cơ bản trên lớp.",
+          "Em đã biết viết câu đầy đủ ý, đọc bài tập đọc khá trôi chảy.",
+          "Em có ý thức học tập, hoàn thành các bài đọc viết theo yêu cầu.",
+          "Em đọc thành tiếng rõ ràng, viết câu ngắn theo mẫu cô hướng dẫn."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện đọc to rõ và viết đúng chính tả các từ thường gặp.",
-          "Trong HK1, em đã có tiến bộ, hãy dành thời gian luyện đọc và chép chính tả mỗi ngày.",
-          "Qua một học kì, em cần ôn lại bảng chữ cái và rèn kĩ năng đọc trơn từng câu.",
-          "Hết HK1, em hãy nhờ thầy cô và gia đình hướng dẫn thêm các bài đọc cơ bản.",
-          "Em đã chuyên cần cả HK1, cần luyện viết hoa - viết thường đúng quy tắc.",
-          "Cô tin em sẽ tiến bộ ở HK2, hãy mạnh dạn hỏi cô khi gặp từ chưa hiểu nghĩa.",
-          "Kết thúc HK1, em hãy đọc to một đoạn văn ngắn mỗi tối cùng gia đình."
+          "Em cần luyện đọc to rõ và viết đúng chính tả các từ thường gặp.",
+          "Em hãy đọc lại bài cũ mỗi tối và luyện chép chính tả khoảng 5 dòng.",
+          "Em ngoan và lễ phép, cần luyện viết hoa - viết thường đúng quy tắc.",
+          "Em đã có cố gắng, hãy mạnh dạn đọc to khi cô gọi và hỏi khi chưa hiểu.",
+          "Em chăm chú nghe giảng, cần luyện đặt câu ngắn với từ mới đã học.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình kèm thêm đọc viết cơ bản.",
+          "Em hãy đọc một đoạn truyện ngắn cùng gia đình mỗi tối để rèn kĩ năng đọc."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em phát huy tốt thành quả HK1, đọc diễn cảm và viết văn hay.",
-          "Tiếp nối HK1, em vẫn duy trì phong độ Tiếng Việt xuất sắc và sáng tạo.",
-          "Sau kì nghỉ Tết, em vào học nhanh, đọc viết thành thạo và rất linh hoạt.",
-          "Nửa đầu HK2, em đọc hiểu sâu sắc và viết đoạn văn giàu cảm xúc.",
-          "Bước vào HK2, em là tấm gương sáng về Tiếng Việt, vốn từ ngày càng phong phú.",
-          "Trong HK2, em viết văn có hình ảnh, kĩ năng nghe nói đọc viết đều xuất sắc.",
-          "Tiếp nối kết quả HK1, em đọc lưu loát và biết kể chuyện rất sinh động."
+          "Em đọc diễn cảm có ngữ điệu, viết đoạn văn miêu tả giàu hình ảnh và cảm xúc.",
+          "Em có vốn từ phong phú, viết câu sáng tạo và biết dùng biện pháp tu từ.",
+          "Em nắm vững ngữ pháp, đọc hiểu sâu và viết đoạn văn mạch lạc lôi cuốn.",
+          "Em viết chữ đẹp, kể chuyện sinh động và lập luận khá chặt chẽ.",
+          "Em hăng hái phát biểu, có nhiều ý hay khi viết văn và kể chuyện.",
+          "Em đọc nhanh hiểu sâu, viết đoạn văn giàu cảm xúc và đầy ý tưởng.",
+          "Em có năng khiếu Tiếng Việt, nghe nói đọc viết đều thành thạo và rất sáng tạo."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn đọc lưu loát và viết câu đúng ngữ pháp mạch lạc.",
-          "Tiếp nối HK1, em chăm chỉ học tập, đọc viết Tiếng Việt khá thành thạo.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh, viết chính tả đúng và rõ ràng.",
-          "Nửa đầu HK2, em hăng hái phát biểu và viết được đoạn văn theo chủ đề.",
-          "Bước vào HK2, em đọc hiểu nội dung bài và diễn đạt ý mạch lạc.",
-          "Trong HK2, em duy trì kết quả tốt, viết câu đúng và đặt câu rõ ý.",
-          "Tiếp nối HK1, em có vốn từ phong phú và viết chữ ngày càng đẹp."
+          "Em đọc bài trôi chảy và diễn cảm, viết đoạn văn theo chủ đề khá tốt.",
+          "Em viết câu đúng ngữ pháp, biết miêu tả sự vật bằng câu có hình ảnh.",
+          "Em có vốn từ ngày càng phong phú, đặt câu rõ ý và sử dụng dấu câu đúng.",
+          "Em đọc to rõ và có cảm xúc, viết bài sạch đẹp và đầy đủ ý.",
+          "Em hăng hái phát biểu xây dựng bài, biết kể lại câu chuyện đã đọc.",
+          "Em viết chính tả ít sai lỗi và bắt đầu biết dùng câu có hình ảnh.",
+          "Em có ý thức học tập tốt, đọc viết Tiếng Việt khá lưu loát và sáng tạo."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và đọc viết đạt yêu cầu cơ bản.",
-          "Tiếp nối HK1, em chăm chú học tập và làm bài tập đọc viết theo yêu cầu.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp học tập và viết chính tả khá đúng.",
-          "Nửa đầu HK2, em có tiến bộ trong đọc trôi chảy và viết câu đầy đủ ý.",
-          "Bước vào HK2, em viết được câu theo mẫu và đọc được bài theo chương trình.",
-          "Trong HK2, em có ý thức học tập, hoàn thành các bài tập đọc viết trên lớp.",
-          "Tiếp nối HK1, em đã đọc thành tiếng rõ ràng và viết câu cô hướng dẫn."
+          "Em đọc được các bài tập đọc, viết được đoạn văn ngắn theo gợi ý.",
+          "Em có tiến bộ trong viết câu và sử dụng từ ngữ phù hợp với chủ đề.",
+          "Em viết chính tả khá đúng, biết kể lại nội dung chính của bài đọc.",
+          "Em chăm chỉ học tập, đọc và viết được các đoạn cơ bản theo yêu cầu.",
+          "Em đã viết câu đầy đủ ý hơn, đọc bài tập đọc lưu loát hơn trước.",
+          "Em có ý thức học tập, hoàn thành bài đọc viết theo cô hướng dẫn.",
+          "Em viết được câu miêu tả đơn giản, đọc to rõ và biết dùng dấu câu."
         ],
         "cht": [
-          "Bước vào HK2, em cần kiên trì luyện đọc trơn và viết chính tả từng ngày.",
-          "Tiếp nối HK1, em hãy duy trì việc luyện đọc và chép chính tả mỗi tối ở nhà.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học, ôn lại bảng chữ cái và ghép vần.",
-          "Nửa đầu HK2, em đã có cố gắng, hãy luyện viết các từ quen thuộc mỗi ngày.",
-          "Em chuyên cần đi học, cần đọc to một đoạn văn ngắn cùng gia đình mỗi tối.",
-          "Cô tin em sẽ tiến bộ ở cuối HK2, hãy mạnh dạn hỏi khi gặp từ chưa hiểu.",
-          "Bước vào HK2, em hãy luyện đặt câu ngắn với từ mới và đọc lại bài cũ."
+          "Em cần luyện đọc diễn cảm và viết câu có đủ chủ ngữ vị ngữ.",
+          "Em hãy đọc to bài tập đọc 2-3 lần mỗi ngày để rèn kĩ năng đọc.",
+          "Em ngoan và lễ phép, cần luyện viết câu ngắn với từ mới đã học.",
+          "Em đã có cố gắng, hãy mạnh dạn kể chuyện hoặc đọc bài cho gia đình nghe.",
+          "Em chăm chú nghe giảng, cần luyện đặt câu và viết chính tả không sai.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô khi gặp từ chưa hiểu nghĩa.",
+          "Em hãy luyện viết đoạn văn ngắn 3 câu theo gợi ý của cô mỗi tuần."
         ]
       }
     },
     "toan": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em thể hiện năng khiếu Toán, tính toán nhanh và chính xác cao.",
-          "Đầu năm học, em đã nắm vững kiến thức cũ và tiếp thu bài mới rất nhanh nhạy.",
-          "Sau hơn một tháng, em tính nhẩm xuất sắc và giải toán có lời văn mạch lạc.",
-          "Em khởi đầu năm học rất tốt, tư duy logic và làm bài Toán chính xác cao.",
-          "Đầu năm học em đã thuộc bảng cửu chương và làm tính rất linh hoạt.",
-          "Em vào học nhanh, có nhiều cách giải hay và trình bày bài khoa học.",
-          "Bước vào năm học, em phân tích đề nhanh và lập luận Toán rất chặt chẽ."
+          "Em có năng khiếu Toán, tính nhẩm nhanh và chính xác các phép cơ bản.",
+          "Em đếm thành thạo, so sánh số nhanh và làm tính cộng trừ rất linh hoạt.",
+          "Em nắm vững kiến thức nền tảng, vận dụng tốt vào bài toán có lời văn.",
+          "Em tư duy logic, đặt tính đúng cột và trình bày bài rất khoa học.",
+          "Em hiểu bài nhanh, giải toán cẩn thận và biết kiểm tra lại kết quả.",
+          "Em có khả năng tính nhẩm vượt trội, làm tính đúng và sáng tạo.",
+          "Em yêu môn Toán, hăng hái phát biểu và làm các dạng bài rất chính xác."
         ],
         "tot": [
-          "Bước vào năm học, em làm tính đúng và giải toán có lời văn rõ ràng.",
-          "Đầu năm học, em đã thực hiện thành thạo các phép tính cộng trừ nhân chia.",
-          "Sau hơn một tháng, em hiểu bài nhanh và làm được các dạng bài cơ bản.",
-          "Em khởi đầu năm học khá tốt, làm tính cẩn thận và trình bày sạch đẹp.",
-          "Trong những tuần đầu, em đã thuộc bảng cửu chương và biết tính nhẩm tốt.",
-          "Em vào năm học có ý thức, làm bài Toán đúng và biết kiểm tra lại kết quả.",
-          "Bước vào năm học, em hăng hái phát biểu và làm các bài tập trên lớp tốt."
+          "Em làm tính cộng trừ thành thạo, trình bày bài sạch đẹp khoa học.",
+          "Em đếm số đúng, so sánh hơn kém chính xác và giải toán đơn giản tốt.",
+          "Em thuộc bảng cộng trừ, vận dụng làm tính nhẩm nhanh trên lớp.",
+          "Em hiểu bài tốt, biết đặt tính thẳng cột và kiểm tra lại đáp số.",
+          "Em hăng hái phát biểu, làm bài tập có ý thức và đạt kết quả tốt.",
+          "Em giải được bài toán có lời văn 1 bước, biết viết câu lời giải.",
+          "Em có ý thức học Toán, làm tính cẩn thận và ít sai sót khi tính."
         ],
         "ht": [
-          "Bước vào năm học, em làm được các phép tính cơ bản theo yêu cầu cô giao.",
-          "Đầu năm học, em đã quen với cách học Toán và làm bài tập đơn giản đúng.",
-          "Sau hơn một tháng, em có tiến bộ trong tính toán và giải toán có lời văn.",
-          "Em đang làm quen lại với chương trình Toán, làm tính cơ bản đúng yêu cầu.",
-          "Trong những tuần đầu, em đã làm được các bài cộng trừ trong phạm vi đã học.",
-          "Em vào năm học đều đặn, hoàn thành các bài tập Toán cô giao trên lớp.",
-          "Bước vào năm học, em chăm chú nghe giảng và làm tính theo cô hướng dẫn."
+          "Em đã làm được các phép cộng trừ trong phạm vi đã học.",
+          "Em đếm số xuôi ngược cơ bản, so sánh được hơn - kém đơn giản.",
+          "Em chăm chỉ làm bài, thực hiện đúng các phép tính cộng trừ.",
+          "Em có tiến bộ trong tính nhẩm, làm được bài tập trên lớp.",
+          "Em viết được phép tính theo mẫu, biết đặt tính thẳng cột.",
+          "Em hiểu bài cô giảng, đã thuộc một phần bảng cộng trừ cơ bản.",
+          "Em làm được các bài toán đơn giản theo hướng dẫn của cô giáo."
         ],
         "cht": [
-          "Bước vào năm học, em cần ôn lại bảng cộng trừ và luyện làm tính cơ bản.",
-          "Đầu năm học, em hãy học thuộc bảng cửu chương và rèn tính nhẩm hằng ngày.",
-          "Em cần đọc kĩ đề bài và suy nghĩ kĩ trước khi làm các bài toán đơn giản.",
-          "Em đã chuyên cần đi học, hãy luyện đếm xuôi đếm ngược và so sánh số.",
-          "Sau hơn một tháng, em cần nhờ thầy cô hướng dẫn lại các dạng toán cơ bản.",
-          "Cô tin em sẽ tiến bộ, hãy gạch chân các con số trước khi đặt phép tính.",
-          "Đầu năm em hãy luyện tính nhẩm 10 phép mỗi ngày để củng cố kiến thức."
+          "Em cần ôn lại đếm xuôi - đếm ngược và bảng cộng trừ trong 10.",
+          "Em hãy luyện tính nhẩm cộng trừ 10 phép mỗi tối ở nhà.",
+          "Em ngoan và chăm chú, cần đặt tính thẳng cột và đọc kĩ đề bài.",
+          "Em đã có cố gắng, hãy gạch chân các số trong đề trước khi tính.",
+          "Em chuyên cần đi học, cần nhờ cô và gia đình hướng dẫn lại phép tính cơ bản.",
+          "Cô tin em sẽ tiến bộ, hãy luyện so sánh và đếm các đồ vật xung quanh.",
+          "Em hãy luyện làm 5 bài tập trong vở mỗi ngày để củng cố kiến thức."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có tư duy Toán học sắc bén, tính toán nhanh chính xác cao.",
-          "Trong học kì I, em nắm vững kiến thức và vận dụng linh hoạt vào bài nâng cao.",
-          "Qua một học kì, em tính nhẩm xuất sắc và giải toán có lời văn mạch lạc.",
-          "Hết HK1, em làm chủ kiến thức Toán và biết tìm nhiều cách giải hay.",
-          "Kết thúc HK1, em phân tích đề bài nhanh và lập luận chặt chẽ khoa học.",
-          "Trong HK1, em có khả năng tự tìm cách giải sáng tạo, làm bài cẩn thận chính xác.",
-          "Qua một học kì, em là tấm gương sáng môn Toán cho cả lớp noi theo."
+          "Em có tư duy Toán học tốt, tính toán chính xác và giải toán có lời văn mạch lạc.",
+          "Em thuộc bảng cửu chương xuất sắc, vận dụng linh hoạt vào các dạng bài.",
+          "Em phân tích đề bài nhanh, lập luận chặt chẽ và trình bày rất khoa học.",
+          "Em có khả năng tự tìm cách giải sáng tạo, kiểm tra lại kết quả cẩn thận.",
+          "Em làm tính nhẩm nhanh, giải toán nhiều dạng và đạt kết quả xuất sắc.",
+          "Em yêu môn Toán, hăng hái phát biểu và làm các bài nâng cao linh hoạt.",
+          "Em có năng khiếu Toán, ghép số - so sánh và đặt tính đều rất chính xác."
         ],
         "tot": [
-          "Kết thúc HK1, em nắm vững kiến thức Toán và tính toán chính xác mạch lạc.",
-          "Trong học kì I, em tính nhanh, giải toán có lời văn rõ ràng và trình bày đẹp.",
-          "Qua một học kì, em thực hiện thành thạo các phép tính và làm bài cẩn thận.",
-          "Hết HK1, em hiểu bài nhanh và giải được các dạng bài tập theo chương trình.",
-          "Kết thúc HK1, em thuộc bảng cửu chương và ít mắc sai sót khi làm bài.",
-          "Trong HK1, em hăng hái phát biểu, làm bài cẩn thận và đạt kết quả tốt.",
-          "Qua một học kì, em vận dụng kiến thức vào giải bài toán có lời văn rất tốt."
+          "Em thực hiện thành thạo các phép tính, giải toán có lời văn rõ ràng.",
+          "Em thuộc bảng cửu chương, tính nhẩm tốt và ít sai sót khi làm bài.",
+          "Em hiểu bài nhanh, vận dụng được vào bài toán có lời văn đơn giản.",
+          "Em làm bài cẩn thận, đặt tính thẳng cột và trình bày bài đẹp.",
+          "Em hăng hái phát biểu, làm các bài tập theo chương trình tốt.",
+          "Em biết viết câu lời giải, làm bài toán có lời văn 1 bước thành thạo.",
+          "Em có ý thức học tập tốt, kiểm tra lại đáp số trước khi nộp bài."
         ],
         "ht": [
-          "Kết thúc HK1, em làm được các phép tính cơ bản và giải toán đơn giản.",
-          "Trong học kì I, em đã có tiến bộ trong tính toán và giải toán có lời văn.",
-          "Qua một học kì, em hiểu bài và làm được các bài tập theo yêu cầu của cô.",
-          "Hết HK1, em chăm chỉ học Toán và thực hiện đúng các phép tính cơ bản.",
-          "Kết thúc HK1, em đã thuộc bảng cửu chương và biết áp dụng vào tính toán.",
-          "Trong HK1, em hoàn thành các bài tập trên lớp đúng yêu cầu cô giao.",
-          "Qua một học kì, em làm được các bài toán cơ bản theo chương trình lớp."
+          "Em làm được các phép tính cộng trừ nhân chia cơ bản trong chương trình.",
+          "Em có tiến bộ trong tính toán, giải được bài toán đơn giản theo cô.",
+          "Em hiểu bài và thực hiện đúng các phép tính theo yêu cầu cô giao.",
+          "Em chăm chỉ học tập, làm được phần lớn bài tập cô giao trên lớp.",
+          "Em đã thuộc bảng cửu chương 2-3-4 và biết áp dụng vào tính đơn giản.",
+          "Em đặt tính thẳng cột, trình bày bài tương đối rõ ràng và sạch sẽ.",
+          "Em viết được phép tính theo mẫu, làm bài có ý thức và đầy đủ."
         ],
         "cht": [
-          "Kết thúc HK1, em cần ôn lại bảng cộng trừ và luyện làm tính cơ bản hằng ngày.",
-          "Trong HK1, em đã có cố gắng, hãy học thuộc bảng cửu chương và rèn tính nhẩm.",
-          "Qua một học kì, em cần đọc kĩ đề bài và suy nghĩ kĩ trước khi làm.",
-          "Hết HK1, em hãy luyện thêm các dạng toán cơ bản và nhờ cô hướng dẫn.",
-          "Em chuyên cần cả HK1, cần kiên trì luyện tập tính toán để củng cố nền tảng.",
-          "Cô tin em sẽ tiến bộ HK2, hãy đặt tính thẳng cột và đọc đề kĩ trước khi làm.",
-          "Kết thúc HK1, em hãy nhờ gia đình kèm thêm phép cộng trừ trong phạm vi đã học."
+          "Em cần ôn lại bảng cộng trừ và luyện làm tính cơ bản hằng ngày.",
+          "Em hãy học thuộc bảng cửu chương 2-3-4 và rèn tính nhẩm mỗi ngày.",
+          "Em ngoan và chăm chú, cần đọc kĩ đề trước khi đặt tính.",
+          "Em đã có cố gắng, hãy đặt tính thẳng cột và viết rõ các con số.",
+          "Em chuyên cần đi học, cần kiên trì luyện tính toán để củng cố kiến thức.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô hướng dẫn từng dạng toán đơn giản.",
+          "Em hãy làm 5-7 bài tập trong vở mỗi tối và hỏi cô khi chưa hiểu."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em phát huy tốt thành quả HK1, tính toán nhanh và chính xác.",
-          "Tiếp nối HK1, em vẫn duy trì phong độ xuất sắc, làm Toán sáng tạo và linh hoạt.",
-          "Sau kì nghỉ Tết, em vào học nhanh và giải toán có lời văn rất mạch lạc.",
-          "Nửa đầu HK2, em tư duy logic, vận dụng linh hoạt vào các bài nâng cao.",
-          "Bước vào HK2, em phân tích đề bài nhanh và trình bày rất khoa học.",
-          "Trong HK2, em là gương về môn Toán, có nhiều cách giải hay cho 1 bài.",
-          "Tiếp nối HK1, em tính nhẩm xuất sắc và vận dụng tốt vào thực tế."
+          "Em có tư duy Toán sắc bén, giải toán nhiều bước và biết tìm nhiều cách giải.",
+          "Em thuộc bảng cửu chương vững, vận dụng linh hoạt vào nhân chia và phân số.",
+          "Em phân tích đề bài kĩ, lập luận chặt chẽ và trình bày khoa học.",
+          "Em làm tính chính xác cao, giải toán có lời văn nhiều bước mạch lạc.",
+          "Em có khả năng tự sáng tạo cách giải hay, làm bài rất cẩn thận.",
+          "Em yêu môn Toán, hăng hái phát biểu và giải các bài nâng cao linh hoạt.",
+          "Em vận dụng kiến thức toán vào thực tế, làm bài chính xác và đầy đủ."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn làm tính đúng và giải toán mạch lạc theo chương trình.",
-          "Tiếp nối HK1, em duy trì kết quả tốt, tính toán chính xác và cẩn thận.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh, làm bài Toán đúng yêu cầu.",
-          "Nửa đầu HK2, em hăng hái phát biểu và làm tính chính xác trên lớp.",
-          "Bước vào HK2, em hiểu bài và vận dụng vào các bài tập có lời văn.",
-          "Trong HK2, em làm bài có suy nghĩ và biết kiểm tra lại đáp số.",
-          "Tiếp nối HK1, em trình bày bài Toán khoa học và làm bài cẩn thận."
+          "Em thực hiện thành thạo bốn phép tính, giải toán có lời văn nhiều bước.",
+          "Em thuộc bảng cửu chương, vận dụng vào nhân chia và phân số khá tốt.",
+          "Em hiểu bài và làm các dạng bài tập theo chương trình một cách chính xác.",
+          "Em đặt tính cẩn thận, trình bày bài khoa học và biết kiểm tra lại.",
+          "Em hăng hái phát biểu, làm bài có suy nghĩ và đạt kết quả tốt.",
+          "Em viết câu lời giải đầy đủ, giải toán có lời văn rõ ràng và đúng.",
+          "Em có ý thức học tập, làm bài chính xác và kiểm tra lại kết quả."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và làm được các bài tập Toán cơ bản.",
-          "Tiếp nối HK1, em chăm chú học tập và làm tính theo yêu cầu cô giao.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và thực hiện đúng phép tính cơ bản.",
-          "Nửa đầu HK2, em có tiến bộ trong giải toán có lời văn đơn giản.",
-          "Bước vào HK2, em làm được các bài tập theo chương trình của lớp đang học.",
-          "Trong HK2, em hoàn thành phần lớn bài cô giao và làm tính tương đối đúng.",
-          "Tiếp nối HK1, em đã thuộc bảng cửu chương và biết áp dụng vào tính toán."
+          "Em làm được các phép tính bốn loại trong phạm vi chương trình lớp.",
+          "Em có tiến bộ trong giải toán có lời văn và làm tính nhân chia.",
+          "Em hiểu bài và thực hiện đúng phép tính theo yêu cầu của cô giáo.",
+          "Em chăm chỉ học tập, làm được phần lớn bài tập trên lớp đầy đủ.",
+          "Em đã thuộc thêm bảng cửu chương và biết áp dụng vào nhân chia đơn giản.",
+          "Em đặt tính thẳng cột, trình bày bài tương đối rõ ràng.",
+          "Em viết câu lời giải theo mẫu, giải được bài toán 1 bước cơ bản."
         ],
         "cht": [
-          "Bước vào HK2, em cần kiên trì luyện bảng cộng trừ và tính nhẩm hằng ngày.",
-          "Tiếp nối HK1, em hãy tiếp tục học thuộc bảng cửu chương và rèn tính nhẩm.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học, làm bài tập đều đặn mỗi tối.",
-          "Nửa đầu HK2, em đã cố gắng, hãy đọc kĩ đề và đặt tính thẳng cột.",
-          "Em chuyên cần đi học, cần nhờ thầy cô và gia đình hướng dẫn từng dạng toán.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy kiên trì làm bài và hỏi khi chưa hiểu.",
-          "Bước vào HK2, em hãy luyện thêm các dạng bài quen thuộc 15 phút mỗi ngày."
+          "Em cần ôn lại bảng cửu chương và luyện làm tính nhân chia hằng ngày.",
+          "Em hãy đặt tính thẳng cột và đọc kĩ đề trước khi tính toán.",
+          "Em ngoan và chăm chỉ, cần luyện viết câu lời giải cho bài toán đơn giản.",
+          "Em đã có cố gắng, hãy gạch chân các số trong đề trước khi đặt tính.",
+          "Em chuyên cần đi học, cần kiên trì làm bài tập về nhà và hỏi khi chưa hiểu.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ gia đình kèm thêm phép tính cơ bản.",
+          "Em hãy làm 5-7 bài tập trong vở mỗi tối để củng cố kĩ năng tính toán."
         ]
       }
     },
     "tnxh": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em quan sát tinh tế và đặt nhiều câu hỏi hay về tự nhiên.",
-          "Đầu năm học, em có vốn hiểu biết phong phú về thế giới xung quanh và rất ham học.",
-          "Sau hơn một tháng, em vận dụng kiến thức vào cuộc sống hằng ngày rất tốt.",
-          "Em khởi đầu năm học xuất sắc, hăng hái phát biểu và mô tả sinh động.",
-          "Đầu năm học em đã nắm chắc các bài về cơ thể, gia đình và lớp học.",
-          "Em vào học nhanh, biết liên hệ kiến thức với thực tế xung quanh.",
-          "Bước vào năm học, em có ý thức bảo vệ môi trường và giữ vệ sinh rất tốt."
+          "Em quan sát tinh tế, đặt câu hỏi thông minh về cơ thể và gia đình.",
+          "Em hiểu sâu về các bộ phận cơ thể và biết chăm sóc bản thân rất tốt.",
+          "Em ham học hỏi, có nhiều hiểu biết về gia đình và lớp học của em.",
+          "Em mô tả sự vật rất sinh động, biết liên hệ với cuộc sống hằng ngày.",
+          "Em có tư duy khoa học, biết giữ vệ sinh cá nhân và lớp học rất sạch.",
+          "Em yêu thiên nhiên, biết tên nhiều đồ vật và đặt câu hỏi rất hay.",
+          "Em vận dụng kiến thức vào thực tế tốt, là tấm gương cho cả lớp."
         ],
         "tot": [
-          "Bước vào năm học, em nắm chắc các kiến thức cơ bản về tự nhiên và xã hội.",
-          "Đầu năm học, em chăm chú nghe giảng và mô tả sự vật xung quanh rõ ràng.",
-          "Sau hơn một tháng, em đã biết tên các bộ phận cơ thể và thành viên gia đình.",
-          "Em khởi đầu năm học tốt, hăng hái trả lời câu hỏi của cô trong giờ học.",
-          "Trong những tuần đầu, em quan sát tốt và biết kể về trường lớp.",
-          "Em vào năm học có ý thức, biết giữ vệ sinh lớp học và bảo vệ môi trường.",
-          "Bước vào năm học, em đã trả lời được các câu hỏi đơn giản về thiên nhiên."
+          "Em nắm vững kiến thức về cơ thể, biết kể tên các bộ phận chính xác.",
+          "Em biết kể về gia đình rõ ràng, mô tả các thành viên thân yêu.",
+          "Em chăm chú quan sát, trả lời được các câu hỏi của cô giáo.",
+          "Em có ý thức giữ gìn vệ sinh cá nhân và bảo vệ sức khỏe.",
+          "Em hăng hái phát biểu, biết các đồ dùng quen thuộc trong gia đình.",
+          "Em mô tả lớp học rõ ràng, biết tên các đồ dùng học tập.",
+          "Em có ý thức học tập tốt, hoàn thành các bài tập trên lớp."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với môn học và trả lời câu hỏi cơ bản.",
-          "Đầu năm học, em chăm chú nghe giảng và biết quan sát hình trong sách.",
-          "Sau hơn một tháng, em đã nắm được các kiến thức cơ bản về tự nhiên xã hội.",
-          "Em đang làm quen với cách học mới, mô tả được sự vật quen thuộc xung quanh.",
-          "Trong những tuần đầu, em đã biết tên các bộ phận cơ thể đơn giản.",
-          "Em vào năm học đều đặn, có ý thức giữ vệ sinh cá nhân và lớp học.",
-          "Bước vào năm học, em tham gia học tập tích cực theo hướng dẫn của cô."
+          "Em đã biết tên các bộ phận cơ thể và thành viên trong gia đình.",
+          "Em quan sát được hình trong sách, trả lời câu hỏi đơn giản đúng.",
+          "Em chăm chú nghe giảng, có tiến bộ trong tìm hiểu thế giới xung quanh.",
+          "Em biết các đồ vật quen thuộc trong nhà và lớp học.",
+          "Em có ý thức giữ vệ sinh, làm theo nội quy của trường lớp.",
+          "Em tham gia học tập đều đặn, kể được một số điều về gia đình.",
+          "Em đã làm quen với cách học mới, hoàn thành yêu cầu cơ bản."
         ],
         "cht": [
-          "Bước vào năm học, em cần quan sát kĩ tranh trong sách và lắng nghe cô giảng.",
-          "Đầu năm học, em hãy cùng cha mẹ kể tên các đồ vật, con vật quen thuộc.",
-          "Em cần mạnh dạn trả lời câu hỏi đơn giản của cô trong giờ học.",
-          "Em đã chuyên cần đi học, hãy chỉ và đọc tên các thành viên gia đình mỗi ngày.",
-          "Sau hơn một tháng, em cần luyện kể về gia đình và lớp học của em.",
-          "Cô tin em sẽ tiến bộ, hãy hỏi cô khi chưa hiểu về sự vật xung quanh.",
-          "Đầu năm em hãy luyện quan sát các đồ vật trong nhà và tập gọi tên."
+          "Em cần quan sát kĩ tranh trong sách và mạnh dạn trả lời câu hỏi của cô.",
+          "Em hãy cùng cha mẹ kể tên các đồ vật, con vật quen thuộc trong nhà.",
+          "Em ngoan và lễ phép, cần luyện kể về gia đình và các bạn trong lớp.",
+          "Em đã có cố gắng, hãy chỉ và đọc tên các bộ phận cơ thể mỗi ngày.",
+          "Em chăm chú nghe giảng, cần hỏi cô khi chưa hiểu về sự vật xung quanh.",
+          "Cô tin em sẽ tiến bộ, hãy giữ vệ sinh cá nhân sạch sẽ hằng ngày.",
+          "Em hãy quan sát đồ vật trong nhà và tập gọi tên chúng cho gia đình nghe."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em quan sát tinh tế, đặt câu hỏi hay và vận dụng kiến thức rất tốt.",
-          "Trong học kì I, em có vốn hiểu biết phong phú về tự nhiên xã hội xung quanh.",
-          "Qua một học kì, em hiểu sâu kiến thức và biết so sánh sự vật hiện tượng.",
-          "Hết HK1, em có tư duy khoa học, ham học hỏi và hăng hái phát biểu.",
-          "Kết thúc HK1, em yêu thiên nhiên và có ý thức bảo vệ môi trường rất tốt.",
-          "Trong HK1, em đặt nhiều câu hỏi thông minh về thế giới xung quanh em.",
-          "Qua một học kì, em là tấm gương sáng về môn TNXH cho cả lớp."
+          "Em có hiểu biết phong phú về gia đình, lớp học và các hoạt động hằng ngày.",
+          "Em quan sát tinh tế, mô tả sự vật sinh động và đặt câu hỏi rất hay.",
+          "Em hiểu sâu các bài học, biết liên hệ và so sánh sự vật hiện tượng.",
+          "Em có tư duy khoa học, biết bảo vệ sức khỏe và môi trường xung quanh.",
+          "Em ham học hỏi, có nhiều kiến thức về tự nhiên và xã hội xung quanh.",
+          "Em mô tả lớp học - nhà trường rõ ràng, biết hoạt động hằng ngày chi tiết.",
+          "Em yêu thiên nhiên, đặt nhiều câu hỏi thông minh về thế giới xung quanh."
         ],
         "tot": [
-          "Kết thúc HK1, em nắm chắc kiến thức về tự nhiên xã hội và phát biểu tốt.",
-          "Trong học kì I, em hiểu bài nhanh và mô tả sự vật xung quanh rõ ràng.",
-          "Qua một học kì, em chăm chỉ học tập và có nhiều hiểu biết về thế giới.",
-          "Hết HK1, em yêu quý gia đình trường lớp và bảo vệ môi trường rất tốt.",
-          "Kết thúc HK1, em vận dụng kiến thức vào thực tế hằng ngày khá tốt.",
-          "Trong HK1, em quan sát tốt và biết đặt câu hỏi thông minh khi học.",
-          "Qua một học kì, em đã biết kể về gia đình, trường lớp một cách rõ ràng."
+          "Em nắm chắc kiến thức về gia đình, lớp học và các hoạt động hằng ngày.",
+          "Em biết kể về trường lớp, mô tả các hoạt động trong ngày rõ ràng.",
+          "Em chăm chú quan sát, trả lời chính xác các câu hỏi của cô giáo.",
+          "Em có ý thức giữ vệ sinh cá nhân và bảo vệ sức khỏe bản thân.",
+          "Em hăng hái phát biểu xây dựng bài, biết tên các sự vật quen thuộc.",
+          "Em mô tả các bộ phận cơ thể đúng, biết chăm sóc bản thân rất tốt.",
+          "Em có ý thức học tập tốt, hoàn thành các bài tập đúng yêu cầu."
         ],
         "ht": [
-          "Kết thúc HK1, em đã nắm được các kiến thức cơ bản về tự nhiên và xã hội.",
-          "Trong học kì I, em chăm chú nghe giảng và trả lời được câu hỏi của cô.",
-          "Qua một học kì, em biết quan sát và mô tả các sự vật quen thuộc xung quanh.",
-          "Hết HK1, em có ý thức bảo vệ môi trường và giữ gìn sức khỏe bản thân.",
-          "Kết thúc HK1, em đã có tiến bộ trong tìm hiểu thế giới xung quanh.",
-          "Trong HK1, em đã biết tên các bộ phận cơ thể và thành viên gia đình.",
-          "Qua một học kì, em chăm chú quan sát hình trong sách và trả lời được câu hỏi."
+          "Em đã nắm được kiến thức về cơ thể, gia đình và lớp học.",
+          "Em chăm chú nghe giảng, trả lời được câu hỏi cơ bản của cô.",
+          "Em quan sát và mô tả các sự vật quen thuộc xung quanh đúng yêu cầu.",
+          "Em có ý thức bảo vệ sức khỏe và giữ gìn vệ sinh môi trường.",
+          "Em biết kể về gia đình và các hoạt động trong ngày của mình.",
+          "Em đã có tiến bộ trong tìm hiểu thế giới xung quanh.",
+          "Em tham gia học tập tích cực, hoàn thành các yêu cầu cơ bản."
         ],
         "cht": [
-          "Kết thúc HK1, em cần dành thời gian quan sát thế giới xung quanh và đọc sách.",
-          "Trong HK1, em đã có tiến bộ, hãy quan sát kĩ các hiện tượng tự nhiên hằng ngày.",
-          "Qua một học kì, em cần tham gia tích cực hơn trong các hoạt động của lớp.",
-          "Hết HK1, em hãy mạnh dạn trả lời câu hỏi đơn giản trong giờ học.",
-          "Em chuyên cần cả HK1, cần luyện kể về gia đình và đồ dùng quen thuộc.",
-          "Cô tin em sẽ tiến bộ HK2, hãy hỏi cô khi chưa hiểu về sự vật xung quanh.",
-          "Kết thúc HK1, em hãy chỉ và đọc tên các bộ phận cơ thể mỗi ngày 5 phút."
+          "Em cần dành thời gian quan sát thế giới xung quanh và đọc sách thiếu nhi.",
+          "Em hãy quan sát kĩ tranh trong sách và mạnh dạn trả lời cô.",
+          "Em ngoan và lễ phép, cần luyện kể về gia đình và lớp học của em.",
+          "Em đã có cố gắng, hãy chỉ và đọc tên các bộ phận cơ thể mỗi ngày.",
+          "Em chăm chú nghe giảng, cần hỏi cô khi chưa hiểu về sự vật xung quanh.",
+          "Cô tin em sẽ tiến bộ, hãy giữ vệ sinh cá nhân và quan tâm sức khỏe.",
+          "Em hãy cùng cha mẹ tìm hiểu các đồ vật, con vật quen thuộc trong nhà."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì sự ham học hỏi và quan sát tinh tế thế giới xung quanh.",
-          "Tiếp nối HK1, em vẫn đặt nhiều câu hỏi hay và vận dụng kiến thức rất tốt.",
-          "Sau kì nghỉ Tết, em vào học nhanh và hiểu sâu các bài về tự nhiên xã hội.",
-          "Nửa đầu HK2, em có tư duy khoa học và biết liên hệ kiến thức vào cuộc sống.",
-          "Bước vào HK2, em là tấm gương về môn TNXH, hăng hái phát biểu và sáng tạo.",
-          "Trong HK2, em quan sát tốt và mô tả sinh động các sự vật hiện tượng.",
-          "Tiếp nối HK1, em yêu thiên nhiên và tích cực bảo vệ môi trường lớp học."
+          "Em quan sát tinh tế các loài cây, con vật và mô tả rất sinh động chi tiết.",
+          "Em hiểu sâu về thực vật - động vật, biết liên hệ với cuộc sống hằng ngày.",
+          "Em có tư duy khoa học, đặt nhiều câu hỏi hay về thiên nhiên xung quanh.",
+          "Em nắm vững kiến thức về mùa - thời tiết, biết liên hệ vào thực tế.",
+          "Em yêu thiên nhiên, có ý thức bảo vệ môi trường và sức khỏe rất tốt.",
+          "Em mô tả các loài cây con vật chính xác, vận dụng kiến thức vào thực tế.",
+          "Em ham học hỏi, vốn kiến thức về tự nhiên xã hội phong phú đa dạng."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn nắm chắc kiến thức và tích cực phát biểu xây dựng bài.",
-          "Tiếp nối HK1, em chăm chỉ học tập và mô tả sự vật xung quanh rõ ràng.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và có nhiều hiểu biết hay.",
-          "Nửa đầu HK2, em hăng hái phát biểu và vận dụng kiến thức vào thực tế.",
-          "Bước vào HK2, em yêu quý trường lớp và có ý thức giữ vệ sinh rất tốt.",
-          "Trong HK2, em biết kể về gia đình, quê hương một cách rõ ràng tự nhiên.",
-          "Tiếp nối HK1, em quan sát tinh tế và đặt câu hỏi thông minh trong giờ học."
+          "Em nắm chắc kiến thức về cây cối, con vật và các mùa trong năm.",
+          "Em biết kể tên các loài cây hoa quen thuộc và mô tả đặc điểm chính.",
+          "Em chăm chú quan sát, trả lời câu hỏi về thiên nhiên xung quanh rõ ràng.",
+          "Em có ý thức bảo vệ môi trường, không vứt rác và yêu thiên nhiên.",
+          "Em hăng hái phát biểu, biết các loài vật nuôi quen thuộc trong gia đình.",
+          "Em mô tả thời tiết các mùa đúng, biết ăn mặc phù hợp với từng mùa.",
+          "Em có ý thức học tập tốt, hoàn thành các bài thực hành quan sát."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và trả lời được câu hỏi cơ bản của cô.",
-          "Tiếp nối HK1, em chăm chú nghe giảng và quan sát hình trong sách.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và mô tả được sự vật quen thuộc.",
-          "Nửa đầu HK2, em có ý thức bảo vệ môi trường và giữ vệ sinh hằng ngày.",
-          "Bước vào HK2, em đã biết tên các bộ phận cơ thể và thành viên gia đình.",
-          "Trong HK2, em có tiến bộ trong việc tìm hiểu thế giới xung quanh.",
-          "Tiếp nối HK1, em chăm chú quan sát và trả lời câu hỏi đơn giản đúng."
+          "Em đã biết tên một số loài cây, con vật và đặc điểm các mùa.",
+          "Em chăm chú nghe giảng, trả lời được câu hỏi đơn giản về thiên nhiên.",
+          "Em quan sát và mô tả các sự vật quen thuộc xung quanh đúng yêu cầu.",
+          "Em có ý thức bảo vệ môi trường và yêu quý cây xanh - con vật.",
+          "Em đã có tiến bộ trong tìm hiểu về thực vật và động vật quen thuộc.",
+          "Em biết các loài vật nuôi trong nhà và một số cây hoa xung quanh.",
+          "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục quan sát các hiện tượng tự nhiên hằng ngày.",
-          "Tiếp nối HK1, em hãy duy trì việc đọc sách và tìm hiểu thế giới xung quanh.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học và mạnh dạn phát biểu hơn.",
-          "Nửa đầu HK2, em đã cố gắng, hãy quan sát kĩ tranh ảnh trong sách giáo khoa.",
-          "Em chuyên cần đi học, cần cùng cha mẹ kể tên đồ vật, con vật quen thuộc.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy hỏi cô khi chưa hiểu sự vật hiện tượng.",
-          "Bước vào HK2, em hãy luyện kể về gia đình và lớp học cho cô và bạn nghe."
+          "Em cần quan sát cây cối, con vật xung quanh và đọc thêm sách thiếu nhi.",
+          "Em hãy cùng cha mẹ kể tên các loài cây, con vật quen thuộc ở nhà.",
+          "Em ngoan và lễ phép, cần luyện kể về thiên nhiên - thời tiết hằng ngày.",
+          "Em đã có cố gắng, hãy quan sát và mô tả các loài vật trong vườn.",
+          "Em chăm chú nghe giảng, cần mạnh dạn trả lời câu hỏi của cô về thiên nhiên.",
+          "Cô tin em sẽ tiến bộ, hãy yêu thiên nhiên và bảo vệ cây xanh xung quanh.",
+          "Em hãy chăm sóc một cây nhỏ ở nhà để hiểu hơn về thực vật."
         ]
       }
     },
     "khoahoc": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có tư duy khoa học xuất sắc và quan sát rất tinh tế.",
-          "Đầu năm học, em ham học hỏi, vốn kiến thức khoa học phong phú đa dạng.",
-          "Sau hơn một tháng, em đặt nhiều câu hỏi sâu sắc và tìm tòi hiện tượng tự nhiên.",
-          "Em khởi đầu năm học rất tốt, thực hành thí nghiệm thành thạo và sáng tạo.",
-          "Đầu năm học em đã hiểu sâu các bài và biết phân tích hiện tượng tự nhiên.",
-          "Em vào học nhanh, biết đặt giả thuyết và kiểm chứng bằng thí nghiệm đơn giản.",
-          "Bước vào năm học, em vận dụng kiến thức khoa học vào cuộc sống rất tốt."
+          "Em có tư duy khoa học tốt, hiểu sâu về dinh dưỡng và vệ sinh cơ thể.",
+          "Em quan sát tinh tế, đặt câu hỏi hay về hô hấp và tuần hoàn máu.",
+          "Em vận dụng kiến thức về sức khỏe vào ăn uống và sinh hoạt hằng ngày.",
+          "Em hiểu rõ tác hại của các bệnh truyền nhiễm và biết cách phòng tránh.",
+          "Em ham học hỏi, có vốn kiến thức về cơ thể người phong phú và sâu sắc.",
+          "Em phân tích nguyên nhân các bệnh thường gặp và giải thích rất logic.",
+          "Em yêu khoa học, làm bài thí nghiệm cẩn thận và ghi chép rất khoa học."
         ],
         "tot": [
-          "Bước vào năm học, em nắm chắc kiến thức khoa học và biết vận dụng thực tế.",
-          "Đầu năm học, em tích cực thực hành thí nghiệm và ghi chép kết quả cẩn thận.",
-          "Sau hơn một tháng, em quan sát tinh tế và phân tích hiện tượng tự nhiên tốt.",
-          "Em khởi đầu năm học khá tốt, hăng hái xây dựng bài và đặt câu hỏi hay.",
-          "Trong những tuần đầu, em đã biết bảo vệ sức khỏe và môi trường xung quanh.",
-          "Em vào năm học có ý thức, hiểu bài tốt và vận dụng vào giải thích hiện tượng.",
-          "Bước vào năm học, em phân loại sự vật theo đặc điểm và mô tả hiện tượng rõ ràng."
+          "Em nắm chắc kiến thức về dinh dưỡng và biết ăn đủ 4 nhóm thực phẩm.",
+          "Em hiểu cấu tạo cơ thể, biết cách giữ vệ sinh cá nhân hằng ngày.",
+          "Em chăm chỉ thí nghiệm, ghi chép kết quả quan sát đầy đủ và rõ ràng.",
+          "Em biết phòng tránh các bệnh thông thường, có ý thức bảo vệ sức khỏe.",
+          "Em hăng hái phát biểu, hiểu bài và vận dụng vào thực tế khá tốt.",
+          "Em quan sát tinh tế, mô tả hiện tượng tự nhiên rõ ràng và đúng.",
+          "Em có ý thức học tập, làm các bài thực hành theo hướng dẫn đầy đủ."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen lại với chương trình Khoa học trên lớp.",
-          "Đầu năm học, em chăm chỉ học tập và thực hiện đúng các thí nghiệm đơn giản.",
-          "Sau hơn một tháng, em biết quan sát và mô tả các hiện tượng tự nhiên quen thuộc.",
-          "Em đang dần quen với cách học Khoa học, tham gia học tập tích cực trên lớp.",
-          "Trong những tuần đầu, em đã có ý thức bảo vệ sức khỏe và môi trường.",
-          "Em vào năm học đều đặn, đã biết một số đặc điểm cơ bản về tự nhiên.",
-          "Bước vào năm học, em trả lời được các câu hỏi cơ bản về tự nhiên đúng."
+          "Em đã nắm được kiến thức cơ bản về cơ thể và dinh dưỡng.",
+          "Em chăm chỉ học tập, thực hiện đúng các thí nghiệm đơn giản trên lớp.",
+          "Em biết quan sát hiện tượng tự nhiên, trả lời câu hỏi đơn giản của cô.",
+          "Em có ý thức bảo vệ sức khỏe và giữ gìn vệ sinh môi trường.",
+          "Em đã hiểu cách phòng tránh một số bệnh thường gặp ở học sinh.",
+          "Em tham gia học tập tích cực, hoàn thành các yêu cầu của cô giáo.",
+          "Em đã biết tên các bộ phận cơ thể và chức năng cơ bản của chúng."
         ],
         "cht": [
-          "Bước vào năm học, em cần đọc lại bài và quan sát kĩ hình trong sách giáo khoa.",
-          "Đầu năm học, em hãy cùng gia đình tìm hiểu thêm về cây cối và con vật.",
-          "Em cần mạnh dạn phát biểu khi cô đặt câu hỏi và hỏi lại khi chưa hiểu.",
-          "Em đã chuyên cần đi học, cần luyện trả lời câu hỏi đơn giản về tự nhiên.",
-          "Sau hơn một tháng, em hãy ghi chép cẩn thận và làm thí nghiệm đơn giản ở nhà.",
-          "Cô tin em sẽ tiến bộ, hãy ôn lại bài và làm bài tập trong vở thực hành.",
-          "Đầu năm em hãy đọc sách khoa học thiếu nhi để hiểu hiện tượng xung quanh."
+          "Em cần đọc lại bài và quan sát kĩ hình trong sách giáo khoa Khoa học.",
+          "Em hãy cùng gia đình tìm hiểu thêm về dinh dưỡng và bảo vệ sức khỏe.",
+          "Em ngoan và chuyên cần, cần mạnh dạn phát biểu khi cô đặt câu hỏi.",
+          "Em đã có cố gắng, hãy luyện trả lời câu hỏi về cơ thể và sức khỏe.",
+          "Em chăm chú nghe giảng, cần ghi chép cẩn thận khi làm bài thí nghiệm.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô khi gặp hiện tượng tự nhiên chưa hiểu.",
+          "Em hãy ăn uống đầy đủ và giữ vệ sinh cá nhân để có sức khỏe tốt."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có tư duy khoa học sắc bén và suy luận logic chính xác.",
-          "Trong học kì I, em nắm vững kiến thức và thực hành thí nghiệm rất thành thạo.",
-          "Qua một học kì, em yêu khoa học và có nhiều khám phá thú vị về tự nhiên.",
-          "Hết HK1, em hiểu sâu hiện tượng tự nhiên và biết phân tích giải thích tốt.",
-          "Kết thúc HK1, em đặt nhiều câu hỏi hay và biết giải thích hiện tượng sáng tạo.",
-          "Trong HK1, em là gương sáng về môn Khoa học cho cả lớp noi theo.",
-          "Qua một học kì, em vận dụng kiến thức khoa học vào cuộc sống xuất sắc."
+          "Em hiểu sâu về tính chất của nước - không khí, biết liên hệ vào thực tế.",
+          "Em có tư duy khoa học sắc bén, thí nghiệm cẩn thận và suy luận logic.",
+          "Em quan sát tinh tế các hiện tượng vật chất, ghi chép kết quả khoa học.",
+          "Em ham khám phá, biết đặt giả thuyết và kiểm chứng bằng thí nghiệm.",
+          "Em vận dụng kiến thức về ánh sáng - âm thanh vào cuộc sống rất tốt.",
+          "Em có vốn kiến thức khoa học phong phú, biết giải thích các hiện tượng.",
+          "Em yêu môn Khoa học, hăng hái phát biểu và làm thí nghiệm sáng tạo."
         ],
         "tot": [
-          "Kết thúc HK1, em nắm chắc kiến thức khoa học và biết vận dụng vào thực tế.",
-          "Trong học kì I, em tích cực thí nghiệm và ghi chép cẩn thận đầy đủ kết quả.",
-          "Qua một học kì, em quan sát tinh tế và phân tích hiện tượng tự nhiên tốt.",
-          "Hết HK1, em hăng hái xây dựng bài và có nhiều kiến giải hay trong giờ học.",
-          "Kết thúc HK1, em biết bảo vệ sức khỏe và môi trường sống xung quanh.",
-          "Trong HK1, em hiểu bài tốt và vận dụng kiến thức giải thích các hiện tượng.",
-          "Qua một học kì, em biết phân loại sự vật và mô tả hiện tượng rõ ràng."
+          "Em nắm chắc kiến thức về nước, không khí và các hiện tượng thường gặp.",
+          "Em làm thí nghiệm cẩn thận, ghi chép kết quả đầy đủ theo cô hướng dẫn.",
+          "Em quan sát tinh tế các hiện tượng tự nhiên, mô tả rõ ràng và đúng.",
+          "Em biết bảo vệ sức khỏe và môi trường sống xung quanh hằng ngày.",
+          "Em hăng hái phát biểu, hiểu bài và biết liên hệ với thực tế.",
+          "Em phân loại được các vật theo tính chất và mô tả hiện tượng tự nhiên.",
+          "Em có ý thức học tập tốt, hoàn thành các bài thực hành đúng yêu cầu."
         ],
         "ht": [
-          "Kết thúc HK1, em đã nắm được các kiến thức khoa học cơ bản theo chương trình.",
-          "Trong học kì I, em chăm chỉ học tập và thực hiện đúng thí nghiệm đơn giản.",
-          "Qua một học kì, em biết quan sát và mô tả các hiện tượng tự nhiên quen thuộc.",
-          "Hết HK1, em tham gia học tập tích cực và hoàn thành yêu cầu của cô.",
-          "Kết thúc HK1, em có ý thức bảo vệ sức khỏe và giữ vệ sinh môi trường.",
-          "Trong HK1, em đã biết một số đặc điểm của con người, động vật, môi trường.",
-          "Qua một học kì, em đã trả lời được câu hỏi cơ bản về tự nhiên đúng."
+          "Em đã nắm được kiến thức cơ bản về nước, không khí và sức khỏe.",
+          "Em chăm chỉ học tập, thực hiện đúng các thí nghiệm đơn giản theo cô.",
+          "Em biết quan sát và mô tả hiện tượng tự nhiên quen thuộc xung quanh.",
+          "Em có ý thức bảo vệ môi trường và giữ vệ sinh nguồn nước.",
+          "Em đã có tiến bộ trong việc tìm hiểu các hiện tượng vật chất.",
+          "Em tham gia học tập tích cực, hoàn thành yêu cầu của cô giáo.",
+          "Em đã trả lời được câu hỏi cơ bản về tính chất nước và không khí."
         ],
         "cht": [
-          "Kết thúc HK1, em cần tích cực thí nghiệm và đọc thêm sách khoa học.",
-          "Trong HK1, em đã có tiến bộ, hãy quan sát các hiện tượng xung quanh hằng ngày.",
-          "Qua một học kì, em nên đặt câu hỏi và tìm hiểu sâu hơn kiến thức khoa học.",
-          "Hết HK1, em hãy đọc lại bài học và quan sát kĩ tranh ảnh trong sách.",
-          "Em chuyên cần cả HK1, cần cùng gia đình tìm hiểu thêm về cây cối con vật.",
-          "Cô tin em sẽ tiến bộ HK2, hãy mạnh dạn phát biểu và hỏi khi chưa hiểu bài.",
-          "Kết thúc HK1, em hãy dành thời gian xem bài cũ và làm bài tập thực hành."
+          "Em cần đọc lại bài và quan sát kĩ tranh ảnh trong sách giáo khoa.",
+          "Em hãy cùng gia đình tìm hiểu thêm về nước, không khí xung quanh.",
+          "Em ngoan và chuyên cần, cần mạnh dạn đặt câu hỏi khi chưa hiểu bài.",
+          "Em đã có cố gắng, hãy thử thí nghiệm đơn giản tại nhà với nước.",
+          "Em chăm chú nghe giảng, cần ghi chép kết quả khi làm thí nghiệm.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn hỏi khi gặp hiện tượng lạ.",
+          "Em hãy đọc sách khoa học thiếu nhi 10 phút mỗi ngày để mở rộng kiến thức."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì tư duy khoa học sắc bén và suy luận logic chính xác.",
-          "Tiếp nối HK1, em vẫn yêu khoa học và có nhiều khám phá thú vị về tự nhiên.",
-          "Sau kì nghỉ Tết, em vào học nhanh và thực hành thí nghiệm rất thành thạo.",
-          "Nửa đầu HK2, em hiểu sâu hiện tượng tự nhiên và biết liên hệ thực tế tốt.",
-          "Bước vào HK2, em là gương về môn Khoa học, đặt nhiều câu hỏi sâu sắc.",
-          "Trong HK2, em vận dụng kiến thức khoa học vào giải thích hiện tượng xuất sắc.",
-          "Tiếp nối HK1, em có vốn kiến thức khoa học phong phú và linh hoạt."
+          "Em hiểu sâu về thực vật - động vật, biết quá trình sinh sản và môi trường sống.",
+          "Em có tư duy khoa học, biết phân loại và mô tả các loài rất chính xác.",
+          "Em quan sát tinh tế chu trình sống của cây, ghi chép quá trình rất khoa học.",
+          "Em vận dụng kiến thức vào chăm sóc cây trồng và vật nuôi trong gia đình.",
+          "Em ham học hỏi, có vốn kiến thức về thực vật - động vật phong phú.",
+          "Em làm thí nghiệm khám phá điều kiện sống của cây cẩn thận, sáng tạo.",
+          "Em yêu thiên nhiên, có ý thức bảo vệ động thực vật và môi trường sống."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn nắm chắc kiến thức và biết vận dụng vào thực tế.",
-          "Tiếp nối HK1, em tích cực thí nghiệm và ghi chép kết quả đầy đủ.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh, phân tích hiện tượng tự nhiên tốt.",
-          "Nửa đầu HK2, em hăng hái xây dựng bài và đặt nhiều câu hỏi hay.",
-          "Bước vào HK2, em biết bảo vệ sức khỏe và môi trường sống xung quanh.",
-          "Trong HK2, em hiểu bài tốt và vận dụng giải thích các hiện tượng quen thuộc.",
-          "Tiếp nối HK1, em quan sát tinh tế và mô tả sự vật hiện tượng rõ ràng."
+          "Em nắm chắc kiến thức về thực vật, động vật và môi trường sống của chúng.",
+          "Em biết các giai đoạn phát triển của cây, mô tả đặc điểm động vật rõ ràng.",
+          "Em làm thí nghiệm về điều kiện sống của cây cẩn thận và đúng yêu cầu.",
+          "Em hăng hái phát biểu, hiểu bài và biết liên hệ với cuộc sống thực tế.",
+          "Em có ý thức bảo vệ động vật và thực vật xung quanh mình.",
+          "Em quan sát các loài cây, con vật và mô tả đặc điểm chính xác.",
+          "Em có ý thức học tập tốt, hoàn thành các bài thực hành quan sát đầy đủ."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và thực hiện được thí nghiệm đơn giản.",
-          "Tiếp nối HK1, em chăm chỉ học tập và mô tả các hiện tượng tự nhiên quen thuộc.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và tham gia học tập tích cực.",
-          "Nửa đầu HK2, em có ý thức bảo vệ sức khỏe và giữ gìn vệ sinh môi trường.",
-          "Bước vào HK2, em đã biết một số đặc điểm của con người và động vật.",
-          "Trong HK2, em có tiến bộ trong tìm hiểu thế giới xung quanh.",
-          "Tiếp nối HK1, em trả lời được câu hỏi cơ bản về tự nhiên đúng theo cô."
+          "Em đã nắm được kiến thức cơ bản về thực vật và động vật quen thuộc.",
+          "Em chăm chỉ học tập, làm thí nghiệm đơn giản theo cô hướng dẫn.",
+          "Em biết quan sát và mô tả các loài cây, con vật quen thuộc.",
+          "Em có ý thức bảo vệ động vật và thực vật, không bẻ cành phá hoa.",
+          "Em đã có tiến bộ trong việc tìm hiểu môi trường sống của các loài.",
+          "Em tham gia học tập tích cực, hoàn thành bài tập đúng yêu cầu.",
+          "Em đã trả lời được câu hỏi cơ bản về cây cối và động vật."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục đặt câu hỏi và tìm hiểu sâu kiến thức khoa học.",
-          "Tiếp nối HK1, em hãy duy trì việc quan sát các hiện tượng tự nhiên xung quanh.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học và mạnh dạn phát biểu hơn.",
-          "Nửa đầu HK2, em đã cố gắng, hãy đọc lại bài và làm thí nghiệm tại nhà.",
-          "Em chuyên cần đi học, cần ghi chép cẩn thận và làm bài tập thực hành đầy đủ.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy mạnh dạn hỏi khi gặp hiện tượng lạ.",
-          "Bước vào HK2, em hãy đọc sách khoa học thiếu nhi 10 phút mỗi ngày."
+          "Em cần quan sát các loài cây, con vật xung quanh và đọc thêm sách.",
+          "Em hãy cùng gia đình chăm sóc cây cối ở nhà và mô tả quá trình lớn.",
+          "Em ngoan và chuyên cần, cần mạnh dạn phát biểu trong giờ học.",
+          "Em đã có cố gắng, hãy thử quan sát chu trình sống của cây hằng ngày.",
+          "Em chăm chú nghe giảng, cần ghi chép cẩn thận khi quan sát thực tế.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô khi gặp hiện tượng lạ về tự nhiên.",
+          "Em hãy đọc sách thiếu nhi về động thực vật mỗi tối để hiểu thêm."
         ]
       }
     },
     "lichsudia": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có hiểu biết sâu rộng về lịch sử và địa lí Việt Nam.",
-          "Đầu năm học, em ghi nhớ chính xác các sự kiện và đọc bản đồ rất tốt.",
-          "Sau hơn một tháng, em kể chuyện lịch sử sinh động, lôi cuốn người nghe.",
-          "Em khởi đầu năm học rất tốt, yêu lịch sử quê hương và tự hào về dân tộc.",
-          "Đầu năm học em đã hiểu sâu các mốc lịch sử và liên hệ với cuộc sống.",
-          "Em vào học nhanh, có nhiều hiểu biết về lịch sử và địa lí Việt Nam.",
-          "Bước vào năm học, em đọc bản đồ rất tốt và kể sự kiện lịch sử mạch lạc."
+          "Em hiểu sâu về vị trí địa lí Việt Nam và biết các vùng địa hình chính.",
+          "Em ghi nhớ chính xác các sự kiện thời Hùng Vương - An Dương Vương.",
+          "Em đọc bản đồ thành thạo, chỉ được các vùng miền của Tổ quốc.",
+          "Em yêu lịch sử quê hương, kể chuyện về Hai Bà Trưng lôi cuốn người nghe.",
+          "Em có vốn kiến thức phong phú về buổi đầu dựng nước và giữ nước.",
+          "Em ham học hỏi, biết liên hệ kiến thức lịch sử với cuộc sống hiện tại.",
+          "Em vận dụng kiến thức địa lí vào tìm hiểu quê hương rất tốt."
         ],
         "tot": [
-          "Bước vào năm học, em nắm chắc kiến thức và hăng hái phát biểu xây dựng bài.",
-          "Đầu năm học, em hiểu các sự kiện và biết liên hệ với địa danh quen thuộc.",
-          "Sau hơn một tháng, em đọc bản đồ khá tốt và ghi nhớ địa danh chính xác.",
-          "Em khởi đầu năm học khá tốt, yêu quê hương và có nhiều hiểu biết về Việt Nam.",
-          "Trong những tuần đầu, em trình bày kiến thức lịch sử rõ ràng và mạch lạc.",
-          "Em vào năm học có ý thức, biết tra cứu và tìm hiểu thêm ngoài bài học.",
-          "Bước vào năm học, em ghi nhớ tốt các mốc lịch sử quan trọng."
+          "Em nắm chắc vị trí địa lí Việt Nam và ba vùng địa hình chính của đất nước.",
+          "Em biết các sự kiện thời Hùng Vương và mở nước của các vua Hùng.",
+          "Em đọc bản đồ khá tốt, chỉ được các tỉnh thành quen thuộc.",
+          "Em hăng hái phát biểu, hiểu các sự kiện lịch sử buổi đầu dựng nước.",
+          "Em ghi nhớ tốt các nhân vật lịch sử như Hai Bà Trưng - Bà Triệu.",
+          "Em yêu quê hương đất nước, có nhiều hiểu biết về Việt Nam.",
+          "Em chăm chỉ học tập, trình bày kiến thức lịch sử rõ ràng mạch lạc."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với chương trình LSĐL trên lớp.",
-          "Đầu năm học, em chăm chú nghe giảng và trả lời được câu hỏi đơn giản.",
-          "Sau hơn một tháng, em biết một số sự kiện và địa danh quen thuộc.",
-          "Em đang dần quen với cách học mới, ghi nhớ thời gian và sự kiện cơ bản.",
-          "Trong những tuần đầu, em có ý thức tìm hiểu về quê hương đất nước.",
-          "Em vào năm học đều đặn, biết tên một số tỉnh thành và đặc điểm cơ bản.",
-          "Bước vào năm học, em đã nhớ một số nhân vật lịch sử trong chương trình."
+          "Em đã nắm được kiến thức cơ bản về vị trí địa lí Việt Nam.",
+          "Em biết một số sự kiện lịch sử buổi đầu dựng nước và các vua Hùng.",
+          "Em chăm chú nghe giảng, trả lời được câu hỏi đơn giản của cô.",
+          "Em có ý thức tìm hiểu về quê hương và đất nước Việt Nam.",
+          "Em đã nhớ được một số nhân vật lịch sử trong chương trình.",
+          "Em biết tên một số tỉnh thành quen thuộc trên bản đồ Việt Nam.",
+          "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp."
         ],
         "cht": [
-          "Bước vào năm học, em cần ôn lại các mốc thời gian và nhân vật lịch sử.",
-          "Đầu năm học, em hãy xem bản đồ Việt Nam và tập đọc tên các tỉnh thành.",
-          "Em cần dành thời gian học thuộc bài và làm đầy đủ bài tập trên lớp.",
-          "Em đã chuyên cần đi học, hãy kể lại sự kiện lịch sử cho gia đình nghe.",
-          "Sau hơn một tháng, em cần luyện đọc lại bài và làm bài trong vở bài tập.",
-          "Cô tin em sẽ tiến bộ, hãy hỏi cô và bạn về sự kiện lịch sử chưa nhớ rõ.",
-          "Đầu năm em hãy xem chương trình thiếu nhi về lịch sử để hiểu dễ hơn."
+          "Em cần ghi nhớ các mốc thời gian Hùng Vương và sự kiện dựng nước.",
+          "Em hãy xem bản đồ Việt Nam mỗi tuần và tập đọc tên các vùng miền.",
+          "Em ngoan và lễ phép, cần dành thời gian học thuộc bài và làm bài tập.",
+          "Em đã có cố gắng, hãy kể về Hai Bà Trưng - Bà Triệu cho gia đình nghe.",
+          "Em chuyên cần đi học, cần luyện đọc lại bài và làm bài trong vở.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô và bạn về sự kiện chưa nhớ rõ.",
+          "Em hãy xem chương trình thiếu nhi về lịch sử để nhớ lâu hơn."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có hiểu biết sâu sắc về lịch sử và địa lí Việt Nam.",
-          "Trong học kì I, em ghi nhớ chính xác các sự kiện và đọc bản đồ rất tốt.",
-          "Qua một học kì, em yêu lịch sử quê hương và tự hào về truyền thống dân tộc.",
-          "Hết HK1, em kể lại sự kiện lịch sử sinh động và liên hệ thực tế tốt.",
-          "Kết thúc HK1, em hiểu sâu các mốc lịch sử và đọc bản đồ rất thành thạo.",
-          "Trong HK1, em ham học hỏi và có nhiều hiểu biết về lịch sử Việt Nam.",
-          "Qua một học kì, em là tấm gương sáng về môn LSĐL cho cả lớp."
+          "Em hiểu sâu về thời kì Ngô - Đinh - Tiền Lê và sự nghiệp Ngô Quyền.",
+          "Em ghi nhớ chính xác các triều đại Lý - Trần và công lao Lý Thái Tổ.",
+          "Em đọc bản đồ thành thạo, chỉ được các tỉnh thành miền Bắc - Trung - Nam.",
+          "Em yêu lịch sử quê hương, kể chuyện Trần Hưng Đạo rất lôi cuốn.",
+          "Em có vốn kiến thức phong phú về các trận đánh chống quân xâm lược.",
+          "Em ham học hỏi, biết liên hệ các sự kiện lịch sử với truyền thống dân tộc.",
+          "Em vận dụng kiến thức về vị trí địa lí từng vùng vào hiểu cuộc sống quê hương."
         ],
         "tot": [
-          "Kết thúc HK1, em nắm chắc kiến thức và hăng hái phát biểu trong giờ học.",
-          "Trong học kì I, em hiểu các sự kiện và liên hệ với địa danh quen thuộc.",
-          "Qua một học kì, em đọc bản đồ khá tốt và ghi nhớ địa danh chính xác.",
-          "Hết HK1, em yêu quê hương đất nước và có nhiều hiểu biết về Việt Nam.",
-          "Kết thúc HK1, em chăm chỉ học tập và trình bày kiến thức rõ ràng mạch lạc.",
-          "Trong HK1, em biết tra cứu tài liệu và tìm hiểu thêm ngoài bài học.",
-          "Qua một học kì, em ghi nhớ tốt các mốc lịch sử và đặc điểm địa lí từng miền."
+          "Em nắm chắc các triều đại Ngô - Đinh - Tiền Lê và Lý - Trần.",
+          "Em biết công lao của Lý Thái Tổ trong việc dời đô về Thăng Long.",
+          "Em đọc bản đồ khá tốt, ghi nhớ các tỉnh thành và đặc điểm vùng miền.",
+          "Em hăng hái phát biểu, hiểu các sự kiện lịch sử và liên hệ với thực tế.",
+          "Em yêu quê hương đất nước, có nhiều hiểu biết về Việt Nam.",
+          "Em chăm chỉ học tập, trình bày kiến thức lịch sử rõ ràng và mạch lạc.",
+          "Em ghi nhớ tốt các trận đánh chống quân Tống - quân Nguyên."
         ],
         "ht": [
-          "Kết thúc HK1, em đã nắm được kiến thức cơ bản về lịch sử và địa lí Việt Nam.",
-          "Trong học kì I, em chăm chú nghe giảng và trả lời được câu hỏi của cô.",
-          "Qua một học kì, em biết một số sự kiện lịch sử và địa danh quen thuộc.",
-          "Hết HK1, em đã có tiến bộ trong việc ghi nhớ thời gian và sự kiện.",
-          "Kết thúc HK1, em có ý thức tìm hiểu về quê hương và đất nước Việt Nam.",
-          "Trong HK1, em đã nhớ được một số nhân vật và sự kiện trong chương trình.",
-          "Qua một học kì, em biết tên các tỉnh thành và đặc điểm địa lí cơ bản."
+          "Em đã nắm được kiến thức cơ bản về các triều đại Ngô - Đinh - Lý - Trần.",
+          "Em biết một số sự kiện lịch sử quan trọng trong chương trình.",
+          "Em chăm chú nghe giảng, trả lời được câu hỏi cơ bản của cô.",
+          "Em có ý thức tìm hiểu về truyền thống dân tộc Việt Nam.",
+          "Em đã nhớ được một số nhân vật lịch sử như Lý Thái Tổ - Trần Hưng Đạo.",
+          "Em biết tên các tỉnh thành và đặc điểm địa lí cơ bản từng vùng.",
+          "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp."
         ],
         "cht": [
-          "Kết thúc HK1, em cần ghi nhớ các mốc thời gian và sự kiện quan trọng.",
-          "Trong HK1, em đã có cố gắng, hãy đọc thêm sách lịch sử và xem bản đồ.",
-          "Qua một học kì, em nên dành thời gian học thuộc bài và làm bài tập đầy đủ.",
-          "Hết HK1, em hãy xem bản đồ Việt Nam mỗi tuần và đọc tên các tỉnh thành.",
-          "Em chuyên cần cả HK1, cần kể sự kiện lịch sử ngắn cho gia đình nghe.",
-          "Cô tin em sẽ tiến bộ HK2, hãy hỏi cô về các sự kiện chưa nhớ rõ.",
-          "Kết thúc HK1, em hãy xem chương trình thiếu nhi về lịch sử để nhớ lâu."
+          "Em cần ghi nhớ các triều đại Lý - Trần và những sự kiện quan trọng.",
+          "Em hãy đọc thêm sách lịch sử và xem bản đồ Việt Nam mỗi tuần.",
+          "Em ngoan và lễ phép, cần dành thời gian học thuộc bài và làm bài tập.",
+          "Em đã có cố gắng, hãy kể về Trần Hưng Đạo cho gia đình nghe.",
+          "Em chuyên cần đi học, cần luyện đọc bài và làm bài tập trong vở.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô về sự kiện chưa nhớ rõ.",
+          "Em hãy xem phim hoạt hình về lịch sử để nhớ các trận đánh hay."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì hiểu biết sâu rộng về lịch sử và địa lí Việt Nam.",
-          "Tiếp nối HK1, em vẫn ghi nhớ chính xác sự kiện và đọc bản đồ rất tốt.",
-          "Sau kì nghỉ Tết, em vào học nhanh và kể lại sự kiện lịch sử rất sinh động.",
-          "Nửa đầu HK2, em yêu lịch sử quê hương và tự hào về truyền thống dân tộc.",
-          "Bước vào HK2, em là tấm gương về môn LSĐL, đọc bản đồ rất thành thạo.",
-          "Trong HK2, em hiểu sâu các mốc lịch sử và liên hệ vào cuộc sống hiện tại.",
-          "Tiếp nối HK1, em có vốn kiến thức lịch sử địa lí phong phú và sâu sắc."
+          "Em hiểu sâu về thời kì Hậu Lê và công lao của vua Lê Lợi - Nguyễn Trãi.",
+          "Em ghi nhớ chính xác phong trào Tây Sơn và các trận đánh của Quang Trung.",
+          "Em đọc bản đồ thành thạo, hiểu đặc điểm dân cư và kinh tế từng vùng.",
+          "Em yêu lịch sử quê hương, kể chuyện Quang Trung đại phá quân Thanh lôi cuốn.",
+          "Em có kiến thức phong phú về thời Nguyễn và các vua đầu triều Nguyễn.",
+          "Em ham học hỏi, biết liên hệ các sự kiện lịch sử với truyền thống yêu nước.",
+          "Em vận dụng kiến thức địa lí về dân cư - kinh tế vào hiểu cuộc sống quê hương."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn nắm chắc kiến thức và hăng hái phát biểu trong giờ học.",
-          "Tiếp nối HK1, em hiểu sự kiện và liên hệ với địa danh quen thuộc tốt.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và đọc bản đồ thành thạo.",
-          "Nửa đầu HK2, em yêu quê hương đất nước và có nhiều hiểu biết về Việt Nam.",
-          "Bước vào HK2, em trình bày kiến thức lịch sử rõ ràng và mạch lạc.",
-          "Trong HK2, em biết tra cứu tài liệu và tìm hiểu thêm về quê hương.",
-          "Tiếp nối HK1, em ghi nhớ tốt các mốc lịch sử và đặc điểm địa lí từng vùng."
+          "Em nắm chắc kiến thức về thời Hậu Lê - Tây Sơn - Nguyễn và các vị vua.",
+          "Em biết công lao Lê Lợi đánh đuổi quân Minh và lập triều Hậu Lê.",
+          "Em đọc bản đồ khá tốt, hiểu đặc điểm dân cư - kinh tế các vùng miền.",
+          "Em hăng hái phát biểu, hiểu các sự kiện lịch sử và liên hệ với thực tế.",
+          "Em ghi nhớ tốt phong trào Tây Sơn và chiến thắng Ngọc Hồi - Đống Đa.",
+          "Em yêu quê hương đất nước, có nhiều hiểu biết về Việt Nam.",
+          "Em chăm chỉ học tập, trình bày kiến thức lịch sử rõ ràng và mạch lạc."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và trả lời được câu hỏi cơ bản của cô.",
-          "Tiếp nối HK1, em chăm chú nghe giảng và nhớ một số sự kiện đơn giản.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và biết một số địa danh trên bản đồ.",
-          "Nửa đầu HK2, em có tiến bộ trong việc ghi nhớ thời gian và sự kiện.",
-          "Bước vào HK2, em có ý thức tìm hiểu về quê hương và đất nước Việt Nam.",
-          "Trong HK2, em đã nhớ thêm một số nhân vật lịch sử trong chương trình.",
-          "Tiếp nối HK1, em biết tên các tỉnh thành cơ bản trên bản đồ Việt Nam."
+          "Em đã nắm được kiến thức cơ bản về thời Hậu Lê và Tây Sơn.",
+          "Em biết một số sự kiện lịch sử và nhân vật trong chương trình.",
+          "Em chăm chú nghe giảng, trả lời được câu hỏi cơ bản của cô.",
+          "Em có ý thức tìm hiểu về truyền thống dân tộc Việt Nam.",
+          "Em đã nhớ được Lê Lợi - Nguyễn Trãi - Quang Trung trong các bài học.",
+          "Em biết một số đặc điểm dân cư - kinh tế cơ bản từng vùng.",
+          "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp."
         ],
         "cht": [
-          "Bước vào HK2, em cần kiên trì ghi nhớ mốc thời gian và sự kiện lịch sử.",
-          "Tiếp nối HK1, em hãy đọc thêm sách lịch sử và xem bản đồ Việt Nam hằng tuần.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học và làm bài tập đầy đủ.",
-          "Nửa đầu HK2, em đã cố gắng, hãy kể sự kiện lịch sử cho gia đình nghe.",
-          "Em chuyên cần đi học, cần luyện đọc lại bài và làm bài tập trong vở.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy hỏi cô về sự kiện chưa nhớ rõ.",
-          "Bước vào HK2, em hãy xem chương trình thiếu nhi về lịch sử mỗi tuần."
+          "Em cần ghi nhớ các mốc thời gian thời Lê - Tây Sơn - Nguyễn.",
+          "Em hãy xem bản đồ Việt Nam và tập kể tên các tỉnh thành.",
+          "Em ngoan và lễ phép, cần dành thời gian học bài và làm bài tập đầy đủ.",
+          "Em đã có cố gắng, hãy kể về Quang Trung đại phá quân Thanh cho gia đình.",
+          "Em chuyên cần đi học, cần luyện đọc bài và làm bài tập trong vở.",
+          "Cô tin em sẽ tiến bộ, hãy hỏi cô và bạn về sự kiện chưa nhớ rõ.",
+          "Em hãy xem chương trình thiếu nhi về lịch sử để nhớ các nhân vật lịch sử."
         ]
       }
     },
     "daoduc": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em là tấm gương sáng về đạo đức cho cả lớp noi theo.",
-          "Đầu năm học, em ngoan ngoãn lễ phép và biết yêu thương giúp đỡ bạn bè.",
-          "Sau hơn một tháng, em hiểu sâu và thực hành tốt các chuẩn mực đạo đức.",
-          "Em khởi đầu năm học rất tốt, trung thực thật thà và có lòng nhân ái cao.",
-          "Đầu năm học em đã thể hiện sự kính trên nhường dưới và hòa nhã với mọi người.",
-          "Em vào học có ý thức rèn luyện đạo đức và là gương cho các bạn.",
-          "Bước vào năm học, em sống chân thành và biết quan tâm đến mọi người."
+          "Em ngoan ngoãn lễ phép với thầy cô, là tấm gương sáng cho cả lớp.",
+          "Em biết kính trọng người lớn tuổi và chào hỏi mọi người rất lễ phép.",
+          "Em luôn gọn gàng ngăn nắp trong học tập và sinh hoạt hằng ngày.",
+          "Em yêu thương giúp đỡ bạn bè, được mọi người trong lớp yêu quý.",
+          "Em có ý thức giữ vệ sinh cá nhân và lớp học rất tốt.",
+          "Em trung thực và biết nhận lỗi khi mắc khuyết điểm, đáng được tuyên dương.",
+          "Em hiểu sâu các bài học đạo đức và thực hành trong cuộc sống hằng ngày."
         ],
         "tot": [
-          "Bước vào năm học, em ngoan ngoãn lễ phép với thầy cô và yêu thương bạn.",
-          "Đầu năm học, em có ý thức rèn luyện đạo đức tốt và biết vâng lời cô.",
-          "Sau hơn một tháng, em biết áp dụng các bài học vào thực tế hằng ngày.",
-          "Em khởi đầu năm học khá tốt, trung thực và biết nhận lỗi khi mắc khuyết điểm.",
-          "Trong những tuần đầu, em chăm chỉ học tập và có tinh thần trách nhiệm.",
-          "Em vào năm học hòa nhã với mọi người, được thầy cô và bạn bè yêu quý.",
-          "Bước vào năm học, em biết phân biệt việc tốt việc xấu và ứng xử phù hợp."
+          "Em ngoan ngoãn lễ phép với thầy cô và yêu thương bạn bè trong lớp.",
+          "Em biết chào hỏi và cảm ơn người lớn đúng cách trong giao tiếp.",
+          "Em giữ gọn gàng đồ dùng học tập và sắp xếp sách vở ngăn nắp.",
+          "Em có ý thức học tập tốt, vâng lời thầy cô và cha mẹ ở nhà.",
+          "Em hòa nhã với bạn bè, biết giúp đỡ bạn khi bạn gặp khó khăn.",
+          "Em biết nhận lỗi khi sai và sửa lỗi nhanh, được bạn bè tin yêu.",
+          "Em có ý thức giữ vệ sinh cá nhân và lớp học sạch sẽ hằng ngày."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với nề nếp lớp và vâng lời thầy cô.",
-          "Đầu năm học, em có tiến bộ trong rèn luyện hành vi đạo đức tốt đẹp.",
-          "Sau hơn một tháng, em biết giúp đỡ bạn bè trong lớp khi cần thiết.",
-          "Em đang dần quen với nội quy, thực hiện đúng yêu cầu của trường lớp.",
-          "Trong những tuần đầu, em biết yêu thương bạn bè và tham gia hoạt động chung.",
-          "Em vào năm học đều đặn, biết chào hỏi và cảm ơn người lớn đúng cách.",
-          "Bước vào năm học, em có ý thức vâng lời thầy cô và làm theo nội quy lớp."
+          "Em ngoan ngoãn, biết vâng lời thầy cô và cha mẹ ở nhà.",
+          "Em đã biết chào hỏi và cảm ơn người lớn theo đúng cách.",
+          "Em chăm chỉ học tập, biết giúp đỡ bạn bè trong lớp khi cần.",
+          "Em có ý thức thực hiện đúng nội quy của trường và lớp học.",
+          "Em đã hiểu các bài học đạo đức và biết áp dụng vào thực tế.",
+          "Em biết yêu thương bạn bè và đoàn kết trong các hoạt động tập thể.",
+          "Em đã có tiến bộ trong rèn luyện hành vi đạo đức tốt đẹp."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện thói quen chào hỏi, cảm ơn và xin lỗi hằng ngày.",
-          "Đầu năm học, em hãy thực hành các bài học đạo đức trên lớp cùng cô và bạn.",
-          "Em cần quan tâm hơn đến bạn ngồi cùng bàn để cùng nhau tiến bộ.",
-          "Em đã chuyên cần đi học, hãy mạnh dạn nhận lỗi và sửa lỗi khi mắc sai.",
-          "Sau hơn một tháng, em cần kể lại các tấm gương tốt trong bài học cho gia đình.",
-          "Cô tin em sẽ tiến bộ, hãy lắng nghe lời khuyên của cô và áp dụng vào cuộc sống.",
-          "Đầu năm em nên tích cực tham gia các hoạt động tập thể và lắng nghe bạn bè."
+          "Em cần luyện thói quen chào hỏi, cảm ơn và xin lỗi đúng cách hằng ngày.",
+          "Em hãy thực hành các bài học đạo đức trên lớp cùng cô và các bạn.",
+          "Em ngoan và lễ phép, cần quan tâm hơn đến bạn ngồi cùng bàn.",
+          "Em đã có cố gắng, hãy mạnh dạn nhận lỗi và sửa lỗi khi mắc khuyết điểm.",
+          "Em chăm chú nghe giảng, cần kể tấm gương tốt trong bài học cho gia đình nghe.",
+          "Cô tin em sẽ tiến bộ, hãy lắng nghe lời khuyên của cô và áp dụng.",
+          "Em hãy tích cực tham gia các hoạt động tập thể và lắng nghe ý kiến bạn."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em là tấm gương sáng về đạo đức cho cả lớp noi theo.",
-          "Trong học kì I, em ngoan ngoãn lễ phép và biết yêu thương giúp đỡ mọi người.",
-          "Qua một học kì, em hiểu sâu và thực hành tốt các chuẩn mực đạo đức.",
-          "Hết HK1, em trung thực thật thà và có lòng nhân ái, trách nhiệm cao.",
-          "Kết thúc HK1, em biết kính trên nhường dưới và hòa nhã với mọi người.",
-          "Trong HK1, em chăm chỉ học tập và rèn luyện đạo đức rất tốt.",
-          "Qua một học kì, em sống chân thành và biết quan tâm đến mọi người."
+          "Em yêu trường lớp, đoàn kết với bạn bè và là tấm gương sáng cho cả lớp.",
+          "Em ngoan ngoãn lễ phép, biết yêu thương giúp đỡ mọi người xung quanh.",
+          "Em có ý thức giữ vệ sinh lớp học và tham gia các hoạt động chung tích cực.",
+          "Em trung thực và có tinh thần trách nhiệm cao với việc học và việc lớp.",
+          "Em sống chân thành, hòa nhã và được thầy cô bạn bè yêu quý.",
+          "Em hiểu sâu các bài học đạo đức và áp dụng trong cuộc sống rất tốt.",
+          "Em biết kính trên nhường dưới, hành vi đẹp đáng được noi gương."
         ],
         "tot": [
-          "Kết thúc HK1, em ngoan ngoãn lễ phép với thầy cô và yêu thương bạn bè.",
-          "Trong học kì I, em có ý thức rèn luyện đạo đức tốt và biết vâng lời.",
-          "Qua một học kì, em biết áp dụng các bài học đạo đức vào thực tế hằng ngày.",
-          "Hết HK1, em trung thực và biết nhận lỗi khi mắc khuyết điểm.",
-          "Kết thúc HK1, em chăm chỉ học tập và có tinh thần trách nhiệm với công việc.",
-          "Trong HK1, em hòa nhã với mọi người và được thầy cô bạn bè yêu quý.",
-          "Qua một học kì, em biết phân biệt việc tốt việc xấu và ứng xử phù hợp."
+          "Em ngoan ngoãn lễ phép với thầy cô và yêu thương bạn bè trong lớp.",
+          "Em biết yêu trường lớp, tham gia tích cực các hoạt động tập thể.",
+          "Em có ý thức giữ vệ sinh lớp học và thực hiện đúng nội quy.",
+          "Em trung thực và biết nhận lỗi khi mắc khuyết điểm, sửa lỗi nhanh.",
+          "Em chăm chỉ học tập và có tinh thần trách nhiệm với việc được giao.",
+          "Em hòa nhã với mọi người, được thầy cô và bạn bè yêu quý tin tưởng.",
+          "Em biết áp dụng các bài học đạo đức vào thực tế hằng ngày."
         ],
         "ht": [
-          "Kết thúc HK1, em ngoan ngoãn, biết vâng lời thầy cô và cha mẹ ở nhà.",
-          "Trong học kì I, em đã có tiến bộ trong rèn luyện hành vi đạo đức.",
-          "Qua một học kì, em chăm chỉ học tập và giúp đỡ bạn bè trong lớp.",
-          "Hết HK1, em có ý thức học tập và thực hiện đúng nội quy trường lớp.",
-          "Kết thúc HK1, em biết yêu thương bạn bè và đoàn kết trong hoạt động chung.",
-          "Trong HK1, em đã hiểu các bài học đạo đức và biết chào hỏi người lớn.",
-          "Qua một học kì, em có ý thức vâng lời thầy cô và làm theo nội quy lớp."
+          "Em ngoan ngoãn, biết vâng lời thầy cô và cha mẹ ở nhà.",
+          "Em đã có tiến bộ trong rèn luyện hành vi đạo đức tốt đẹp.",
+          "Em chăm chỉ học tập, biết giúp đỡ bạn bè trong lớp khi cần.",
+          "Em có ý thức học tập và thực hiện đúng nội quy của trường lớp.",
+          "Em biết yêu thương bạn bè và đoàn kết trong hoạt động chung.",
+          "Em đã hiểu các bài học đạo đức và biết chào hỏi người lớn.",
+          "Em có ý thức vâng lời thầy cô và làm theo nội quy lớp."
         ],
         "cht": [
-          "Kết thúc HK1, em cần rèn luyện các hành vi đạo đức trong sinh hoạt hằng ngày.",
-          "Trong HK1, em đã cố gắng, hãy lắng nghe lời khuyên của cô và áp dụng.",
-          "Qua một học kì, em nên quan tâm hơn đến bạn bè và thực hành bài học.",
-          "Hết HK1, em hãy luyện chào hỏi, cảm ơn và xin lỗi đúng lúc hằng ngày.",
-          "Em chuyên cần cả HK1, cần cùng cô thực hành bài học đạo đức trên lớp.",
-          "Cô tin em sẽ tiến bộ HK2, hãy mạnh dạn nhận lỗi khi mắc khuyết điểm.",
-          "Kết thúc HK1, em nên tích cực tham gia hoạt động tập thể và lắng nghe bạn."
+          "Em cần rèn luyện các hành vi đạo đức trong sinh hoạt hằng ngày.",
+          "Em hãy lắng nghe lời khuyên của cô và áp dụng vào cuộc sống.",
+          "Em ngoan và lễ phép, cần quan tâm hơn đến bạn bè và thực hành bài học.",
+          "Em đã có cố gắng, hãy mạnh dạn nhận lỗi và sửa lỗi khi mắc khuyết điểm.",
+          "Em chăm chú nghe giảng, cần cùng cô thực hành các bài học đạo đức.",
+          "Cô tin em sẽ tiến bộ, hãy luyện chào hỏi - cảm ơn - xin lỗi đúng cách.",
+          "Em hãy tham gia tích cực hoạt động tập thể và lắng nghe ý kiến bạn."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì là tấm gương sáng về đạo đức cho cả lớp.",
-          "Tiếp nối HK1, em vẫn ngoan ngoãn lễ phép và yêu thương giúp đỡ bạn bè.",
-          "Sau kì nghỉ Tết, em vào học nhanh và tiếp tục thực hành đạo đức rất tốt.",
-          "Nửa đầu HK2, em trung thực thật thà và có lòng nhân ái, trách nhiệm cao.",
-          "Bước vào HK2, em biết kính trên nhường dưới và hòa nhã với mọi người.",
-          "Trong HK2, em chăm chỉ học tập và rèn luyện đạo đức tốt hơn cả HK1.",
-          "Tiếp nối HK1, em sống chân thành và biết quan tâm đến mọi người xung quanh."
+          "Em yêu thương gia đình, kính trọng ông bà cha mẹ và biết quan tâm chia sẻ.",
+          "Em trung thực thật thà, biết nhận lỗi và sửa lỗi rất kịp thời.",
+          "Em có lòng nhân ái cao, giúp đỡ bạn khó khăn và làm nhiều việc tốt.",
+          "Em ngoan ngoãn lễ phép, là tấm gương sáng về đạo đức cho cả lớp.",
+          "Em hiểu sâu và thực hành các chuẩn mực đạo đức trong cuộc sống.",
+          "Em sống chân thành, biết kính trên nhường dưới và hòa nhã với mọi người.",
+          "Em có ý thức rèn luyện đạo đức tốt, được mọi người yêu quý tin tưởng."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn ngoan ngoãn lễ phép với thầy cô và yêu thương bạn.",
-          "Tiếp nối HK1, em duy trì ý thức rèn luyện đạo đức và biết vâng lời.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và áp dụng bài học vào thực tế.",
-          "Nửa đầu HK2, em trung thực và biết nhận lỗi khi mắc khuyết điểm.",
-          "Bước vào HK2, em chăm chỉ học tập và có tinh thần trách nhiệm với công việc.",
-          "Trong HK2, em hòa nhã với mọi người và được thầy cô bạn bè yêu quý.",
-          "Tiếp nối HK1, em biết phân biệt việc tốt việc xấu và ứng xử phù hợp lễ phép."
+          "Em yêu thương gia đình, kính trọng ông bà cha mẹ và thầy cô.",
+          "Em trung thực thật thà, biết nhận lỗi khi mắc khuyết điểm.",
+          "Em có lòng nhân ái, biết chia sẻ và quan tâm đến bạn bè trong lớp.",
+          "Em ngoan ngoãn lễ phép, có ý thức rèn luyện đạo đức tốt.",
+          "Em biết áp dụng các bài học đạo đức vào thực tế hằng ngày.",
+          "Em hòa nhã với mọi người, được thầy cô và bạn bè yêu quý.",
+          "Em biết phân biệt việc tốt việc xấu và chọn cách ứng xử phù hợp."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì sự ngoan ngoãn và biết vâng lời thầy cô, cha mẹ.",
-          "Tiếp nối HK1, em chăm chỉ học tập và giúp đỡ bạn bè trong lớp khi cần.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và thực hiện đúng nội quy lớp.",
-          "Nửa đầu HK2, em biết yêu thương bạn bè và đoàn kết trong hoạt động chung.",
-          "Bước vào HK2, em có ý thức học tập và làm theo các bài học đạo đức.",
-          "Trong HK2, em chào hỏi cảm ơn lễ phép với người lớn đúng cách.",
-          "Tiếp nối HK1, em vâng lời thầy cô và làm theo nội quy của trường lớp."
+          "Em ngoan ngoãn, biết vâng lời thầy cô và cha mẹ ở nhà.",
+          "Em đã có tiến bộ trong rèn luyện hành vi đạo đức tốt đẹp.",
+          "Em chăm chỉ học tập, biết giúp đỡ bạn bè trong lớp khi cần.",
+          "Em có ý thức thực hiện đúng nội quy của trường và lớp.",
+          "Em biết yêu thương bạn bè và đoàn kết trong hoạt động chung.",
+          "Em đã hiểu các bài học đạo đức và biết chào hỏi người lớn.",
+          "Em có ý thức vâng lời thầy cô và yêu thương người thân trong gia đình."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục rèn các hành vi đạo đức trong sinh hoạt.",
-          "Tiếp nối HK1, em hãy lắng nghe lời khuyên của cô và áp dụng vào cuộc sống.",
-          "Sau kì nghỉ Tết, em cần lấy lại nề nếp và quan tâm hơn đến bạn bè.",
-          "Nửa đầu HK2, em đã cố gắng, hãy luyện chào hỏi, cảm ơn và xin lỗi đúng cách.",
-          "Em chuyên cần đi học, cần cùng cô thực hành các bài học đạo đức trên lớp.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy mạnh dạn nhận lỗi khi mắc khuyết điểm.",
-          "Bước vào HK2, em nên tích cực tham gia hoạt động tập thể và lắng nghe bạn."
+          "Em cần tiếp tục rèn các hành vi đạo đức trong sinh hoạt hằng ngày.",
+          "Em hãy lắng nghe lời khuyên của cô và áp dụng vào cuộc sống.",
+          "Em ngoan và lễ phép, cần quan tâm hơn đến bạn bè và người thân.",
+          "Em đã có cố gắng, hãy luyện chào hỏi - cảm ơn - xin lỗi đúng cách.",
+          "Em chăm chú nghe giảng, cần cùng cô thực hành các bài học đạo đức.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn nhận lỗi khi mắc khuyết điểm.",
+          "Em hãy tích cực tham gia hoạt động tập thể và lắng nghe ý kiến bạn."
         ]
       }
     },
     "tinhoc": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em thao tác máy tính thành thạo và sáng tạo xuất sắc.",
-          "Đầu năm học, em có năng khiếu Tin học rõ rệt, vận dụng tốt vào học tập.",
-          "Sau hơn một tháng, em sử dụng phần mềm thành thạo và biết tự khám phá.",
-          "Em khởi đầu năm học rất tốt, có tư duy logic và giải bài thực hành nhanh.",
-          "Đầu năm học em đã tạo sản phẩm độc đáo và đẹp mắt trên máy tính.",
-          "Em vào học nhanh, có ý thức an toàn và khai thác internet hiệu quả.",
-          "Bước vào năm học, em có tư duy thuật toán tốt và biết giải bài nhiều cách."
+          "Em hiểu rõ về phần cứng máy tính, sử dụng chuột thành thạo và sáng tạo.",
+          "Em có tư duy tin học tốt, thao tác trên máy nhanh và chính xác cao.",
+          "Em ngồi đúng tư thế, bảo quản thiết bị cẩn thận và là gương cho cả lớp.",
+          "Em sử dụng chuột linh hoạt, thực hiện các thao tác cơ bản rất nhanh.",
+          "Em yêu môn Tin học, có ý thức an toàn cao khi sử dụng máy tính.",
+          "Em phân biệt được các bộ phận máy tính và chức năng từng bộ phận.",
+          "Em có năng khiếu Tin học, sáng tạo trong các bài thực hành trên lớp."
         ],
         "tot": [
-          "Bước vào năm học, em sử dụng máy tính khá thành thạo và thao tác chính xác.",
-          "Đầu năm học, em yêu thích môn học và sáng tạo trong các sản phẩm thực hành.",
-          "Sau hơn một tháng, em nắm vững kiến thức cơ bản và vận dụng linh hoạt.",
-          "Em khởi đầu năm học tốt, có ý thức an toàn khi sử dụng máy tính và internet.",
-          "Trong những tuần đầu, em hăng hái thực hành và hoàn thành sản phẩm đúng yêu cầu.",
-          "Em vào năm học có ý thức, sử dụng phần mềm học tập hiệu quả đúng cách.",
-          "Bước vào năm học, em thao tác chuột bàn phím nhanh và đúng kĩ thuật."
+          "Em sử dụng chuột thành thạo, thao tác cơ bản chính xác và nhanh nhẹn.",
+          "Em ngồi đúng tư thế khi học, biết bảo quản máy tính cẩn thận.",
+          "Em biết các bộ phận chính của máy tính và chức năng cơ bản.",
+          "Em hăng hái thực hành, hoàn thành các bài tập đúng yêu cầu của cô.",
+          "Em có ý thức an toàn khi sử dụng máy tính trong giờ học.",
+          "Em chăm chú nghe giảng, làm theo cô hướng dẫn các thao tác chuột.",
+          "Em yêu thích môn học, có ý thức giữ gìn thiết bị trong lớp tin học."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với máy tính và thao tác cơ bản.",
-          "Đầu năm học, em thực hành đúng các thao tác cô hướng dẫn trên máy.",
-          "Sau hơn một tháng, em có tiến bộ trong các bài thực hành trên lớp.",
-          "Em đang dần quen với cách học Tin học, biết sử dụng máy tính an toàn.",
-          "Trong những tuần đầu, em tham gia học tập tích cực và hoàn thành bài cơ bản.",
-          "Em vào năm học đều đặn, đã sử dụng được chuột để thao tác đơn giản.",
-          "Bước vào năm học, em đã thực hiện được các bài tập tin học cơ bản trên lớp."
+          "Em đã làm quen với máy tính, biết bật/tắt và sử dụng chuột cơ bản.",
+          "Em thực hành đúng các thao tác cô hướng dẫn trên máy tính.",
+          "Em chăm chỉ học tập, có tiến bộ trong các bài thực hành trên lớp.",
+          "Em biết sử dụng máy tính an toàn theo hướng dẫn của cô giáo.",
+          "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
+          "Em đã biết tên một số bộ phận của máy tính như chuột, bàn phím.",
+          "Em có ý thức giữ tư thế ngồi đúng khi học môn Tin học."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện thao tác di chuyển chuột và nhấp đúng vị trí.",
-          "Đầu năm học, em hãy luyện gõ bàn phím chậm và đúng các ngón tay tương ứng.",
-          "Em cần mạnh dạn thao tác máy tính và hỏi cô khi gặp lỗi chưa biết cách xử lí.",
-          "Em đã chuyên cần đi học, hãy ghi nhớ các bước cô hướng dẫn trước khi thực hành.",
-          "Sau hơn một tháng, em cần quan sát bạn ngồi cạnh để học cách thao tác đúng.",
-          "Cô tin em sẽ tiến bộ, hãy giữ tư thế ngồi đúng và bảo quản thiết bị cẩn thận.",
-          "Đầu năm em hãy luyện sử dụng chuột tại nhà 10 phút mỗi ngày."
+          "Em cần luyện thao tác di chuyển chuột và nhấp đúng vị trí trên màn hình.",
+          "Em hãy ngồi đúng tư thế và đặt tay đúng cách khi sử dụng chuột.",
+          "Em ngoan và chuyên cần, cần mạnh dạn thao tác trên máy khi cô hướng dẫn.",
+          "Em đã có cố gắng, hãy quan sát bạn ngồi cạnh để học cách thao tác.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các bước trước khi thực hành.",
+          "Cô tin em sẽ tiến bộ, hãy giữ tư thế ngồi đúng và bảo quản thiết bị.",
+          "Em hãy luyện cầm chuột và di chuyển trên bàn 10 phút mỗi tối ở nhà."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em thao tác máy tính thành thạo và sáng tạo xuất sắc.",
-          "Trong học kì I, em sử dụng phần mềm linh hoạt và biết khai thác internet hiệu quả.",
-          "Qua một học kì, em có tư duy logic và giải bài thực hành rất nhanh.",
-          "Hết HK1, em tạo được sản phẩm độc đáo và đẹp mắt trên máy tính.",
-          "Kết thúc HK1, em có ý thức an toàn cao khi sử dụng máy và internet.",
-          "Trong HK1, em là tấm gương về Tin học cho cả lớp noi theo.",
-          "Qua một học kì, em có tư duy thuật toán tốt và giải bài nhiều cách hay."
+          "Em gõ bàn phím thành thạo bằng 10 ngón tay, soạn thảo văn bản nhanh chính xác.",
+          "Em có tư duy tin học tốt, thao tác trên máy linh hoạt và sáng tạo.",
+          "Em sử dụng phần mềm soạn thảo cơ bản, định dạng văn bản đẹp mắt.",
+          "Em ngồi đúng tư thế, bảo quản thiết bị cẩn thận và làm gương cho lớp.",
+          "Em yêu môn Tin học, có nhiều sáng tạo trong các bài thực hành.",
+          "Em có ý thức an toàn cao khi sử dụng máy tính và biết tiết kiệm điện.",
+          "Em vận dụng tin học tốt vào học tập, tạo sản phẩm đẹp và sáng tạo."
         ],
         "tot": [
-          "Kết thúc HK1, em sử dụng máy tính thành thạo và thao tác nhanh nhẹn.",
-          "Trong học kì I, em yêu thích môn học và sáng tạo trong sản phẩm thực hành.",
-          "Qua một học kì, em nắm vững kiến thức cơ bản và vận dụng linh hoạt.",
-          "Hết HK1, em có ý thức an toàn khi dùng máy và mạng internet.",
-          "Kết thúc HK1, em hăng hái thực hành và hoàn thành sản phẩm đúng yêu cầu.",
-          "Trong HK1, em biết sử dụng phần mềm học tập hiệu quả đúng cách.",
-          "Qua một học kì, em thao tác chuột bàn phím nhanh và hoàn thành bài đúng."
+          "Em gõ bàn phím khá nhanh và chính xác, soạn thảo văn bản ngắn tốt.",
+          "Em sử dụng chuột bàn phím thành thạo, hoàn thành bài thực hành đúng.",
+          "Em ngồi đúng tư thế, biết bảo quản máy tính cẩn thận sau giờ học.",
+          "Em hăng hái thực hành, có ý thức học tập và hoàn thành sản phẩm.",
+          "Em có ý thức an toàn khi sử dụng máy tính trên lớp.",
+          "Em biết định dạng văn bản đơn giản và biết lưu file vào thư mục.",
+          "Em yêu thích môn học, có nhiều cố gắng trong các bài thực hành."
         ],
         "ht": [
-          "Kết thúc HK1, em đã nắm được các kĩ năng cơ bản về sử dụng máy tính.",
-          "Trong học kì I, em thực hành đúng các thao tác cô hướng dẫn trên máy.",
-          "Qua một học kì, em chăm chỉ học tập và có tiến bộ trong bài thực hành.",
-          "Hết HK1, em biết sử dụng máy tính an toàn theo hướng dẫn của cô.",
-          "Kết thúc HK1, em đã làm quen với máy và sử dụng chuột để thao tác đơn giản.",
-          "Trong HK1, em có ý thức học tập và thực hiện được bài tập tin học cơ bản.",
-          "Qua một học kì, em tham gia học tập tích cực và hoàn thành các bài tập."
+          "Em đã nắm được các kĩ năng cơ bản về sử dụng máy tính trên lớp.",
+          "Em gõ được bàn phím chậm nhưng đúng các ngón tay cơ bản.",
+          "Em chăm chỉ học tập, có tiến bộ trong các bài thực hành tin học.",
+          "Em biết sử dụng máy tính an toàn theo hướng dẫn của cô.",
+          "Em đã soạn thảo được câu ngắn trên máy tính theo mẫu.",
+          "Em có ý thức học tập, thực hiện các bài tập cơ bản đầy đủ.",
+          "Em tham gia học tập tích cực, hoàn thành yêu cầu cô giao."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện sử dụng máy tính và làm quen với thao tác cơ bản.",
-          "Trong HK1, em đã có cố gắng, hãy thực hành thêm để nắm vững kĩ năng tin học.",
-          "Qua một học kì, em nên đọc kĩ hướng dẫn và thực hành nhiều lần để tiến bộ.",
-          "Hết HK1, em hãy luyện gõ bàn phím chậm và đúng các ngón tay.",
-          "Em chuyên cần cả HK1, cần mạnh dạn thao tác và hỏi cô khi gặp lỗi.",
-          "Cô tin em sẽ tiến bộ HK2, hãy quan sát bạn ngồi cạnh để học cách thao tác.",
-          "Kết thúc HK1, em hãy giữ tư thế ngồi đúng và bảo quản thiết bị cẩn thận."
+          "Em cần luyện gõ bàn phím chậm và đúng các ngón tay tương ứng.",
+          "Em hãy thực hành thêm để nắm vững các kĩ năng tin học cơ bản.",
+          "Em ngoan và chuyên cần, cần mạnh dạn thao tác và hỏi cô khi gặp lỗi.",
+          "Em đã có cố gắng, hãy quan sát bạn ngồi cạnh để học cách thao tác.",
+          "Em chăm chú nghe giảng, cần đọc kĩ hướng dẫn trước khi thực hành.",
+          "Cô tin em sẽ tiến bộ, hãy giữ tư thế ngồi đúng và bảo quản thiết bị.",
+          "Em hãy luyện gõ bảng chữ cái trên giấy mỗi ngày để quen ngón tay."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì kĩ năng tin học xuất sắc và sáng tạo cao.",
-          "Tiếp nối HK1, em vẫn sử dụng phần mềm linh hoạt và khai thác internet hiệu quả.",
-          "Sau kì nghỉ Tết, em vào học nhanh và giải bài thực hành rất sáng tạo.",
-          "Nửa đầu HK2, em có tư duy logic và tạo sản phẩm độc đáo trên máy tính.",
-          "Bước vào HK2, em là tấm gương về Tin học, an toàn cao và thao tác chuẩn xác.",
-          "Trong HK2, em có tư duy thuật toán tốt và giải bài nhiều cách hay.",
-          "Tiếp nối HK1, em vận dụng tốt CNTT vào học tập các môn khác."
+          "Em sử dụng phần mềm Paint thành thạo, vẽ sản phẩm đẹp và sáng tạo độc đáo.",
+          "Em có tư duy tin học tốt, sử dụng phần mềm học tập rất linh hoạt.",
+          "Em soạn thảo văn bản nhanh, định dạng đẹp và biết chèn hình ảnh.",
+          "Em yêu môn Tin học, có nhiều ý tưởng sáng tạo trong các sản phẩm.",
+          "Em vận dụng tin học vào học tập các môn khác rất linh hoạt và hiệu quả.",
+          "Em có ý thức an toàn cao khi sử dụng máy tính và mạng internet.",
+          "Em ngồi đúng tư thế, bảo quản thiết bị cẩn thận và làm gương cho lớp."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn sử dụng máy tính thành thạo và thao tác nhanh nhẹn.",
-          "Tiếp nối HK1, em yêu thích môn học và sáng tạo trong các sản phẩm.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và làm bài thực hành đúng yêu cầu.",
-          "Nửa đầu HK2, em hăng hái thực hành và hoàn thành sản phẩm sáng tạo.",
-          "Bước vào HK2, em có ý thức an toàn khi dùng máy và mạng internet.",
-          "Trong HK2, em sử dụng phần mềm học tập hiệu quả và đúng cách.",
-          "Tiếp nối HK1, em thao tác chuột bàn phím nhanh và hoàn thành bài đúng."
+          "Em vẽ Paint khá đẹp, biết phối màu và tạo sản phẩm sáng tạo.",
+          "Em sử dụng phần mềm học tập đúng cách và hoàn thành bài thực hành.",
+          "Em soạn thảo văn bản khá tốt, định dạng đơn giản theo yêu cầu của cô.",
+          "Em hăng hái thực hành, có ý thức học tập và yêu thích môn học.",
+          "Em có ý thức an toàn khi sử dụng máy tính và mạng internet.",
+          "Em ngồi đúng tư thế, biết bảo quản thiết bị cẩn thận sau giờ học.",
+          "Em vận dụng tin học vào học tập, tạo sản phẩm đúng theo hướng dẫn."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc thực hành và thao tác cơ bản trên máy tính.",
-          "Tiếp nối HK1, em chăm chỉ học tập và có tiến bộ trong bài thực hành.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và sử dụng máy theo hướng dẫn của cô.",
-          "Nửa đầu HK2, em biết sử dụng máy tính an toàn theo hướng dẫn.",
-          "Bước vào HK2, em đã làm quen với máy và sử dụng chuột để thao tác đơn giản.",
-          "Trong HK2, em có ý thức học tập và thực hiện được bài tập tin học cơ bản.",
-          "Tiếp nối HK1, em tham gia học tập tích cực và hoàn thành các bài tập."
+          "Em đã sử dụng được phần mềm Paint để vẽ các hình cơ bản.",
+          "Em gõ bàn phím và sử dụng chuột để hoàn thành bài tập cơ bản.",
+          "Em chăm chỉ học tập, có tiến bộ trong các bài thực hành trên lớp.",
+          "Em biết sử dụng phần mềm học tập theo hướng dẫn của cô giáo.",
+          "Em đã hoàn thành các sản phẩm đơn giản trong giờ thực hành.",
+          "Em có ý thức học tập, thực hiện các bài tập đầy đủ.",
+          "Em tham gia học tập tích cực, biết giữ tư thế ngồi đúng."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục luyện thao tác chuột và gõ phím tin học cơ bản.",
-          "Tiếp nối HK1, em hãy duy trì việc thực hành để nắm vững kĩ năng tin học.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học và mạnh dạn thao tác trên máy.",
-          "Nửa đầu HK2, em đã cố gắng, hãy luyện gõ bàn phím đúng các ngón tay tương ứng.",
-          "Em chuyên cần đi học, cần quan sát bạn ngồi cạnh để học cách thao tác đúng.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy giữ tư thế ngồi đúng và bảo quản thiết bị.",
-          "Bước vào HK2, em hãy ghi nhớ các bước cô hướng dẫn trước khi thực hành."
+          "Em cần luyện sử dụng Paint và phần mềm học tập theo hướng dẫn của cô.",
+          "Em hãy thực hành thêm tại nhà nếu có máy để nắm vững kĩ năng.",
+          "Em ngoan và chuyên cần, cần mạnh dạn thử nghiệm và hỏi cô khi khó.",
+          "Em đã có cố gắng, hãy quan sát bạn ngồi cạnh để học cách thao tác.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các bước trước khi thực hành.",
+          "Cô tin em sẽ tiến bộ, hãy giữ tư thế ngồi đúng và bảo quản thiết bị.",
+          "Em hãy luyện gõ bàn phím và vẽ hình đơn giản 10 phút mỗi ngày."
         ]
       }
     },
     "congnghe": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có năng khiếu Công nghệ, lắp ráp sản phẩm khéo léo.",
-          "Đầu năm học, em vẽ phác hình đẹp mắt và lắp ráp mô hình kĩ thuật chính xác.",
-          "Sau hơn một tháng, em sáng tạo trong làm sản phẩm thủ công và vận dụng tốt.",
-          "Em khởi đầu năm học rất tốt, sử dụng đồ dùng an toàn và có ý thức cao.",
-          "Đầu năm học em đã làm theo quy trình chính xác và tạo sản phẩm đẹp.",
-          "Em vào học nhanh, chăm sóc cây và hoa rất khéo léo cẩn thận.",
-          "Bước vào năm học, em biết tiết kiệm điện nước trong sinh hoạt hằng ngày."
+          "Em hiểu rõ vai trò công nghệ trong đời sống và kể tên nhiều sản phẩm công nghệ.",
+          "Em có tư duy kĩ thuật tốt, quan sát sản phẩm và mô tả đặc điểm rất chính xác.",
+          "Em sử dụng đồ dùng học tập và gia đình rất an toàn, đúng cách.",
+          "Em biết phân loại sản phẩm công nghệ theo công dụng và mô tả công dụng.",
+          "Em có ý thức an toàn điện cao, không tự ý cắm rút phích điện.",
+          "Em yêu thích môn Công nghệ, hăng hái phát biểu và đặt câu hỏi hay.",
+          "Em vận dụng kiến thức công nghệ vào sinh hoạt hằng ngày rất tốt."
         ],
         "tot": [
-          "Bước vào năm học, em làm sản phẩm thủ công khéo léo theo quy trình hướng dẫn.",
-          "Đầu năm học, em biết sử dụng đồ dùng học tập và gia đình an toàn đúng cách.",
-          "Sau hơn một tháng, em chăm chỉ thực hành và lắp ráp được mô hình đơn giản.",
-          "Em khởi đầu năm học tốt, có ý thức an toàn khi dùng đồ điện hằng ngày.",
-          "Trong những tuần đầu, em quan sát tốt và làm theo các bước quy trình kĩ thuật.",
-          "Em vào năm học có ý thức, yêu thích thực hành và chăm sóc cây cảnh.",
-          "Bước vào năm học, em vẽ phác hình sản phẩm rõ ràng và hoàn thành đúng yêu cầu."
+          "Em biết kể tên các sản phẩm công nghệ trong gia đình và công dụng của chúng.",
+          "Em sử dụng đồ dùng học tập an toàn và đúng cách theo hướng dẫn.",
+          "Em có ý thức an toàn khi sử dụng điện trong gia đình hằng ngày.",
+          "Em hăng hái phát biểu, hiểu bài và biết liên hệ với thực tế.",
+          "Em chăm chỉ học tập, hoàn thành các bài tập theo yêu cầu của cô.",
+          "Em biết phân biệt đồ dùng nguy hiểm và đồ dùng an toàn trong nhà.",
+          "Em có ý thức bảo quản đồ dùng học tập và đồ dùng gia đình."
         ],
         "ht": [
-          "Bước vào năm học, em đã biết sử dụng đồ dùng học tập an toàn theo hướng dẫn.",
-          "Đầu năm học, em hoàn thành các bài thực hành Công nghệ theo yêu cầu.",
-          "Sau hơn một tháng, em chăm chỉ học tập và làm theo các bước quy trình đơn giản.",
-          "Em đang dần quen với cách học mới, có ý thức giữ gìn đồ dùng học tập.",
-          "Trong những tuần đầu, em đã lắp ráp được mô hình đơn giản trên lớp.",
-          "Em vào năm học đều đặn, biết quan sát sản phẩm công nghệ trong gia đình.",
-          "Bước vào năm học, em tham gia học tập tích cực và chăm sóc cây hoa ở lớp."
+          "Em đã biết tên một số sản phẩm công nghệ quen thuộc trong gia đình.",
+          "Em sử dụng đồ dùng học tập theo hướng dẫn an toàn của cô giáo.",
+          "Em chăm chú nghe giảng, có tiến bộ trong các bài học công nghệ.",
+          "Em biết các đồ dùng nguy hiểm cần tránh xa trong gia đình.",
+          "Em đã có ý thức bảo quản đồ dùng học tập của mình.",
+          "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp.",
+          "Em đã trả lời được câu hỏi đơn giản về sản phẩm công nghệ quen thuộc."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện thao tác cẩn thận khi làm sản phẩm thủ công.",
-          "Đầu năm học, em hãy quan sát cô làm mẫu rồi thực hành theo từng bước nhỏ.",
-          "Em cần giữ gìn đồ dùng cẩn thận và tiết kiệm điện nước hằng ngày.",
-          "Em đã chuyên cần đi học, hãy luyện vẽ phác hình sản phẩm trước khi lắp ráp.",
-          "Sau hơn một tháng, em hãy mạnh dạn thử làm sản phẩm và hỏi cô khi khó.",
-          "Cô tin em sẽ tiến bộ, hãy ghi nhớ các bước quy trình trước khi thực hành.",
-          "Đầu năm em hãy chăm sóc cây hoa nhỏ ở nhà để rèn tính cẩn thận."
+          "Em cần quan sát các đồ dùng trong gia đình và biết tên gọi của chúng.",
+          "Em hãy cùng cha mẹ tìm hiểu các sản phẩm công nghệ ở nhà.",
+          "Em ngoan và chuyên cần, cần mạnh dạn phát biểu khi cô đặt câu hỏi.",
+          "Em đã có cố gắng, hãy luyện sử dụng đồ dùng học tập đúng cách.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các đồ dùng nguy hiểm cần tránh.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ gia đình hướng dẫn an toàn điện cơ bản.",
+          "Em hãy tập sử dụng các đồ dùng học tập cẩn thận và đúng cách."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có năng khiếu Công nghệ, lắp ráp sản phẩm khéo léo và đẹp.",
-          "Trong học kì I, em vẽ phác hình đẹp và lắp ráp mô hình kĩ thuật chính xác.",
-          "Qua một học kì, em sáng tạo trong làm sản phẩm thủ công và vận dụng tốt.",
-          "Hết HK1, em sử dụng đồ dùng điện an toàn và biết tiết kiệm điện nước.",
-          "Kết thúc HK1, em có tư duy kĩ thuật tốt và làm theo quy trình chính xác.",
-          "Trong HK1, em yêu thích môn Công nghệ và chăm sóc cây hoa khéo léo.",
-          "Qua một học kì, em có ý tưởng sáng tạo và làm sản phẩm thủ công độc đáo."
+          "Em sử dụng đèn học và quạt điện rất an toàn, biết tiết kiệm điện hằng ngày.",
+          "Em có tư duy kĩ thuật tốt, biết quy trình sử dụng đồ dùng điện đúng cách.",
+          "Em làm sản phẩm thủ công khéo léo, lắp ráp mô hình đơn giản chính xác.",
+          "Em biết phân biệt đồ dùng điện an toàn và nguy hiểm, ý thức cao.",
+          "Em yêu thích môn Công nghệ, có nhiều sáng tạo trong bài thực hành.",
+          "Em sử dụng đồ dùng học tập cẩn thận, là tấm gương cho cả lớp.",
+          "Em vận dụng kiến thức công nghệ vào sinh hoạt gia đình rất hiệu quả."
         ],
         "tot": [
-          "Kết thúc HK1, em làm sản phẩm thủ công khéo léo và hoàn thành đúng quy trình.",
-          "Trong học kì I, em biết sử dụng đồ dùng học tập và gia đình an toàn đúng cách.",
-          "Qua một học kì, em chăm chỉ thực hành và lắp ráp được mô hình đơn giản.",
-          "Hết HK1, em có ý thức an toàn khi dùng đồ điện và tiết kiệm điện nước.",
-          "Kết thúc HK1, em quan sát tốt và làm theo các bước quy trình kĩ thuật.",
-          "Trong HK1, em yêu thích thực hành và biết chăm sóc hoa cây cảnh đơn giản.",
-          "Qua một học kì, em vẽ phác hình rõ ràng và hoàn thành bài thực hành đúng."
+          "Em sử dụng đèn học và quạt điện an toàn theo hướng dẫn của cô.",
+          "Em biết tiết kiệm điện - nước trong sinh hoạt hằng ngày ở nhà.",
+          "Em làm sản phẩm thủ công khá khéo, hoàn thành theo quy trình.",
+          "Em có ý thức bảo quản đồ dùng và sử dụng đúng cách an toàn.",
+          "Em hăng hái phát biểu, hiểu bài và làm tốt các bài thực hành.",
+          "Em biết các bước sử dụng đồ điện đơn giản trong gia đình.",
+          "Em chăm chỉ học tập, hoàn thành bài tập đúng yêu cầu của cô."
         ],
         "ht": [
-          "Kết thúc HK1, em đã biết sử dụng đồ dùng học tập và gia đình theo hướng dẫn.",
-          "Trong học kì I, em hoàn thành các bài thực hành Công nghệ theo yêu cầu cô.",
-          "Qua một học kì, em chăm chỉ học tập và biết làm theo các bước quy trình.",
-          "Hết HK1, em có ý thức giữ gìn đồ dùng và biết tiết kiệm điện nước.",
-          "Kết thúc HK1, em đã lắp ráp được mô hình đơn giản và làm sản phẩm cơ bản.",
-          "Trong HK1, em đã biết quan sát sản phẩm công nghệ trong gia đình.",
-          "Qua một học kì, em tham gia học tập tích cực và chăm sóc cây hoa ở lớp."
+          "Em đã biết sử dụng đồ dùng học tập và đồ dùng gia đình an toàn.",
+          "Em hoàn thành các bài thực hành công nghệ theo yêu cầu của cô.",
+          "Em chăm chỉ học tập, có tiến bộ trong các bài thực hành cơ bản.",
+          "Em biết tiết kiệm điện - nước trong sinh hoạt theo hướng dẫn.",
+          "Em đã làm được sản phẩm cơ bản trong giờ thực hành thủ công.",
+          "Em có ý thức học tập, thực hiện các bài tập đầy đủ trên lớp.",
+          "Em đã biết các đồ dùng điện đơn giản trong gia đình."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện thao tác cẩn thận khi làm sản phẩm thủ công.",
-          "Trong HK1, em đã cố gắng, hãy quan sát cô làm mẫu rồi thực hành từng bước.",
-          "Qua một học kì, em cần giữ gìn đồ dùng cẩn thận và tiết kiệm điện nước.",
-          "Hết HK1, em hãy luyện vẽ phác hình sản phẩm trước khi bắt đầu lắp ráp.",
-          "Em chuyên cần cả HK1, cần mạnh dạn thử làm sản phẩm và hỏi cô khi khó.",
-          "Cô tin em sẽ tiến bộ HK2, hãy ghi nhớ các bước quy trình trước khi thực hành.",
-          "Kết thúc HK1, em hãy chăm sóc cây hoa nhỏ ở nhà cùng cha mẹ."
+          "Em cần luyện thao tác cẩn thận khi làm sản phẩm thủ công đơn giản.",
+          "Em hãy quan sát cô làm mẫu rồi thực hành theo từng bước nhỏ.",
+          "Em ngoan và hiền, cần giữ gìn đồ dùng cẩn thận và tiết kiệm điện nước.",
+          "Em đã có cố gắng, hãy mạnh dạn thử làm sản phẩm và hỏi cô khi khó.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các bước quy trình thực hành.",
+          "Cô tin em sẽ tiến bộ, hãy giữ đồ dùng cẩn thận và sử dụng đúng cách.",
+          "Em hãy nhờ gia đình hướng dẫn sử dụng đèn học và quạt an toàn."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì khéo léo trong lắp ráp và sáng tạo cao.",
-          "Tiếp nối HK1, em vẫn vẽ phác hình đẹp và lắp ráp mô hình kĩ thuật chính xác.",
-          "Sau kì nghỉ Tết, em vào học nhanh và làm sản phẩm thủ công rất khéo.",
-          "Nửa đầu HK2, em sử dụng đồ dùng điện an toàn và tiết kiệm điện nước.",
-          "Bước vào HK2, em là tấm gương về Công nghệ, có nhiều ý tưởng sáng tạo.",
-          "Trong HK2, em làm sản phẩm thủ công độc đáo và đẹp mắt hơn HK1.",
-          "Tiếp nối HK1, em chăm sóc cây hoa rất khéo léo và cẩn thận."
+          "Em trồng và chăm sóc cây cảnh rất khéo léo, hiểu rõ quy trình chăm sóc.",
+          "Em có tư duy kĩ thuật tốt, biết tưới nước - bón phân đúng cho từng loại cây.",
+          "Em quan sát quá trình lớn của cây cẩn thận, ghi chép khoa học và sáng tạo.",
+          "Em yêu thiên nhiên, biết chăm sóc hoa cây cảnh ở nhà và ở lớp.",
+          "Em có nhiều ý tưởng sáng tạo trong làm sản phẩm từ cây hoa.",
+          "Em vận dụng kiến thức công nghệ vào trồng cây trong gia đình rất tốt.",
+          "Em là tấm gương về Công nghệ, biết yêu lao động và bảo vệ thiên nhiên."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn làm sản phẩm thủ công khéo léo theo quy trình.",
-          "Tiếp nối HK1, em duy trì việc sử dụng đồ dùng an toàn và đúng cách.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và lắp ráp mô hình đơn giản.",
-          "Nửa đầu HK2, em có ý thức an toàn khi dùng đồ điện và tiết kiệm hằng ngày.",
-          "Bước vào HK2, em quan sát tốt và làm theo các bước quy trình kĩ thuật.",
-          "Trong HK2, em yêu thích thực hành và biết chăm sóc hoa cây cảnh.",
-          "Tiếp nối HK1, em vẽ phác hình rõ ràng và hoàn thành bài thực hành đúng."
+          "Em chăm sóc hoa cây cảnh trong lớp đúng cách và rất cẩn thận.",
+          "Em biết tưới nước cho cây, đặt cây nơi có ánh sáng phù hợp.",
+          "Em quan sát quá trình lớn của cây, ghi chép khá đầy đủ.",
+          "Em yêu lao động, tham gia chăm sóc vườn trường tích cực.",
+          "Em hăng hái phát biểu, hiểu bài và biết liên hệ với thực tế.",
+          "Em có ý thức bảo vệ cây cối và yêu thiên nhiên xung quanh.",
+          "Em chăm chỉ học tập, hoàn thành bài tập theo yêu cầu của cô giáo."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học và sử dụng đồ dùng học tập theo hướng dẫn.",
-          "Tiếp nối HK1, em hoàn thành các bài thực hành Công nghệ theo yêu cầu.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và làm sản phẩm cơ bản trên lớp.",
-          "Nửa đầu HK2, em có ý thức giữ gìn đồ dùng và biết tiết kiệm điện nước.",
-          "Bước vào HK2, em đã lắp ráp được mô hình đơn giản theo cô hướng dẫn.",
-          "Trong HK2, em đã biết quan sát sản phẩm công nghệ trong gia đình.",
-          "Tiếp nối HK1, em tham gia học tập tích cực và chăm sóc cây hoa ở lớp."
+          "Em đã biết tưới nước và chăm sóc cây hoa cơ bản theo cô hướng dẫn.",
+          "Em hoàn thành các bài thực hành chăm sóc cây theo yêu cầu của cô.",
+          "Em chăm chỉ học tập, có tiến bộ trong việc chăm sóc cây cảnh.",
+          "Em biết yêu cây cối và có ý thức không bẻ cành phá hoa.",
+          "Em đã làm được sản phẩm đơn giản từ lá hoa trong giờ thực hành.",
+          "Em có ý thức học tập, thực hiện các bài tập đầy đủ trên lớp.",
+          "Em đã biết tên một số loài cây hoa quen thuộc trong vườn trường."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục luyện thao tác cẩn thận khi làm sản phẩm.",
-          "Tiếp nối HK1, em hãy duy trì việc quan sát cô làm mẫu rồi thực hành theo.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp và giữ gìn đồ dùng cẩn thận hơn.",
-          "Nửa đầu HK2, em đã cố gắng, hãy luyện vẽ phác hình trước khi lắp ráp.",
-          "Em chuyên cần đi học, cần mạnh dạn thử làm sản phẩm và hỏi cô khi khó.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy ghi nhớ các bước quy trình.",
-          "Bước vào HK2, em hãy chăm sóc cây hoa nhỏ ở nhà cùng cha mẹ."
+          "Em cần luyện thao tác cẩn thận khi chăm sóc cây hoa trong vườn.",
+          "Em hãy cùng gia đình chăm sóc một cây nhỏ ở nhà để rèn tính kiên trì.",
+          "Em ngoan và hiền, cần giữ gìn cây cối và không bẻ cành phá hoa.",
+          "Em đã có cố gắng, hãy quan sát cô làm mẫu rồi tưới nước cho cây.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các bước chăm sóc cây cơ bản.",
+          "Cô tin em sẽ tiến bộ, hãy yêu thiên nhiên và bảo vệ cây xanh.",
+          "Em hãy chăm sóc cây cảnh ở nhà mỗi ngày để biết cây lớn lên thế nào."
         ]
       }
     },
     "tienganh": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có năng khiếu Tiếng Anh, phát âm chuẩn và tự tin giao tiếp.",
-          "Đầu năm học, em đọc viết Tiếng Anh thành thạo và vốn từ vựng phong phú.",
-          "Sau hơn một tháng, em giao tiếp tự nhiên và biết vận dụng linh hoạt vào tình huống.",
-          "Em khởi đầu năm học rất tốt, nghe hiểu tốt và nói tiếng Anh trôi chảy.",
-          "Đầu năm học em đã có vốn từ phong phú và phát âm chuẩn các từ trong bài.",
-          "Em vào học nhanh, mạnh dạn giao tiếp Tiếng Anh và viết câu sáng tạo.",
-          "Bước vào năm học, em đọc to rõ và biết vận dụng cấu trúc câu linh hoạt."
+          "Em phát âm chuẩn các từ vựng cơ bản, đọc bảng chữ cái rất chính xác.",
+          "Em có năng khiếu Tiếng Anh, vốn từ vựng phong phú và chào hỏi tự tin.",
+          "Em nghe và lặp lại câu chính xác, sử dụng số đếm 1-10 rất linh hoạt.",
+          "Em mạnh dạn giao tiếp Tiếng Anh, biết giới thiệu bản thân tự tin.",
+          "Em yêu thích môn học, đọc to rõ và viết các từ vựng đúng chính tả.",
+          "Em hăng hái phát biểu, ghi nhớ tốt từ vựng về màu sắc và đồ dùng.",
+          "Em vận dụng từ vựng linh hoạt vào giao tiếp đơn giản trong lớp."
         ],
         "tot": [
-          "Bước vào năm học, em phát âm chuẩn và đọc Tiếng Anh khá lưu loát.",
-          "Đầu năm học, em nắm vững từ vựng và mẫu câu, vận dụng tốt vào giao tiếp.",
-          "Sau hơn một tháng, em nghe hiểu tốt và trả lời được câu hỏi bằng Tiếng Anh.",
-          "Em khởi đầu năm học khá tốt, đọc to rõ và viết câu đúng ngữ pháp.",
-          "Trong những tuần đầu, em mạnh dạn giao tiếp và hăng hái tham gia hoạt động.",
-          "Em vào năm học có ý thức, đọc viết Tiếng Anh khá thành thạo.",
-          "Bước vào năm học, em phát âm đúng các từ trong bài và tự tin trả lời."
+          "Em phát âm khá chuẩn các từ vựng cơ bản và đọc bảng chữ cái đúng.",
+          "Em nghe hiểu các câu chào hỏi đơn giản và biết trả lời tự tin.",
+          "Em đã thuộc số đếm 1-10 và các từ vựng về màu sắc - đồ dùng.",
+          "Em hăng hái phát biểu, mạnh dạn lặp lại theo cô trong giờ học.",
+          "Em viết được các từ vựng đã học vào vở chính tả Tiếng Anh.",
+          "Em có ý thức học tập tốt, đọc viết Tiếng Anh khá ổn theo chương trình.",
+          "Em ghi nhớ tốt từ vựng mới, biết chào hỏi bằng Tiếng Anh đơn giản."
         ],
         "ht": [
-          "Bước vào năm học, em đã làm quen với chương trình Tiếng Anh trên lớp.",
-          "Đầu năm học, em đã thuộc một số từ vựng quen thuộc và biết chào hỏi.",
-          "Sau hơn một tháng, em chăm chỉ học tập và có nhiều tiến bộ trong phát âm.",
-          "Em đang dần quen với cách học mới, đọc và viết câu đơn giản theo yêu cầu.",
-          "Trong những tuần đầu, em có tiến bộ trong nghe và lặp lại câu theo cô.",
-          "Em vào năm học đều đặn, tham gia học tập tích cực và hoàn thành bài.",
-          "Bước vào năm học, em đã biết giới thiệu bản thân bằng Tiếng Anh đơn giản."
+          "Em đã thuộc một số từ vựng quen thuộc và biết chào hỏi cơ bản.",
+          "Em đọc và viết được các câu chào hỏi đơn giản theo cô.",
+          "Em chăm chỉ học tập, có tiến bộ trong phát âm và nghe.",
+          "Em đã biết giới thiệu bản thân bằng Tiếng Anh đơn giản theo mẫu.",
+          "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
+          "Em có tiến bộ trong nghe và lặp lại câu theo cô giáo.",
+          "Em đã đọc được bảng chữ cái Tiếng Anh và một số từ ngắn."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện phát âm và học thuộc các từ vựng cơ bản.",
-          "Đầu năm học, em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà.",
-          "Em cần mạnh dạn hơn khi nói Tiếng Anh trong lớp và luyện thêm ở nhà.",
-          "Em đã chuyên cần đi học, hãy học thuộc 3-5 từ vựng mới mỗi ngày.",
-          "Sau hơn một tháng, em hãy mạnh dạn lặp lại câu theo cô dù chưa thật chuẩn.",
-          "Cô tin em sẽ tiến bộ, hãy nghe các bài hát Tiếng Anh thiếu nhi mỗi tối.",
-          "Đầu năm em hãy luyện viết lại các từ vựng đã học vào vở mỗi ngày."
+          "Em cần luyện phát âm và học thuộc các từ vựng cơ bản mỗi ngày.",
+          "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
+          "Em ngoan và lễ phép, cần học thuộc 3-5 từ vựng mới mỗi ngày.",
+          "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo cô dù chưa chuẩn.",
+          "Em chăm chú nghe giảng, cần luyện viết lại từ vựng vào vở mỗi ngày.",
+          "Cô tin em sẽ tiến bộ, hãy nghe bài hát Tiếng Anh thiếu nhi mỗi tối.",
+          "Em hãy nhờ cô và gia đình hỏi đáp các câu chào hỏi đơn giản."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có năng khiếu ngôn ngữ, nghe nói đọc viết Tiếng Anh thành thạo.",
-          "Trong học kì I, em phát âm chuẩn và giao tiếp lưu loát tự tin.",
-          "Qua một học kì, em vốn từ vựng phong phú và sử dụng linh hoạt trong tình huống.",
-          "Hết HK1, em nghe hiểu xuất sắc và viết câu sáng tạo, đúng ngữ pháp.",
-          "Kết thúc HK1, em đọc viết Tiếng Anh thành thạo và ngữ điệu rất tự nhiên.",
-          "Trong HK1, em yêu thích môn học và mạnh dạn giao tiếp với cô và bạn.",
-          "Qua một học kì, em là tấm gương sáng về Tiếng Anh cho cả lớp."
+          "Em phát âm chuẩn các mẫu câu, giao tiếp về gia đình - đồ vật trong nhà tự tin.",
+          "Em có vốn từ vựng phong phú, nghe nói đọc viết Tiếng Anh đều xuất sắc.",
+          "Em sử dụng mẫu câu giới thiệu bản thân và gia đình rất linh hoạt sáng tạo.",
+          "Em đọc trôi chảy các đoạn ngắn, viết câu đúng ngữ pháp tự tin.",
+          "Em ham học hỏi, có nhiều sáng tạo trong giao tiếp Tiếng Anh trên lớp.",
+          "Em ghi nhớ tốt từ vựng và mẫu câu, vận dụng vào tình huống thực tế.",
+          "Em yêu môn Tiếng Anh, hăng hái phát biểu và biểu diễn rất tự tin."
         ],
         "tot": [
-          "Kết thúc HK1, em phát âm chuẩn và đọc nói Tiếng Anh khá lưu loát.",
-          "Trong học kì I, em nắm vững từ vựng và vận dụng tốt vào giao tiếp đơn giản.",
-          "Qua một học kì, em nghe hiểu tốt và trả lời câu hỏi của cô bằng Tiếng Anh.",
-          "Hết HK1, em đọc to rõ và viết câu đúng ngữ pháp khá tự tin.",
-          "Kết thúc HK1, em mạnh dạn giao tiếp và hăng hái tham gia hoạt động trong lớp.",
-          "Trong HK1, em có ý thức học tập tốt và đọc viết Tiếng Anh khá thành thạo.",
-          "Qua một học kì, em ghi nhớ từ vựng tốt và viết được câu đơn giản theo mẫu."
+          "Em phát âm khá chuẩn, giao tiếp về gia đình và đồ vật trong nhà đúng.",
+          "Em nắm vững mẫu câu giới thiệu bản thân và biết áp dụng vào thực tế.",
+          "Em đọc to rõ và viết câu đúng ngữ pháp theo mẫu đã học.",
+          "Em hăng hái phát biểu, mạnh dạn giao tiếp với cô và bạn bè.",
+          "Em ghi nhớ tốt từ vựng mới, sử dụng vào giao tiếp đơn giản.",
+          "Em có ý thức học tập tốt, đọc viết Tiếng Anh khá thành thạo.",
+          "Em đã viết được câu đơn giản theo mẫu và biết chào hỏi tự tin."
         ],
         "ht": [
-          "Kết thúc HK1, em đã nắm được các từ vựng và mẫu câu cơ bản theo chương trình.",
-          "Trong học kì I, em đọc và viết được các câu đơn giản theo yêu cầu của cô.",
-          "Qua một học kì, em chăm chỉ học tập và có nhiều tiến bộ trong phát âm.",
-          "Hết HK1, em đã biết chào hỏi và giới thiệu bản thân bằng Tiếng Anh.",
-          "Kết thúc HK1, em tham gia học tập tích cực và hoàn thành các bài tập.",
-          "Trong HK1, em đã thuộc một số từ vựng quen thuộc và biết chào hỏi.",
-          "Qua một học kì, em có tiến bộ trong nghe và lặp lại câu theo cô."
+          "Em đã nắm được từ vựng và mẫu câu cơ bản theo chương trình HK1.",
+          "Em đọc và viết được các câu đơn giản theo yêu cầu của cô.",
+          "Em chăm chỉ học tập, có nhiều tiến bộ trong phát âm Tiếng Anh.",
+          "Em đã biết chào hỏi và giới thiệu bản thân bằng Tiếng Anh.",
+          "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
+          "Em đã thuộc thêm từ vựng quen thuộc và biết một số mẫu câu.",
+          "Em có tiến bộ trong nghe và lặp lại câu theo cô giáo."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện phát âm và học thuộc các từ vựng cơ bản.",
-          "Trong HK1, em đã cố gắng, hãy nghe và đọc Tiếng Anh ở nhà mỗi tối.",
-          "Qua một học kì, em nên mạnh dạn hơn khi nói Tiếng Anh và luyện thêm ở nhà.",
-          "Hết HK1, em hãy học thuộc 3-5 từ vựng mới mỗi ngày và đọc lại bài cũ.",
-          "Em chuyên cần cả HK1, cần luyện viết lại các từ vựng đã học vào vở.",
-          "Cô tin em sẽ tiến bộ HK2, hãy nhờ cô và gia đình hỏi-đáp các câu chào hỏi.",
-          "Kết thúc HK1, em hãy nghe các bài hát Tiếng Anh thiếu nhi để làm quen phát âm."
+          "Em cần luyện phát âm và học thuộc các từ vựng cơ bản hằng ngày.",
+          "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
+          "Em ngoan và lễ phép, cần học thuộc 3-5 từ vựng mới mỗi ngày.",
+          "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo cô dù chưa chuẩn.",
+          "Em chăm chú nghe giảng, cần luyện viết lại từ vựng vào vở mỗi ngày.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình hỏi đáp các câu chào hỏi.",
+          "Em hãy nghe bài hát Tiếng Anh thiếu nhi 10 phút mỗi tối để quen ngữ điệu."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì khả năng nghe nói đọc viết Tiếng Anh thành thạo.",
-          "Tiếp nối HK1, em vẫn phát âm chuẩn và giao tiếp lưu loát tự tin.",
-          "Sau kì nghỉ Tết, em vào học nhanh và mở rộng vốn từ vựng rất tốt.",
-          "Nửa đầu HK2, em nghe hiểu xuất sắc và viết câu sáng tạo đúng ngữ pháp.",
-          "Bước vào HK2, em là tấm gương về Tiếng Anh, ngữ điệu rất tự nhiên.",
-          "Trong HK2, em yêu thích môn học và mạnh dạn giao tiếp với cô và bạn.",
-          "Tiếp nối HK1, em vận dụng từ vựng và cấu trúc câu linh hoạt vào tình huống."
+          "Em diễn đạt sở thích và hoạt động hằng ngày bằng Tiếng Anh tự tin sáng tạo.",
+          "Em sử dụng mẫu câu 'I like / I have' linh hoạt trong giao tiếp.",
+          "Em có vốn từ vựng phong phú, nghe nói đọc viết Tiếng Anh đều thành thạo.",
+          "Em đọc hiểu các đoạn văn ngắn, viết câu đúng ngữ pháp và sáng tạo.",
+          "Em ham học hỏi, có nhiều sáng tạo trong giao tiếp Tiếng Anh hằng ngày.",
+          "Em ghi nhớ tốt từ vựng và biết vận dụng vào tình huống thực tế.",
+          "Em yêu môn Tiếng Anh, hăng hái phát biểu và biểu diễn rất tự tin."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn phát âm chuẩn và đọc Tiếng Anh khá lưu loát.",
-          "Tiếp nối HK1, em duy trì việc học từ vựng và vận dụng tốt vào giao tiếp.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và nghe hiểu khá tốt.",
-          "Nửa đầu HK2, em đọc to rõ và viết câu đúng ngữ pháp tự tin.",
-          "Bước vào HK2, em mạnh dạn giao tiếp và hăng hái tham gia hoạt động trên lớp.",
-          "Trong HK2, em đọc viết Tiếng Anh khá thành thạo theo chương trình.",
-          "Tiếp nối HK1, em ghi nhớ từ vựng tốt và viết được câu đơn giản theo mẫu."
+          "Em phát âm khá chuẩn, diễn đạt sở thích và hoạt động hằng ngày đúng.",
+          "Em sử dụng mẫu câu 'I like / I have' đúng và biết áp dụng vào thực tế.",
+          "Em đọc to rõ và viết câu đúng ngữ pháp theo mẫu đã học.",
+          "Em hăng hái phát biểu, mạnh dạn giao tiếp với cô và bạn bè.",
+          "Em ghi nhớ tốt từ vựng mới và sử dụng vào giao tiếp đơn giản.",
+          "Em có ý thức học tập tốt, đọc viết Tiếng Anh khá thành thạo.",
+          "Em đã viết được câu kể về sở thích và hoạt động hằng ngày của mình."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc học từ vựng và mẫu câu cơ bản.",
-          "Tiếp nối HK1, em chăm chỉ học tập và có tiến bộ trong phát âm.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và đọc viết câu đơn giản đúng.",
-          "Nửa đầu HK2, em đã biết chào hỏi và giới thiệu bản thân bằng Tiếng Anh.",
-          "Bước vào HK2, em tham gia học tập tích cực và hoàn thành các bài tập.",
-          "Trong HK2, em đã thuộc thêm từ vựng quen thuộc và biết chào hỏi.",
-          "Tiếp nối HK1, em có tiến bộ trong nghe và lặp lại câu theo cô."
+          "Em đã nắm được từ vựng và mẫu câu cơ bản về sở thích - hoạt động.",
+          "Em đọc và viết được các câu đơn giản theo yêu cầu của cô.",
+          "Em chăm chỉ học tập, có nhiều tiến bộ trong phát âm Tiếng Anh.",
+          "Em đã biết kể về sở thích bằng Tiếng Anh đơn giản theo mẫu.",
+          "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
+          "Em đã thuộc thêm từ vựng và biết mẫu câu 'I like / I have'.",
+          "Em có tiến bộ trong nghe và lặp lại câu theo cô giáo."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục luyện phát âm và học thuộc các từ vựng.",
-          "Tiếp nối HK1, em hãy duy trì việc nghe và đọc Tiếng Anh mỗi tối ở nhà.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp học và mạnh dạn nói hơn.",
-          "Nửa đầu HK2, em đã cố gắng, hãy học thuộc 3-5 từ vựng mỗi ngày.",
-          "Em chuyên cần đi học, cần luyện viết lại các từ vựng đã học vào vở.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy nhờ cô và gia đình hỏi-đáp Tiếng Anh.",
-          "Bước vào HK2, em hãy nghe các bài hát Tiếng Anh thiếu nhi mỗi tối."
+          "Em cần luyện phát âm và học thuộc các từ vựng cơ bản hằng ngày.",
+          "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
+          "Em ngoan và lễ phép, cần học thuộc 3-5 từ vựng mới mỗi ngày.",
+          "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo cô dù chưa chuẩn.",
+          "Em chăm chú nghe giảng, cần luyện viết lại từ vựng vào vở mỗi ngày.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình hỏi đáp các câu Tiếng Anh.",
+          "Em hãy nghe bài hát Tiếng Anh thiếu nhi mỗi tối để quen ngữ điệu."
         ]
       }
     },
     "gdtc": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có năng khiếu thể thao và thực hiện động tác đẹp.",
-          "Đầu năm học, em thể lực tốt, nhanh nhẹn khéo léo trong vận động.",
-          "Sau hơn một tháng, em đạt thành tích cao trong các môn vận động trên lớp.",
-          "Em khởi đầu năm học rất tốt, thực hiện kĩ thuật chuẩn xác và dẻo dai.",
-          "Đầu năm học em đã có tinh thần đồng đội rất tốt trong các trò chơi.",
-          "Em vào học nhanh, kĩ năng vận động vượt trội so với bạn trong lớp.",
-          "Bước vào năm học, em có thể lực vượt trội và thực hiện động tác đẹp."
+          "Em thực hiện đội hình đội ngũ chuẩn xác, dứt khoát và rất đẹp mắt.",
+          "Em có thể lực tốt, các bài tập tư thế cơ bản đều thực hiện chính xác.",
+          "Em năng khiếu thể thao, khởi động cơ thể nhanh nhẹn và đầy đủ các động tác.",
+          "Em yêu thể thao, có tinh thần đồng đội rất tốt trong giờ học.",
+          "Em đứng nghiêm - đứng nghỉ - quay trái - quay phải đẹp, là gương cho cả lớp.",
+          "Em chăm chỉ rèn luyện, kĩ năng vận động vượt trội so với các bạn.",
+          "Em có ý thức rèn luyện sức khỏe cao, là tấm gương về thể chất."
         ],
         "tot": [
-          "Bước vào năm học, em thực hiện đúng và đẹp các động tác thể dục cô hướng dẫn.",
-          "Đầu năm học, em có thể lực tốt và tích cực tham gia hoạt động thể chất.",
-          "Sau hơn một tháng, em hoàn thành tốt các nội dung và động tác đẹp.",
-          "Em khởi đầu năm học khá tốt, yêu vận động và tham gia trò chơi tích cực.",
-          "Trong những tuần đầu, em có ý thức rèn luyện sức khỏe và tập luyện đều.",
-          "Em vào năm học có tinh thần đồng đội tốt, hợp tác hiệu quả trong hoạt động.",
-          "Bước vào năm học, em có sự khéo léo và phối hợp tốt với bạn trong lớp."
+          "Em thực hiện đội hình đội ngũ đúng theo hướng dẫn, dứt khoát và đẹp.",
+          "Em có thể lực tốt, các bài tập rèn tư thế cơ bản đều thực hiện đúng.",
+          "Em khởi động cơ thể đầy đủ, tham gia tích cực các hoạt động thể chất.",
+          "Em yêu vận động, có tinh thần đồng đội tốt trong trò chơi tập thể.",
+          "Em có ý thức rèn luyện sức khỏe và chăm chỉ tập luyện hằng ngày.",
+          "Em phối hợp tốt với bạn trong các bài tập đội hình đội ngũ.",
+          "Em thực hiện các động tác đứng nghiêm - đứng nghỉ - quay đẹp và đúng."
         ],
         "ht": [
-          "Bước vào năm học, em đã thực hiện được các động tác thể dục cơ bản.",
-          "Đầu năm học, em tham gia tích cực các hoạt động thể chất trong giờ học.",
-          "Sau hơn một tháng, em có ý thức rèn luyện sức khỏe và chăm chỉ tập luyện.",
-          "Em đang dần quen với chương trình mới, có tiến bộ trong thực hiện bài tập.",
-          "Trong những tuần đầu, em biết hợp tác với bạn trong trò chơi vận động.",
-          "Em vào năm học đều đặn, đã làm quen với các động tác cơ bản trên lớp.",
-          "Bước vào năm học, em cố gắng thực hiện bài tập theo cô hướng dẫn."
+          "Em đã thực hiện được các động tác đội hình đội ngũ cơ bản.",
+          "Em tham gia tích cực các hoạt động thể chất trong giờ học.",
+          "Em có ý thức rèn luyện sức khỏe, chăm chỉ tập luyện trên lớp.",
+          "Em đã có tiến bộ trong thực hiện các bài tập rèn tư thế.",
+          "Em biết hợp tác với bạn trong các trò chơi vận động tập thể.",
+          "Em đã làm quen với các động tác khởi động cơ thể đầy đủ.",
+          "Em cố gắng thực hiện bài tập theo cô hướng dẫn đầy đủ."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện các động tác khởi động và thể dục buổi sáng.",
-          "Đầu năm học, em hãy mạnh dạn tham gia các trò chơi vận động cùng bạn.",
-          "Em cần luyện đi bộ, chạy chậm và bài tập cơ bản 15 phút mỗi ngày.",
-          "Em đã chuyên cần đi học, hãy làm theo cô từng động tác và mạnh dạn hỏi.",
-          "Sau hơn một tháng, em hãy kiên trì rèn luyện và phối hợp tốt với bạn.",
-          "Cô tin em sẽ tiến bộ, hãy ăn uống đủ chất và ngủ đủ giấc cho khỏe.",
-          "Đầu năm em hãy tập thể dục buổi sáng 10 phút mỗi ngày tại nhà."
+          "Em cần luyện các động tác đứng nghiêm - đứng nghỉ - quay trái - quay phải.",
+          "Em hãy tích cực vận động và tham gia trò chơi tập thể trong lớp.",
+          "Em ngoan và chuyên cần, cần luyện thể dục buổi sáng đều đặn tại nhà.",
+          "Em đã có cố gắng, hãy mạnh dạn tham gia trò chơi vận động cùng bạn.",
+          "Em chăm chú nghe giảng, cần làm theo cô từng động tác và hỏi khi cần.",
+          "Cô tin em sẽ tiến bộ, hãy kiên trì rèn luyện và phối hợp với bạn.",
+          "Em hãy ăn đủ chất - ngủ đủ giấc để có sức khỏe tốt cho học tập."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có năng khiếu thể thao và thực hiện động tác đẹp đẽ.",
-          "Trong học kì I, em thể lực tốt, nhanh nhẹn khéo léo và đạt thành tích cao.",
-          "Qua một học kì, em yêu thể thao và có tinh thần đồng đội rất tốt.",
-          "Hết HK1, em thực hiện kĩ thuật chuẩn xác và là gương về rèn luyện thể chất.",
-          "Kết thúc HK1, em vận động khéo léo và đạt thành tích cao trong các môn.",
-          "Trong HK1, em chăm chỉ rèn luyện và kĩ năng vận động vượt trội.",
-          "Qua một học kì, em luôn cổ vũ bạn và đoàn kết trong các trò chơi."
+          "Em thực hiện bài thể dục phát triển chung chuẩn xác, dứt khoát và rất đẹp.",
+          "Em có thể lực vượt trội, tham gia trò chơi vận động đầy nhiệt huyết.",
+          "Em năng khiếu thể thao, các động tác bài thể dục đều chính xác và đẹp.",
+          "Em yêu thể thao, có tinh thần đồng đội cao và biết cổ vũ bạn.",
+          "Em là tấm gương về rèn luyện thể chất, các bạn trong lớp noi theo.",
+          "Em phối hợp với bạn rất tốt trong các trò chơi vận động tập thể.",
+          "Em có ý thức rèn luyện sức khỏe cao, kĩ năng vận động vượt trội."
         ],
         "tot": [
-          "Kết thúc HK1, em thực hiện đúng và đẹp các động tác thể dục theo hướng dẫn.",
-          "Trong học kì I, em có thể lực tốt và tích cực tham gia hoạt động thể chất.",
-          "Qua một học kì, em hoàn thành tốt nội dung bài học và động tác đẹp.",
-          "Hết HK1, em yêu vận động và tham gia tích cực các trò chơi tập thể.",
-          "Kết thúc HK1, em có ý thức rèn luyện sức khỏe và tập luyện hằng ngày.",
-          "Trong HK1, em có tinh thần đồng đội tốt và hợp tác hiệu quả với bạn.",
-          "Qua một học kì, em thực hiện đúng động tác cơ bản và phối hợp tốt."
+          "Em thực hiện bài thể dục phát triển chung đúng và đẹp theo cô.",
+          "Em có thể lực tốt, tham gia tích cực các trò chơi vận động.",
+          "Em hoàn thành tốt các nội dung bài học, động tác rõ ràng và đúng.",
+          "Em yêu vận động, có tinh thần đồng đội tốt trong trò chơi tập thể.",
+          "Em có ý thức rèn luyện sức khỏe và chăm chỉ tập luyện hằng ngày.",
+          "Em phối hợp tốt với bạn trong các bài tập và trò chơi vận động.",
+          "Em thực hiện các động tác đẹp và biết phối hợp tay - chân nhịp nhàng."
         ],
         "ht": [
-          "Kết thúc HK1, em đã thực hiện được các động tác thể dục cơ bản theo yêu cầu.",
-          "Trong học kì I, em tham gia tích cực các hoạt động thể chất trong giờ học.",
-          "Qua một học kì, em có ý thức rèn luyện sức khỏe và chăm chỉ luyện tập.",
-          "Hết HK1, em đã có tiến bộ trong thực hiện các bài tập thể dục.",
-          "Kết thúc HK1, em biết hợp tác với bạn trong các trò chơi vận động.",
-          "Trong HK1, em đã làm quen với các động tác cơ bản và tham gia trò chơi.",
-          "Qua một học kì, em cố gắng thực hiện bài tập theo cô hướng dẫn."
+          "Em đã thực hiện được các động tác bài thể dục phát triển chung.",
+          "Em tham gia tích cực các hoạt động thể chất trong giờ học.",
+          "Em có ý thức rèn luyện sức khỏe, chăm chỉ tập luyện trên lớp.",
+          "Em đã có tiến bộ trong thực hiện các bài tập thể dục.",
+          "Em biết hợp tác với bạn trong các trò chơi vận động tập thể.",
+          "Em đã làm quen với các động tác bài thể dục và trò chơi vận động.",
+          "Em cố gắng thực hiện bài tập theo cô hướng dẫn đầy đủ."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện tập các động tác thể dục và rèn sức khỏe.",
-          "Trong HK1, em đã cố gắng, hãy tham gia trò chơi tập thể cùng bạn.",
-          "Qua một học kì, em nên kiên trì luyện tập để có sức khỏe tốt hơn.",
-          "Hết HK1, em hãy luyện các động tác khởi động buổi sáng đều đặn tại nhà.",
-          "Em chuyên cần cả HK1, cần luyện đi bộ và chạy chậm 15 phút mỗi ngày.",
-          "Cô tin em sẽ tiến bộ HK2, hãy làm theo cô từng động tác và mạnh dạn hỏi.",
-          "Kết thúc HK1, em hãy ăn đủ chất và ngủ đủ giấc cho việc học tập."
+          "Em cần luyện các động tác bài thể dục phát triển chung tại nhà.",
+          "Em hãy tích cực vận động và tham gia trò chơi tập thể trong lớp.",
+          "Em ngoan và chuyên cần, cần luyện thể dục buổi sáng đều đặn.",
+          "Em đã có cố gắng, hãy mạnh dạn tham gia trò chơi vận động cùng bạn.",
+          "Em chăm chú nghe giảng, cần làm theo cô từng động tác và hỏi khi cần.",
+          "Cô tin em sẽ tiến bộ, hãy kiên trì rèn luyện và phối hợp với bạn.",
+          "Em hãy ăn đủ chất - ngủ đủ giấc để có sức khỏe tốt cho học tập."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì năng khiếu thể thao và thực hiện động tác đẹp.",
-          "Tiếp nối HK1, em vẫn thể lực tốt, nhanh nhẹn khéo léo trong vận động.",
-          "Sau kì nghỉ Tết, em vào học nhanh và đạt thành tích cao trong các môn.",
-          "Nửa đầu HK2, em thực hiện kĩ thuật chuẩn xác và có tinh thần đồng đội.",
-          "Bước vào HK2, em là tấm gương về rèn luyện thể chất, vận động khéo léo.",
-          "Trong HK2, em chăm chỉ rèn luyện và kĩ năng vận động vượt trội.",
-          "Tiếp nối HK1, em cổ vũ bạn và đoàn kết trong các trò chơi tập thể."
+          "Em bật xa thành thạo, ném bóng trúng đích và phối hợp các động tác nhịp nhàng.",
+          "Em có thể lực vượt trội, các bài tập phối hợp đều thực hiện đẹp mắt.",
+          "Em năng khiếu thể thao, kĩ năng bật - chạy - ném đều rất khéo léo.",
+          "Em yêu thể thao, đoàn kết với bạn trong các trò chơi tập thể đầy nhiệt.",
+          "Em là tấm gương về rèn luyện thể chất, được các bạn cổ vũ noi theo.",
+          "Em phối hợp các động tác tay chân nhịp nhàng và đầy sức mạnh.",
+          "Em có ý thức rèn luyện sức khỏe cao, kĩ năng vận động vượt trội."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn thực hiện đúng và đẹp các động tác thể dục.",
-          "Tiếp nối HK1, em duy trì thể lực tốt và tích cực tham gia hoạt động thể chất.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và hoàn thành tốt nội dung bài.",
-          "Nửa đầu HK2, em yêu vận động và tham gia trò chơi tích cực.",
-          "Bước vào HK2, em có ý thức rèn luyện sức khỏe và tập luyện hằng ngày.",
-          "Trong HK2, em có tinh thần đồng đội tốt và hợp tác hiệu quả với bạn.",
-          "Tiếp nối HK1, em thực hiện động tác cơ bản và phối hợp tốt với bạn."
+          "Em thực hiện bật xa và ném bóng đúng kĩ thuật theo cô hướng dẫn.",
+          "Em có thể lực tốt, tham gia tích cực các bài tập phối hợp.",
+          "Em hoàn thành tốt các nội dung bài học, động tác rõ ràng và đúng.",
+          "Em yêu vận động, có tinh thần đồng đội tốt trong trò chơi tập thể.",
+          "Em có ý thức rèn luyện sức khỏe và chăm chỉ tập luyện hằng ngày.",
+          "Em phối hợp tay - chân nhịp nhàng trong các bài tập vận động.",
+          "Em biết hợp tác với bạn và cổ vũ trong các trò chơi vận động."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc tập thể dục và thực hiện động tác cơ bản.",
-          "Tiếp nối HK1, em tham gia tích cực các hoạt động thể chất trong giờ học.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và rèn luyện sức khỏe.",
-          "Nửa đầu HK2, em có tiến bộ trong thực hiện các bài tập thể dục.",
-          "Bước vào HK2, em biết hợp tác với bạn trong các trò chơi vận động.",
-          "Trong HK2, em đã thực hiện các động tác và tham gia trò chơi tập thể.",
-          "Tiếp nối HK1, em cố gắng thực hiện bài tập theo cô hướng dẫn."
+          "Em đã thực hiện được các động tác bật xa và ném bóng cơ bản.",
+          "Em tham gia tích cực các hoạt động thể chất trong giờ học.",
+          "Em có ý thức rèn luyện sức khỏe, chăm chỉ tập luyện trên lớp.",
+          "Em đã có tiến bộ trong thực hiện các bài tập phối hợp.",
+          "Em biết hợp tác với bạn trong các trò chơi vận động tập thể.",
+          "Em đã làm quen với các động tác phối hợp tay chân.",
+          "Em cố gắng thực hiện bài tập theo cô hướng dẫn đầy đủ."
         ],
         "cht": [
-          "Bước vào HK2, em cần kiên trì luyện tập thể dục và rèn sức khỏe.",
-          "Tiếp nối HK1, em hãy duy trì việc tập thể dục buổi sáng đều đặn.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp và mạnh dạn tham gia trò chơi.",
-          "Nửa đầu HK2, em đã cố gắng, hãy phối hợp tốt với bạn trong giờ học.",
-          "Em chuyên cần đi học, cần luyện đi bộ và chạy chậm 15 phút mỗi ngày.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy làm theo cô từng động tác và hỏi khi cần.",
-          "Bước vào HK2, em hãy ăn đủ chất và ngủ đủ giấc để có thể lực tốt."
+          "Em cần luyện bật xa và ném bóng theo hướng dẫn của cô.",
+          "Em hãy tích cực vận động và tham gia trò chơi tập thể trong lớp.",
+          "Em ngoan và chuyên cần, cần luyện thể dục buổi sáng đều đặn.",
+          "Em đã có cố gắng, hãy mạnh dạn tham gia trò chơi vận động cùng bạn.",
+          "Em chăm chú nghe giảng, cần làm theo cô từng động tác và hỏi khi cần.",
+          "Cô tin em sẽ tiến bộ, hãy kiên trì rèn luyện và phối hợp với bạn.",
+          "Em hãy ăn đủ chất - ngủ đủ giấc để có sức khỏe tốt cho học tập."
         ]
       }
     },
     "amnhac": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có năng khiếu âm nhạc, hát hay và biểu diễn tự tin.",
-          "Đầu năm học, em hát đúng giai điệu và truyền cảm xúc rất tốt.",
-          "Sau hơn một tháng, em biết kết hợp hát với vận động phụ họa đẹp.",
-          "Em khởi đầu năm học rất tốt, yêu ca hát và biểu diễn sáng tạo.",
-          "Đầu năm học em đã cảm thụ âm nhạc tinh tế và phân biệt giai điệu chính xác.",
-          "Em vào học nhanh, có chất giọng đẹp và biểu diễn tự tin trước lớp.",
-          "Bước vào năm học, em hát đúng cao độ và thể hiện sắc thái phong phú."
+          "Em hát các bài về thầy cô - bạn bè đúng giai điệu và truyền cảm xúc tốt.",
+          "Em có năng khiếu âm nhạc, hát to rõ và biểu diễn rất tự tin.",
+          "Em nghe nhạc thiếu nhi cảm thụ tinh tế, phân biệt giai điệu chính xác.",
+          "Em yêu ca hát, biểu diễn các bài hát sáng tạo và đầy cảm xúc.",
+          "Em hát đúng cao độ - trường độ, kết hợp vỗ tay theo phách rất đều.",
+          "Em có chất giọng đẹp, hát các bài hát truyền cảm và lôi cuốn.",
+          "Em là tấm gương về Âm nhạc, hăng hái biểu diễn trước lớp."
         ],
         "tot": [
-          "Bước vào năm học, em hát hay đúng nhạc và tích cực tham gia hoạt động.",
-          "Đầu năm học, em hát đúng giai điệu và mạnh dạn biểu diễn trước lớp.",
-          "Sau hơn một tháng, em nghe và phân biệt được giai điệu trong bài hát.",
-          "Em khởi đầu năm học khá tốt, tích cực luyện tập và hát khá hay.",
-          "Trong những tuần đầu, em có ý thức học tập tốt và hoàn thành bài hát cô giao.",
-          "Em vào năm học có ý thức, biết hát theo nhóm và kết hợp vận động.",
-          "Bước vào năm học, em hát đúng giai điệu và mạnh dạn biểu diễn tự nhiên."
+          "Em hát các bài về thầy cô - bạn bè đúng giai điệu và lời ca.",
+          "Em hát to rõ, mạnh dạn biểu diễn trước lớp khá tự tin.",
+          "Em nghe và phân biệt được các giai điệu trong bài hát.",
+          "Em tích cực luyện tập, hát các bài đã học khá hay và truyền cảm.",
+          "Em có ý thức học tập tốt, hoàn thành các bài hát cô giao.",
+          "Em biết hát theo nhóm và vỗ tay theo phách đơn giản.",
+          "Em hát đúng giai điệu, mạnh dạn biểu diễn trước lớp tự nhiên."
         ],
         "ht": [
-          "Bước vào năm học, em đã hát được các bài hát theo yêu cầu chương trình.",
-          "Đầu năm học, em tham gia tích cực các hoạt động ca hát trong giờ học.",
-          "Sau hơn một tháng, em có tiến bộ trong việc hát đúng giai điệu và lời ca.",
-          "Em đang dần quen với cách học mới, biết hát theo nhóm và vận động đơn giản.",
-          "Trong những tuần đầu, em có ý thức học tập và hoàn thành các bài hát.",
-          "Em vào năm học đều đặn, đã thuộc lời và hát được các bài theo chương trình.",
-          "Bước vào năm học, em hát theo cô và bạn trong các giờ học âm nhạc."
+          "Em đã hát được các bài hát theo yêu cầu của chương trình HK1.",
+          "Em tham gia tích cực các hoạt động ca hát trong giờ học.",
+          "Em đã có tiến bộ trong việc hát đúng giai điệu và lời ca.",
+          "Em biết hát theo nhóm và kết hợp vỗ tay đơn giản.",
+          "Em có ý thức học tập, hoàn thành các bài hát được giao.",
+          "Em đã thuộc lời và hát được các bài hát theo chương trình.",
+          "Em hát theo cô và bạn trong các giờ học âm nhạc đầy đủ."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện thuộc lời các bài hát đã học và hát theo nhạc.",
-          "Đầu năm học, em hãy mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
-          "Em cần nghe các bài hát thiếu nhi quen thuộc và tập hát theo mỗi tối.",
-          "Em đã chuyên cần đi học, hãy luyện hát đúng giai điệu từng câu theo cô.",
-          "Sau hơn một tháng, em hãy biểu diễn cho gia đình nghe các bài hát đã học.",
-          "Cô tin em sẽ tiến bộ, hãy tham gia hát tập thể cùng lớp để rèn sự tự tin.",
-          "Đầu năm em hãy nghe các bài hát thiếu nhi 10 phút mỗi tối ở nhà."
+          "Em cần luyện thuộc lời các bài hát đã học và hát theo nhạc nền.",
+          "Em hãy mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
+          "Em ngoan và hiền, cần nghe các bài hát thiếu nhi quen thuộc mỗi tối.",
+          "Em đã có cố gắng, hãy luyện hát đúng giai điệu từng câu theo cô.",
+          "Em chăm chú nghe giảng, cần biểu diễn cho gia đình nghe bài đã học.",
+          "Cô tin em sẽ tiến bộ, hãy tham gia hát tập thể cùng lớp để tự tin.",
+          "Em hãy nghe bài hát thiếu nhi 10 phút mỗi tối ở nhà để quen giai điệu."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có năng khiếu âm nhạc, hát hay và biểu diễn tự tin.",
-          "Trong học kì I, em hát đúng giai điệu và truyền cảm xúc rất tốt.",
-          "Qua một học kì, em biết kết hợp hát với vận động phụ họa đẹp mắt.",
-          "Hết HK1, em yêu ca hát và biểu diễn sáng tạo các bài hát đã học.",
-          "Kết thúc HK1, em cảm thụ âm nhạc tinh tế và phân biệt giai điệu chính xác.",
-          "Trong HK1, em có chất giọng đẹp và biểu diễn tự tin truyền cảm xúc.",
-          "Qua một học kì, em hát đúng cao độ và thể hiện sắc thái phong phú."
+          "Em hát kết hợp vỗ tay theo phách - nhịp đều đẹp và rất chuẩn xác.",
+          "Em có năng khiếu âm nhạc, đọc nhạc đơn giản chính xác và sáng tạo.",
+          "Em hát các bài đã học truyền cảm xúc tốt, lôi cuốn người nghe.",
+          "Em cảm thụ âm nhạc tinh tế, phân biệt giai điệu - tiết tấu chính xác.",
+          "Em yêu ca hát, biểu diễn cá nhân và nhóm rất tự tin sáng tạo.",
+          "Em có chất giọng đẹp, thể hiện sắc thái phong phú và đầy cảm xúc.",
+          "Em là tấm gương về Âm nhạc cho cả lớp, hăng hái biểu diễn."
         ],
         "tot": [
-          "Kết thúc HK1, em hát hay đúng nhạc và tích cực tham gia hoạt động.",
-          "Trong học kì I, em hát đúng giai điệu và mạnh dạn biểu diễn trước lớp.",
-          "Qua một học kì, em nghe và phân biệt được giai điệu tiết tấu trong bài hát.",
-          "Hết HK1, em tích cực luyện tập và hát các bài đã học khá hay truyền cảm.",
-          "Kết thúc HK1, em có ý thức học tập tốt và hoàn thành bài hát cô giao.",
-          "Trong HK1, em biết hát theo nhóm và kết hợp với vận động đơn giản.",
-          "Qua một học kì, em mạnh dạn biểu diễn trước lớp khá tự nhiên."
+          "Em hát đúng giai điệu, kết hợp vỗ tay theo phách đều đẹp.",
+          "Em hát to rõ, mạnh dạn biểu diễn trước lớp khá tự tin.",
+          "Em nghe và phân biệt được giai điệu - tiết tấu trong bài hát.",
+          "Em tích cực luyện tập, hát các bài đã học khá hay và truyền cảm.",
+          "Em có ý thức học tập tốt, hoàn thành các bài hát cô giao.",
+          "Em biết hát theo nhóm và vỗ tay theo nhịp khá đều.",
+          "Em đọc nhạc đơn giản đúng, biểu diễn trước lớp tự nhiên."
         ],
         "ht": [
-          "Kết thúc HK1, em đã hát được các bài hát theo yêu cầu của chương trình.",
-          "Trong học kì I, em tham gia tích cực các hoạt động ca hát trong giờ học.",
-          "Qua một học kì, em có tiến bộ trong việc hát đúng giai điệu và lời ca.",
-          "Hết HK1, em biết hát theo nhóm và kết hợp với vận động đơn giản.",
-          "Kết thúc HK1, em có ý thức học tập và hoàn thành các bài hát được giao.",
-          "Trong HK1, em đã thuộc lời và hát được các bài theo chương trình.",
-          "Qua một học kì, em hát theo cô và bạn trong các giờ học âm nhạc."
+          "Em đã hát được các bài hát theo yêu cầu của chương trình HK1.",
+          "Em tham gia tích cực các hoạt động ca hát trong giờ học.",
+          "Em đã có tiến bộ trong việc hát đúng giai điệu và lời ca.",
+          "Em biết hát theo nhóm và kết hợp vỗ tay theo phách.",
+          "Em có ý thức học tập, hoàn thành các bài hát được giao.",
+          "Em đã thuộc lời và hát được các bài hát theo chương trình.",
+          "Em hát theo cô và bạn trong các giờ học âm nhạc đầy đủ."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện thuộc lời và đúng giai điệu các bài hát đã học.",
-          "Trong HK1, em đã cố gắng, hãy mạnh dạn hơn trong các hoạt động ca hát.",
-          "Qua một học kì, em nên dành thời gian nghe và tập hát các bài thiếu nhi.",
-          "Hết HK1, em hãy luyện thuộc lời và hát theo nhạc nền tại nhà.",
-          "Em chuyên cần cả HK1, cần mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
-          "Cô tin em sẽ tiến bộ HK2, hãy biểu diễn cho gia đình nghe các bài đã học.",
-          "Kết thúc HK1, em hãy tham gia hát tập thể cùng lớp để rèn sự tự tin."
+          "Em cần luyện thuộc lời và đúng giai điệu các bài hát đã học.",
+          "Em hãy mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
+          "Em ngoan và hiền, cần nghe các bài hát thiếu nhi quen thuộc mỗi tối.",
+          "Em đã có cố gắng, hãy luyện hát đúng giai điệu từng câu theo cô.",
+          "Em chăm chú nghe giảng, cần biểu diễn cho gia đình nghe bài đã học.",
+          "Cô tin em sẽ tiến bộ, hãy tham gia hát tập thể cùng lớp để tự tin.",
+          "Em hãy nghe bài hát thiếu nhi 10 phút mỗi tối để quen giai điệu."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì năng khiếu âm nhạc, hát hay và biểu diễn tự tin.",
-          "Tiếp nối HK1, em vẫn hát đúng giai điệu và truyền cảm xúc rất tốt.",
-          "Sau kì nghỉ Tết, em vào học nhanh và biểu diễn các bài mới rất hay.",
-          "Nửa đầu HK2, em biết kết hợp hát với vận động phụ họa đẹp mắt.",
-          "Bước vào HK2, em là tấm gương về Âm nhạc, biểu diễn sáng tạo và tự tin.",
-          "Trong HK2, em cảm thụ âm nhạc tinh tế và hát đúng cao độ.",
-          "Tiếp nối HK1, em có chất giọng đẹp và thể hiện sắc thái phong phú."
+          "Em hát các bài về gia đình - quê hương truyền cảm xúc và rất sâu sắc.",
+          "Em có năng khiếu âm nhạc, biểu diễn nhóm sáng tạo và rất chuyên nghiệp.",
+          "Em hát kết hợp vận động phụ họa đẹp mắt, thể hiện sắc thái phong phú.",
+          "Em cảm thụ âm nhạc tinh tế, phân biệt giai điệu và tiết tấu chính xác.",
+          "Em yêu ca hát, có nhiều ý tưởng sáng tạo khi biểu diễn nhóm.",
+          "Em có chất giọng đẹp, hát truyền cảm và lôi cuốn người nghe.",
+          "Em là tấm gương về Âm nhạc, hăng hái biểu diễn các bài về quê hương."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn hát hay đúng nhạc và tích cực tham gia hoạt động.",
-          "Tiếp nối HK1, em hát đúng giai điệu và mạnh dạn biểu diễn trước lớp.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và phân biệt giai điệu tốt.",
-          "Nửa đầu HK2, em tích cực luyện tập và hát các bài đã học khá hay.",
-          "Bước vào HK2, em có ý thức học tập tốt và hoàn thành bài hát cô giao.",
-          "Trong HK2, em biết hát theo nhóm và kết hợp với vận động đơn giản.",
-          "Tiếp nối HK1, em mạnh dạn biểu diễn trước lớp khá tự nhiên."
+          "Em hát các bài về gia đình - quê hương đúng giai điệu và truyền cảm.",
+          "Em hát to rõ, mạnh dạn biểu diễn nhóm trước lớp khá tự tin.",
+          "Em nghe và phân biệt được giai điệu - tiết tấu trong bài hát.",
+          "Em tích cực luyện tập, hát các bài đã học khá hay và truyền cảm.",
+          "Em có ý thức học tập tốt, hoàn thành các bài hát cô giao.",
+          "Em biết hát theo nhóm và kết hợp với vận động phụ họa đơn giản.",
+          "Em mạnh dạn biểu diễn trước lớp và tham gia hoạt động tích cực."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc hát theo yêu cầu chương trình.",
-          "Tiếp nối HK1, em tham gia tích cực các hoạt động ca hát trong giờ học.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và hát đúng giai điệu.",
-          "Nửa đầu HK2, em biết hát theo nhóm và kết hợp với vận động đơn giản.",
-          "Bước vào HK2, em có ý thức học tập và hoàn thành các bài hát được giao.",
-          "Trong HK2, em đã thuộc thêm lời và hát được các bài mới theo chương trình.",
-          "Tiếp nối HK1, em hát theo cô và bạn trong các giờ học âm nhạc."
+          "Em đã hát được các bài hát về gia đình - quê hương theo chương trình.",
+          "Em tham gia tích cực các hoạt động ca hát trong giờ học.",
+          "Em đã có tiến bộ trong việc hát đúng giai điệu và lời ca.",
+          "Em biết hát theo nhóm và kết hợp vận động đơn giản.",
+          "Em có ý thức học tập, hoàn thành các bài hát được giao.",
+          "Em đã thuộc lời và hát được các bài về quê hương theo cô.",
+          "Em hát theo cô và bạn trong các giờ học âm nhạc đầy đủ."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục luyện thuộc lời và đúng giai điệu bài hát.",
-          "Tiếp nối HK1, em hãy duy trì việc nghe các bài hát thiếu nhi mỗi tối.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp và mạnh dạn hát to hơn trên lớp.",
-          "Nửa đầu HK2, em đã cố gắng, hãy luyện hát đúng giai điệu từng câu.",
-          "Em chuyên cần đi học, cần luyện thuộc lời các bài hát đã học tại nhà.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy biểu diễn cho gia đình nghe.",
-          "Bước vào HK2, em hãy tham gia hát tập thể cùng lớp để rèn sự tự tin."
+          "Em cần luyện thuộc lời các bài hát về gia đình - quê hương.",
+          "Em hãy mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
+          "Em ngoan và hiền, cần nghe các bài hát thiếu nhi quen thuộc mỗi tối.",
+          "Em đã có cố gắng, hãy luyện hát đúng giai điệu từng câu theo cô.",
+          "Em chăm chú nghe giảng, cần biểu diễn cho gia đình nghe bài đã học.",
+          "Cô tin em sẽ tiến bộ, hãy tham gia hát tập thể cùng lớp để tự tin.",
+          "Em hãy nghe bài hát về quê hương 10 phút mỗi tối để quen giai điệu."
         ]
       }
     },
     "mithuat": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em có năng khiếu hội họa, vẽ đẹp và phối màu hài hòa.",
-          "Đầu năm học, em có óc thẩm mĩ tốt và sản phẩm tranh vẽ giàu cảm xúc.",
-          "Sau hơn một tháng, em có trí tưởng tượng phong phú và sáng tạo độc đáo.",
-          "Em khởi đầu năm học rất tốt, sử dụng màu sắc hài hòa và bố cục cân đối.",
-          "Đầu năm học em đã cảm thụ cái đẹp tốt và biểu đạt cảm xúc tinh tế.",
-          "Em vào học nhanh, hoàn thành sản phẩm mĩ thuật xuất sắc và sáng tạo.",
-          "Bước vào năm học, em có ý tưởng độc đáo và đẹp mắt trong tranh vẽ."
+          "Em vẽ các đường nét cơ bản chuẩn xác, hình đồ vật xung quanh rất sinh động.",
+          "Em có năng khiếu hội họa, vẽ đẹp và phối màu hài hòa từ những bài đầu.",
+          "Em quan sát đồ vật tinh tế, vẽ lại theo trí nhớ chính xác và sáng tạo.",
+          "Em có óc thẩm mĩ tốt, sản phẩm tranh vẽ sinh động và đầy cảm xúc.",
+          "Em sử dụng màu sắc hài hòa, bố cục cân đối và biểu đạt cảm xúc tinh tế.",
+          "Em yêu thích vẽ tranh, có nhiều ý tưởng sáng tạo và độc đáo.",
+          "Em là tấm gương về Mĩ thuật, hoàn thành sản phẩm xuất sắc và đẹp mắt."
         ],
         "tot": [
-          "Bước vào năm học, em vẽ đẹp và biết phối màu hài hòa trong tranh.",
-          "Đầu năm học, em có óc thẩm mĩ tốt và thể hiện nét vẽ sinh động.",
-          "Sau hơn một tháng, em yêu thích vẽ tranh và sáng tạo trong sản phẩm.",
-          "Em khởi đầu năm học khá tốt, sử dụng màu sắc hợp lí và bố cục đẹp.",
-          "Trong những tuần đầu, em biết cảm thụ cái đẹp và biểu đạt cảm xúc qua tranh.",
-          "Em vào năm học có ý thức, hoàn thành sản phẩm mĩ thuật đẹp và công phu.",
-          "Bước vào năm học, em vẽ và tô màu cẩn thận, biết chọn màu phù hợp."
+          "Em vẽ các đường nét cơ bản thẳng - cong - gấp khúc đúng và đẹp.",
+          "Em vẽ hình các đồ vật quen thuộc rõ ràng và phối màu phù hợp.",
+          "Em có óc thẩm mĩ, thể hiện nét vẽ sinh động và rõ ràng.",
+          "Em yêu thích vẽ tranh, sáng tạo trong các sản phẩm trên lớp.",
+          "Em sử dụng màu sắc hợp lí, bố cục tranh cân đối khá đẹp.",
+          "Em hoàn thành sản phẩm mĩ thuật đẹp, có ý tưởng tốt và rõ ràng.",
+          "Em vẽ và tô màu cẩn thận, biết chọn màu phù hợp với nội dung."
         ],
         "ht": [
-          "Bước vào năm học, em đã vẽ được các bức tranh theo yêu cầu của chương trình.",
-          "Đầu năm học, em tham gia tích cực các hoạt động vẽ và tạo hình trong lớp.",
-          "Sau hơn một tháng, em có tiến bộ trong sử dụng màu sắc và bố cục.",
-          "Em đang dần quen với cách học mới, biết vẽ các hình cơ bản và tô màu.",
-          "Trong những tuần đầu, em có ý thức giữ gìn dụng cụ và hoàn thành sản phẩm.",
-          "Em vào năm học đều đặn, đã vẽ được các hình cơ bản theo cô hướng dẫn.",
-          "Bước vào năm học, em có ý thức học tập và hoàn thành sản phẩm cơ bản."
+          "Em đã vẽ được các nét cơ bản và hình đơn giản theo cô hướng dẫn.",
+          "Em tham gia tích cực các hoạt động vẽ và tạo hình trong lớp.",
+          "Em đã có tiến bộ trong sử dụng màu sắc và bố cục đơn giản.",
+          "Em biết vẽ các hình cơ bản và tô màu theo hướng dẫn của cô.",
+          "Em có ý thức giữ gìn dụng cụ học tập và hoàn thành sản phẩm.",
+          "Em đã vẽ được hình đồ vật quen thuộc theo mẫu của cô.",
+          "Em có ý thức học tập, hoàn thành sản phẩm cơ bản trên lớp."
         ],
         "cht": [
-          "Bước vào năm học, em cần luyện vẽ các nét cơ bản: thẳng, cong, gấp khúc.",
-          "Đầu năm học, em hãy luyện tô màu kín hình và không lan ra ngoài đường viền.",
-          "Em cần quan sát đồ vật cây cối quanh em và tập vẽ lại theo trí nhớ.",
-          "Em đã chuyên cần đi học, hãy chuẩn bị đầy đủ dụng cụ vẽ trước giờ học.",
-          "Sau hơn một tháng, em hãy mạnh dạn sáng tạo và đừng sợ vẽ chưa đẹp.",
+          "Em cần luyện vẽ các nét cơ bản thẳng - cong - gấp khúc cho chuẩn.",
+          "Em hãy luyện tô màu kín hình và không lan ra ngoài đường viền.",
+          "Em ngoan và chuyên cần, cần quan sát đồ vật và vẽ lại theo trí nhớ.",
+          "Em đã có cố gắng, hãy chuẩn bị đầy đủ dụng cụ vẽ trước giờ học.",
+          "Em chăm chú nghe giảng, cần mạnh dạn sáng tạo và không sợ vẽ chưa đẹp.",
           "Cô tin em sẽ tiến bộ, hãy giữ vở vẽ sạch và tham khảo cách vẽ của bạn.",
-          "Đầu năm em hãy luyện vẽ các hình cơ bản 10 phút mỗi ngày tại nhà."
+          "Em hãy luyện vẽ 10 phút mỗi tối ở nhà để rèn kĩ năng nét vẽ."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em có năng khiếu hội họa, vẽ đẹp sáng tạo và phối màu hài hòa.",
-          "Trong học kì I, em có óc thẩm mĩ tốt và sản phẩm giàu cảm xúc.",
-          "Qua một học kì, em yêu vẽ tranh và có trí tưởng tượng phong phú.",
-          "Hết HK1, em sử dụng màu sắc hài hòa và bố cục cân đối, biểu đạt tinh tế.",
-          "Kết thúc HK1, em hoàn thành sản phẩm mĩ thuật xuất sắc và đẹp mắt.",
-          "Trong HK1, em là tấm gương về Mĩ thuật cho cả lớp noi theo.",
-          "Qua một học kì, em có ý tưởng sáng tạo độc đáo và đẹp mắt trong tranh."
+          "Em vẽ tranh chủ đề trường lớp - gia đình rất sinh động và đầy cảm xúc.",
+          "Em có năng khiếu hội họa, phối màu hài hòa và bố cục cân đối đẹp.",
+          "Em quan sát tinh tế, vẽ lại sự vật xung quanh chính xác và sáng tạo.",
+          "Em có óc thẩm mĩ tốt, sản phẩm tranh vẽ sinh động và giàu ý nghĩa.",
+          "Em sử dụng màu sắc hài hòa, biểu đạt cảm xúc qua tranh rất tinh tế.",
+          "Em yêu vẽ tranh, có nhiều ý tưởng sáng tạo và độc đáo hơn các bạn.",
+          "Em là tấm gương về Mĩ thuật, hoàn thành sản phẩm xuất sắc đẹp mắt."
         ],
         "tot": [
-          "Kết thúc HK1, em vẽ đẹp, sáng tạo và biết phối màu hài hòa trong tranh.",
-          "Trong học kì I, em có óc thẩm mĩ tốt và thể hiện nét vẽ sinh động.",
-          "Qua một học kì, em yêu thích vẽ tranh và sáng tạo trong sản phẩm.",
-          "Hết HK1, em sử dụng màu sắc hợp lí và bố cục tranh cân đối đẹp mắt.",
-          "Kết thúc HK1, em biết cảm thụ cái đẹp và biểu đạt cảm xúc qua tranh tốt.",
-          "Trong HK1, em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng.",
-          "Qua một học kì, em vẽ và tô màu cẩn thận, biết chọn màu phù hợp nội dung."
+          "Em vẽ tranh trường lớp - gia đình đúng yêu cầu, phối màu phù hợp.",
+          "Em có óc thẩm mĩ, thể hiện nét vẽ sinh động và rõ ràng.",
+          "Em yêu thích vẽ tranh, sáng tạo trong các sản phẩm trên lớp.",
+          "Em sử dụng màu sắc hợp lí, bố cục tranh cân đối và đẹp mắt.",
+          "Em biết cảm thụ cái đẹp, biểu đạt cảm xúc qua tranh tốt.",
+          "Em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng.",
+          "Em vẽ và tô màu cẩn thận, biết chọn màu phù hợp với nội dung."
         ],
         "ht": [
-          "Kết thúc HK1, em đã vẽ được các bức tranh theo yêu cầu của chương trình.",
-          "Trong học kì I, em tham gia tích cực các hoạt động vẽ và tạo hình.",
-          "Qua một học kì, em có tiến bộ trong sử dụng màu sắc và bố cục tranh.",
-          "Hết HK1, em biết vẽ các hình cơ bản và tô màu theo cô hướng dẫn.",
-          "Kết thúc HK1, em có ý thức giữ gìn dụng cụ và hoàn thành sản phẩm.",
-          "Trong HK1, em đã vẽ được các hình cơ bản và tô màu theo hướng dẫn.",
-          "Qua một học kì, em có ý thức học tập và hoàn thành sản phẩm cơ bản."
+          "Em đã vẽ được tranh trường lớp - gia đình theo yêu cầu chương trình.",
+          "Em tham gia tích cực các hoạt động vẽ và tạo hình trong lớp.",
+          "Em đã có tiến bộ trong sử dụng màu sắc và bố cục tranh.",
+          "Em biết vẽ các hình cơ bản và tô màu theo cô hướng dẫn.",
+          "Em có ý thức giữ gìn dụng cụ và hoàn thành sản phẩm.",
+          "Em đã vẽ được các hình đồ vật và tô màu theo hướng dẫn.",
+          "Em có ý thức học tập, hoàn thành sản phẩm cơ bản trên lớp."
         ],
         "cht": [
-          "Kết thúc HK1, em cần luyện vẽ các hình cơ bản và tô màu cẩn thận hơn.",
-          "Trong HK1, em đã cố gắng, hãy quan sát thiên nhiên và vẽ tranh thường xuyên.",
-          "Qua một học kì, em nên tham khảo cách vẽ của bạn và mạnh dạn sáng tạo.",
-          "Hết HK1, em hãy luyện vẽ các nét cơ bản: thẳng, cong, gấp khúc.",
-          "Em chuyên cần cả HK1, cần chuẩn bị đầy đủ dụng cụ vẽ trước giờ học.",
-          "Cô tin em sẽ tiến bộ HK2, hãy mạnh dạn sáng tạo và đừng sợ vẽ chưa đẹp.",
-          "Kết thúc HK1, em hãy giữ vở vẽ sạch và tham khảo cách vẽ của bạn."
+          "Em cần luyện vẽ các hình cơ bản và rèn cách tô màu cẩn thận.",
+          "Em hãy quan sát người thân trong gia đình và vẽ lại theo trí nhớ.",
+          "Em ngoan và chuyên cần, cần luyện vẽ các nét cơ bản và hình đơn giản.",
+          "Em đã có cố gắng, hãy luyện tô màu kín hình và không lan ra ngoài.",
+          "Em chăm chú nghe giảng, cần chuẩn bị đầy đủ dụng cụ vẽ trước giờ học.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn sáng tạo và đừng sợ vẽ chưa đẹp.",
+          "Em hãy giữ vở vẽ sạch và tham khảo cách vẽ của bạn để học hỏi thêm."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì năng khiếu hội họa, vẽ đẹp và phối màu hài hòa.",
-          "Tiếp nối HK1, em vẫn có óc thẩm mĩ tốt và sản phẩm giàu cảm xúc.",
-          "Sau kì nghỉ Tết, em vào học nhanh và có nhiều ý tưởng sáng tạo.",
-          "Nửa đầu HK2, em sử dụng màu sắc hài hòa và bố cục cân đối đẹp mắt.",
-          "Bước vào HK2, em là tấm gương về Mĩ thuật, biểu đạt cảm xúc rất tinh tế.",
-          "Trong HK2, em hoàn thành sản phẩm mĩ thuật xuất sắc và đẹp mắt.",
-          "Tiếp nối HK1, em có ý tưởng độc đáo và đẹp mắt trong tranh vẽ."
+          "Em vẽ tranh thiên nhiên - lễ hội mùa xuân rất sinh động và sáng tạo.",
+          "Em có năng khiếu hội họa, phối màu hài hòa và biểu đạt cảm xúc tinh tế.",
+          "Em quan sát thiên nhiên tinh tế, vẽ tranh giàu hình ảnh và ý nghĩa.",
+          "Em có óc thẩm mĩ tốt, sản phẩm tranh vẽ sinh động và đầy cảm xúc.",
+          "Em sử dụng màu sắc hài hòa, bố cục cân đối và biểu đạt phong phú.",
+          "Em yêu vẽ tranh, có nhiều ý tưởng sáng tạo và độc đáo hơn các bạn.",
+          "Em là tấm gương về Mĩ thuật, hoàn thành sản phẩm xuất sắc đẹp mắt."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn vẽ đẹp và biết phối màu hài hòa trong tranh.",
-          "Tiếp nối HK1, em duy trì óc thẩm mĩ tốt và nét vẽ sinh động.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và sáng tạo trong sản phẩm.",
-          "Nửa đầu HK2, em sử dụng màu sắc hợp lí và bố cục tranh đẹp mắt.",
-          "Bước vào HK2, em biết cảm thụ cái đẹp và biểu đạt cảm xúc qua tranh.",
-          "Trong HK2, em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng.",
-          "Tiếp nối HK1, em vẽ và tô màu cẩn thận, biết chọn màu phù hợp nội dung."
+          "Em vẽ tranh thiên nhiên và lễ hội đẹp mắt, phối màu phù hợp.",
+          "Em có óc thẩm mĩ, thể hiện nét vẽ sinh động và sáng tạo.",
+          "Em yêu thích vẽ tranh, có nhiều ý tưởng trong các sản phẩm.",
+          "Em sử dụng màu sắc hợp lí, bố cục tranh cân đối đẹp mắt.",
+          "Em biết cảm thụ cái đẹp, biểu đạt cảm xúc qua tranh tốt.",
+          "Em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng.",
+          "Em vẽ và tô màu cẩn thận, biết chọn màu phù hợp với nội dung."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc vẽ và hoàn thành sản phẩm theo chương trình.",
-          "Tiếp nối HK1, em tham gia tích cực các hoạt động vẽ và tạo hình.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và vẽ được các hình cơ bản.",
-          "Nửa đầu HK2, em có tiến bộ trong sử dụng màu sắc và bố cục tranh.",
-          "Bước vào HK2, em biết vẽ các hình và tô màu theo cô hướng dẫn.",
-          "Trong HK2, em có ý thức giữ gìn dụng cụ học tập và hoàn thành sản phẩm.",
-          "Tiếp nối HK1, em có ý thức học tập và hoàn thành sản phẩm cơ bản."
+          "Em đã vẽ được tranh thiên nhiên - mùa xuân theo yêu cầu chương trình.",
+          "Em tham gia tích cực các hoạt động vẽ và tạo hình trong lớp.",
+          "Em đã có tiến bộ trong sử dụng màu sắc và bố cục tranh.",
+          "Em biết vẽ các hình cơ bản và tô màu theo cô hướng dẫn.",
+          "Em có ý thức giữ gìn dụng cụ học tập và hoàn thành sản phẩm.",
+          "Em đã vẽ được tranh chủ đề mùa xuân theo gợi ý của cô.",
+          "Em có ý thức học tập, hoàn thành sản phẩm cơ bản trên lớp."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục luyện vẽ các hình cơ bản và tô màu cẩn thận.",
-          "Tiếp nối HK1, em hãy duy trì việc quan sát thiên nhiên và vẽ tranh.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp và mạnh dạn sáng tạo trong tranh.",
-          "Nửa đầu HK2, em đã cố gắng, hãy tham khảo cách vẽ của bạn.",
-          "Em chuyên cần đi học, cần chuẩn bị đầy đủ dụng cụ vẽ trước giờ học.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy giữ vở vẽ sạch và đừng sợ vẽ chưa đẹp.",
-          "Bước vào HK2, em hãy luyện vẽ 10 phút mỗi ngày tại nhà để tiến bộ."
+          "Em cần luyện vẽ các hình cơ bản và rèn cách tô màu cẩn thận hơn.",
+          "Em hãy quan sát thiên nhiên xung quanh và vẽ lại theo trí nhớ.",
+          "Em ngoan và chuyên cần, cần tham khảo cách vẽ của bạn và sáng tạo.",
+          "Em đã có cố gắng, hãy luyện tô màu kín hình và không lan ra ngoài.",
+          "Em chăm chú nghe giảng, cần chuẩn bị đầy đủ dụng cụ trước giờ học.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn sáng tạo và đừng sợ vẽ chưa đẹp.",
+          "Em hãy luyện vẽ tranh mùa xuân 10 phút mỗi tối ở nhà."
         ]
       }
     },
     "htn": {
       "ghk1": {
         "tot_xs": [
-          "Bước vào năm học, em mạnh dạn tự tin và có kĩ năng sống tốt hơn các bạn.",
-          "Đầu năm học, em năng động sáng tạo và đưa ra nhiều ý tưởng hay cho lớp.",
-          "Sau hơn một tháng, em có khả năng lãnh đạo nhóm và giao tiếp linh hoạt.",
-          "Em khởi đầu năm học rất tốt, tích cực hợp tác và có kĩ năng tự lập.",
-          "Đầu năm học em đã chủ động tham gia mọi hoạt động và truyền cảm hứng.",
-          "Em vào học nhanh, có nhiều kĩ năng nổi bật và biết tự đánh giá rút kinh nghiệm.",
-          "Bước vào năm học, em có kĩ năng làm việc nhóm xuất sắc và dẫn dắt bạn."
+          "Em làm quen môi trường mới rất nhanh, là tấm gương về thích ứng cho cả lớp.",
+          "Em mạnh dạn tự tin, năng động và có nhiều ý tưởng hay cho hoạt động lớp.",
+          "Em có kĩ năng tự phục vụ tốt, biết sắp xếp đồ dùng và giữ vệ sinh cá nhân.",
+          "Em chủ động tham gia mọi hoạt động, đoàn kết và truyền cảm hứng cho bạn.",
+          "Em có khả năng giao tiếp tự tin với cô và các bạn trong lớp.",
+          "Em hiểu và thực hiện đúng nội quy lớp, là gương cho các bạn noi theo.",
+          "Em có nhiều kĩ năng nổi bật, biết tự đánh giá và rút kinh nghiệm tốt."
         ],
         "tot": [
-          "Bước vào năm học, em mạnh dạn tự tin khi tham gia hoạt động trải nghiệm.",
-          "Đầu năm học, em tích cực tham gia hoạt động tập thể và hợp tác tốt với bạn.",
-          "Sau hơn một tháng, em có kĩ năng sống tốt và biết tự lập trong sinh hoạt.",
-          "Em khởi đầu năm học khá tốt, năng động và có ý tưởng hay khi làm nhóm.",
-          "Trong những tuần đầu, em có kĩ năng giao tiếp tự tin và ứng xử phù hợp.",
-          "Em vào năm học có ý thức, yêu lao động và tích cực tham gia công việc tập thể.",
-          "Bước vào năm học, em chia sẻ ý kiến trong nhóm và phối hợp với bạn tốt."
+          "Em đã làm quen với môi trường mới khá nhanh và tự tin.",
+          "Em mạnh dạn tự tin khi tham gia các hoạt động trải nghiệm trên lớp.",
+          "Em có kĩ năng tự phục vụ tốt, biết sắp xếp đồ dùng học tập.",
+          "Em tích cực tham gia hoạt động tập thể và hợp tác tốt với bạn.",
+          "Em có kĩ năng giao tiếp tự tin và ứng xử phù hợp với tình huống.",
+          "Em hiểu và thực hiện đúng nội quy của trường và lớp học.",
+          "Em năng động, có ý tưởng hay khi tham gia hoạt động nhóm."
         ],
         "ht": [
-          "Bước vào năm học, em đã tham gia các hoạt động trải nghiệm trên lớp.",
-          "Đầu năm học, em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
-          "Sau hơn một tháng, em đã mạnh dạn hơn khi tham gia hoạt động tập thể.",
-          "Em đang dần quen với cách học mới, thực hiện kĩ năng sống theo hướng dẫn.",
-          "Trong những tuần đầu, em có tiến bộ trong giao tiếp và ứng xử hằng ngày.",
-          "Em vào năm học đều đặn, tham gia các hoạt động tập thể và hợp tác với bạn.",
-          "Bước vào năm học, em thực hiện được một số kĩ năng sống cơ bản."
+          "Em đã tham gia các hoạt động trải nghiệm trên lớp đầy đủ.",
+          "Em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
+          "Em đã mạnh dạn hơn khi tham gia các hoạt động tập thể.",
+          "Em biết thực hiện các kĩ năng tự phục vụ cơ bản theo hướng dẫn.",
+          "Em đã có tiến bộ trong giao tiếp và ứng xử với cô và bạn.",
+          "Em tham gia các hoạt động tập thể và làm theo hướng dẫn của cô.",
+          "Em đã hiểu một số nội quy của trường và lớp học."
         ],
         "cht": [
-          "Bước vào năm học, em cần mạnh dạn hơn khi giao tiếp với cô và bạn.",
-          "Đầu năm học, em hãy chủ động tham gia trò chơi và hoạt động nhóm.",
-          "Em cần luyện kĩ năng tự phục vụ: gấp quần áo, sắp xếp sách vở.",
-          "Em đã chuyên cần đi học, hãy luyện đặt câu hỏi và chia sẻ suy nghĩ với bạn.",
-          "Sau hơn một tháng, em hãy mạnh dạn nhận nhiệm vụ trong nhóm và cố gắng hoàn thành.",
-          "Cô tin em sẽ tiến bộ, hãy rèn thói quen tự lập trong sinh hoạt hằng ngày.",
-          "Đầu năm em hãy đoàn kết với các bạn và lắng nghe khi bạn nói."
+          "Em cần mạnh dạn hơn khi giao tiếp với cô và bạn trong lớp.",
+          "Em hãy chủ động tham gia trò chơi và hoạt động nhóm trong lớp.",
+          "Em ngoan và hiền, cần luyện kĩ năng tự phục vụ và giữ vệ sinh cá nhân.",
+          "Em đã có cố gắng, hãy luyện đặt câu hỏi và chia sẻ suy nghĩ với bạn.",
+          "Em chăm chú nghe giảng, cần mạnh dạn nhận nhiệm vụ trong nhóm.",
+          "Cô tin em sẽ tiến bộ, hãy rèn thói quen tự lập trong sinh hoạt.",
+          "Em hãy đoàn kết với các bạn và lắng nghe khi bạn nói."
         ]
       },
       "chk1": {
         "tot_xs": [
-          "Kết thúc HK1, em mạnh dạn tự tin và có kĩ năng sống tốt hơn các bạn.",
-          "Trong học kì I, em năng động sáng tạo và đưa ra nhiều ý tưởng hay cho lớp.",
-          "Qua một học kì, em có khả năng lãnh đạo nhóm và giao tiếp linh hoạt.",
-          "Hết HK1, em tích cực hợp tác và có kĩ năng giải quyết vấn đề tốt.",
-          "Kết thúc HK1, em chủ động trong mọi hoạt động và truyền cảm hứng cho bạn.",
-          "Trong HK1, em có nhiều kĩ năng nổi bật và biết tự đánh giá hiệu quả.",
-          "Qua một học kì, em có kĩ năng làm việc nhóm xuất sắc và dẫn dắt bạn."
+          "Em tham gia hoạt động tập thể rất tích cực, là cây xanh của các phong trào lớp.",
+          "Em mạnh dạn tự tin, có khả năng lãnh đạo nhóm và giao tiếp linh hoạt.",
+          "Em có kĩ năng làm việc nhóm xuất sắc, biết lắng nghe và dẫn dắt bạn.",
+          "Em chủ động tham gia mọi hoạt động, đoàn kết và truyền cảm hứng cho bạn.",
+          "Em có khả năng giao tiếp tự tin với cô và bạn bè trong các tình huống.",
+          "Em có nhiều ý tưởng sáng tạo cho hoạt động lớp, là gương cho các bạn.",
+          "Em năng động sáng tạo, biết tổ chức hoạt động nhóm rất hiệu quả."
         ],
         "tot": [
-          "Kết thúc HK1, em mạnh dạn tự tin khi tham gia các hoạt động trải nghiệm.",
-          "Trong học kì I, em tích cực tham gia hoạt động tập thể và hợp tác tốt với bạn.",
-          "Qua một học kì, em có kĩ năng sống tốt và biết tự lập trong sinh hoạt.",
-          "Hết HK1, em năng động và có ý tưởng hay khi tham gia hoạt động nhóm.",
-          "Kết thúc HK1, em có kĩ năng giao tiếp tự tin và ứng xử phù hợp tình huống.",
-          "Trong HK1, em yêu lao động và tích cực tham gia các công việc của tập thể.",
-          "Qua một học kì, em chia sẻ ý kiến trong nhóm và phối hợp với bạn tốt."
+          "Em mạnh dạn tự tin khi tham gia các hoạt động trải nghiệm trên lớp.",
+          "Em tích cực tham gia hoạt động tập thể và hợp tác tốt với bạn bè.",
+          "Em có kĩ năng giao tiếp tự tin và ứng xử phù hợp với tình huống.",
+          "Em năng động, có ý tưởng hay khi tham gia hoạt động nhóm.",
+          "Em yêu lao động, tích cực tham gia công việc của tập thể.",
+          "Em chia sẻ ý kiến trong nhóm và phối hợp với bạn để hoàn thành công việc.",
+          "Em có kĩ năng tự phục vụ tốt, biết giữ gìn vệ sinh cá nhân và lớp học."
         ],
         "ht": [
-          "Kết thúc HK1, em đã tham gia tích cực các hoạt động trải nghiệm trên lớp.",
-          "Trong học kì I, em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
-          "Qua một học kì, em đã mạnh dạn hơn khi tham gia hoạt động tập thể.",
-          "Hết HK1, em biết thực hiện các kĩ năng sống cơ bản theo hướng dẫn.",
-          "Kết thúc HK1, em đã có tiến bộ trong giao tiếp và ứng xử hằng ngày.",
-          "Trong HK1, em tham gia các hoạt động tập thể và hợp tác với bạn theo cô.",
-          "Qua một học kì, em có tiến bộ trong giao tiếp và thực hiện kĩ năng sống."
+          "Em đã tham gia tích cực các hoạt động trải nghiệm trên lớp.",
+          "Em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
+          "Em đã mạnh dạn hơn khi tham gia các hoạt động tập thể.",
+          "Em biết thực hiện các kĩ năng sống cơ bản theo hướng dẫn.",
+          "Em đã có tiến bộ trong giao tiếp và ứng xử hằng ngày.",
+          "Em tham gia các hoạt động tập thể và hợp tác với bạn theo cô.",
+          "Em có tiến bộ trong giao tiếp và biết thực hiện kĩ năng sống cơ bản."
         ],
         "cht": [
-          "Kết thúc HK1, em cần mạnh dạn hơn trong các hoạt động tập thể.",
-          "Trong HK1, em đã cố gắng, hãy chủ động đóng góp ý kiến trong các hoạt động.",
-          "Qua một học kì, em nên rèn luyện thêm kĩ năng giao tiếp và hợp tác.",
-          "Hết HK1, em hãy luyện kĩ năng tự phục vụ: gấp quần áo, sắp xếp sách vở.",
-          "Em chuyên cần cả HK1, cần luyện đặt câu hỏi và chia sẻ suy nghĩ với bạn.",
-          "Cô tin em sẽ tiến bộ HK2, hãy mạnh dạn nhận nhiệm vụ trong nhóm.",
-          "Kết thúc HK1, em hãy rèn thói quen tự lập trong sinh hoạt và đoàn kết với bạn."
+          "Em cần mạnh dạn hơn trong các hoạt động tập thể và làm việc nhóm.",
+          "Em hãy chủ động đóng góp ý kiến trong các hoạt động của lớp.",
+          "Em ngoan và hiền, cần rèn kĩ năng giao tiếp và hợp tác với bạn bè.",
+          "Em đã có cố gắng, hãy luyện kĩ năng tự phục vụ tại nhà hằng ngày.",
+          "Em chăm chú nghe giảng, cần luyện đặt câu hỏi và chia sẻ với bạn.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn nhận nhiệm vụ trong nhóm.",
+          "Em hãy rèn thói quen tự lập trong sinh hoạt và đoàn kết với bạn."
         ]
       },
       "ghk2": {
         "tot_xs": [
-          "Bước vào HK2, em duy trì mạnh dạn tự tin và kĩ năng sống nổi bật.",
-          "Tiếp nối HK1, em vẫn năng động sáng tạo và đưa ra nhiều ý tưởng hay.",
-          "Sau kì nghỉ Tết, em vào học nhanh và có khả năng lãnh đạo nhóm tốt.",
-          "Nửa đầu HK2, em tích cực hợp tác và giải quyết vấn đề rất linh hoạt.",
-          "Bước vào HK2, em là tấm gương về kĩ năng sống, dẫn dắt bạn cùng tiến bộ.",
-          "Trong HK2, em có nhiều kĩ năng nổi bật và biết tự đánh giá hiệu quả.",
-          "Tiếp nối HK1, em chủ động trong mọi hoạt động và truyền cảm hứng cho bạn."
+          "Em tham gia hoạt động cộng đồng tích cực, biết trồng cây - vệ sinh trường lớp.",
+          "Em có kĩ năng hợp tác xuất sắc, biết phân công và phối hợp nhóm hiệu quả.",
+          "Em chủ động trong mọi hoạt động, là tấm gương về kĩ năng sống cho cả lớp.",
+          "Em mạnh dạn tự tin, có khả năng lãnh đạo và truyền cảm hứng cho bạn.",
+          "Em yêu lao động, biết quan tâm cộng đồng và bảo vệ môi trường.",
+          "Em có nhiều ý tưởng sáng tạo cho hoạt động lớp và cộng đồng.",
+          "Em có kĩ năng làm việc nhóm vượt trội, biết lắng nghe và dẫn dắt bạn."
         ],
         "tot": [
-          "Bước vào HK2, em vẫn mạnh dạn tự tin khi tham gia hoạt động trải nghiệm.",
-          "Tiếp nối HK1, em tích cực tham gia hoạt động tập thể và hợp tác tốt với bạn.",
-          "Sau kì nghỉ Tết, em quay lại học tập nhanh và có kĩ năng tự lập tốt.",
-          "Nửa đầu HK2, em năng động và có ý tưởng hay khi tham gia hoạt động nhóm.",
-          "Bước vào HK2, em có kĩ năng giao tiếp tự tin và ứng xử phù hợp tình huống.",
-          "Trong HK2, em yêu lao động và tham gia các công việc của tập thể.",
-          "Tiếp nối HK1, em chia sẻ ý kiến trong nhóm và phối hợp với bạn tốt."
+          "Em mạnh dạn tự tin khi tham gia các hoạt động cộng đồng và tập thể.",
+          "Em tích cực trồng cây - vệ sinh trường lớp và bảo vệ môi trường.",
+          "Em có kĩ năng giao tiếp tự tin và hợp tác tốt với bạn trong nhóm.",
+          "Em năng động, có ý tưởng hay khi tham gia hoạt động cộng đồng.",
+          "Em yêu lao động, tích cực tham gia công việc của tập thể.",
+          "Em chia sẻ ý kiến trong nhóm và phối hợp với bạn hoàn thành công việc.",
+          "Em có kĩ năng tự phục vụ tốt, giúp đỡ bạn và người thân trong gia đình."
         ],
         "ht": [
-          "Bước vào HK2, em duy trì việc tham gia các hoạt động trải nghiệm trên lớp.",
-          "Tiếp nối HK1, em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
-          "Sau kì nghỉ Tết, em đã quay lại nề nếp và mạnh dạn hơn trong hoạt động.",
-          "Nửa đầu HK2, em biết thực hiện các kĩ năng sống cơ bản theo hướng dẫn.",
-          "Bước vào HK2, em đã có tiến bộ trong giao tiếp và ứng xử hằng ngày.",
-          "Trong HK2, em tham gia các hoạt động tập thể và hợp tác với bạn theo cô.",
-          "Tiếp nối HK1, em có tiến bộ trong giao tiếp và thực hiện kĩ năng sống."
+          "Em đã tham gia các hoạt động cộng đồng - vệ sinh trường lớp.",
+          "Em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
+          "Em đã mạnh dạn hơn khi tham gia các hoạt động tập thể.",
+          "Em biết thực hiện các kĩ năng sống cơ bản theo hướng dẫn.",
+          "Em đã có tiến bộ trong giao tiếp và ứng xử hằng ngày.",
+          "Em tham gia trồng cây - vệ sinh sân trường theo hướng dẫn của cô.",
+          "Em có tiến bộ trong kĩ năng tự phục vụ và hợp tác với bạn."
         ],
         "cht": [
-          "Bước vào HK2, em cần tiếp tục rèn mạnh dạn trong các hoạt động tập thể.",
-          "Tiếp nối HK1, em hãy chủ động đóng góp ý kiến trong các hoạt động lớp.",
-          "Sau kì nghỉ Tết, em cần lấy lại nhịp và mạnh dạn giao tiếp hơn.",
-          "Nửa đầu HK2, em đã cố gắng, hãy luyện kĩ năng tự phục vụ tại nhà.",
-          "Em chuyên cần đi học, cần luyện đặt câu hỏi và chia sẻ suy nghĩ với bạn.",
-          "Cô tin em sẽ tiến bộ cuối HK2, hãy mạnh dạn nhận nhiệm vụ trong nhóm.",
-          "Bước vào HK2, em hãy rèn thói quen tự lập trong sinh hoạt và đoàn kết."
+          "Em cần mạnh dạn hơn trong các hoạt động tập thể và cộng đồng.",
+          "Em hãy chủ động đóng góp ý kiến và tham gia các hoạt động lớp.",
+          "Em ngoan và hiền, cần luyện kĩ năng giao tiếp và hợp tác với bạn.",
+          "Em đã có cố gắng, hãy luyện kĩ năng tự phục vụ tại nhà hằng ngày.",
+          "Em chăm chú nghe giảng, cần mạnh dạn nhận nhiệm vụ trong nhóm.",
+          "Cô tin em sẽ tiến bộ, hãy tham gia trồng cây - vệ sinh tích cực.",
+          "Em hãy rèn thói quen tự lập trong sinh hoạt và đoàn kết với bạn."
         ]
       }
     }

@@ -208,19 +208,30 @@ async function assertThrows(fn, name) {
     engine.resetUsedPhrases();
     const nxGhk1 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'ghk1');
     log('V2.0 sinhNhanXet ghk1 trả phrase', typeof nxGhk1 === 'string' && nxGhk1.length > 10);
-    log('V2.0 ghk1 chứa tone "đầu năm/bước vào/sau hơn một tháng/khởi đầu/những tuần đầu/vào học nhanh"',
-        /đầu năm|bước vào năm|sau hơn một tháng|khởi đầu|những tuần đầu|vào học nhanh/i.test(nxGhk1),
-        nxGhk1);
 
     engine.resetUsedPhrases();
     const nxChk1 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'chk1');
-    log('V2.0 chk1 chứa tone "kết thúc hk1/học kì I/qua một học kì/hết hk1"',
-        /kết thúc hk1|học kì I|qua một học kì|hết hk1|trong hk1/i.test(nxChk1), nxChk1);
+    log('V2.0 sinhNhanXet chk1 trả phrase', typeof nxChk1 === 'string' && nxChk1.length > 10);
 
     engine.resetUsedPhrases();
     const nxGhk2 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'ghk2');
-    log('V2.0 ghk2 chứa tone "bước vào hk2/tiếp nối/sau kì nghỉ tết/nửa đầu hk2"',
-        /bước vào hk2|tiếp nối|sau kì nghỉ tết|nửa đầu hk2|trong hk2/i.test(nxGhk2), nxGhk2);
+    log('V2.0 sinhNhanXet ghk2 trả phrase', typeof nxGhk2 === 'string' && nxGhk2.length > 10);
+
+    // V2.0 — KHÔNG dùng temporal prefix ("Bước vào HK2", "Sau nghỉ Tết", "Đầu năm"...).
+    // Anh Chung phản hồi: phrases có temporal prefix lặp lại nhiều dạng → nhìn như máy sinh.
+    // Kiểm tra: KHÔNG có phrase nào trong cả 3 ky bắt đầu bằng các cụm thời gian.
+    const tempPrefixRe = /^(Bước vào|Sau (hơn|kì)|Đầu năm|Tiếp nối|Nửa đầu|Kết thúc HK|Qua một học kì|Trong HK|Trong những tuần|Trong học kì I|Hết HK|Em vào (học|năm)|Em khởi đầu)/;
+    let tempViolations = 0;
+    for (const subj of Object.keys(kyData.subjects)) {
+        for (const ky of ['ghk1', 'chk1', 'ghk2']) {
+            for (const tier of ['tot_xs', 'tot', 'ht', 'cht']) {
+                for (const phrase of kyData.subjects[subj][ky][tier]) {
+                    if (tempPrefixRe.test(phrase)) tempViolations++;
+                }
+            }
+        }
+    }
+    log('V2.0 KHÔNG có phrase nào dùng temporal prefix', tempViolations === 0, { violations: tempViolations });
 
     // Fallback: ky='chk2' hoặc undefined → flat pool (legacy)
     engine.resetUsedPhrases();
