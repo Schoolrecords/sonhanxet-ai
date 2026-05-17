@@ -669,11 +669,12 @@
             return;
         }
 
-        // LICENSE GATE — model 1 môn: free user dùng được 1 môn duy nhất (lock subject đầu).
+        // LICENSE GATE — V1.6: free user lock cứng vào cặp (môn, lớp) đầu tiên.
+        const className = currentContext.lop || null;
         if (window.LicenseClient) {
-            const gate = await LicenseClient.canUseFeature('subject', subjectCode);
+            const gate = await LicenseClient.canUseFeature('subject', subjectCode, className);
             if (!gate.allowed) {
-                showLockModal(gate.reason, gate);
+                showLockModal(gate.reason, { ...gate, currentSubject: subjectCode, currentClass: className });
                 return;
             }
         }
@@ -701,9 +702,9 @@
             renderStudentList(result);
             document.getElementById('apply-bar').classList.remove('view-hidden');
 
-            // Lock môn miễn phí vào subject này (chỉ khi bản free) — gọi SAU sinh thành công
+            // V1.6: lock CẶP (môn, lớp) — gọi SAU sinh thành công, chỉ ảnh hưởng free user.
             if (window.LicenseClient) {
-                await LicenseClient.commitFreeSubject(subjectCode);
+                await LicenseClient.commitFreeSubject(subjectCode, className);
                 refreshLicenseUI();
             }
         } catch (e) {
@@ -1473,11 +1474,15 @@
             return;
         }
 
-        // 'free' — model 1 môn: hiển thị tên môn đã chọn (hoặc chưa)
+        // 'free' — V1.6: hiển thị cặp (môn, lớp) đã lock
         box.className = 'lic-status lic-status-free';
-        box.innerHTML = state.freeSubject
-            ? `Bản miễn phí — đã chọn môn <strong>${escapeHtml(subjectKeyToLabel(state.freeSubject))}</strong>`
-            : 'Bản miễn phí — môn đầu tiên thầy/cô dùng sẽ được lưu làm môn duy nhất';
+        if (state.freeSubject && state.freeClass) {
+            box.innerHTML = `Bản miễn phí — đã chọn môn <strong>${escapeHtml(subjectKeyToLabel(state.freeSubject))}</strong> · lớp <strong>${escapeHtml(state.freeClass)}</strong>`;
+        } else if (state.freeSubject) {
+            box.innerHTML = `Bản miễn phí — đã chọn môn <strong>${escapeHtml(subjectKeyToLabel(state.freeSubject))}</strong> (lớp đầu tiên thầy/cô mở sẽ được lưu)`;
+        } else {
+            box.innerHTML = 'Bản miễn phí — <strong>1 môn + 1 lớp</strong> đầu tiên thầy/cô dùng sẽ được lưu';
+        }
 
         if (licUiMode === 'login') {
             formLogin.style.display = 'block';
@@ -1623,8 +1628,15 @@
             msgEl.innerHTML = 'Bản miễn phí <strong>không hỗ trợ</strong> tạo nhận xét NL/PC. Mở khóa để dùng được tất cả 16 trường NL/PC.';
         } else if (reason === 'free_other_subject') {
             const subj = ctx?.freeSubject ? subjectKeyToLabel(ctx.freeSubject) : '?';
+            const lopLocked = ctx?.freeClass ? ` · lớp <strong>${escapeHtml(ctx.freeClass)}</strong>` : '';
             titleEl.textContent = 'Đã dùng hết quota miễn phí';
-            msgEl.innerHTML = `Bản miễn phí chỉ dùng được <strong>1 môn</strong> — máy này đã chọn môn <strong>${escapeHtml(subj)}</strong>. Mở khóa để dùng tất cả môn.`;
+            msgEl.innerHTML = `Bản miễn phí chỉ dùng được <strong>1 môn + 1 lớp</strong> — máy này đã chọn môn <strong>${escapeHtml(subj)}</strong>${lopLocked}. Đăng ký bản quyền để dùng tất cả môn ở tất cả lớp.`;
+        } else if (reason === 'free_other_class') {
+            const subj = ctx?.freeSubject ? subjectKeyToLabel(ctx.freeSubject) : '?';
+            const lopLocked = ctx?.freeClass || '?';
+            const lopHienTai = ctx?.currentClass || '?';
+            titleEl.textContent = `Bản miễn phí đã khóa ở lớp ${lopLocked}`;
+            msgEl.innerHTML = `Máy này đã chọn cặp <strong>môn ${escapeHtml(subj)} · lớp ${escapeHtml(lopLocked)}</strong>. Thầy/cô đang mở <strong>lớp ${escapeHtml(lopHienTai)}</strong> — cần đăng ký bản quyền để dùng thêm lớp khác.`;
         } else if (reason === 'expired') {
             titleEl.textContent = 'Mã đã hết hạn';
             msgEl.textContent = 'Mã kích hoạt đã hết hạn. Liên hệ thầy quản trị để gia hạn.';
