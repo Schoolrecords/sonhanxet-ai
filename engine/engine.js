@@ -182,10 +182,14 @@ class NhanXetEngineV2 {
 
         const mucNLDT = tongHopMuc(danhGia.nang_luc_dac_thu || {});
         result.nang_luc_dac_thu['Nhận xét chung'] = pickFrom(nlpc.nang_luc_dac_thu.nhan_xet_chung, mucNLDT);
-        // BUG-006 fix: Lớp 3-5 có thêm 2 mục Công nghệ + Tin học (TT27 quy định).
-        // V.01 fix: nếu KHÔNG detect được gradeLevel → MẶC ĐỊNH thêm (an toàn cho lớp 3-5).
-        const nldtKeys = ['ngon_ngu', 'tinh_toan', 'khoa_hoc', 'tham_mi', 'the_chat'];
+        // V1.5: Năng lực Khoa học chỉ áp dụng lớp 4-5 (CT GDPT 2018 — môn Khoa học bắt đầu từ
+        // lớp 4; lớp 1-3 chỉ học TNXH). Lớp 3-5 thêm Công nghệ + Tin học (TT27 quy định).
+        // Khi KHÔNG detect được gradeLevel → MẶC ĐỊNH thêm đủ (an toàn cho lớp 4-5).
+        const nldtKeys = ['ngon_ngu', 'tinh_toan', 'tham_mi', 'the_chat'];
         const gradeLevel = hsContext?.gradeLevel;
+        if (gradeLevel == null || gradeLevel >= 4) {
+            nldtKeys.splice(2, 0, 'khoa_hoc');
+        }
         if (gradeLevel == null || gradeLevel >= 3) {
             nldtKeys.push('cong_nghe', 'tin_hoc');
         }

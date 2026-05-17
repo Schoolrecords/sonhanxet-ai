@@ -15,31 +15,63 @@
     transform: translateX(380px);
 }
 
+/* V.05: Toggle button dạng vertical tab — text "Mở/Đóng Sổ nhận xét - AI"
+   xoay -90deg, luôn hiển thị (không cần hover tooltip). Dùng inner span +
+   transform rotate để Vietnamese diacritics hiển thị đúng. */
 #cogiao-ai-toggle {
     position: fixed;
     top: 50%;
     right: 380px;
-    transform: translate(50%, -50%);
+    transform: translateY(-50%);
     z-index: 999998;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+
+    width: 24px;
+    height: 200px;
+
     background: #1D9E75;
     color: white;
     border: 2px solid white;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
     cursor: pointer;
-    font-size: 11px;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: right 0.3s ease;
+
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: -2px 0 8px rgba(0,0,0,0.18);
+    transition: right 0.3s ease, background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
-#cogiao-ai-sidebar.cogiao-ai-hidden ~ #cogiao-ai-toggle {
-    right: 0;
+/* Inner span chứa text xoay -90 deg (đọc từ dưới lên) */
+#cogiao-ai-toggle .toggle-label {
+    display: inline-block;
+    white-space: nowrap;
+    transform: rotate(-90deg);
+    transform-origin: center;
+
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: white;
+    line-height: 1;
 }
 
 #cogiao-ai-toggle:hover {
     background: #0F6E56;
+    box-shadow: -3px 0 12px rgba(0,0,0,0.25);
+    transform: translateY(-50%) translateX(-2px);
+}
+
+#cogiao-ai-toggle:active {
+    transform: translateY(-50%) translateX(0);
+}
+
+#cogiao-ai-sidebar.cogiao-ai-hidden ~ #cogiao-ai-toggle {
+    right: 0;
 }
 
 .cogiao-ai-filled {

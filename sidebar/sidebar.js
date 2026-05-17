@@ -41,10 +41,13 @@
     let nlpcOverrides = {};          // GV override: { tu_chu_tu_hoc: 'cht', ... } (overlay lên auto)
     let nlpcGenerated = null;        // payload sau khi tạo nhận xét text từ engine
 
-    // BUG-006: Định nghĩa 15 field (NL chung 3 + NL đặc thù 5–7 + PC 5).
-    // Lớp 1-2: 5 NL đặc thù (16 mục tổng). Lớp 3-5: 7 NL đặc thù (18 mục tổng — thêm
-    // Công nghệ + Tin học theo TT27/2020 + CT GDPT 2018).
-    // grade=null nghĩa là dùng cho mọi lớp; grade='3+' nghĩa là chỉ lớp 3-5.
+    // V1.5: Định nghĩa các field NL/PC theo CT GDPT 2018 + TT27/2020.
+    //   Lớp 1-2: 4 NL đặc thù (Ngôn ngữ, Tính toán, Thẩm mĩ, Thể chất).
+    //   Lớp 3:   6 NL đặc thù (+ Công nghệ, Tin học).
+    //   Lớp 4-5: 7 NL đặc thù (+ Khoa học).
+    //   V1.5 thay đổi: Năng lực Khoa học chỉ áp dụng lớp 4-5 (bỏ cho lớp 1-3 vì
+    //   chưa có môn Khoa học, chỉ có TNXH).
+    // grade=null mặc định hiển thị ĐỦ (an toàn cho lớp 4-5, lớp dưới Vnedu thiếu ô sẽ skip).
     const NLPC_FIELD_DEFS = {
         nang_luc_chung: [
             { key: 'tu_chu_tu_hoc', label: 'Tự chủ và tự học' },
@@ -54,7 +57,7 @@
         nang_luc_dac_thu: [
             { key: 'ngon_ngu', label: 'Ngôn ngữ' },
             { key: 'tinh_toan', label: 'Tính toán' },
-            { key: 'khoa_hoc', label: 'Khoa học' },
+            { key: 'khoa_hoc', label: 'Khoa học', minGrade: 4 },
             { key: 'tham_mi', label: 'Thẩm mĩ' },
             { key: 'the_chat', label: 'Thể chất' },
             { key: 'cong_nghe', label: 'Công nghệ', minGrade: 3 },
@@ -156,6 +159,7 @@
         document.getElementById('btn-close').onclick = () => {
             parent.postMessage({ type: 'COGIAO_CLOSE_SIDEBAR' }, '*');
         };
+
         document.getElementById('btn-rescan').onclick = () => {
             parent.postMessage({ type: 'COGIAO_RESCAN' }, '*');
             showToast('Đang quét lại dữ liệu Vnedu...');
@@ -169,6 +173,10 @@
 
         document.getElementById('btn-generate').onclick = generateAllNhanXet;
         document.getElementById('btn-apply').onclick = applyAllToVnedu;
+
+        // V.05: 2 nút launcher mở module Vnedu
+        document.getElementById('btn-launcher-mon').onclick = () => openVneduModule('so-diem');
+        document.getElementById('btn-launcher-nlpc').onclick = () => openVneduModule('nlpc');
 
         document.querySelectorAll('#setting-gvLa button').forEach(btn => {
             btn.onclick = () => {
@@ -480,6 +488,26 @@
         closeClassDetail();
     }
 
+    /**
+     * V.05 Launcher: gửi message yêu cầu content-script điều hướng Vnedu Start menu
+     * tới module tương ứng. module = 'so-diem' (Nhập sổ điểm) hoặc 'nlpc' (Phẩm chất - Năng lực).
+     */
+    function openVneduModule(module) {
+        const btnId = module === 'so-diem' ? 'btn-launcher-mon' : 'btn-launcher-nlpc';
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.disabled = true;
+            const originalLabel = btn.querySelector('.btn-launcher-label').textContent;
+            btn.querySelector('.btn-launcher-label').textContent = 'Đang mở...';
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.querySelector('.btn-launcher-label').textContent = originalLabel;
+            }, 2500);
+        }
+        parent.postMessage({ type: 'COGIAO_OPEN_VNEDU_MODULE', payload: { module } }, '*');
+        showToast('Đang mở module Vnedu...');
+    }
+
     function showToast(msg) {
         let toast = document.getElementById('sidebar-toast');
         if (!toast) {
@@ -527,6 +555,12 @@
         }
         if (type === 'COGIAO_NLPC_APPLY_RESULT') {
             handleNLPCApplyResult(payload);
+        }
+        if (type === 'COGIAO_OPEN_VNEDU_MODULE_RESULT') {
+            if (!payload.success) {
+                showToast('Không mở được — vui lòng bấm Start menu Vnedu thủ công');
+                console.warn('[Sidebar] openVneduModule failed:', payload);
+            }
         }
     });
 
@@ -635,7 +669,7 @@
             return;
         }
 
-        // v0.1.17 LICENSE GATE — chặn môn 2+ nếu bản miễn phí
+        // LICENSE GATE — model 1 môn: free user dùng được 1 môn duy nhất (lock subject đầu).
         if (window.LicenseClient) {
             const gate = await LicenseClient.canUseFeature('subject', subjectCode);
             if (!gate.allowed) {
@@ -1145,7 +1179,7 @@
             return;
         }
 
-        // v0.1.17 LICENSE GATE — NLPC luôn cần bản quyền
+        // LICENSE GATE — NLPC luôn cần bản quyền (model 1 môn free chỉ Sổ NX môn).
         if (window.LicenseClient) {
             const gate = await LicenseClient.canUseFeature('nlpc');
             if (!gate.allowed) {
@@ -1365,7 +1399,7 @@
         renderLicenseSection(licenseState);
     }
 
-    function renderLicenseSection(state) {
+    async function renderLicenseSection(state) {
         const box = document.getElementById('lic-status-box');
         if (!box) return;
 
@@ -1439,7 +1473,7 @@
             return;
         }
 
-        // 'free' — cho chọn register hoặc login
+        // 'free' — model 1 môn: hiển thị tên môn đã chọn (hoặc chưa)
         box.className = 'lic-status lic-status-free';
         box.innerHTML = state.freeSubject
             ? `Bản miễn phí — đã chọn môn <strong>${escapeHtml(subjectKeyToLabel(state.freeSubject))}</strong>`

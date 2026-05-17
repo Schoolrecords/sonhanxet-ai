@@ -163,15 +163,10 @@ window.VneduAdapter = {
             return 'so-nhan-xet';
         }
 
-        // Fallback chỉ chạy nếu KHÔNG tìm thấy marker nào — rất ít khi cần.
-        if (this._isSoNXActive()) {
-            this._logDetectOnce_('fallback SoNX', '', 'so-nhan-xet');
-            return 'so-nhan-xet';
-        }
-        if (this._isNLPCFormActive()) {
-            this._logDetectOnce_('fallback NLPC', '', 'nlpc');
-            return 'nlpc';
-        }
+        // V.05: XÓA fallback _isSoNXActive / _isNLPCFormActive. Vnedu's save popup mask
+        // toàn màn → _isOnTop fail cho mọi element → marker invisible. Khi đó fallback
+        // (không check visible) lại bắt được hidden Sổ NX môn 3A cache → trả về so-nhan-xet
+        // SAI → sidebar nhảy sang lớp khác. Tốt hơn: trả null, watcher giữ nguyên state cũ.
         return null;
     },
 
@@ -312,7 +307,18 @@ window.VneduAdapter = {
         return !!this._getActiveSoNXTable();
     },
 
+    // V.05: Cache getContext result để tránh quét DOM 10k+ elements lặp lại khi
+    // watcher fire liên tục trong lúc Vnedu animate.
+    _ctxCache: { value: null, time: 0 },
+    _CTX_CACHE_MS: 500,
+
     getContext() {
+        // V.05: dùng cache nếu < 500ms
+        const cacheNow = Date.now();
+        if (this._ctxCache.value && cacheNow - this._ctxCache.time < this._CTX_CACHE_MS) {
+            return this._ctxCache.value;
+        }
+
         const ctx = { khoi: '', lop: '', mon: '', hocKy: '', kyDanhGia: '' };
 
         // BUG-009 v2 PRIMARY: Vnedu Ext.js dùng <input> + combobox ảo, không phải
@@ -366,8 +372,16 @@ window.VneduAdapter = {
             }
         }
 
-        // [NLPC-DBG] log context cuối cùng + source
-        console.log('[NLPC-DBG] getContext result', ctx, '· primary(visibleVals):', visibleVals);
+        // [NLPC-DBG] log context cuối cùng + source — chỉ log khi có thay đổi để giảm noise
+        const sig = `${ctx.khoi}|${ctx.lop}|${ctx.mon}|${ctx.hocKy}`;
+        if (sig !== this._lastCtxLogSig) {
+            this._lastCtxLogSig = sig;
+            console.log('[NLPC-DBG] getContext result', ctx, '· primary(visibleVals):', visibleVals);
+        }
+
+        // V.05: save cache
+        this._ctxCache.value = ctx;
+        this._ctxCache.time = Date.now();
 
         return ctx;
     },
@@ -785,17 +799,46 @@ window.VneduAdapter = {
         }
     },
 
+    /**
+     * V.05 BUG-011: Tìm window Ext.js chứa marker visible (NLPC hoặc Sổ NX môn).
+     * Walk up từ leaf marker để tìm ancestor có class x-window. Trả null nếu không
+     * tìm thấy → caller fall back tìm toàn document.
+     */
+    _findActiveModuleWindow_() {
+        // Tìm marker visible (NLPC hoặc Sổ NX)
+        let markerEl = this._findVisibleLeafByText_(
+            /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ|Năng lực ghi học bạ/i
+        );
+        if (!markerEl) {
+            markerEl = this._findVisibleLeafByText_(/^Nhận xét cuối kỳ$/i);
+        }
+        if (!markerEl) return null;
+
+        let el = markerEl;
+        for (let i = 0; i < 20; i++) {
+            if (!el) break;
+            if (el.classList && el.classList.contains('x-window')) return el;
+            el = el.parentElement;
+        }
+        return null;
+    },
+
     findLuuButton() {
-        const all = document.querySelectorAll('button, input[type="button"], input[type="submit"], a, span, div');
+        // V.05 BUG-011: Scope tìm "Lưu" vào WINDOW của module đang active (NLPC hoặc
+        // Sổ NX môn). Vnedu Ext.js có thể có nhiều window mở cùng lúc, mỗi window có
+        // toolbar "Lưu" riêng. Trước đây quét toàn document → click NHẦM nút Lưu của
+        // window Sổ điểm thay vì NLPC → Vnedu báo "Đã lưu dữ liệu điểm" + data NLPC
+        // không được lưu.
+        const moduleWindow = this._findActiveModuleWindow_();
+        const searchRoot = moduleWindow || document;
+
+        const all = searchRoot.querySelectorAll('button, input[type="button"], input[type="submit"], a, span, div');
         const candidates = [];
 
         for (const el of all) {
             if (el.closest('#cogiao-ai-sidebar')) continue;
             if (el.offsetWidth === 0 || el.offsetHeight === 0) continue;
             if (el.disabled) continue;
-
-            // BUG-010 fix: phải qua _isInActiveCard — loại nút "Lưu" của window
-            // Sổ NX cũ minimized trong taskbar Ext.js (sẽ save NHẦM lớp cũ).
             if (!this._isInActiveCard(el)) continue;
 
             const text = (el.value || el.textContent || el.title || '').trim();
@@ -810,15 +853,23 @@ window.VneduAdapter = {
             }
         }
 
-        // BUG-010: ưu tiên candidate _isVisible strict (top-most) — nút Lưu đang
-        // hiển thị thực tế trên màn hình, không phải nút của window khác.
+        // Ưu tiên topMost (visible strict)
         candidates.forEach(c => {
             c.topMost = this._isVisible(c.el);
+            // V.05: bonus điểm nếu nút nằm trong x-toolbar (header toolbar của window)
+            c.inToolbar = !!c.el.closest('.x-toolbar');
         });
         candidates.sort((a, b) => {
             if (a.topMost !== b.topMost) return a.topMost ? -1 : 1;
+            if (a.inToolbar !== b.inToolbar) return a.inToolbar ? -1 : 1;
             return b.priority - a.priority;
         });
+
+        if (moduleWindow) {
+            console.log(`[VneduAdapter] findLuuButton: scope = window ${moduleWindow.id || '(no-id)'}, ${candidates.length} candidates`);
+        } else {
+            console.log(`[VneduAdapter] findLuuButton: scope = document (no active module window), ${candidates.length} candidates`);
+        }
 
         for (const c of candidates) {
             if (c.el.tagName === 'BUTTON' || c.el.tagName === 'INPUT' || c.el.tagName === 'A') {
@@ -960,11 +1011,12 @@ window.VneduAdapter = {
     /* ====================================================================
      * v0.1.7 — NLPC FORM (Phẩm chất + Năng lực ghi học bạ)
      *
-     * Form NLPC có 16 textarea (lớp 1-2) hoặc 18 textarea (lớp 3-5) cho 1 HS:
+     * Form NLPC có 15–18 textarea cho 1 HS (V1.5):
      *   NL chung (4): Nhận xét chung, Tự chủ và tự học, Giao tiếp và hợp tác, GQVĐ
-     *   NL đặc thù (6 hoặc 8):
-     *     - Lớp 1-2: Nhận xét chung, Ngôn ngữ, Tính toán, Khoa học, Thẩm mĩ, Thể chất
-     *     - Lớp 3-5: thêm Công nghệ + Tin học (BUG-006, theo TT27/2020 + CT GDPT 2018)
+     *   NL đặc thù (5, 7 hoặc 8):
+     *     - Lớp 1-2: Nhận xét chung, Ngôn ngữ, Tính toán, Thẩm mĩ, Thể chất (5 ô)
+     *     - Lớp 3:   thêm Công nghệ + Tin học (7 ô — vẫn KHÔNG có Khoa học)
+     *     - Lớp 4-5: thêm Khoa học (8 ô — CT GDPT 2018: môn Khoa học bắt đầu từ lớp 4)
      *   PC (6): Nhận xét chung, Yêu nước, Nhân ái, Chăm chỉ, Trung thực, Trách nhiệm
      *
      * UX Vnedu: GV chọn HS từ danh sách bên trái → các textarea bên phải hiển thị.
@@ -1408,5 +1460,270 @@ window.VneduAdapter = {
             console.error('[VneduAdapter] silentCacheScores lỗi:', e);
             return { success: false, reason: 'exception', error: e.message };
         }
+    },
+
+    /* ====================================================================
+     * V.05 — Action Launcher: navigate Vnedu Ext.js Start menu programmatically
+     * ================================================================== */
+
+    /**
+     * Mở module Vnedu bằng cách click theo menu:
+     *   Start → Quản lý nhà trường → Quản lý học tập → [Nhập sổ điểm | Phẩm chất - Năng lực ghi học bạ]
+     *
+     * @param {string} module - 'so-diem' hoặc 'nlpc'
+     * @returns {Promise<{success, reason?, missing?, step?}>}
+     */
+    async openVneduModule(module) {
+        // V.05: Hiển thị overlay che animation menu (UX nhẹ nhàng, không "robot")
+        const moduleLabel = module === 'nlpc' ? 'Phẩm chất - Năng lực' : 'Sổ nhận xét môn';
+        const overlay = this._showLoadingOverlay_(`Đang mở ${moduleLabel}...`);
+
+        try {
+            // Step 0: Thử click DESKTOP ICON trước (đơn giản, reliable hơn navigate menu)
+            const desktopIcon = this._findDesktopIcon_(module);
+            if (desktopIcon) {
+                console.log('[VneduAdapter] openVneduModule: tìm thấy desktop icon, dblclick trực tiếp');
+                const rect = desktopIcon.getBoundingClientRect();
+                const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: rect.left + rect.width/2, clientY: rect.top + rect.height/2 };
+                desktopIcon.dispatchEvent(new MouseEvent('mousedown', opts));
+                desktopIcon.dispatchEvent(new MouseEvent('mouseup', opts));
+                desktopIcon.dispatchEvent(new MouseEvent('click', opts));
+                desktopIcon.dispatchEvent(new MouseEvent('dblclick', opts));
+                await this._sleep_(500);
+                return { success: true, via: 'desktop_icon' };
+            }
+
+            // Fallback: navigate qua Start menu
+            const TARGET_PATH = module === 'nlpc'
+                ? ['Quản lý nhà trường', 'Quản lý học tập', 'Phẩm chất - Năng lực ghi học bạ']
+                : ['Quản lý nhà trường', 'Quản lý học tập', 'Nhập số điểm'];
+
+            // Bước 0: Click Start button — chỉ làm nếu menu Start chưa mở
+            const startMenu = document.getElementById('startmenu_container');
+            const startMenuOpen = startMenu && this._isMenuOpen_(startMenu);
+            if (!startMenuOpen) {
+                const startBtn = this._findStartButton_();
+                if (!startBtn) {
+                    return { success: false, reason: 'no_start_btn' };
+                }
+                startBtn.click();
+                await this._sleep_(400);
+            }
+
+            // Bước 1..N: Hover non-leaf, click leaf
+            for (let i = 0; i < TARGET_PATH.length; i++) {
+                const text = TARGET_PATH[i];
+                const isLeaf = i === TARGET_PATH.length - 1;
+                const item = this._findVisibleMenuItem_(text);
+                if (!item) {
+                    console.warn(`[VneduAdapter] openVneduModule: không tìm thấy "${text}" ở bước ${i + 1}`);
+                    return { success: false, reason: 'menu_item_not_found', missing: text, step: i + 1 };
+                }
+
+                if (isLeaf) {
+                    item.click();
+                    await this._sleep_(500);
+                } else {
+                    const rect = item.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: cx, clientY: cy };
+                    item.dispatchEvent(new MouseEvent('mousemove', opts));
+                    item.dispatchEvent(new MouseEvent('mouseover', opts));
+                    item.dispatchEvent(new MouseEvent('mouseenter', opts));
+                    await this._sleep_(700);
+                }
+            }
+
+            console.log(`[VneduAdapter] openVneduModule(${module}) success — đã mở module`);
+            return { success: true };
+        } catch (e) {
+            console.error('[VneduAdapter] openVneduModule lỗi:', e);
+            return { success: false, reason: 'exception', error: e.message };
+        } finally {
+            // Wait nhẹ cho Vnedu render window xong rồi mới gỡ overlay → tránh flash
+            await this._sleep_(250);
+            this._hideLoadingOverlay_(overlay);
+        }
+    },
+
+    /**
+     * V.05: Overlay full-screen che animation menu Vnedu, hiển thị spinner + message
+     * thân thiện. pointer-events: auto chặn user click linh tinh trong lúc automation.
+     * Synthetic events vẫn dispatch trực tiếp tới target element nên không bị overlay chặn.
+     */
+    _showLoadingOverlay_(message) {
+        // Inject keyframes nếu chưa có
+        if (!document.getElementById('cogiao-spin-kf')) {
+            const style = document.createElement('style');
+            style.id = 'cogiao-spin-kf';
+            style.textContent = '@keyframes cogiaoSpin { to { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'cogiao-loading-overlay';
+        overlay.style.cssText = [
+            'position:fixed', 'top:0', 'left:0',
+            'width:100vw', 'height:100vh',
+            'background:rgba(248,250,252,0.92)',
+            'backdrop-filter:blur(2px)',
+            '-webkit-backdrop-filter:blur(2px)',
+            'z-index:2147483600',  // tối đa, đảm bảo trên mọi window Ext.js
+            'display:flex', 'flex-direction:column',
+            'align-items:center', 'justify-content:center',
+            'gap:18px',
+            'font-family:"Segoe UI",Tahoma,Arial,sans-serif',
+            'pointer-events:auto',
+            'opacity:0',
+            'transition:opacity 0.15s ease-out'
+        ].join(';');
+
+        overlay.innerHTML = `
+            <div style="width:56px;height:56px;border:4px solid #e2e8f0;border-top-color:#2B4F9E;border-radius:50%;animation:cogiaoSpin 0.8s linear infinite"></div>
+            <div style="font-size:17px;font-weight:600;color:#0C447C">${message}</div>
+            <div style="font-size:13px;color:#64748b">Sổ nhận xét - AI đang điều hướng Vnedu giúp thầy/cô</div>
+        `;
+        document.body.appendChild(overlay);
+        // Fade-in
+        requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+        return overlay;
+    },
+
+    _hideLoadingOverlay_(overlay) {
+        if (!overlay || !overlay.parentNode) return;
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 180);
+    },
+
+    /**
+     * V.05: Tìm desktop icon trên Ext.js Desktop của Vnedu. Trả về element click-able
+     * (icon container) cho module. Icon Vnedu render bằng <div class="ux-desktop-shortcut">
+     * hoặc tương tự, có text label bên dưới.
+     */
+    _findDesktopIcon_(module) {
+        // Tên icon trên desktop theo module.
+        // NLPC: KHÔNG có desktop icon riêng — phải vào qua Start menu
+        // (Quản lý nhà trường → Quản lý học tập → Phẩm chất - Năng lực ghi học bạ).
+        // Trước đây có thêm "Học bạ số" làm fallback nhưng nó match nhầm icon
+        // "Học bạ số - Học bạ điện tử" → mở sai module.
+        const targets = module === 'nlpc'
+            ? []  // chuyển thẳng qua Start menu nav
+            : ['Sổ nhận xét'];  // Sổ NX môn: icon trên desktop
+
+        // Search ALL leaf elements với text khớp, scope desktop area (top of body)
+        const els = document.querySelectorAll('div, span, a, td');
+        for (const el of els) {
+            if (el.children.length > 0) continue;
+            const text = (el.textContent || '').trim();
+            if (text.length > 50 || text.length < 3) continue;
+            // Match exact hoặc startsWith với target
+            const matches = targets.some(t => text === t || text.startsWith(t));
+            if (!matches) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width <= 0 || r.height <= 0) continue;
+            const s = window.getComputedStyle(el);
+            if (s.display === 'none' || s.visibility === 'hidden') continue;
+            // Phải nằm trong viewport (icon desktop visible)
+            if (r.top > window.innerHeight - 30 || r.bottom < 30) continue;
+            // KHÔNG nằm trong menu (loại false positive từ Start menu)
+            if (el.closest('.x-menu, .x-window, #cogiao-ai-sidebar')) continue;
+            // Walk up tìm icon container (div cha có hình ảnh + text)
+            let icon = el;
+            for (let i = 0; i < 4; i++) {
+                if (!icon || !icon.parentElement) break;
+                const pr = icon.parentElement.getBoundingClientRect();
+                if (pr.width >= 50 && pr.width <= 150 && pr.height >= 50 && pr.height <= 150) {
+                    icon = icon.parentElement;
+                    break;
+                }
+                icon = icon.parentElement;
+            }
+            console.log(`[VneduAdapter] _findDesktopIcon_: tìm thấy "${text}"`, icon);
+            return icon;
+        }
+        return null;
+    },
+
+    _isMenuOpen_(menuEl) {
+        if (!menuEl) return false;
+        const s = window.getComputedStyle(menuEl);
+        if (s.display === 'none' || s.visibility === 'hidden') return false;
+        const r = menuEl.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.right > 0 && r.left < window.innerWidth;
+    },
+
+    /**
+     * Tìm nút Start ở góc dưới trái viewport. Vnedu Ext.js Desktop dùng class
+     * "ux-start-btn" hoặc tương tự, nhưng để robust em search theo text "Start".
+     */
+    _findStartButton_() {
+        // Strategy 1: class chứa "start"
+        const byClass = document.querySelectorAll(
+            '.ux-start-btn, [class*="start-btn"], #start_btn, [id*="start_btn"]'
+        );
+        for (const el of byClass) {
+            const r = el.getBoundingClientRect();
+            if (r.width > 0 && r.height > 0 && r.top > window.innerHeight - 80) return el;
+        }
+
+        // Strategy 2: text "Start" ở góc dưới
+        const els = document.querySelectorAll('button, div, span, a, [role="button"]');
+        for (const el of els) {
+            const text = (el.textContent || '').trim();
+            if (text.length > 15) continue;
+            if (!/^start$/i.test(text)) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width <= 0 || r.height <= 0) continue;
+            // Nút Start ở bottom-left: top phải gần bottom của viewport
+            if (r.top < window.innerHeight - 80) continue;
+            if (r.left > 200) continue;
+            return el;
+        }
+        return null;
+    },
+
+    /**
+     * Tìm menu item visible khớp text. Scope vào .x-menu visible để tránh false match.
+     */
+    _findVisibleMenuItem_(targetText) {
+        const visibleMenus = Array.from(document.querySelectorAll('.x-menu')).filter(m => this._isMenuOpen_(m));
+
+        // Sort: menu mới mở (top z-index cao) ưu tiên trước
+        visibleMenus.sort((a, b) => {
+            const za = parseInt(window.getComputedStyle(a).zIndex) || 0;
+            const zb = parseInt(window.getComputedStyle(b).zIndex) || 0;
+            return zb - za;
+        });
+
+        for (const menu of visibleMenus) {
+            const candidates = menu.querySelectorAll(
+                '.x-menu-item, [role="menuitem"], a.x-menu-item-link, span.x-menu-item-text, .x-menu-item-text-default'
+            );
+            for (const el of candidates) {
+                const text = (el.textContent || '').trim();
+                if (text !== targetText && !text.endsWith(targetText)) continue;
+                const r = el.getBoundingClientRect();
+                if (r.width <= 0 || r.height <= 0) continue;
+                // Walk up nếu cần — find clickable container
+                let clickable = el;
+                for (let depth = 0; depth < 4; depth++) {
+                    if (!clickable) break;
+                    if (clickable.matches && (
+                        clickable.matches('.x-menu-item') ||
+                        clickable.matches('[role="menuitem"]')
+                    )) {
+                        return clickable;
+                    }
+                    clickable = clickable.parentElement;
+                }
+                return el;
+            }
+        }
+        return null;
+    },
+
+    _sleep_(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 };

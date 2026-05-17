@@ -2,14 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 // ====== INSTALL LINKS ======
-// Đổi cwsApproved=true SAU KHI Google duyệt V.04 (manifest 1.3). Hiện CWS còn
-// ở v0.1.26 có 10 bug → giữ false để đẩy user dùng zip V.04 đã fix.
-const cwsApproved = false;
-const cwsUrl = 'https://chromewebstore.google.com/detail/so-nhan-xet-ai/hhiipgifeplegcejhpdmdbnbabjikllh';
-const zipUrl = '/sonhanxet-ai-v1.3.zip';
-const zipSizeKB = 466;
+// Sổ nhận xét - AI đã được Chrome Web Store phê duyệt (v1.4 ngày 17/05/2026).
+// V1.5 (17/05/2026): bỏ Năng lực Khoa học cho lớp 1-3 (CT GDPT 2018).
+const cwsUrl = 'https://chromewebstore.google.com/detail/sổ-nhận-xét-ai/hhiipgifeplegcejhpdmdbnbabjikllh';
 const installGuideUrl = '/cai-dat';
-const CHROME_STORE_URL = cwsApproved ? cwsUrl : "#cai-dat";
 
 // ====== VIDEO HƯỚNG DẪN ======
 // Để bật video, thay `youtubeId: null` bằng ID YouTube thật (vd "dQw4w9WgXcQ")
@@ -75,7 +71,7 @@ const features = [
 const faqs = [
   {
     q: "Cài đặt có mất thời gian không? Tôi không rành công nghệ.",
-    a: "Hiện đang chờ Chrome Web Store duyệt nên thầy/cô cài bằng cách tải file zip → giải nén → cài vào Chrome. Tổng khoảng 2 phút, có hướng dẫn chi tiết từng bước kèm hình tại trang Cài đặt. Sau khi Google duyệt xong (1-7 ngày), cách cài chỉ còn 30 giây qua nút Cài cho Chrome. Có thể gọi/Zalo 0913031073 nếu cần hỗ trợ trực tiếp."
+    a: "Rất đơn giản — chỉ 30 giây. Bấm nút “Cài cho Chrome”, trang Chrome Web Store sẽ mở ra, bấm tiếp “Thêm vào Chrome” → “Thêm tiện ích”. Xong! Mở Vnedu là dùng được ngay. Có thể gọi/Zalo 0913031073 nếu cần hỗ trợ trực tiếp."
   },
   {
     q: "Dữ liệu học sinh của tôi có bị gửi đi đâu không?",
@@ -119,9 +115,9 @@ const faqs = [
           Trợ lý AI tự động đọc bảng điểm Vnedu và sinh nhận xét theo Thông tư 27/2020 cho cả lớp. Thông tin học sinh chỉ ở lại máy thầy cô — không gửi đi đâu cả.
         </p>
         <div class="hero-cta">
-          <a href={CHROME_STORE_URL} class="btn btn-primary btn-lg">
+          <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
             <span style="font-size: 18px;">⬇</span>
-            {cwsApproved ? 'Cài đặt cho Chrome' : 'Tải file cài đặt'}
+            Cài đặt cho Chrome
           </a>
           <a href={installGuideUrl} class="btn btn-ghost btn-lg">
             📖 Xem hướng dẫn
@@ -292,8 +288,8 @@ const faqs = [
             <span class="video-tag">{featuredVideo.tag}</span>
             <h3>{featuredVideo.title}</h3>
             <p>{featuredVideo.description}</p>
-            <a href={CHROME_STORE_URL} class="btn btn-primary" style="align-self: flex-start;">
-              {cwsApproved ? 'Cài đặt cho Chrome' : 'Tải file cài đặt'}
+            <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary" style="align-self: flex-start;">
+              Cài đặt cho Chrome
             </a>
           </div>
         </div>
@@ -373,79 +369,34 @@ const faqs = [
     <div class="container">
       <div class="section-title">
         <span class="eyebrow">Cài đặt</span>
-        {cwsApproved ? (
-          <h2 class="text-balance">3 bước · ~30 giây · không cần biết kỹ thuật</h2>
-        ) : (
-          <h2 class="text-balance">Tải file & cài đặt · ~2 phút</h2>
-        )}
-        {!cwsApproved && (
-          <p class="text-pretty">
-            Bản chính thức <strong>V.04</strong> đang chờ Chrome Web Store duyệt (1-7 ngày).
-            Trong thời gian chờ, thầy/cô tải file zip bên dưới và cài thủ công — dùng được ngay hôm nay.
-          </p>
-        )}
+        <h2 class="text-balance">3 bước · ~30 giây · không cần biết kỹ thuật</h2>
+        <p class="text-pretty">
+          Đã có mặt trên <strong>Chrome Web Store</strong> — cài 1 click, tự cập nhật khi có bản mới, không cần làm gì thêm.
+        </p>
       </div>
 
-      {!cwsApproved && (
-        <div style="max-width: 720px; margin: 0 auto 48px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 36px 32px; text-align: center; box-shadow: var(--shadow-md);">
-          <div style="font-size: 14px; color: var(--brand-600); font-weight: 600; margin-bottom: 8px;">📦 Phiên bản V.04 · {zipSizeKB} KB</div>
-          <h3 style="font-size: 1.35rem; color: var(--brand-700); margin-bottom: 20px;">Tải file cài đặt</h3>
-          <a href={zipUrl} download class="btn btn-primary btn-lg" style="font-size: 17px; margin-bottom: 12px;">
-            ⬇ Tải Sổ nhận xét - AI · V.04
-          </a>
-          <p style="font-size: 14px; color: var(--ink-400); margin-top: 16px;">
-            File <code style="background: var(--canvas-2); padding: 2px 8px; border-radius: 4px;">sonhanxet-ai-v1.3.zip</code> · Tương thích Chrome trên Windows, Mac, Linux
-          </p>
+      <div class="steps">
+        <div class="step">
+          <h3>Bấm "Cài cho Chrome"</h3>
+          <p>Nút bên dưới mở Chrome Web Store. Tại đó bấm <kbd>Thêm vào Chrome</kbd> → <kbd>Thêm tiện ích</kbd>. Xong, có icon trên thanh công cụ.</p>
         </div>
-      )}
-
-      {cwsApproved ? (
-        <div class="steps">
-          <div class="step">
-            <h3>Bấm "Cài cho Chrome"</h3>
-            <p>Nút bên dưới mở Chrome Web Store. Tại đó bấm <kbd>Add to Chrome</kbd> → <kbd>Add extension</kbd>. Xong, có icon trên thanh công cụ.</p>
-          </div>
-          <div class="step">
-            <h3>Mở Vnedu, vào Sổ nhận xét</h3>
-            <p>Đăng nhập Vnedu như bình thường. Vào <kbd>Sổ điểm → Sổ nhận xét</kbd>, chọn lớp, môn, học kỳ. <strong>Sidebar tự xuất hiện bên phải.</strong></p>
-          </div>
-          <div class="step">
-            <h3>Đăng ký mã & bắt đầu</h3>
-            <p>Lần đầu, sidebar hướng dẫn đăng ký mã & kích hoạt ngay trong app. Từ lần sau, mở Vnedu là dùng được ngay.</p>
-          </div>
+        <div class="step">
+          <h3>Mở Vnedu, vào Sổ nhận xét</h3>
+          <p>Đăng nhập Vnedu như bình thường. Vào <kbd>Sổ điểm → Sổ nhận xét</kbd>, chọn lớp, môn, học kỳ. <strong>Sidebar tự xuất hiện bên phải.</strong></p>
         </div>
-      ) : (
-        <div class="steps">
-          <div class="step">
-            <h3>Tải & giải nén file</h3>
-            <p>Bấm nút <strong>"Tải Sổ nhận xét - AI"</strong> ở trên. Click chuột phải file zip vừa tải → <kbd>Giải nén tất cả</kbd> → chọn Desktop.</p>
-          </div>
-          <div class="step">
-            <h3>Cài vào Chrome</h3>
-            <p>Mở Chrome → gõ <kbd>chrome://extensions</kbd> → bật <strong>Chế độ nhà phát triển</strong> (góc trên phải) → bấm <strong>Tải tiện ích đã giải nén</strong> → chọn folder vừa giải nén.</p>
-          </div>
-          <div class="step">
-            <h3>Mở Vnedu & dùng ngay</h3>
-            <p>Đăng nhập Vnedu → vào <kbd>Sổ điểm → Sổ nhận xét</kbd>. Sidebar tự hiện bên phải. Đăng ký + kích hoạt mã ngay trong app.</p>
-          </div>
+        <div class="step">
+          <h3>Đăng ký mã & bắt đầu</h3>
+          <p>Lần đầu, sidebar hướng dẫn đăng ký mã & kích hoạt ngay trong app. Từ lần sau, mở Vnedu là dùng được ngay.</p>
         </div>
-      )}
+      </div>
 
       <div style="text-align: center; margin-top: 56px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-        {cwsApproved ? (
-          <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            🌐 Cài đặt qua Chrome Web Store
-          </a>
-        ) : (
-          <>
-            <a href={zipUrl} download class="btn btn-primary btn-lg">
-              ⬇ Tải file cài ngay
-            </a>
-            <a href={installGuideUrl} class="btn btn-ghost btn-lg">
-              📖 Hướng dẫn chi tiết
-            </a>
-          </>
-        )}
+        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          🌐 Cài đặt qua Chrome Web Store
+        </a>
+        <a href={installGuideUrl} class="btn btn-ghost btn-lg">
+          📖 Hướng dẫn chi tiết
+        </a>
       </div>
     </div>
   </section>
@@ -478,8 +429,8 @@ const faqs = [
         Nhanh hơn, đồng bộ hơn và tiết kiệm hàng giờ làm việc.
       </p>
       <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-        <a href={CHROME_STORE_URL} class="btn btn-primary btn-lg">
-          {cwsApproved ? 'Cài đặt cho Chrome · Miễn phí' : '⬇ Tải file cài đặt · Miễn phí'}
+        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          Cài đặt cho Chrome · Miễn phí
         </a>
         <a href={installGuideUrl} class="btn btn-outline-light btn-lg">
           📖 Hướng dẫn chi tiết

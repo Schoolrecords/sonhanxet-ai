@@ -46,11 +46,21 @@ const TT = {
   HET_HAN: 'het_han',
   KHOA: 'khoa'
 };
-const SO_TIEN_MAC_DINH = 50000;
+const SO_TIEN_MAC_DINH = 30000;   // V.05: đổi 50k → 30k
 const HAN_DUNG_NGAY = 365;
 const MA_BI_MAT_LEN = 4;  // 4 ký tự cho GV dễ gõ. 31^4 ≈ 923k tổ hợp, đủ.
 // Bộ ký tự cho mã: chữ thường + số, BỎ ký tự dễ nhầm (0, o, 1, l, i)
 const MA_CHARSET = 'abcdefghjkmnpqrstuvwxyz23456789';
+
+// V.05: SĐT admin/test — tự động bypass payment + cho phép re-register/re-bind
+// để admin test flow nhanh không cần tick checkbox + reset device thủ công.
+const ADMIN_SDTS = ['0913031073'];
+// Mã cố định cho admin (4 ký tự, lowercase + số, theo MA_CHARSET). Thầy luôn dùng
+// mã này thay vì mã random → dễ nhớ, không cần tra cứu mỗi lần test.
+const ADMIN_FIXED_MA = 'admn';
+function isAdminSdt_(sdt) {
+  return ADMIN_SDTS.indexOf(String(sdt || '')) >= 0;
+}
 
 // =============== ENTRY POINT ===============
 
@@ -112,6 +122,33 @@ function dangKy_(body) {
   if (!sheet) return { ok: false, error: 'chua_setup_sheet' };
 
   const row = findRowBySdt_(sheet, sdt);
+  const isAdmin = isAdminSdt_(sdt);  // V.05: admin bypass
+
+  // V.05: Admin SĐT — luôn cho phép re-register, reset state về da_tra_tien để
+  // có thể đăng nhập ngay (không cần thầy tick "da_thanh_toan" trong sheet).
+  // Mã dùng ADMIN_FIXED_MA → thầy luôn dùng cùng 1 mã, dễ nhớ.
+  if (row && isAdmin) {
+    const ma = ADMIN_FIXED_MA;
+    const now = new Date();
+    sheet.getRange(row, COL.ma_bi_mat).setValue("'" + ma);
+    sheet.getRange(row, COL.ho_ten).setValue(hoTen);
+    sheet.getRange(row, COL.ngay_dang_ky).setValue(now);
+    sheet.getRange(row, COL.so_tien).setValue(SO_TIEN_MAC_DINH);
+    sheet.getRange(row, COL.da_thanh_toan).setValue(true);   // ADMIN auto-pay
+    sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
+    sheet.getRange(row, COL.ngay_kich_hoat).setValue('');
+    sheet.getRange(row, COL.ngay_het_han).setValue('');
+    sheet.getRange(row, COL.device_fp).setValue('');  // Clear → cho phép re-bind
+    sheet.getRange(row, COL.last_check).setValue('');
+    sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
+    sheet.getRange(row, COL.ghi_chu).setValue('ADMIN · auto-bypass');
+    return {
+      ok: true, daDangKyTruoc: false,
+      sdt: sdt, hoTen: hoTen, ma: ma,
+      soTien: 0,  // admin = miễn phí
+      message: '[ADMIN] Đã reset. Đăng nhập ngay với mã: ' + ma
+    };
+  }
 
   if (row) {
     const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
@@ -147,8 +184,8 @@ function dangKy_(body) {
     }
   }
 
-  // Sinh mã không trùng
-  const ma = sinhMaKhongTrung_(sheet);
+  // Sinh mã: admin dùng mã cố định, user thường dùng mã random
+  const ma = isAdmin ? ADMIN_FIXED_MA : sinhMaKhongTrung_(sheet);
   const now = new Date();
 
   if (row) {
@@ -167,19 +204,23 @@ function dangKy_(body) {
   } else {
     // QUAN TRỌNG: prefix "'" cho SĐT và mã để Google Sheets giữ dạng text,
     // không cắt số 0 đầu. Apostrophe không hiển thị trong cell.
+    // V.05: Admin SĐT new → auto-pay + DA_TRA_TIEN state để đăng nhập ngay.
     sheet.appendRow([
       "'" + sdt, hoTen, "'" + ma,
-      now, SO_TIEN_MAC_DINH, false, '',
+      now, SO_TIEN_MAC_DINH, isAdmin, isAdmin ? now : '',
       '', '',
-      '', '', TT.CHO_THANH_TOAN, ''
+      '', '', isAdmin ? TT.DA_TRA_TIEN : TT.CHO_THANH_TOAN,
+      isAdmin ? 'ADMIN · auto-bypass' : ''
     ]);
   }
 
   return {
     ok: true, daDangKyTruoc: false,
     sdt: sdt, hoTen: hoTen, ma: ma,
-    soTien: SO_TIEN_MAC_DINH,
-    message: 'Đăng ký thành công. Vui lòng chuyển khoản với nội dung: ' + ma
+    soTien: isAdmin ? 0 : SO_TIEN_MAC_DINH,
+    message: isAdmin
+      ? '[ADMIN] Đăng ký thành công. Đăng nhập ngay với mã: ' + ma
+      : 'Đăng ký thành công. Vui lòng chuyển khoản với nội dung: ' + ma
   };
 }
 
@@ -208,7 +249,7 @@ function dangNhap_(body) {
   const maTrenSheet = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
   const daTraTien = v[COL.da_thanh_toan - 1] === true || v[COL.da_thanh_toan - 1] === 'TRUE';
   const fpHienTai = String(v[COL.device_fp - 1] || '').trim();
-  const ngayHetHan = v[COL.ngay_het_han - 1];
+  let ngayHetHan = v[COL.ngay_het_han - 1];  // V.05: let (có thể reassign khi auto-set bên dưới)
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
 
@@ -233,14 +274,15 @@ function dangNhap_(body) {
     return { ok: false, error: 'het_han' };
   }
 
-  if (fpHienTai && fpHienTai !== deviceFp) {
+  // V.05: Admin SĐT — luôn cho phép re-bind device khác (đỡ phải reset thủ công khi test).
+  if (fpHienTai && fpHienTai !== deviceFp && !isAdminSdt_(sdt)) {
     return { ok: false, error: 'da_dung_cho_may_khac',
              message: 'Tài khoản đã kích hoạt ở máy khác. Liên hệ admin để reset.' };
   }
 
-  // OK: bind máy này
+  // OK: bind máy này (admin: luôn ghi đè fp)
   const now = new Date();
-  if (!fpHienTai) sheet.getRange(row, COL.device_fp).setValue(deviceFp);
+  if (!fpHienTai || isAdminSdt_(sdt)) sheet.getRange(row, COL.device_fp).setValue(deviceFp);
   if (!v[COL.ngay_kich_hoat - 1]) sheet.getRange(row, COL.ngay_kich_hoat).setValue(now);
   sheet.getRange(row, COL.last_check).setValue(now);
   sheet.getRange(row, COL.trang_thai).setValue(TT.DA_KICH_HOAT);
@@ -276,7 +318,7 @@ function checkLicense_(body) {
   const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
   const trangThai = v[COL.trang_thai - 1];
   const fpHienTai = String(v[COL.device_fp - 1] || '').trim();
-  const ngayHetHan = v[COL.ngay_het_han - 1];
+  let ngayHetHan = v[COL.ngay_het_han - 1];  // V.05: let (có thể reassign khi auto-set bên dưới)
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
   if (fpHienTai && fpHienTai !== deviceFp) return { ok: false, error: 'sai_thiet_bi' };
@@ -519,4 +561,47 @@ function donDepMaCho() {
   try {
     SpreadsheetApp.getUi().alert('Đã dọn ' + xoa.length + ' mã chưa thanh toán quá 7 ngày.');
   } catch (e) { /* được gọi từ trigger, không có UI */ }
+}
+
+/**
+ * V.05: Dồn dữ liệu lên đầu sheet bắt đầu từ A2.
+ * Khi sheet có nhiều hàng trống xen kẽ (do user xóa nội dung), `appendRow` vẫn
+ * append ở cuối sheet (vd row 1004) thay vì row 2. Hàm này quét toàn bộ data,
+ * lọc hàng có SĐT, xóa hết hàng dưới header, ghi data nén liền mạch từ row 2.
+ *
+ * CÁCH CHẠY: Apps Script editor → Chọn function "donDepHangTrong" → bấm Run.
+ */
+function donDepHangTrong() {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    try { SpreadsheetApp.getUi().alert('Chưa setup sheet License'); } catch (e) {}
+    return;
+  }
+  const last = sheet.getLastRow();
+  if (last < 2) {
+    try { SpreadsheetApp.getUi().alert('Sheet trống, không có gì để dồn.'); } catch (e) {}
+    return;
+  }
+
+  // Đọc tất cả data dưới header
+  const data = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  // Lọc hàng có SĐT (cột 1)
+  const validRows = data.filter(r => r[0] && String(r[0]).trim() !== '');
+
+  // Xóa hết hàng dưới header
+  if (last > 1) {
+    sheet.getRange(2, 1, last - 1, HEADERS.length).clearContent();
+  }
+
+  // Ghi lại data nén liền mạch
+  if (validRows.length > 0) {
+    sheet.getRange(2, 1, validRows.length, HEADERS.length).setValues(validRows);
+  }
+
+  try {
+    SpreadsheetApp.getUi().alert(
+      'Đã dồn ' + validRows.length + ' hàng dữ liệu lên đầu sheet (từ A2). ' +
+      'Các hàng trống ở dưới đã được dọn sạch.'
+    );
+  } catch (e) { /* không có UI */ }
 }

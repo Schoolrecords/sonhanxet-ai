@@ -36,6 +36,18 @@
     <button class="tab-btn" data-tab="cache">💾 Lưu dữ liệu</button>
 </nav>
 
+<!-- V.05: Quick launcher — bấm 1 cái để Vnedu mở module tương ứng -->
+<div class="launcher-bar" id="launcher-bar">
+    <button class="btn-launcher btn-launcher-mon" id="btn-launcher-mon" title="Mở module Sổ điểm / Sổ nhận xét môn">
+        <span class="btn-launcher-icon">📋</span>
+        <span class="btn-launcher-label">Nhận xét theo môn học</span>
+    </button>
+    <button class="btn-launcher btn-launcher-nlpc" id="btn-launcher-nlpc" title="Mở module Phẩm chất - Năng lực ghi học bạ">
+        <span class="btn-launcher-icon">🌟</span>
+        <span class="btn-launcher-label">Nhận xét NL-PC</span>
+    </button>
+</div>
+
 <div class="rescan-bar" id="rescan-bar">
     <button class="btn-rescan" id="btn-rescan">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/></svg>
@@ -201,7 +213,7 @@
                 <div class="lic-pending-info">
                     <div class="lic-pending-row"><span>SĐT:</span> <strong id="lic-pending-sdt">—</strong></div>
                     <div class="lic-pending-row"><span>Tên:</span> <strong id="lic-pending-name">—</strong></div>
-                    <div class="lic-pending-row"><span>Số tiền:</span> <strong>50.000đ</strong></div>
+                    <div class="lic-pending-row"><span>Số tiền:</span> <strong>30.000đ</strong></div>
                     <div class="lic-pending-row lic-pending-ma-row">
                         <span>Mã của bạn (= nội dung chuyển khoản):</span>
                         <strong id="lic-pending-ma" class="lic-pending-ma">—</strong>
@@ -215,9 +227,10 @@
                         <code>license/qr.png</code> trong thư mục extension.
                     </div>
                     <div class="lic-qr-caption">
-                        Quét QR bằng app ngân hàng → nhập <strong>50.000đ</strong>
-                        → ghi <strong>nội dung CK đúng mã ở trên</strong>.<br>
-                        Đợi thầy quản trị xác nhận (1-24 giờ) rồi bấm "Tôi đã CK".
+                        Quét QR và thanh toán <strong>30.000đ</strong><br>
+                        Ghi rõ <strong>nội dung CK đúng mã ở trên</strong><br>
+                        Đợi xác nhận trong khoảng <strong>5-10 phút</strong><br>
+                        <em>(Liên hệ Zalo - Chung Trần 0913031073)</em>
                     </div>
                 </div>
 
@@ -269,9 +282,9 @@
             </div>
 
             <div class="setting-note" id="lic-setting-note">
-                <strong>Bản miễn phí:</strong> 1 môn học bất kỳ.<br>
-                <strong>Mở khóa hết môn + NL/PC:</strong> 50.000đ / máy / năm.
-                Đăng ký 1 lần, dùng trên máy này 365 ngày.
+                <strong>Bản dùng thử miễn phí:</strong> 1 môn học — để thầy/cô đánh giá chất lượng nhận xét.<br>
+                <strong>Mua bản quyền:</strong> 30.000đ / máy — sử dụng hết tất cả các tính năng của Sổ nhận xét - AI.<br>
+                <em>(mời tác giả 1 cốc cafe — thay vì ngồi mãi trên máy tính 😊)</em>
             </div>
         </div>
 
@@ -345,7 +358,7 @@
         <h3 class="modal-title" id="lock-title">Tính năng cần bản quyền</h3>
         <p class="modal-message" id="lock-message">Bản miễn phí chỉ dùng được 1 môn học.</p>
         <div class="modal-note">
-            Mở khóa <strong>tất cả môn + NL/PC</strong> với <strong>50.000đ / máy / năm</strong>.
+            Mở khóa <strong>tất cả môn + NL/PC</strong> với <strong>30.000đ / máy</strong>.
             Vào <strong>⚙️ Cài đặt → Bản quyền</strong> để đăng ký nhận mã + chuyển khoản.
         </div>
         <div class="modal-actions">
@@ -357,7 +370,7 @@
 </div>
 
 <footer class="footer">
-    Sổ nhận xét - AI · V.04
+    Sổ nhận xét - AI · V.05-dev
     <div class="copyright">© 2026 Bản quyền thuộc ChungTran · 0913031073</div>
 </footer>
 
