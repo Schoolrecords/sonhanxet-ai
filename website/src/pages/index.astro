@@ -139,37 +139,31 @@ const faqs = [
           </div>
         </div>
 
-        <div class="mock-browser">
-          <div class="mock-browser-bar">
+        <div class="hero-video-frame">
+          <div class="hero-video-bar">
             <span class="mock-dot"></span>
             <span class="mock-dot"></span>
             <span class="mock-dot"></span>
-            <div class="mock-url">vnedu.vn/so-nhan-xet</div>
+            <div class="hero-video-bar-label">
+              <span class="hero-video-play">▶</span>
+              Video hướng dẫn · {featuredVideo.duration}
+            </div>
           </div>
-          <div class="mock-content">
-            <div class="mock-left">
-              <div class="mock-left-title">Sổ điểm → Sổ nhận xét · Lớp 4A · Toán · HK1</div>
-              <div class="mock-row"><span class="num">1</span><span class="name">Nguyễn Văn An</span><span class="grade t-plus">T+</span></div>
-              <div class="mock-row"><span class="num">2</span><span class="name">Trần Thị Bình</span><span class="grade t">T</span></div>
-              <div class="mock-row"><span class="num">3</span><span class="name">Lê Hoàng Cường</span><span class="grade t">T</span></div>
-              <div class="mock-row"><span class="num">4</span><span class="name">Phạm Mai Dung</span><span class="grade h">H</span></div>
-              <div class="mock-row"><span class="num">5</span><span class="name">Vũ Minh Đức</span><span class="grade t-plus">T+</span></div>
-              <div class="mock-row"><span class="num">6</span><span class="name">Hoàng Thị Em</span><span class="grade t">T</span></div>
-              <div class="mock-row"><span class="num">7</span><span class="name">Đặng Văn Phúc</span><span class="grade h">H</span></div>
-            </div>
-            <div class="mock-sidebar">
-              <div class="mock-sidebar-title">🧠 Sổ nhận xét - AI</div>
-              <div class="mock-sidebar-sub">Phát hiện 35 HS · Toán HK1</div>
-              <div class="mock-sidebar-btn">Sinh nhận xét →</div>
-              <div class="mock-comment">
-                <div class="who">An <span class="badge">T+</span></div>
-                Hoàn thành tốt môn Toán, tính toán nhanh và chính xác.
+          <div class="video-player hero-video-player">
+            {featuredVideo.youtubeId ? (
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${featuredVideo.youtubeId}?rel=0&modestbranding=1`}
+                title={featuredVideo.title}
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              />
+            ) : (
+              <div class="video-placeholder">
+                <div class="video-play-icon">▶</div>
+                <div class="video-placeholder-text">Video sẽ được đăng tại đây</div>
               </div>
-              <div class="mock-comment">
-                <div class="who">Bình <span class="badge">T</span></div>
-                Nắm vững kiến thức cơ bản, vận dụng tốt vào bài tập.
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -235,65 +229,14 @@ const faqs = [
     </div>
   </section>
 
-  <!-- ============== FEATURES ============== -->
-  <section id="tinh-nang">
-    <div class="container">
-      <div class="section-title">
-        <span class="eyebrow">Giải pháp</span>
-        <h2 class="text-balance">Để AI lo phần lặp lại — thầy cô chỉ chỉnh câu nào không hài lòng</h2>
-        <p class="text-pretty">Extension đọc bảng điểm Vnedu, sinh nhận xét, GV xem trước rồi áp dụng. Không thay thế GV — chỉ tăng tốc 30 lần.</p>
-      </div>
-      <div class="features-grid">
-        {features.map(f => (
-          <div class="feature">
-            <div class="feature-icon">{f.icon}</div>
-            <h3>{f.title}</h3>
-            <p>{f.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== VIDEO HƯỚNG DẪN ============== -->
+  <!-- ============== VIDEO HƯỚNG DẪN (V2.1: lên trước Features để GV thấy ngay) ============== -->
   <section id="video" class="video-section">
     <div class="container">
       <div class="section-title">
         <span class="eyebrow">Video hướng dẫn</span>
-        <h2 class="text-balance">Xem cách dùng, không cần đọc</h2>
+        <h2 class="text-balance">Xem chi tiết từng tính năng</h2>
         <p class="text-pretty">Mỗi video dưới 3 phút — vừa đủ để thầy cô tự làm theo mà không cần thành thạo CNTT.</p>
       </div>
-
-      <!-- Video featured -->
-      <article class="video-featured">
-        <div class="video-featured-content">
-          <div class="video-player">
-            {featuredVideo.youtubeId ? (
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${featuredVideo.youtubeId}?rel=0&modestbranding=1`}
-                title={featuredVideo.title}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              />
-            ) : (
-              <div class="video-placeholder">
-                <div class="video-play-icon">▶</div>
-                <div class="video-placeholder-text">Video sẽ được đăng tại đây</div>
-              </div>
-            )}
-            <div class="video-duration">{featuredVideo.duration}</div>
-          </div>
-          <div class="video-meta">
-            <span class="video-tag">{featuredVideo.tag}</span>
-            <h3>{featuredVideo.title}</h3>
-            <p>{featuredVideo.description}</p>
-            <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary" style="align-self: flex-start;">
-              Cài đặt cho Chrome
-            </a>
-          </div>
-        </div>
-      </article>
 
       <!-- Video grid -->
       <div class="video-grid">
@@ -324,6 +267,26 @@ const faqs = [
               </div>
             </div>
           </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FEATURES ============== -->
+  <section id="tinh-nang">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Giải pháp</span>
+        <h2 class="text-balance">Để AI lo phần lặp lại — thầy cô chỉ chỉnh câu nào không hài lòng</h2>
+        <p class="text-pretty">Extension đọc bảng điểm Vnedu, sinh nhận xét, GV xem trước rồi áp dụng. Không thay thế GV — chỉ tăng tốc 30 lần.</p>
+      </div>
+      <div class="features-grid">
+        {features.map(f => (
+          <div class="feature">
+            <div class="feature-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.desc}</p>
+          </div>
         ))}
       </div>
     </div>
