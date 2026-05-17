@@ -185,6 +185,89 @@ async function assertThrows(fn, name) {
     }
     log('engine lớp 5: tất cả 18 nhận xét là text non-empty', allTextValid);
 
+    // ========== GROUP 10: V2.0 — Ky-specific phrases (Giữa HK1 / Cuối HK1 / Giữa HK2) ==========
+    const kyData = JSON.parse(fs.readFileSync('./engine/data/nhanxet-ky.json', 'utf8'));
+    engine.loadKyData(kyData);
+
+    // Cấu trúc data ky
+    const subjsWithKy = Object.keys(kyData.subjects);
+    log('V2.0 ky data: 13 môn', subjsWithKy.length === 13);
+    const kysExpected = ['ghk1', 'chk1', 'ghk2'];
+    log('V2.0 mỗi môn có 3 ky', subjsWithKy.every(s => kysExpected.every(k => kyData.subjects[s][k])));
+    const tiersExpected = ['tot_xs', 'tot', 'ht', 'cht'];
+    log('V2.0 mỗi ky đủ 4 tier', subjsWithKy.every(s =>
+        kysExpected.every(k => tiersExpected.every(t =>
+            Array.isArray(kyData.subjects[s][k][t]) && kyData.subjects[s][k][t].length > 0
+        ))));
+
+    // sinhNhanXet pick đúng pool theo ky
+    const hsGioi = { stt: 1, hoVaTen: 'Test HS Giỏi', diem: 9 };
+    const hsTb = { stt: 2, hoVaTen: 'Test HS Khá', diem: 7 };
+    const hsYeu = { stt: 3, hoVaTen: 'Test HS Yếu', diem: 4 };
+
+    engine.resetUsedPhrases();
+    const nxGhk1 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'ghk1');
+    log('V2.0 sinhNhanXet ghk1 trả phrase', typeof nxGhk1 === 'string' && nxGhk1.length > 10);
+    log('V2.0 ghk1 chứa tone "đầu năm/bước vào/sau hơn một tháng/khởi đầu/những tuần đầu/vào học nhanh"',
+        /đầu năm|bước vào năm|sau hơn một tháng|khởi đầu|những tuần đầu|vào học nhanh/i.test(nxGhk1),
+        nxGhk1);
+
+    engine.resetUsedPhrases();
+    const nxChk1 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'chk1');
+    log('V2.0 chk1 chứa tone "kết thúc hk1/học kì I/qua một học kì/hết hk1"',
+        /kết thúc hk1|học kì I|qua một học kì|hết hk1|trong hk1/i.test(nxChk1), nxChk1);
+
+    engine.resetUsedPhrases();
+    const nxGhk2 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'ghk2');
+    log('V2.0 ghk2 chứa tone "bước vào hk2/tiếp nối/sau kì nghỉ tết/nửa đầu hk2"',
+        /bước vào hk2|tiếp nối|sau kì nghỉ tết|nửa đầu hk2|trong hk2/i.test(nxGhk2), nxGhk2);
+
+    // Fallback: ky='chk2' hoặc undefined → flat pool (legacy)
+    engine.resetUsedPhrases();
+    const nxChk2 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'chk2');
+    log('V2.0 chk2 trả phrase (fallback flat pool)', typeof nxChk2 === 'string' && nxChk2.length > 10);
+    engine.resetUsedPhrases();
+    const nxLegacy = engine.sinhNhanXet(hsGioi, 'tieng-viet');
+    log('V2.0 không truyền ky → giống legacy V1.6 (flat pool)',
+        typeof nxLegacy === 'string' && nxLegacy.length > 10);
+
+    // Mỗi tier ghk1 cho 1 môn phải khác nhau với 4 mức HS
+    engine.resetUsedPhrases();
+    const ky_r1 = engine.sinhNhanXet(hsGioi, 'toan', 'ghk1');
+    engine.resetUsedPhrases();
+    const ky_r2 = engine.sinhNhanXet(hsTb, 'toan', 'ghk1');
+    engine.resetUsedPhrases();
+    const ky_r3 = engine.sinhNhanXet(hsYeu, 'toan', 'ghk1');
+    log('V2.0 ghk1 toán: 3 mức HS sinh ra 3 phrase khác nhau',
+        new Set([ky_r1, ky_r2, ky_r3]).size === 3, { ky_r1, ky_r2, ky_r3 });
+
+    // sinhCaLop truyền ky
+    engine.resetUsedPhrases();
+    const caLopGhk1 = engine.sinhCaLop([hsGioi, hsTb, hsYeu], 'tieng-viet', 'ghk1');
+    log('V2.0 sinhCaLop ghk1: 3 HS có nhận xét', caLopGhk1.length === 3 && caLopGhk1.every(r => r.nhanXet));
+
+    // VneduAdapter.deriveKyCode logic (test gián tiếp bằng cách re-impl)
+    // Vì adapter chạy trong content-script không thể import trong Node, ta test logic tương đương
+    const deriveKy = (hocKy, kyDg) => {
+        const isHK1 = /1/.test(hocKy || '');
+        const isHK2 = /2/.test(hocKy || '');
+        const isGiua = /giữa/i.test(kyDg || '');
+        const isCuoi = /cuối/i.test(kyDg || '');
+        if (isHK1 && isGiua) return 'ghk1';
+        if (isHK1 && isCuoi) return 'chk1';
+        if (isHK2 && isGiua) return 'ghk2';
+        if (isHK2 && isCuoi) return 'chk2';
+        if (isHK1) return 'chk1';
+        if (isHK2) return 'chk2';
+        return null;
+    };
+    log('deriveKyCode HK1+Giữa → ghk1', deriveKy('Học kỳ 1', 'Giữa kỳ') === 'ghk1');
+    log('deriveKyCode HK1+Cuối → chk1', deriveKy('Học kỳ 1', 'Cuối kỳ') === 'chk1');
+    log('deriveKyCode HK2+Giữa → ghk2', deriveKy('Học kỳ 2', 'Giữa kỳ') === 'ghk2');
+    log('deriveKyCode HK2+Cuối → chk2', deriveKy('Học kỳ 2', 'Cuối kỳ') === 'chk2');
+    log('deriveKyCode chỉ có HK1 → chk1 (default cuối)', deriveKy('Học kỳ 1', '') === 'chk1');
+    log('deriveKyCode rỗng → null', deriveKy('', '') === null);
+
     // Tổng kết
     console.log(`\n=== ${pass} pass, ${fail} fail ===`);
     if (fails.length) {

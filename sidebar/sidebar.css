@@ -266,6 +266,56 @@ body {
     color: #0C447C;
 }
 
+/* V2.0: ô chọn kỳ nhận xét trong context-box */
+.context-ky-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #D4D4D4;
+}
+.context-ky-label {
+    font-size: 12px;
+    color: #0C447C;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.context-ky-select {
+    flex: 1;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #C0CDDE;
+    background: white;
+    color: #0E5440;
+    font-family: inherit;
+    cursor: pointer;
+}
+.context-ky-select:focus {
+    outline: none;
+    border-color: #0C447C;
+    box-shadow: 0 0 0 2px rgba(12,68,124,0.15);
+}
+.context-ky-reset {
+    background: white;
+    border: 1px solid #C0CDDE;
+    color: #0C447C;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.context-ky-reset:hover {
+    background: #E6F1FB;
+}
+
 .btn-rescan {
     background: white;
     color: #0C447C;

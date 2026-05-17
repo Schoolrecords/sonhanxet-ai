@@ -157,7 +157,8 @@ window.VneduAdapter = {
             return 'nlpc';
         }
 
-        const soNXMarker = this._findStrictVisibleText_(/^Nhận xét cuối kỳ$/i);
+        // V2.0: chấp nhận cả "Nhận xét giữa kỳ" (Giữa HK1/HK2) và "Nhận xét cuối kỳ" (Cuối HK1/HK2)
+        const soNXMarker = this._findStrictVisibleText_(/^Nhận xét (cuối|giữa) kỳ$/i);
         if (soNXMarker) {
             this._logDetectOnce_('marker SoNX', soNXMarker, 'so-nhan-xet');
             return 'so-nhan-xet';
@@ -285,8 +286,9 @@ window.VneduAdapter = {
      * cuối bảng thì header "Nhận xét cuối kỳ" có thể đã ra khỏi tầm nhìn — nhưng bảng vẫn active.
      */
     _getActiveSoNXTable() {
+        // V2.0: chấp nhận cả "Nhận xét giữa kỳ" lẫn "Nhận xét cuối kỳ"
         const cells = Array.from(document.querySelectorAll('th, td'))
-            .filter(el => /Nhận xét cuối kỳ/i.test(el.textContent || ''))
+            .filter(el => /Nhận xét (cuối|giữa) kỳ/i.test(el.textContent || ''))
             .filter(el => this._isInActivePanel(el));
 
         for (const cell of cells) {
@@ -372,8 +374,21 @@ window.VneduAdapter = {
             }
         }
 
+        // V2.0: Detect kyDanhGia (Giữa kỳ / Cuối kỳ) từ cột marker nếu chưa có.
+        //   - GV chọn Giữa kỳ trong Vnedu → cột table thành "Nhận xét giữa kỳ"
+        //   - GV chọn Cuối kỳ → "Nhận xét cuối kỳ"
+        if (!ctx.kyDanhGia) {
+            const marker = this._findStrictVisibleText_(/^Nhận xét (cuối|giữa) kỳ$/i);
+            if (marker) {
+                if (/giữa/i.test(marker)) ctx.kyDanhGia = 'Giữa kỳ';
+                else if (/cuối/i.test(marker)) ctx.kyDanhGia = 'Cuối kỳ';
+            }
+        }
+        // V2.0: Suy ra ky code (ghk1/chk1/ghk2/chk2) để engine pick pool đúng kỳ.
+        ctx.kyCode = this.deriveKyCode(ctx.hocKy, ctx.kyDanhGia);
+
         // [NLPC-DBG] log context cuối cùng + source — chỉ log khi có thay đổi để giảm noise
-        const sig = `${ctx.khoi}|${ctx.lop}|${ctx.mon}|${ctx.hocKy}`;
+        const sig = `${ctx.khoi}|${ctx.lop}|${ctx.mon}|${ctx.hocKy}|${ctx.kyDanhGia}|${ctx.kyCode}`;
         if (sig !== this._lastCtxLogSig) {
             this._lastCtxLogSig = sig;
             console.log('[NLPC-DBG] getContext result', ctx, '· primary(visibleVals):', visibleVals);
@@ -384,6 +399,27 @@ window.VneduAdapter = {
         this._ctxCache.time = Date.now();
 
         return ctx;
+    },
+
+    /**
+     * V2.0: Suy ra ky code từ context.
+     *   hocKy: "Học kỳ 1" | "Học kỳ 2" | ""
+     *   kyDanhGia: "Cuối kỳ" | "Giữa kỳ" | ""
+     * Trả 'ghk1' | 'chk1' | 'ghk2' | 'chk2' | null.
+     * Fallback: nếu thiếu kyDanhGia mà có hocKy → mặc định 'cuối kỳ' (engine fallback flat pool).
+     */
+    deriveKyCode(hocKy, kyDanhGia) {
+        const isHK1 = /1/.test(hocKy || '');
+        const isHK2 = /2/.test(hocKy || '');
+        const isGiua = /giữa/i.test(kyDanhGia || '');
+        const isCuoi = /cuối/i.test(kyDanhGia || '');
+        if (isHK1 && isGiua) return 'ghk1';
+        if (isHK1 && isCuoi) return 'chk1';
+        if (isHK2 && isGiua) return 'ghk2';
+        if (isHK2 && isCuoi) return 'chk2';
+        if (isHK1) return 'chk1';
+        if (isHK2) return 'chk2';
+        return null;
     },
 
     /**
@@ -458,7 +494,7 @@ window.VneduAdapter = {
         const patterns = [
             /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ/i,
             /Năng lực ghi học bạ/i,
-            /^Nhận xét cuối kỳ$/i
+            /^Nhận xét (cuối|giữa) kỳ$/i
         ];
         const candidates = document.querySelectorAll('div, span, h1, h2, h3, h4, td, th, b, strong, a, label, legend, p');
         let markerEl = null;
@@ -810,7 +846,7 @@ window.VneduAdapter = {
             /Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ|Năng lực ghi học bạ/i
         );
         if (!markerEl) {
-            markerEl = this._findVisibleLeafByText_(/^Nhận xét cuối kỳ$/i);
+            markerEl = this._findVisibleLeafByText_(/^Nhận xét (cuối|giữa) kỳ$/i);
         }
         if (!markerEl) return null;
 
@@ -928,7 +964,7 @@ window.VneduAdapter = {
         const urlMatch = /(so[-_]?nhan[-_]?xet|sohoc|nhat[-_]?ky|diem[-_]?mon|so[-_]?diem)/.test(url);
 
         // DOM signal: text "Sổ nhận xét" + có cột Môn học + có textarea nhận xét
-        const textMatch = /Sổ nhận xét|Nhận xét cuối kỳ|Nhận xét môn/i.test(allText) ||
+        const textMatch = /Sổ nhận xét|Nhận xét (cuối|giữa) kỳ|Nhận xét môn/i.test(allText) ||
                           /Sổ nhận xét/i.test(title);
 
         // Phải có ít nhất 1 textarea nhận xét HS hợp lệ (= có Sổ NX)

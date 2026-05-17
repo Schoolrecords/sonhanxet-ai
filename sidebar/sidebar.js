@@ -23,6 +23,25 @@
         gvLa: 'co'
     };
 
+    // V2.0: Ky override — GV có thể chọn kỳ thủ công khi auto-detect không chính xác.
+    // null = dùng kyCode auto-detect từ Vnedu; nếu set → override.
+    // Giá trị hợp lệ: 'ghk1' | 'chk1' | 'ghk2' | 'chk2' | null.
+    let kyOverride = null;
+
+    function getEffectiveKy() {
+        if (kyOverride) return kyOverride;
+        return (currentContext && currentContext.kyCode) || 'chk2';
+    }
+
+    function kyLabel(code) {
+        return {
+            ghk1: 'Giữa HK1',
+            chk1: 'Cuối HK1',
+            ghk2: 'Giữa HK2',
+            chk2: 'Cuối HK2'
+        }[code] || 'Cuối HK2';
+    }
+
     // v0.1.17: trạng thái license cache trong RAM (re-sync mỗi lần đổi)
     let licenseState = null;
 
@@ -127,6 +146,18 @@
         } catch (e) {
             console.error('[Sidebar] Không load được data:', e);
             throw e;
+        }
+
+        // V2.0: load thêm ky-specific phrases (Giữa HK1 / Cuối HK1 / Giữa HK2).
+        // File tách riêng cho dễ revert; nếu fetch fail engine vẫn chạy với pool flat (chk2).
+        try {
+            const kyUrl = chrome.runtime.getURL('engine/data/nhanxet-ky.json');
+            const kyRes = await fetch(kyUrl);
+            const kyData = await kyRes.json();
+            engine.loadKyData(kyData);
+            console.log('[Sidebar] V2.0 ky data loaded:', Object.keys(kyData.subjects).length, 'môn × 3 kỳ');
+        } catch (e) {
+            console.warn('[Sidebar] V2.0 ky data load fail (engine vẫn chạy chk2 default):', e);
         }
     }
 
@@ -569,6 +600,13 @@
     }
 
     function handleContextUpdate({ module, context, students }) {
+        // V2.0: reset ky override khi đổi lớp/môn/kỳ — để auto-detect lại theo Vnedu.
+        const prev = currentContext || {};
+        const next = context || {};
+        if (prev.lop !== next.lop || prev.mon !== next.mon || prev.kyCode !== next.kyCode) {
+            kyOverride = null;
+        }
+
         currentModule = module;
         currentContext = context;
         currentStudents = students || [];
@@ -606,6 +644,15 @@
         const ctx = currentContext || {};
         const monDisplay = formatMonDisplay(ctx.mon);
 
+        // V2.0: dropdown chọn kỳ — auto detect + cho phép GV override
+        const effectiveKy = getEffectiveKy();
+        const autoKy = ctx.kyCode || 'chk2';
+        const kyOptions = ['ghk1', 'chk1', 'ghk2', 'chk2'].map(c => {
+            const sel = c === effectiveKy ? 'selected' : '';
+            const autoTag = (c === autoKy && !kyOverride) ? ' (auto)' : '';
+            return `<option value="${c}" ${sel}>${kyLabel(c)}${autoTag}</option>`;
+        }).join('');
+
         document.getElementById('ctx-box').innerHTML = `
             <div class="context-label">Đã phát hiện:</div>
             <div class="context-title">Sổ nhận xét môn — Lớp ${escapeHtml(ctx.lop || '?')}</div>
@@ -614,7 +661,30 @@
                 ${ctx.hocKy ? `<span class="pill">${escapeHtml(ctx.hocKy)}</span>` : ''}
                 ${ctx.kyDanhGia ? `<span class="pill">${escapeHtml(ctx.kyDanhGia)}</span>` : ''}
             </div>
+            <div class="context-ky-row">
+                <label class="context-ky-label" for="ctx-ky-select">📅 Kỳ nhận xét:</label>
+                <select id="ctx-ky-select" class="context-ky-select">
+                    ${kyOptions}
+                </select>
+                ${kyOverride ? '<button id="ctx-ky-reset" class="context-ky-reset" title="Trở lại auto-detect">↻</button>' : ''}
+            </div>
         `;
+
+        const kySelect = document.getElementById('ctx-ky-select');
+        if (kySelect) {
+            kySelect.onchange = () => {
+                const val = kySelect.value;
+                kyOverride = (val === autoKy) ? null : val;
+                renderSoNhanXetView();
+            };
+        }
+        const kyReset = document.getElementById('ctx-ky-reset');
+        if (kyReset) {
+            kyReset.onclick = () => {
+                kyOverride = null;
+                renderSoNhanXetView();
+            };
+        }
 
         const total = currentStudents.length;
         const daCo = currentStudents.filter(s => s.daCoNhanXet).length;
@@ -692,7 +762,7 @@
         engine.options.gvLa = settings.gvLa;
 
         try {
-            const result = engine.sinhCaLop(toGenerate, subjectCode);
+            const result = engine.sinhCaLop(toGenerate, subjectCode, getEffectiveKy());
 
             generatedNhanXet.clear();
             for (const r of result) {

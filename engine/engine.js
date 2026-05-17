@@ -25,6 +25,28 @@ class NhanXetEngineV2 {
         return this;
     }
 
+    /**
+     * V2.0: Load thêm ky-specific data (Giữa HK1 / Cuối HK1 / Giữa HK2) từ file
+     * nhanxet-ky.json, merge vào this.data.subjects[code][ky].
+     * Pool ky-specific KHÔNG ghi đè flat pool (chk2 default) — sinhNhanXet sẽ
+     * pick theo param ky truyền vào: có ky → dùng pool[ky][tier]; không ky hoặc
+     * ky='chk2' → fallback về flat pool gốc.
+     */
+    loadKyData(kyData) {
+        if (!this.data || !this.data.subjects) {
+            console.warn('[Engine] loadKyData: chưa loadData() trước, bỏ qua');
+            return this;
+        }
+        if (!kyData || !kyData.subjects) return this;
+        for (const [subj, kyMap] of Object.entries(kyData.subjects)) {
+            if (!this.data.subjects[subj]) continue;
+            for (const [ky, pools] of Object.entries(kyMap)) {
+                this.data.subjects[subj][ky] = pools;
+            }
+        }
+        return this;
+    }
+
     phanLoaiMuc(diem) {
         if (diem === null || diem === undefined) return 'ht';
         const d = parseFloat(diem);
@@ -78,7 +100,7 @@ class NhanXetEngineV2 {
         this.usedPhrases.clear();
     }
 
-    sinhNhanXet(hs, subjectCode) {
+    sinhNhanXet(hs, subjectCode, ky) {
         if (!this.data || !this.data.subjects) {
             return 'Em chăm chỉ học tập và có nhiều tiến bộ trong học kì này.';
         }
@@ -91,7 +113,17 @@ class NhanXetEngineV2 {
         // Ưu tiên mucDat (mức chữ T/H/C cho môn không có điểm — TNXH, ĐĐ, MT...)
         // Sau đó mới phân loại từ điểm số.
         const mucDo = hs.mucDat || this.phanLoaiMuc(hs.diem);
-        const pool = subject[mucDo] || subject.ht || [];
+
+        // V2.0: pick pool theo ky nếu có; fallback flat pool (chk2 mặc định).
+        // ky hợp lệ: 'ghk1' | 'chk1' | 'ghk2' | 'chk2'. ky='chk2' hoặc null → dùng pool flat.
+        let pool;
+        if (ky && ky !== 'chk2' && subject[ky] && subject[ky][mucDo]) {
+            pool = subject[ky][mucDo];
+        } else if (ky && ky !== 'chk2' && subject[ky] && subject[ky].ht) {
+            pool = subject[ky].ht;
+        } else {
+            pool = subject[mucDo] || subject.ht || [];
+        }
 
         const phrase = this.chonKhongTrungLap(pool);
 
@@ -125,11 +157,11 @@ class NhanXetEngineV2 {
         return result.join('');
     }
 
-    sinhCaLop(danhSachHS, subjectCode) {
+    sinhCaLop(danhSachHS, subjectCode, ky) {
         this.resetUsedPhrases();
 
         return danhSachHS.map(hs => {
-            const nhanXet = this.sinhNhanXet(hs, subjectCode);
+            const nhanXet = this.sinhNhanXet(hs, subjectCode, ky);
             // Ưu tiên mucDat (môn không điểm) trước phân loại theo điểm
             const mucDo = hs.mucDat || this.phanLoaiMuc(hs.diem);
 
