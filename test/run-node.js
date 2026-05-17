@@ -248,6 +248,55 @@ async function assertThrows(fn, name) {
     log('V2.0 KHÔNG phrase nào dính marker thời gian (50+ pattern)',
         violations.length === 0, violations.slice(0, 3));
 
+    // V2.0.1 — Anh Chung phản hồi 17/05/2026: các cô test thấy phrases dính nội dung
+    // CỤ THỂ (Paint chỉ học lớp 5, Hùng Vương cụ thể quá, bảng cửu chương chỉ đúng lớp 2-3...)
+    // → phải TRUNG TÍNH theo TT32/2018 yêu cầu cần đạt — ai đọc cũng đúng cho mọi lớp + mọi bộ SGK.
+    const specificContentRe = new RegExp([
+        // Tin học - tên phần mềm cụ thể
+        '\\bPaint\\b', '\\bWord\\b', '\\bExcel\\b', '\\bPowerpoint\\b',
+        // Lịch sử - tên nhân vật cụ thể
+        'Hùng Vương', 'Lý Thái Tổ', 'Trần Hưng Đạo', 'Lê Lợi', 'Quang Trung',
+        'Bà Trưng', 'Bà Triệu', 'Nguyễn Trãi', 'An Dương Vương',
+        'Tây Sơn', 'Hậu Lê', 'Ngô Quyền', 'Lý Trần', 'thời Lý', 'thời Trần',
+        // Toán - bảng cụ thể
+        'bảng cửu chương', 'bảng cộng trừ', 'trong phạm vi 10',
+        'trong phạm vi 100', 'trong phạm vi 1000', 'phép cộng trừ trong',
+        // Tiếng Việt - kĩ năng cụ thể của lớp 1
+        'ghép vần', 'bảng chữ cái', 'đọc trơn',
+        // GDTC - bài tập cụ thể
+        'đội hình đội ngũ', 'bài thể dục phát triển chung',
+        'bật xa', 'ném bóng', 'đứng nghiêm', 'đứng nghỉ', 'quay trái', 'quay phải',
+        // Công nghệ - đồ dùng cụ thể
+        'đèn học', 'quạt điện', 'tưới nước cho cây', 'chăm sóc cây cảnh',
+        'lắp ráp mô hình kĩ thuật', 'sản phẩm thủ công từ',
+        // Âm nhạc - hoạt động cụ thể của lớp 4-5
+        'vỗ tay theo phách', 'đọc nhạc đơn giản',
+        // Tiếng Anh - mẫu câu cụ thể
+        'I like', 'I have', '\\bI am\\b',
+        // Mĩ thuật - chủ điểm cụ thể
+        'đường nét cơ bản: thẳng', 'vẽ đồ vật trong', 'vẽ tranh trường lớp',
+        'vẽ tranh thiên nhiên', 'tranh mùa xuân',
+        // Khoa học - chủ điểm cụ thể
+        'dinh dưỡng', 'hô hấp', 'tuần hoàn',
+        'nước - không khí', 'ánh sáng - âm thanh',
+        // TNXH - chủ điểm cụ thể
+        'bộ phận cơ thể', 'thành viên gia đình', 'mùa và thời tiết'
+    ].join('|'));
+    const specViolations = [];
+    for (const subj of Object.keys(kyData.subjects)) {
+        for (const ky of ['ghk1', 'chk1', 'ghk2']) {
+            for (const tier of ['tot_xs', 'tot', 'ht', 'cht']) {
+                for (const phrase of kyData.subjects[subj][ky][tier]) {
+                    if (specificContentRe.test(phrase)) {
+                        specViolations.push(`${subj}/${ky}/${tier}: ${phrase}`);
+                    }
+                }
+            }
+        }
+    }
+    log('V2.0.1 KHÔNG phrase nào dính nội dung CỤ THỂ (tên phần mềm/nhân vật LS/SGK)',
+        specViolations.length === 0, specViolations.slice(0, 5));
+
     // Fallback: ky='chk2' hoặc undefined → flat pool (legacy)
     engine.resetUsedPhrases();
     const nxChk2 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'chk2');
