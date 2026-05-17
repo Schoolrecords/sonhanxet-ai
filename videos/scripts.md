@@ -1,6 +1,7 @@
-# Kịch bản 3 Video — Sổ nhận xét - AI
+# Kịch bản 3 Video — Sổ nhận xét - AI · V1.5
 
 **Mục đích**: Quay tutorial cho website https://sonhanxet-ai.vercel.app
+**Phiên bản extension**: 1.5 (đã có mặt trên Chrome Web Store)
 **Tổng thời lượng 3 video**: ~6 phút 45 giây
 **Style đề xuất**: **Screen recording + voice-over** (không cần webcam thầy xuất hiện)
 
@@ -20,8 +21,9 @@
 
 - ✅ Tắt thông báo Windows (Settings → Focus Assist → Priority only)
 - ✅ Đóng tab khác trong Chrome
-- ✅ Mở Vnedu sẵn ở trang Sổ nhận xét, đã chọn lớp test (đầy đủ HS giả)
-- ✅ Cài extension v0.1.26 vào Chrome (Load unpacked từ thư mục `C:\Users\PC\OneDrive\Documents\SoNhanXet_AI\`)
+- ✅ Mở Vnedu sẵn ở trang Sổ nhận xét, đã chọn **lớp 4 hoặc lớp 5** (đầy đủ HS giả) — vì lớp 4-5 có đủ Khoa học, Tin học, Công nghệ để demo NL/PC
+- ✅ Cài extension v1.5 từ Chrome Web Store: https://chromewebstore.google.com/detail/sổ-nhận-xét-ai/hhiipgifeplegcejhpdmdbnbabjikllh
+- ✅ Đã kích hoạt mã license trong sidebar
 - ✅ Chuẩn bị **mic ngoài** nếu có (mic laptop hơi rè), hoặc mic của tai nghe
 - ✅ Quay ở phòng yên tĩnh, ban ngày
 - ✅ Test 30 giây trước → kiểm tra audio + video chất lượng OK
@@ -66,20 +68,20 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 **Màn hình hiển thị**: Slide đen với chữ vàng, hoặc trang web `sonhanxet-ai.vercel.app` đang scroll xuống section "Vấn đề"
 
 **Lời thuyết minh**:
-> *"Cuối học kỳ — 30, 35 học sinh, 8 môn học, 13 mục đánh giá Năng lực Phẩm chất. Tổng cộng vài trăm câu nhận xét phải viết tay. Trung bình 3 đến 4 tiếng đồng hồ mỗi lớp."*
+> *"Cuối học kỳ — 30, 35 học sinh, 8 môn học, 15 đến 18 mục đánh giá Năng lực Phẩm chất tuỳ theo khối lớp. Tổng cộng vài trăm câu nhận xét phải viết tay. Trung bình 3 đến 4 tiếng đồng hồ mỗi lớp."*
 
 **Tip**: Nói chậm, giọng trầm — như than thở cùng đồng nghiệp.
 
 #### 📺 Cảnh 2 (0:10–0:25) — Giải pháp
 
-**Màn hình**: Mở Chrome Web Store, hiển thị extension Sổ nhận xét - AI. Bấm "Add to Chrome".
+**Màn hình**: Mở Chrome Web Store, hiển thị extension **Sổ nhận xét - AI v1.5**. Bấm "Thêm vào Chrome".
 
 **Lời thuyết minh**:
-> *"Tôi muốn chia sẻ với thầy cô một trợ lý AI giúp việc này còn 5 phút. Đầu tiên, vào Chrome Web Store tìm 'Sổ nhận xét AI'. Bấm 'Add to Chrome' — xong, có icon trên thanh công cụ."*
+> *"Tôi muốn chia sẻ với thầy cô một trợ lý AI giúp việc này còn 5 phút. Đầu tiên, vào Chrome Web Store tìm 'Sổ nhận xét AI'. Bấm 'Thêm vào Chrome' — xác nhận thêm tiện ích — xong, có icon trên thanh công cụ."*
 
 #### 📺 Cảnh 3 (0:25–0:50) — Sidebar tự xuất hiện
 
-**Màn hình**: Mở Vnedu (đã đăng nhập sẵn) → vào Sổ điểm → Sổ nhận xét → chọn lớp 4A, môn Toán, HK1. **Sidebar AI tự xuất hiện bên phải**.
+**Màn hình**: Mở Vnedu (đã đăng nhập sẵn) → vào Sổ điểm → Sổ nhận xét → chọn lớp 5A, môn Toán, HK1. **Sidebar AI tự xuất hiện bên phải**.
 
 **Lời thuyết minh**:
 > *"Sau khi cài, mỗi lần vào trang Sổ nhận xét của Vnedu, sidebar tự xuất hiện bên phải — phát hiện ngay là lớp này có 35 học sinh, môn Toán, học kỳ 1. Không cần làm gì thêm."*
@@ -126,7 +128,7 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 
 #### 📺 Cảnh 1 (0:00–0:15) — Intro
 
-**Màn hình**: Slide title "Video 1: Nhận xét môn học" hoặc thumbnail
+**Màn hình**: Slide title "Video 2: Nhận xét môn học" hoặc thumbnail
 
 **Lời thuyết minh**:
 > *"Xin chào thầy cô! Video này tôi sẽ hướng dẫn chi tiết cách sinh nhận xét môn học cho cả lớp 35 học sinh chỉ trong vài phút, dùng extension Sổ nhận xét - AI. Nếu thầy cô chưa cài, mời xem video 'Bắt đầu trong 90 giây' trước."*
@@ -146,7 +148,7 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 **Màn hình**: Sidebar AI tự xuất hiện bên phải, hiển thị "Phát hiện 35 HS"
 
 **Lời thuyết minh**:
-> *"Sidebar AI tự động xuất hiện bên phải — và phát hiện ngay đây là lớp 4A, môn Toán, có 35 học sinh. Nếu sidebar không hiện, thầy cô bấm icon Sổ nhận xét trên thanh công cụ Chrome, hoặc bấm 'Quét lại'."*
+> *"Sidebar AI tự động xuất hiện bên phải — và phát hiện ngay đây là lớp 5A, môn Toán, có 35 học sinh. Nếu sidebar không hiện, thầy cô bấm icon Sổ nhận xét trên thanh công cụ Chrome, hoặc bấm 'Quét lại'."*
 
 #### 📺 Cảnh 4 (0:55–1:15) — Bấm sinh
 
@@ -156,7 +158,7 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 - Sidebar chuyển sang chế độ preview với cards nhận xét
 
 **Lời thuyết minh**:
-> *"Bấm nút vàng 'Sinh nhận xét cho 35 HS'. AI đọc điểm của từng học sinh từ bảng Vnedu, rồi sinh ra nhận xét tương ứng — học sinh điểm T+ có nhận xét khác với học sinh điểm H. Không có câu nào trùng nhau."*
+> *"Bấm nút vàng 'Sinh nhận xét cho 35 HS'. AI đọc điểm của từng học sinh từ bảng Vnedu, rồi sinh ra nhận xét tương ứng — học sinh điểm T+ có nhận xét khác với học sinh điểm H, học sinh chưa hoàn thành sẽ có lời động viên cụ thể. Ngân hàng câu hơn 500 câu, đa dạng theo từng môn và từng mức."*
 
 #### 📺 Cảnh 5 (1:15–1:45) — Preview + Chỉnh sửa
 
@@ -185,7 +187,7 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 **Màn hình**: Quay về sidebar hiển thị "Đã hoàn tất 35 nhận xét"
 
 **Lời thuyết minh**:
-> *"Vậy là xong môn Toán. Lặp lại tương tự cho các môn khác — Tiếng Việt, TNXH, Khoa học... Video sau, tôi sẽ hướng dẫn module Năng lực - Phẩm chất phức tạp hơn một chút. Cảm ơn thầy cô!"*
+> *"Vậy là xong môn Toán. Lặp lại tương tự cho các môn khác — Tiếng Việt, TNXH, Khoa học, Đạo đức... Video sau, tôi sẽ hướng dẫn module Năng lực - Phẩm chất phức tạp hơn một chút. Cảm ơn thầy cô!"*
 
 ---
 
@@ -199,10 +201,10 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 
 | Đoạn | Thời gian | Nội dung |
 |---|---|---|
-| Intro + Vấn đề | 0:00–0:30 | NL/PC tại sao khó: 13 mục × 35 HS |
+| Intro + Vấn đề | 0:00–0:30 | NL/PC tại sao khó: 15-18 mục × 35 HS |
 | Cơ chế AI | 0:30–0:55 | AI suy từ điểm môn thế nào |
 | Mở form NLPC | 0:55–1:20 | Đến đúng trang Vnedu |
-| Auto-fill | 1:20–1:50 | 13 mục được điền tự động |
+| Auto-fill | 1:20–1:50 | 15-18 mục được điền tự động |
 | Override badge | 1:50–2:25 | Click badge đổi mức |
 | Áp dụng | 2:25–2:45 | Ghi vào Vnedu + Lưu |
 | Đóng + CTA | 2:45–3:00 | Tổng kết + tải về |
@@ -214,45 +216,47 @@ Tạo trên Vnedu (hoặc dùng lớp thật nhưng **đổi tên HS bằng Find
 **Màn hình**: Slide title, hoặc form NL/PC Vnedu (chưa fill, trống)
 
 **Lời thuyết minh**:
-> *"Xin chào thầy cô! Module Phẩm chất - Năng lực theo Thông tư 27 là phần khó nhất khi đánh giá: mỗi học sinh cần 13 mục đánh giá, mỗi mục 3 mức Tốt - Đạt - Cần cố gắng. Một lớp 35 học sinh là 455 lần phải quyết định và viết. Video này, tôi hướng dẫn cách Sổ nhận xét - AI làm việc này trong 5 phút."*
+> *"Xin chào thầy cô! Module Phẩm chất - Năng lực theo Thông tư 27 là phần khó nhất khi đánh giá: tuỳ khối lớp, mỗi học sinh cần 15 đến 18 mục đánh giá. Lớp 1-2 là 15 mục. Lớp 3 là 17 mục. Lớp 4-5 là 18 mục — có thêm Năng lực Khoa học. Mỗi mục 3 mức Tốt - Đạt - Cần cố gắng. Một lớp 35 học sinh là vài trăm lần phải quyết định và viết. Video này, tôi hướng dẫn cách Sổ nhận xét - AI làm việc này trong vài phút."*
 
 #### 📺 Cảnh 2 (0:30–0:55) — Cơ chế AI
 
 **Màn hình**: Slide đơn giản hoặc whiteboard giải thích logic:
+
 ```
 Điểm môn (Toán T+, Tiếng Việt T, GDTC T) → AI suy NL/PC
-↓
+   ↓
 Năng lực Tính toán: T (vì Toán T+)
 Năng lực Ngôn ngữ: T (vì Tiếng Việt T)
+Năng lực Khoa học: T (vì TNXH + KH + LSĐL) — CHỈ áp dụng lớp 4-5
 Năng lực Thể chất: T (vì GDTC T)
 Phẩm chất Chăm chỉ: T (vì các môn đều khá)
-...
+   ...
 ```
 
 **Lời thuyết minh**:
-> *"AI hoạt động dựa trên nguyên lý đơn giản: học sinh nào học tốt các môn, NL/PC cũng cao. Cụ thể: Năng lực Tính toán suy từ điểm Toán. Năng lực Ngôn ngữ suy từ điểm Tiếng Việt. Năng lực Thể chất từ Giáo dục Thể chất... 13 mục đánh giá đều có công thức suy ra rõ ràng. Thầy cô không phải nghĩ — chỉ cần xác nhận hoặc sửa lại theo nhận định thực tế."*
+> *"AI hoạt động dựa trên nguyên lý đơn giản: học sinh nào học tốt các môn, NL/PC cũng cao. Cụ thể: Năng lực Tính toán suy từ điểm Toán. Năng lực Ngôn ngữ suy từ điểm Tiếng Việt. Năng lực Khoa học suy từ TNXH, Khoa học và Lịch sử - Địa lí, chỉ áp dụng cho lớp 4 và 5. Năng lực Thể chất từ Giáo dục Thể chất... 15 đến 18 mục đánh giá đều có công thức suy ra rõ ràng. Thầy cô không phải nghĩ — chỉ cần xác nhận hoặc sửa lại theo nhận định thực tế."*
 
 #### 📺 Cảnh 3 (0:55–1:20) — Mở form NLPC
 
 **Màn hình**:
 - Vnedu: Hồ sơ HS → Phẩm chất Năng lực
-- Chọn lớp 4A, HK1
+- Chọn lớp 5A, HK1
 - Chọn 1 học sinh đầu tiên — Nguyễn Văn An
 
 **Lời thuyết minh**:
-> *"Trong Vnedu, vào menu Hồ sơ học sinh — chọn Phẩm chất Năng lực. Chọn lớp 4A, học kỳ 1. Chọn học sinh đầu tiên trong danh sách — Nguyễn Văn An. Form 13 mục đánh giá hiện ra, ban đầu còn trống."*
+> *"Trong Vnedu, vào menu Hồ sơ học sinh — chọn Phẩm chất Năng lực. Chọn lớp 5A, học kỳ 1. Chọn học sinh đầu tiên trong danh sách — Nguyễn Văn An. Form 18 mục đánh giá hiện ra, ban đầu còn trống."*
 
 #### 📺 Cảnh 4 (1:20–1:50) — Auto-fill
 
 **Màn hình**:
-- Sidebar AI hiện status "Đã suy 13/13 mục từ điểm môn"
+- Sidebar AI hiện status "Đã suy 18/18 mục từ điểm môn"
 - Hiển thị progress 92% Tốt
 - Bấm "Áp dụng auto-fill"
-- 13 ô trong form Vnedu tự động được tick badge T (xanh lá)
+- 18 ô trong form Vnedu tự động được tick badge T (xanh lá)
 - Mỗi ô có tag nhỏ "AI ✨" góc trên phải
 
 **Lời thuyết minh**:
-> *"Sidebar AI hiển thị 'Đã suy 13 mục từ điểm môn'. Bấm áp dụng — toàn bộ 13 mục đánh giá được tự động chọn mức tương ứng. Mỗi badge có dấu 'AI' nhỏ ở góc cho biết đây là AI gợi ý, chứ không phải thầy cô chọn tay."*
+> *"Sidebar AI hiển thị 'Đã suy 18 mục từ điểm môn'. Bấm áp dụng — toàn bộ 18 mục đánh giá được tự động chọn mức tương ứng. Mỗi badge có dấu 'AI' nhỏ ở góc cho biết đây là AI gợi ý, chứ không phải thầy cô chọn tay."*
 
 #### 📺 Cảnh 5 (1:50–2:25) — Override badge
 
@@ -275,7 +279,7 @@ Phẩm chất Chăm chỉ: T (vì các môn đều khá)
 - Quay về danh sách HS, NL/PC của HS này có icon ✓
 
 **Lời thuyết minh**:
-> *"Xong với học sinh này. Bấm 'Lưu' của Vnedu — toàn bộ 13 mục đánh giá được lưu vào hệ thống. Quay về danh sách — học sinh đã có dấu tích xác nhận đã hoàn thành."*
+> *"Xong với học sinh này. Bấm 'Lưu' của Vnedu — toàn bộ 18 mục đánh giá được lưu vào hệ thống. Quay về danh sách — học sinh đã có dấu tích xác nhận đã hoàn thành."*
 
 #### 📺 Cảnh 7 (2:45–3:00) — Đóng + CTA
 
@@ -284,7 +288,7 @@ Phẩm chất Chăm chỉ: T (vì các môn đều khá)
 - Mouse pointer di chuyển sang HS tiếp theo
 
 **Lời thuyết minh**:
-> *"Lặp lại quy trình này cho 35 học sinh trong lớp — trung bình mỗi HS chỉ mất 10-15 giây vì 13 mục đã được AI suy sẵn, thầy cô chỉ cần xem qua và override 1-2 mục nếu cần. Tổng cộng cả lớp khoảng 5-7 phút. So với cách viết tay, đây là một bước tiến lớn. Tải về tại sonhanxet-ai.vercel.app. Hẹn gặp lại thầy cô ở video tiếp theo!"*
+> *"Lặp lại quy trình này cho 35 học sinh trong lớp — trung bình mỗi HS chỉ mất 10-15 giây vì 18 mục đã được AI suy sẵn, thầy cô chỉ cần xem qua và override 1-2 mục nếu cần. Tổng cộng cả lớp khoảng 5-7 phút. So với cách viết tay, đây là một bước tiến lớn. Tải về tại sonhanxet-ai.vercel.app. Hẹn gặp lại thầy cô ở video tiếp theo!"*
 
 ---
 
@@ -295,7 +299,8 @@ Trước mỗi buổi quay, check qua 1 lần:
 - [ ] Đóng tất cả notification Windows + Chrome
 - [ ] Đóng tab phụ — chỉ giữ tab Vnedu + tab extension settings
 - [ ] Mic test — thu thử 10 giây nghe lại
-- [ ] Lớp test có data hợp lệ (35 HS, tên giả, điểm đa dạng)
+- [ ] Lớp test có data hợp lệ (35 HS, tên giả, điểm đa dạng, đủ T+/T/H/C)
+- [ ] Đã kích hoạt mã license trong sidebar
 - [ ] Mặt thầy/cô bình tĩnh, có ly nước cạnh ✓
 - [ ] Để sẵn kịch bản (file này) trên màn hình thứ 2 (hoặc in ra giấy)
 - [ ] Hít sâu, nhấn Record, đếm 3-2-1 rồi nói
