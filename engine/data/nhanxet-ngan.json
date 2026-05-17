@@ -343,6 +343,49 @@
         "Em nên giữ tư thế ngồi đúng và bảo quản chuột, bàn phím cẩn thận khi thực hành."
       ]
     },
+    "congnghe": {
+      "name": "Công nghệ",
+      "tot_xs": [
+        "Em có năng khiếu Công nghệ, lắp ráp sản phẩm khéo léo và sáng tạo xuất sắc.",
+        "Em vẽ phác hình sản phẩm đẹp mắt, lắp ráp mô hình kĩ thuật rất chính xác.",
+        "Em sáng tạo trong làm sản phẩm thủ công, vận dụng tốt vào cuộc sống hằng ngày.",
+        "Em hiểu sâu vai trò công nghệ, có ý thức an toàn cao khi sử dụng đồ dùng.",
+        "Em có tư duy kĩ thuật tốt, làm theo quy trình chính xác và tạo sản phẩm đẹp.",
+        "Em yêu thích môn Công nghệ, chăm sóc cây và hoa rất khéo léo, cẩn thận.",
+        "Em sử dụng đồ dùng điện an toàn, biết tiết kiệm điện nước trong sinh hoạt hằng ngày.",
+        "Em có nhiều ý tưởng sáng tạo, làm ra sản phẩm thủ công độc đáo và đẹp mắt."
+      ],
+      "tot": [
+        "Em làm sản phẩm thủ công khá khéo léo, hoàn thành đúng theo quy trình hướng dẫn.",
+        "Em biết sử dụng đồ dùng học tập và đồ dùng gia đình an toàn, đúng cách.",
+        "Em chăm chỉ thực hành Công nghệ, lắp ráp được mô hình kĩ thuật đơn giản.",
+        "Em có ý thức an toàn khi dùng đồ điện, biết tiết kiệm điện nước hằng ngày.",
+        "Em quan sát tốt, làm theo các bước quy trình kĩ thuật và hoàn thành sản phẩm.",
+        "Em yêu thích thực hành, biết chăm sóc hoa và cây cảnh đơn giản trong gia đình.",
+        "Em vẽ phác hình sản phẩm rõ ràng, hoàn thành bài thực hành đúng yêu cầu của cô.",
+        "Em biết sử dụng quạt điện, đèn học an toàn và bảo quản đồ dùng cẩn thận."
+      ],
+      "ht": [
+        "Em đã biết sử dụng đồ dùng học tập và đồ dùng gia đình theo hướng dẫn an toàn.",
+        "Em hoàn thành các bài thực hành Công nghệ, làm sản phẩm thủ công theo yêu cầu.",
+        "Em chăm chỉ học tập, biết làm theo các bước quy trình đơn giản trong giờ học.",
+        "Em có ý thức giữ gìn đồ dùng, biết tiết kiệm điện nước trong sinh hoạt.",
+        "Em đã lắp ráp được mô hình đơn giản, hoàn thành sản phẩm cơ bản trên lớp.",
+        "Em đã biết quan sát các sản phẩm công nghệ trong gia đình và sử dụng đúng cách.",
+        "Em tham gia học tập tích cực, biết chăm sóc cây hoa nhỏ ở góc lớp."
+      ],
+      "cht": [
+        "Em ngoan và chuyên cần, cần luyện thao tác cẩn thận khi làm sản phẩm thủ công.",
+        "Em đã có cố gắng, hãy quan sát cô làm mẫu rồi thực hành theo từng bước.",
+        "Em ngoan và hiền, cần giữ gìn đồ dùng cẩn thận và tiết kiệm điện nước hằng ngày.",
+        "Em hãy luyện vẽ phác hình sản phẩm trước khi bắt đầu lắp ráp mô hình.",
+        "Cô tin em sẽ tiến bộ, hãy mạnh dạn thử làm sản phẩm và hỏi cô khi gặp khó khăn.",
+        "Em chăm chú nghe giảng, cần ghi nhớ các bước quy trình trước khi thực hành.",
+        "Em nên sử dụng đồ dùng điện cẩn thận và rút phích cắm sau khi dùng xong.",
+        "Em hãy quan sát bạn ngồi cạnh để học cách làm sản phẩm thủ công đúng cách.",
+        "Em ngoan và lễ phép, hãy chăm sóc cây hoa nhỏ ở nhà cùng cha mẹ để rèn tính cẩn thận."
+      ]
+    },
     "tienganh": {
       "name": "Tiếng Anh",
       "tot_xs": [

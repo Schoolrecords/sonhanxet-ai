@@ -325,6 +325,7 @@ const VALID_SUBJECTS = Object.freeze([
     'lich-su-dia',
     'dao-duc',
     'tin-hoc',
+    'cong-nghe',
     'tieng-anh',
     'gd-the-chap',
     'am-nhac',
@@ -354,6 +355,7 @@ const SUBJECT_NAME_MAP = Object.freeze({
     'dd': 'dao-duc',
     'tin hoc': 'tin-hoc',
     'tin hoc va cong nghe': 'tin-hoc',
+    'cong nghe': 'cong-nghe',
     'tieng anh': 'tieng-anh',
     'ta': 'tieng-anh',
     'giao duc the chat': 'gd-the-chap',
@@ -378,6 +380,19 @@ class CacheManager {
      */
     static normalizeSubject(subjectRaw) {
         if (!subjectRaw || typeof subjectRaw !== 'string') return null;
+
+        // V1.7: phân biệt Tin học vs Công nghệ TRƯỚC khi strip parenthetical.
+        // Vnedu thường hiện 2 cột con dưới "Tin học và Công nghệ":
+        //   "Tin học và Công nghệ (Tin học)"  → 'tin-hoc'   (xử lý ở BUG-005 strip phía dưới)
+        //   "Tin học và Công nghệ (Công nghệ)" → 'cong-nghe' (BẮT Ở ĐÂY)
+        //   "Công nghệ" riêng                 → 'cong-nghe'
+        const rawNoAccent = subjectRaw
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .replace(/đ/g, 'd');
+        if (/\(\s*cong nghe\s*\)/.test(rawNoAccent)) return 'cong-nghe';
+        if (rawNoAccent.includes('cong nghe') && !rawNoAccent.includes('tin hoc')) return 'cong-nghe';
 
         // BUG-005 fix: strip parenthetical suffix vd "Tin học và Công nghệ (Tin học)"
         // → "Tin học và Công nghệ" để match alias chuẩn
@@ -835,17 +850,18 @@ const NLPC_FIELD_RULES = Object.freeze({
         section: 'nang_luc_dac_thu',
         sources: [{ key: 'gd-the-chap', label: 'GDTC' }]
     },
-    // BUG-006: Lớp 3-5 thêm Công nghệ + Tin học (TT27/2020 + CT GDPT 2018).
-    // Cả 2 NL cùng derive từ môn "Tin học và Công nghệ" (subject key 'tin-hoc').
+    // BUG-006/V1.7: Lớp 3-5 thêm Công nghệ + Tin học (TT27/2020 + CT GDPT 2018).
+    // NL Công nghệ ưu tiên cache 'cong-nghe'; nếu trường chỉ cache combined "Tin học và
+    // Công nghệ" (→ 'tin-hoc') thì fallback dùng điểm 'tin-hoc' để tránh default Đ.
     cong_nghe: {
         label: 'Năng lực Công nghệ',
         section: 'nang_luc_dac_thu',
-        sources: [{ key: 'tin-hoc', label: 'Tin-CN' }]
+        sources: [{ key: 'cong-nghe', label: 'CN' }, { key: 'tin-hoc', label: 'Tin' }]
     },
     tin_hoc: {
         label: 'Năng lực Tin học',
         section: 'nang_luc_dac_thu',
-        sources: [{ key: 'tin-hoc', label: 'Tin-CN' }]
+        sources: [{ key: 'tin-hoc', label: 'Tin' }]
     },
 
     // PHẨM CHẤT (5 trường)
@@ -974,9 +990,9 @@ class NLPCMapper {
     static _shortLabel(subjectKey) {
         return {
             'tieng-viet': 'TV', 'toan': 'Toán', 'tnxh': 'TNXH', 'khoa-hoc': 'KH',
-            'lich-su-dia': 'LSĐL', 'dao-duc': 'ĐĐ', 'tin-hoc': 'Tin', 'tieng-anh': 'TA',
-            'gd-the-chap': 'GDTC', 'am-nhac': 'ÂN', 'mi-thuat': 'MT', 'htn': 'HĐTN',
-            'diem-tb': 'TB'
+            'lich-su-dia': 'LSĐL', 'dao-duc': 'ĐĐ', 'tin-hoc': 'Tin', 'cong-nghe': 'CN',
+            'tieng-anh': 'TA', 'gd-the-chap': 'GDTC', 'am-nhac': 'ÂN', 'mi-thuat': 'MT',
+            'htn': 'HĐTN', 'diem-tb': 'TB'
         }[subjectKey] || subjectKey;
     }
 

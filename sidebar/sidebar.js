@@ -406,9 +406,9 @@
     function shortSubject(key) {
         const map = {
             'tieng-viet': 'TV', 'toan': 'Toán', 'tnxh': 'TNXH', 'khoa-hoc': 'KH',
-            'lich-su-dia': 'LSĐL', 'dao-duc': 'ĐĐ', 'tin-hoc': 'Tin', 'tieng-anh': 'TA',
-            'gd-the-chap': 'GDTC', 'am-nhac': 'ÂN', 'mi-thuat': 'MT', 'htn': 'HĐTN',
-            'diem-tb': 'TB'
+            'lich-su-dia': 'LSĐL', 'dao-duc': 'ĐĐ', 'tin-hoc': 'Tin', 'cong-nghe': 'CN',
+            'tieng-anh': 'TA', 'gd-the-chap': 'GDTC', 'am-nhac': 'ÂN', 'mi-thuat': 'MT',
+            'htn': 'HĐTN', 'diem-tb': 'TB'
         };
         return map[key] || key;
     }
@@ -725,6 +725,11 @@
         if (lower.includes('lịch sử') || lower.includes('địa lí') ||
             /^ls[\s\-]*đl$/.test(lower) || lower === 'lsdl') return 'lichsudia';
         if (lower.includes('đạo đức') || lower === 'đđ' || lower === 'dd') return 'daoduc';
+        // V1.7: phân biệt Công nghệ vs Tin học (Vnedu thường có 2 cột con dưới
+        // "Tin học và Công nghệ"). Phải kiểm tra Công nghệ TRƯỚC để bắt
+        // "Tin học và Công nghệ (Công nghệ)" và "Công nghệ" riêng.
+        if (/\(\s*công nghệ\s*\)/.test(lower)) return 'congnghe';
+        if (lower.includes('công nghệ') && !lower.includes('tin học')) return 'congnghe';
         if (lower.includes('tin học') || lower === 'th' ||
             /^th[\s\-]*cn$/.test(lower)) return 'tinhoc';
         if (lower.includes('tiếng anh') || lower.includes('ngoại ngữ') || lower === 'ta') return 'tienganh';
@@ -1386,7 +1391,7 @@
     const SUBJECT_LABELS = {
         'tieng-viet': 'Tiếng Việt', 'toan': 'Toán', 'tnxh': 'Tự nhiên & Xã hội',
         'khoahoc': 'Khoa học', 'lichsudia': 'Lịch sử & Địa lí', 'daoduc': 'Đạo đức',
-        'tinhoc': 'Tin học', 'tienganh': 'Tiếng Anh', 'gdtc': 'Giáo dục thể chất',
+        'tinhoc': 'Tin học', 'congnghe': 'Công nghệ', 'tienganh': 'Tiếng Anh', 'gdtc': 'Giáo dục thể chất',
         'amnhac': 'Âm nhạc', 'mithuat': 'Mĩ thuật', 'htn': 'Hoạt động trải nghiệm'
     };
     function subjectKeyToLabel(k) { return SUBJECT_LABELS[k] || k || '?'; }
