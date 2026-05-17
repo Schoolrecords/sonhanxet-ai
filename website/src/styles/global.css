@@ -289,35 +289,10 @@ section { padding: var(--section-y) 0; position: relative; }
 .logo-mark {
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
-  background-image:
-    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.20) 1px, transparent 1px),
-    linear-gradient(135deg, var(--brand-500), var(--brand-700));
-  background-size: 8px 8px, 100%;
   border-radius: 11px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 0 4px;
-  color: #fff;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(43, 79, 158, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
-}
-.logo-mark-letters {
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-.logo-mark-tag {
-  font-size: 7px;
-  font-weight: 700;
-  color: var(--gold-500);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  margin-top: 2px;
-  text-transform: uppercase;
+  display: block;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(43, 79, 158, 0.35);
 }
 .nav-links {
   display: flex;
@@ -1669,8 +1644,7 @@ details p {
   /* Header: shrink everything */
   .nav { padding: 12px 0; }
   .logo { font-size: 14px; gap: 9px; }
-  .logo-mark { width: 32px; height: 32px; font-size: 13px; border-radius: 9px; }
-  .logo-mark::after { width: 10px; height: 10px; bottom: -2px; right: -2px; border-width: 2px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; }
   .nav-cta { padding: 8px 14px !important; font-size: 13px !important; }
 
   /* Hero further tighten */
