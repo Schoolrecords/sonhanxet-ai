@@ -255,7 +255,7 @@ const part1 = [
         bold('bởi giáo viên — cho giáo viên'),
         tr('. Tiện ích này giúp thầy/cô '),
         bold('tự động sinh nhận xét cuối kỳ'),
-        tr(' cho cả lớp 35 học sinh chỉ trong 5 phút, thay vì 3-4 giờ viết tay như trước.')
+        tr(' cho cả lớp chỉ trong 5 phút, thay vì 3-4 giờ viết tay như trước.')
     ]),
 
     h2('Tiện ích này dành cho ai?'),
