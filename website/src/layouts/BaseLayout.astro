@@ -74,6 +74,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       <slot />
     </main>
 
+    <!-- Floating Zalo CTA — luôn hiển thị, 1 chạm là vào nhóm -->
+    <a
+      href="https://zalo.me/g/flzq2x9rgampkvjp6mps"
+      target="_blank"
+      rel="noopener"
+      class="fab-zalo"
+      aria-label="Tham gia nhóm Zalo Hỗ trợ Công nghệ số"
+    >
+      <span class="fab-zalo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28">
+          <path fill="currentColor" d="M12 2C6.477 2 2 5.94 2 10.8c0 2.78 1.46 5.25 3.74 6.87-.16.62-.5 1.5-1.1 2.34-.13.18-.04.43.18.45.05.01.1.01.16.01 1.34 0 3-.74 4.16-1.42.93.21 1.9.33 2.86.33 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/>
+        </svg>
+      </span>
+      <span class="fab-zalo-text">
+        <span class="fab-zalo-line1">Vào nhóm Zalo</span>
+        <span class="fab-zalo-line2">Hỗ trợ Công nghệ số</span>
+      </span>
+    </a>
+
     <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
