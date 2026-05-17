@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "2.2.0",
+    "version": "2.3.0",
     "style": "short-4tier",
     "framework": "TT27/2020 + CT GDPT 2018",
     "tiers": {
@@ -9,7 +9,7 @@
       "ht": "Điểm 5-6. Xếp loại Vnedu: H. Phrase đạt yêu cầu cơ bản.",
       "cht": "Điểm <5. Xếp loại Vnedu: C. Chỉ động viên."
     },
-    "note": "CHT phrases có vế gợi ý cụ thể, phục vụ phụ huynh đồng hành"
+    "note": "CHT phrases có vế gợi ý cụ thể, phục vụ phụ huynh đồng hành · V1.5 (2026-05-17): bổ sung ~200 câu, ưu tiên mức Chưa hoàn thành (cht) theo TT27."
   },
   "subjects": {
     "tieng-viet": {
@@ -24,7 +24,9 @@
         "Em đọc diễn cảm, viết văn có hình ảnh, sử dụng từ ngữ chính xác và hay.",
         "Em có vốn từ phong phú, diễn đạt mạch lạc, viết bài hay và sạch đẹp.",
         "Em đọc thành thạo, viết câu đúng ngữ pháp, biết kể chuyện sinh động hấp dẫn.",
-        "Em có tư duy ngôn ngữ tốt, đọc viết xuất sắc, hăng hái phát biểu xây dựng bài."
+        "Em có tư duy ngôn ngữ tốt, đọc viết xuất sắc, hăng hái phát biểu xây dựng bài.",
+        "Em có khả năng cảm thụ văn học tốt, viết bài giàu cảm xúc và sáng tạo.",
+        "Em đọc hiểu sâu sắc, viết đoạn văn có ý mới lạ và lập luận chặt chẽ."
       ],
       "tot": [
         "Em đọc rõ ràng lưu loát, viết câu đúng ngữ pháp và trình bày sạch đẹp.",
@@ -36,7 +38,9 @@
         "Em đọc đúng tốc độ, viết chính tả chính xác và trình bày khoa học.",
         "Em có ý thức học tập tốt, đọc và viết Tiếng Việt đều khá lưu loát.",
         "Em diễn đạt ý rõ ràng, viết câu đầy đủ và biết sử dụng dấu câu đúng.",
-        "Em yêu thích môn học, đọc viết khá tốt, mạnh dạn phát biểu ý kiến."
+        "Em yêu thích môn học, đọc viết khá tốt, mạnh dạn phát biểu ý kiến.",
+        "Em đọc diễn cảm khá tốt, viết đoạn văn theo chủ đề mạch lạc và đủ ý.",
+        "Em có vốn từ ngày càng phong phú, đặt câu đúng và rõ ý."
       ],
       "ht": [
         "Em đọc rõ ràng, viết được câu đúng theo yêu cầu cơ bản của chương trình.",
@@ -46,14 +50,24 @@
         "Em đã hoàn thành các bài tập đọc viết, chữ viết ngày càng đẹp hơn.",
         "Em có ý thức học tập, đọc và viết theo đúng yêu cầu chương trình.",
         "Em đọc trôi chảy hơn so với đầu năm, viết được câu đầy đủ ý.",
-        "Em viết chính tả khá đúng và biết viết câu theo mẫu được học."
+        "Em viết chính tả khá đúng và biết viết câu theo mẫu được học.",
+        "Em đọc thành tiếng rõ ràng, viết được câu theo mẫu cô hướng dẫn.",
+        "Em đã có tiến bộ về kĩ năng đọc viết, cần phát huy thêm."
       ],
       "cht": [
         "Em cần luyện đọc to rõ và viết đúng chính tả các từ thường gặp.",
         "Em hãy dành thời gian luyện đọc và chép chính tả mỗi ngày ở nhà.",
         "Em cần ôn lại bảng chữ cái và rèn kĩ năng đọc trơn từng câu.",
         "Em hãy nhờ thầy cô và gia đình hướng dẫn thêm các bài đọc cơ bản.",
-        "Em nên đọc nhiều sách truyện và luyện chữ viết để tiến bộ hơn."
+        "Em nên đọc nhiều sách truyện và luyện chữ viết để tiến bộ hơn.",
+        "Em ngoan và lễ phép, cần luyện đọc trơn từng tiếng và viết đúng nét chữ cơ bản.",
+        "Em chăm chú nghe giảng, cần luyện đánh vần và ghép vần các từ thường gặp.",
+        "Em đã có cố gắng, cần luyện viết chính tả các từ quen thuộc mỗi ngày 5-10 phút.",
+        "Em hãy cùng người thân đọc to một đoạn văn ngắn mỗi tối để cải thiện kĩ năng đọc.",
+        "Em nên luyện viết hoa, viết thường đúng quy tắc và giữ vở sạch chữ đẹp hơn.",
+        "Cô tin em sẽ tiến bộ, hãy mạnh dạn hỏi cô khi gặp từ chưa hiểu nghĩa.",
+        "Em chuyên cần đi học, cần ôn lại bảng chữ cái và rèn ghép vần cùng cô và bạn.",
+        "Em hãy luyện đặt câu ngắn với từ mới học và đọc lại bài học cũ trước khi đến lớp."
       ]
     },
     "toan": {
@@ -68,7 +82,9 @@
         "Em hiểu bài sâu, giải toán có lời văn đầy đủ ý và sáng tạo trong cách giải.",
         "Em yêu thích môn Toán, học giỏi đều các dạng bài, tư duy linh hoạt.",
         "Em có khả năng tự tìm ra cách giải hay, làm bài cẩn thận chính xác cao.",
-        "Em thuộc bảng cửu chương xuất sắc, tính nhẩm và giải toán đều rất tốt."
+        "Em thuộc bảng cửu chương xuất sắc, tính nhẩm và giải toán đều rất tốt.",
+        "Em có tư duy toán học vượt trội, biết tìm nhiều cách giải cho một bài toán.",
+        "Em phân tích đề bài nhanh, lập luận chặt chẽ và trình bày rất khoa học."
       ],
       "tot": [
         "Em nắm vững kiến thức toán học, tính toán chính xác và giải toán mạch lạc.",
@@ -80,7 +96,9 @@
         "Em hăng hái phát biểu, làm bài cẩn thận, đạt kết quả tốt môn Toán.",
         "Em có khả năng tính toán tốt, vận dụng được vào giải bài toán có lời văn.",
         "Em chăm chỉ học tập, làm tính đúng và biết trình bày bài giải rõ ràng.",
-        "Em hiểu kiến thức, giải toán có lời văn đầy đủ và làm bài chính xác."
+        "Em hiểu kiến thức, giải toán có lời văn đầy đủ và làm bài chính xác.",
+        "Em làm bài có suy nghĩ, kết quả chính xác và biết kiểm tra lại đáp số.",
+        "Em vận dụng được kiến thức vào giải các bài toán quen thuộc một cách thành thạo."
       ],
       "ht": [
         "Em làm được các phép tính cơ bản và giải các bài toán đơn giản.",
@@ -90,14 +108,24 @@
         "Em đã thuộc bảng cửu chương và biết áp dụng vào tính toán đơn giản.",
         "Em làm tính đúng, trình bày bài có nhiều tiến bộ so với đầu năm.",
         "Em có ý thức học tập, hoàn thành các bài tập trên lớp đúng yêu cầu.",
-        "Em làm được các bài toán cơ bản theo chương trình của lớp đang học."
+        "Em làm được các bài toán cơ bản theo chương trình của lớp đang học.",
+        "Em thực hiện được các phép tính cơ bản và trình bày bài tương đối rõ ràng.",
+        "Em có ý thức rèn luyện, làm được phần lớn bài tập cô giao trên lớp."
       ],
       "cht": [
         "Em cần ôn lại bảng cộng trừ và luyện làm tính cơ bản thường xuyên hơn.",
         "Em hãy học thuộc bảng cửu chương và rèn kĩ năng tính nhẩm hàng ngày.",
         "Em cần đọc kĩ đề bài và suy nghĩ kĩ trước khi làm các bài toán.",
         "Em hãy luyện thêm các dạng toán cơ bản và nhờ thầy cô hướng dẫn.",
-        "Em nên kiên trì luyện tập tính toán để củng cố kiến thức nền tảng."
+        "Em nên kiên trì luyện tập tính toán để củng cố kiến thức nền tảng.",
+        "Em ngoan và chăm chú nghe giảng, cần ôn lại bảng cộng trừ trong phạm vi đã học.",
+        "Em đã có tiến bộ nhỏ, hãy luyện đếm xuôi đếm ngược và so sánh số mỗi ngày.",
+        "Em hãy đọc kĩ đề bài và gạch chân các con số trước khi đặt phép tính.",
+        "Em chuyên cần đi học, cần luyện thuộc bảng cửu chương và ôn lại các phép tính cơ bản.",
+        "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình hướng dẫn từng dạng toán đơn giản.",
+        "Em đã có cố gắng, cần kiên trì làm bài tập về nhà và hỏi ngay khi chưa hiểu.",
+        "Em nên trình bày bài cẩn thận hơn, viết rõ các số và đặt tính thẳng cột.",
+        "Em hãy luyện giải toán có lời văn ngắn để rèn cách trả lời và phép tính."
       ]
     },
     "tnxh": {
@@ -108,7 +136,9 @@
         "Em hiểu sâu kiến thức, biết liên hệ và so sánh các sự vật hiện tượng xung quanh.",
         "Em có tư duy khoa học, ham học hỏi, hăng hái phát biểu xây dựng bài.",
         "Em nắm vững kiến thức tự nhiên xã hội, biết áp dụng vào cuộc sống hàng ngày.",
-        "Em yêu thiên nhiên, có ý thức bảo vệ môi trường và sức khỏe rất tốt."
+        "Em yêu thiên nhiên, có ý thức bảo vệ môi trường và sức khỏe rất tốt.",
+        "Em có hiểu biết phong phú về tự nhiên xã hội, biết liên hệ vào cuộc sống.",
+        "Em quan sát tinh tế, đặt nhiều câu hỏi hay về thế giới xung quanh."
       ],
       "tot": [
         "Em nắm chắc kiến thức về tự nhiên xã hội, tích cực phát biểu xây dựng bài.",
@@ -116,19 +146,29 @@
         "Em chăm chỉ học tập, có nhiều hiểu biết về thế giới tự nhiên và xã hội.",
         "Em biết yêu quý gia đình trường lớp, có ý thức bảo vệ môi trường tốt.",
         "Em vận dụng được kiến thức vào thực tế, hăng hái phát biểu trong giờ học.",
-        "Em quan sát tốt, mô tả sự vật rõ ràng và biết đặt câu hỏi thông minh."
+        "Em quan sát tốt, mô tả sự vật rõ ràng và biết đặt câu hỏi thông minh.",
+        "Em biết kể về gia đình, trường lớp và quê hương một cách rõ ràng tự nhiên.",
+        "Em có ý thức bảo vệ môi trường, nhặt rác và giữ gìn lớp học sạch sẽ."
       ],
       "ht": [
         "Em đã nắm được các kiến thức cơ bản về tự nhiên và xã hội.",
         "Em chăm chú nghe giảng, trả lời được các câu hỏi của cô đặt ra.",
         "Em biết quan sát và mô tả các sự vật quen thuộc xung quanh mình.",
         "Em có ý thức bảo vệ môi trường và giữ gìn sức khỏe bản thân.",
-        "Em đã có tiến bộ trong việc tìm hiểu thế giới xung quanh."
+        "Em đã có tiến bộ trong việc tìm hiểu thế giới xung quanh.",
+        "Em đã biết các bộ phận cơ thể, các thành viên trong gia đình và lớp học.",
+        "Em chăm chú quan sát hình ảnh trong sách và trả lời được câu hỏi đơn giản."
       ],
       "cht": [
         "Em cần dành thời gian đọc sách và tìm hiểu thêm về thế giới xung quanh.",
         "Em hãy quan sát kĩ các hiện tượng tự nhiên trong cuộc sống hàng ngày.",
-        "Em nên tham gia tích cực hơn trong các hoạt động học tập của lớp."
+        "Em nên tham gia tích cực hơn trong các hoạt động học tập của lớp.",
+        "Em ngoan và lễ phép, cần quan sát kĩ tranh trong sách và lắng nghe cô giảng bài.",
+        "Em đã có tiến bộ, hãy cùng cha mẹ kể tên các đồ vật, con vật quen thuộc trong nhà.",
+        "Em chăm chú nghe giảng, cần mạnh dạn trả lời câu hỏi đơn giản của cô trong giờ học.",
+        "Em hãy chỉ và đọc tên các bộ phận cơ thể, các thành viên gia đình mỗi ngày 5 phút.",
+        "Cô tin em sẽ tiến bộ, hãy hỏi cô khi chưa hiểu về sự vật, hiện tượng xung quanh.",
+        "Em chuyên cần đi học, cần luyện kể về gia đình, lớp học và đồ dùng quen thuộc."
       ]
     },
     "khoahoc": {
@@ -139,7 +179,9 @@
         "Em yêu khoa học, có nhiều khám phá thú vị và vận dụng tốt vào cuộc sống.",
         "Em hiểu sâu các hiện tượng tự nhiên, biết phân tích và giải thích rất tốt.",
         "Em có khả năng đặt câu hỏi sâu sắc, tìm tòi và giải thích các hiện tượng hay.",
-        "Em ham học hỏi, có vốn kiến thức khoa học phong phú và biết vận dụng linh hoạt."
+        "Em ham học hỏi, có vốn kiến thức khoa học phong phú và biết vận dụng linh hoạt.",
+        "Em có tư duy khoa học sắc bén, biết đặt giả thuyết và kiểm chứng bằng thí nghiệm.",
+        "Em vận dụng kiến thức khoa học vào giải thích hiện tượng trong cuộc sống rất tốt."
       ],
       "tot": [
         "Em nắm chắc kiến thức khoa học, biết vận dụng vào thực tế hàng ngày.",
@@ -147,19 +189,29 @@
         "Em quan sát tinh tế, biết phân tích và so sánh các hiện tượng tự nhiên.",
         "Em hăng hái xây dựng bài, có nhiều kiến giải hay trong giờ học.",
         "Em biết bảo vệ sức khỏe bản thân và môi trường sống xung quanh.",
-        "Em hiểu bài tốt, vận dụng kiến thức giải thích các hiện tượng quen thuộc."
+        "Em hiểu bài tốt, vận dụng kiến thức giải thích các hiện tượng quen thuộc.",
+        "Em biết phân loại sự vật theo đặc điểm và mô tả hiện tượng tự nhiên rõ ràng.",
+        "Em tham gia thí nghiệm cẩn thận, ghi chép kết quả đầy đủ theo hướng dẫn."
       ],
       "ht": [
         "Em đã nắm được các kiến thức khoa học cơ bản theo chương trình lớp học.",
         "Em chăm chỉ học tập, thực hiện đúng các thí nghiệm đơn giản trên lớp.",
         "Em biết quan sát và mô tả các hiện tượng tự nhiên quen thuộc xung quanh.",
         "Em tham gia học tập tích cực, hoàn thành các yêu cầu của cô giáo.",
-        "Em có ý thức bảo vệ sức khỏe và giữ gìn vệ sinh môi trường hàng ngày."
+        "Em có ý thức bảo vệ sức khỏe và giữ gìn vệ sinh môi trường hàng ngày.",
+        "Em đã biết một số đặc điểm cơ bản của con người, động vật và môi trường.",
+        "Em có ý thức học tập, đã trả lời được các câu hỏi cơ bản về tự nhiên."
       ],
       "cht": [
         "Em cần tích cực thí nghiệm và đọc thêm sách khoa học để hiểu bài.",
         "Em hãy quan sát các hiện tượng xung quanh và ghi chép bài học cẩn thận.",
-        "Em nên đặt câu hỏi và tìm hiểu sâu hơn về các kiến thức khoa học."
+        "Em nên đặt câu hỏi và tìm hiểu sâu hơn về các kiến thức khoa học.",
+        "Em ngoan và chuyên cần, cần đọc lại bài học và quan sát kĩ hình ảnh trong sách giáo khoa.",
+        "Em đã có cố gắng, hãy cùng gia đình tìm hiểu thêm về cây cối, con vật quen thuộc.",
+        "Em hãy mạnh dạn phát biểu khi cô đặt câu hỏi và hỏi lại khi chưa hiểu bài.",
+        "Em chăm chú nghe giảng, cần luyện trả lời câu hỏi đơn giản về tự nhiên xung quanh.",
+        "Cô tin em sẽ tiến bộ, hãy ghi chép cẩn thận và làm các thí nghiệm đơn giản tại nhà.",
+        "Em nên dành thêm thời gian xem lại bài cũ và làm bài tập trong vở thực hành."
       ]
     },
     "lichsudia": {
@@ -170,7 +222,9 @@
         "Em đọc bản đồ thành thạo, kiến thức về địa lí phong phú và sâu sắc.",
         "Em có khả năng kể lại sự kiện lịch sử sinh động, lôi cuốn và chính xác.",
         "Em hiểu sâu các mốc lịch sử, biết liên hệ với cuộc sống hiện tại rất tốt.",
-        "Em ham học hỏi, có nhiều hiểu biết về lịch sử và địa lí Việt Nam."
+        "Em ham học hỏi, có nhiều hiểu biết về lịch sử và địa lí Việt Nam.",
+        "Em có hiểu biết sâu sắc về các sự kiện lịch sử và vị trí địa lí Việt Nam.",
+        "Em đọc bản đồ rất tốt và kể chuyện lịch sử mạch lạc, lôi cuốn người nghe."
       ],
       "tot": [
         "Em nắm chắc kiến thức lịch sử địa lí, hăng hái phát biểu trong giờ học.",
@@ -178,19 +232,29 @@
         "Em đọc bản đồ khá tốt, ghi nhớ các địa danh và sự kiện chính xác.",
         "Em yêu quê hương đất nước, có nhiều hiểu biết về lịch sử Việt Nam.",
         "Em chăm chỉ học tập, trình bày kiến thức lịch sử rõ ràng mạch lạc.",
-        "Em biết tra cứu tài liệu và có ý thức tìm hiểu thêm ngoài bài học."
+        "Em biết tra cứu tài liệu và có ý thức tìm hiểu thêm ngoài bài học.",
+        "Em ghi nhớ tốt các mốc lịch sử quan trọng và đặc điểm địa lí từng vùng miền.",
+        "Em biết liên hệ kiến thức lịch sử địa lí với cuộc sống quê hương em."
       ],
       "ht": [
         "Em đã nắm được các kiến thức cơ bản về lịch sử và địa lí Việt Nam.",
         "Em chăm chú nghe giảng, trả lời được các câu hỏi cô đặt ra.",
         "Em biết một số sự kiện lịch sử và địa danh quen thuộc trên bản đồ.",
         "Em đã có tiến bộ trong việc ghi nhớ thời gian và sự kiện lịch sử.",
-        "Em có ý thức tìm hiểu về quê hương và đất nước Việt Nam."
+        "Em có ý thức tìm hiểu về quê hương và đất nước Việt Nam.",
+        "Em đã nhớ được một số nhân vật và sự kiện lịch sử trong chương trình.",
+        "Em biết tên một số tỉnh thành và đặc điểm địa lí cơ bản của Việt Nam."
       ],
       "cht": [
         "Em cần ghi nhớ các mốc thời gian và sự kiện lịch sử quan trọng của dân tộc.",
         "Em hãy đọc thêm sách lịch sử và xem bản đồ Việt Nam thường xuyên hơn.",
-        "Em nên dành thời gian học thuộc bài và làm đầy đủ các bài tập trên lớp."
+        "Em nên dành thời gian học thuộc bài và làm đầy đủ các bài tập trên lớp.",
+        "Em ngoan và lễ phép, cần ôn lại các mốc thời gian và nhân vật lịch sử trong bài học.",
+        "Em đã có cố gắng, hãy xem bản đồ Việt Nam mỗi tuần và tập đọc tên các tỉnh thành.",
+        "Em hãy kể lại một sự kiện lịch sử ngắn cho gia đình nghe sau mỗi bài học mới.",
+        "Em chuyên cần đi học, cần luyện đọc lại bài và làm bài tập trong vở bài tập.",
+        "Cô tin em sẽ tiến bộ, hãy hỏi cô và bạn về các sự kiện lịch sử chưa nhớ rõ.",
+        "Em nên xem thêm chương trình thiếu nhi về lịch sử để hiểu bài dễ hơn và nhớ lâu hơn."
       ]
     },
     "daoduc": {
@@ -201,7 +265,9 @@
         "Em hiểu sâu và thực hành tốt các chuẩn mực đạo đức trong cuộc sống hàng ngày.",
         "Em trung thực thật thà, có lòng nhân ái và tinh thần trách nhiệm rất cao.",
         "Em biết kính trên nhường dưới, hòa nhã với mọi người, có nhiều việc làm tốt.",
-        "Em chăm chỉ học tập, có ý thức rèn luyện đạo đức và là gương sáng cho bạn."
+        "Em chăm chỉ học tập, có ý thức rèn luyện đạo đức và là gương sáng cho bạn.",
+        "Em là tấm gương sáng về đạo đức, sống chân thành và biết quan tâm mọi người.",
+        "Em hiểu sâu các giá trị đạo đức và thể hiện qua hành động tốt mỗi ngày."
       ],
       "tot": [
         "Em ngoan ngoãn lễ phép với thầy cô và yêu thương bạn bè trong lớp.",
@@ -209,19 +275,29 @@
         "Em biết áp dụng các hành vi đạo đức đã học vào thực tế hàng ngày.",
         "Em trung thực, biết nhận lỗi khi mắc khuyết điểm và sửa lỗi nhanh.",
         "Em chăm chỉ học tập, có tinh thần trách nhiệm với công việc được giao.",
-        "Em hòa nhã với mọi người, được thầy cô và bạn bè yêu quý tin tưởng."
+        "Em hòa nhã với mọi người, được thầy cô và bạn bè yêu quý tin tưởng.",
+        "Em biết phân biệt việc tốt việc xấu, luôn chọn cách ứng xử phù hợp lễ phép.",
+        "Em chia sẻ với bạn khi bạn gặp khó khăn và biết xin lỗi khi mình mắc lỗi."
       ],
       "ht": [
         "Em ngoan ngoãn, biết vâng lời thầy cô và cha mẹ ở nhà.",
         "Em đã có tiến bộ trong rèn luyện hành vi đạo đức tốt đẹp.",
         "Em chăm chỉ học tập, biết giúp đỡ bạn bè trong lớp khi cần.",
         "Em có ý thức học tập, thực hiện đúng nội quy của trường và lớp.",
-        "Em biết yêu thương bạn bè, đoàn kết trong các hoạt động tập thể."
+        "Em biết yêu thương bạn bè, đoàn kết trong các hoạt động tập thể.",
+        "Em đã hiểu các bài học đạo đức, biết chào hỏi và cảm ơn người lớn.",
+        "Em có ý thức vâng lời thầy cô và làm theo nội quy của trường lớp."
       ],
       "cht": [
         "Em cần rèn luyện các hành vi đạo đức trong sinh hoạt và học tập hàng ngày.",
         "Em hãy lắng nghe lời khuyên của thầy cô và áp dụng vào cuộc sống.",
-        "Em nên quan tâm hơn đến bạn bè và thực hành các bài học đạo đức."
+        "Em nên quan tâm hơn đến bạn bè và thực hành các bài học đạo đức.",
+        "Em ngoan và hiền lành, cần luyện thói quen chào hỏi, cảm ơn và xin lỗi hàng ngày.",
+        "Em đã có cố gắng, hãy cùng cô và bạn thực hành các bài học đạo đức trên lớp.",
+        "Em hãy quan tâm và giúp đỡ bạn ngồi cùng bàn để cùng nhau tiến bộ.",
+        "Em chăm chú nghe giảng, cần kể lại các tấm gương tốt trong bài học cho gia đình nghe.",
+        "Cô tin em sẽ tiến bộ, hãy mạnh dạn nhận lỗi và sửa lỗi mỗi khi mắc khuyết điểm.",
+        "Em nên tích cực tham gia các hoạt động tập thể và lắng nghe ý kiến của bạn bè."
       ]
     },
     "tinhoc": {
@@ -232,7 +308,9 @@
         "Em có tư duy logic tốt, giải quyết bài thực hành nhanh và sáng tạo.",
         "Em yêu thích Tin học, tạo ra sản phẩm độc đáo và đẹp mắt trên máy tính.",
         "Em nắm vững kiến thức, sử dụng phần mềm thành thạo và biết tự khám phá.",
-        "Em có ý thức an toàn cao, biết khai thác internet hiệu quả và tích cực."
+        "Em có ý thức an toàn cao, biết khai thác internet hiệu quả và tích cực.",
+        "Em sử dụng máy tính linh hoạt, sáng tạo sản phẩm bằng phần mềm rất đẹp mắt.",
+        "Em có tư duy thuật toán tốt, biết giải quyết bài thực hành theo nhiều cách hay."
       ],
       "tot": [
         "Em sử dụng máy tính khá thành thạo, thao tác chính xác và nhanh nhẹn.",
@@ -240,19 +318,29 @@
         "Em nắm vững kiến thức cơ bản, vận dụng linh hoạt vào bài thực hành.",
         "Em có ý thức an toàn khi sử dụng máy tính và mạng internet hàng ngày.",
         "Em hăng hái thực hành, hoàn thành sản phẩm sáng tạo và đúng yêu cầu.",
-        "Em biết sử dụng phần mềm học tập một cách hiệu quả và đúng cách."
+        "Em biết sử dụng phần mềm học tập một cách hiệu quả và đúng cách.",
+        "Em thao tác chuột và bàn phím nhanh, hoàn thành bài thực hành đúng yêu cầu.",
+        "Em biết bật/tắt máy tính đúng cách và bảo quản thiết bị cẩn thận sau giờ học."
       ],
       "ht": [
         "Em đã nắm được các kĩ năng cơ bản về sử dụng máy tính.",
         "Em thực hành đúng các thao tác cô hướng dẫn trên máy tính.",
         "Em chăm chỉ học tập, có tiến bộ trong các bài thực hành trên lớp.",
         "Em biết sử dụng máy tính an toàn theo hướng dẫn của cô giáo.",
-        "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản."
+        "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
+        "Em đã làm quen với máy tính và sử dụng được chuột để hoàn thành thao tác đơn giản.",
+        "Em có ý thức học tập, đã thực hiện được các bài tập tin học cơ bản trên lớp."
       ],
       "cht": [
         "Em cần luyện tập sử dụng máy tính và làm quen với các thao tác cơ bản.",
         "Em hãy dành thời gian thực hành thêm để nắm vững các kĩ năng tin học.",
-        "Em nên đọc kĩ hướng dẫn và thực hành nhiều lần để tiến bộ hơn."
+        "Em nên đọc kĩ hướng dẫn và thực hành nhiều lần để tiến bộ hơn.",
+        "Em ngoan và chuyên cần, cần luyện thao tác di chuyển chuột và nhấp đúng vị trí.",
+        "Em đã có cố gắng, hãy luyện gõ bàn phím chậm và đúng các ngón tay tương ứng.",
+        "Em hãy mạnh dạn thao tác trên máy tính và hỏi cô khi gặp lỗi chưa biết cách xử lí.",
+        "Em chăm chú nghe giảng, cần ghi nhớ các bước cô hướng dẫn trước khi bắt đầu thực hành.",
+        "Cô tin em sẽ tiến bộ, hãy quan sát bạn ngồi cạnh để học cách thao tác đúng.",
+        "Em nên giữ tư thế ngồi đúng và bảo quản chuột, bàn phím cẩn thận khi thực hành."
       ]
     },
     "tienganh": {
@@ -263,7 +351,9 @@
         "Em nghe hiểu xuất sắc, nói tự nhiên, đọc trôi chảy và viết câu sáng tạo.",
         "Em có khả năng giao tiếp tiếng Anh tự tin, biết vận dụng linh hoạt trong tình huống.",
         "Em đọc viết tiếng Anh thành thạo, phát âm chuẩn và ngữ điệu tự nhiên.",
-        "Em yêu thích môn học, có vốn từ vựng phong phú và sử dụng linh hoạt."
+        "Em yêu thích môn học, có vốn từ vựng phong phú và sử dụng linh hoạt.",
+        "Em có khả năng giao tiếp tiếng Anh tự tin, phát âm chuẩn và ngữ điệu hay.",
+        "Em vận dụng từ vựng và cấu trúc câu linh hoạt trong các tình huống thực tế."
       ],
       "tot": [
         "Em phát âm chuẩn, đọc và nói tiếng Anh khá lưu loát trong giờ học.",
@@ -271,19 +361,29 @@
         "Em nghe hiểu tốt, trả lời được các câu hỏi cô đặt ra bằng tiếng Anh.",
         "Em đọc to rõ, viết câu đúng ngữ pháp và biết cách chào hỏi tự tin.",
         "Em mạnh dạn giao tiếp tiếng Anh, hăng hái tham gia các hoạt động trong lớp.",
-        "Em có ý thức học tập tốt, đọc viết tiếng Anh khá thành thạo."
+        "Em có ý thức học tập tốt, đọc viết tiếng Anh khá thành thạo.",
+        "Em phát âm đúng các từ trong bài, đọc to rõ và tự tin trả lời câu hỏi của cô.",
+        "Em ghi nhớ từ vựng tốt, viết được câu đơn giản theo mẫu đã học."
       ],
       "ht": [
         "Em đã nắm được các từ vựng và mẫu câu cơ bản theo chương trình.",
         "Em đọc và viết được các câu đơn giản theo yêu cầu của cô giáo.",
         "Em chăm chỉ học tập, có nhiều tiến bộ trong phát âm tiếng Anh.",
         "Em biết chào hỏi và giới thiệu bản thân bằng tiếng Anh đơn giản.",
-        "Em tham gia học tập tích cực, hoàn thành các bài tập trên lớp."
+        "Em tham gia học tập tích cực, hoàn thành các bài tập trên lớp.",
+        "Em đã thuộc một số từ vựng quen thuộc và biết chào hỏi bằng tiếng Anh đơn giản.",
+        "Em có tiến bộ trong nghe và lặp lại câu theo cô, cần phát huy thêm."
       ],
       "cht": [
         "Em cần luyện phát âm và học thuộc các từ vựng cơ bản mỗi ngày.",
         "Em hãy dành thời gian nghe và đọc tiếng Anh ở nhà để quen với ngôn ngữ.",
-        "Em nên mạnh dạn hơn khi nói tiếng Anh trong lớp và luyện thêm ở nhà."
+        "Em nên mạnh dạn hơn khi nói tiếng Anh trong lớp và luyện thêm ở nhà.",
+        "Em ngoan và lễ phép, cần học thuộc 3-5 từ vựng mới mỗi ngày và đọc lại bài cũ.",
+        "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo cô dù chưa thật chuẩn.",
+        "Em hãy nghe các bài hát tiếng Anh thiếu nhi để làm quen với phát âm và ngữ điệu.",
+        "Em chăm chú nghe giảng, cần luyện viết lại các từ vựng đã học vào vở mỗi ngày.",
+        "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình hỏi-đáp các câu chào hỏi đơn giản.",
+        "Em nên ôn lại bài học cũ trước khi đến lớp và mạnh dạn hỏi khi chưa hiểu."
       ]
     },
     "gdtc": {
@@ -294,7 +394,9 @@
         "Em yêu thể thao, tích cực luyện tập và có tinh thần đồng đội rất tốt.",
         "Em thực hiện kĩ thuật chuẩn xác, dẻo dai và là gương về rèn luyện thể chất.",
         "Em có sức khỏe tốt, vận động khéo léo và đạt thành tích cao trong các môn.",
-        "Em chăm chỉ rèn luyện, kĩ năng vận động vượt trội so với các bạn trong lớp."
+        "Em chăm chỉ rèn luyện, kĩ năng vận động vượt trội so với các bạn trong lớp.",
+        "Em có thể lực vượt trội, thực hiện các bài tập thể chất chuẩn xác và đẹp.",
+        "Em có tinh thần thể thao cao, luôn cổ vũ bạn và đoàn kết trong các trò chơi."
       ],
       "tot": [
         "Em thực hiện đúng và đẹp các động tác thể dục theo hướng dẫn của cô.",
@@ -302,19 +404,29 @@
         "Em hoàn thành tốt các nội dung bài học, động tác đẹp và rõ ràng.",
         "Em yêu vận động, tham gia tích cực các trò chơi tập thể trong lớp.",
         "Em có ý thức rèn luyện sức khỏe và chăm chỉ tập luyện hàng ngày.",
-        "Em có tinh thần đồng đội tốt, hợp tác hiệu quả trong các hoạt động."
+        "Em có tinh thần đồng đội tốt, hợp tác hiệu quả trong các hoạt động.",
+        "Em thực hiện đúng các động tác cơ bản, có sự khéo léo và phối hợp tốt với bạn.",
+        "Em tích cực rèn luyện sức khỏe, tham gia đầy đủ các hoạt động thể chất."
       ],
       "ht": [
         "Em đã thực hiện được các động tác thể dục cơ bản theo yêu cầu.",
         "Em tham gia tích cực các hoạt động thể chất trong giờ học.",
         "Em có ý thức rèn luyện sức khỏe, chăm chỉ luyện tập trên lớp.",
         "Em đã có tiến bộ trong thực hiện các bài tập thể dục.",
-        "Em biết hợp tác với bạn trong các trò chơi vận động tập thể."
+        "Em biết hợp tác với bạn trong các trò chơi vận động tập thể.",
+        "Em đã làm quen với các động tác cơ bản và tham gia trò chơi vận động.",
+        "Em có ý thức rèn luyện, cố gắng thực hiện các bài tập theo cô hướng dẫn."
       ],
       "cht": [
         "Em cần luyện tập các động tác thể dục và rèn luyện sức khỏe hàng ngày.",
         "Em hãy tích cực vận động và tham gia các trò chơi tập thể trong lớp.",
-        "Em nên kiên trì luyện tập để có sức khỏe tốt và động tác chuẩn xác hơn."
+        "Em nên kiên trì luyện tập để có sức khỏe tốt và động tác chuẩn xác hơn.",
+        "Em ngoan và chuyên cần, cần luyện các động tác khởi động và thể dục buổi sáng tại nhà.",
+        "Em đã có cố gắng, hãy mạnh dạn tham gia các trò chơi vận động cùng bạn.",
+        "Em hãy luyện đi bộ, chạy chậm và các bài tập cơ bản 15 phút mỗi ngày để khỏe hơn.",
+        "Em chăm chú nghe giảng, cần làm theo cô từng động tác và mạnh dạn hỏi khi chưa rõ.",
+        "Cô tin em sẽ tiến bộ, hãy kiên trì rèn luyện và phối hợp tốt với bạn trong giờ học.",
+        "Em nên ăn uống đủ chất và ngủ đủ giấc để có sức khỏe tốt cho việc học tập."
       ]
     },
     "amnhac": {
@@ -325,7 +437,9 @@
         "Em có giọng hát hay, biết kết hợp hát với vận động phụ họa rất đẹp.",
         "Em yêu ca hát, biểu diễn các bài hát một cách sáng tạo và tự tin.",
         "Em cảm thụ âm nhạc tốt, phân biệt giai điệu tiết tấu chính xác.",
-        "Em hát đúng cao độ trường độ, biết thể hiện sắc thái tình cảm sinh động."
+        "Em hát đúng cao độ trường độ, biết thể hiện sắc thái tình cảm sinh động.",
+        "Em có chất giọng đẹp, biểu diễn các bài hát tự tin và truyền cảm xúc tốt.",
+        "Em cảm nhận âm nhạc tinh tế, biết hát đúng cao độ và thể hiện sắc thái phong phú."
       ],
       "tot": [
         "Em hát hay đúng nhạc, tích cực tham gia hoạt động âm nhạc trên lớp.",
@@ -333,19 +447,29 @@
         "Em nghe và phân biệt được các giai điệu tiết tấu trong bài hát.",
         "Em tích cực luyện tập, hát các bài hát đã học khá hay và truyền cảm.",
         "Em có ý thức học tập tốt, hoàn thành các bài hát được cô giao.",
-        "Em biết hát theo nhóm và kết hợp với vận động đơn giản."
+        "Em biết hát theo nhóm và kết hợp với vận động đơn giản.",
+        "Em hát đúng giai điệu và lời ca, mạnh dạn biểu diễn trước lớp khá tự nhiên.",
+        "Em tham gia tích cực các hoạt động âm nhạc, biết phối hợp hát theo nhóm."
       ],
       "ht": [
         "Em đã hát được các bài hát theo yêu cầu của chương trình lớp.",
         "Em tham gia tích cực các hoạt động ca hát trong giờ học âm nhạc.",
         "Em đã có tiến bộ trong việc hát đúng giai điệu và lời ca.",
         "Em biết hát theo nhóm, kết hợp với vận động đơn giản.",
-        "Em có ý thức học tập, hoàn thành các bài hát được giao."
+        "Em có ý thức học tập, hoàn thành các bài hát được giao.",
+        "Em đã thuộc lời và hát được các bài hát theo chương trình lớp học.",
+        "Em có ý thức học tập, hát theo cô và bạn trong các giờ học âm nhạc."
       ],
       "cht": [
         "Em cần luyện hát thuộc lời và đúng giai điệu các bài hát đã học.",
         "Em hãy mạnh dạn hơn trong các hoạt động ca hát của lớp.",
-        "Em nên dành thời gian nghe và tập hát các bài hát thiếu nhi quen thuộc."
+        "Em nên dành thời gian nghe và tập hát các bài hát thiếu nhi quen thuộc.",
+        "Em ngoan và hiền, cần luyện thuộc lời các bài hát đã học và hát theo nhạc nền.",
+        "Em đã có cố gắng, hãy mạnh dạn hát to hơn cùng cô và bạn trong giờ học.",
+        "Em hãy nghe các bài hát thiếu nhi quen thuộc và tập hát theo mỗi tối 5-10 phút.",
+        "Em chăm chú nghe giảng, cần luyện hát đúng giai điệu từng câu ngắn theo cô.",
+        "Cô tin em sẽ tiến bộ, hãy biểu diễn cho gia đình nghe các bài hát đã học.",
+        "Em nên tham gia hát tập thể cùng lớp để rèn sự tự tin và đúng nhịp."
       ]
     },
     "mithuat": {
@@ -356,7 +480,9 @@
         "Em yêu vẽ tranh, có trí tưởng tượng phong phú và sáng tạo độc đáo.",
         "Em sử dụng màu sắc hài hòa, bố cục cân đối và biểu đạt cảm xúc tinh tế.",
         "Em có khả năng cảm thụ cái đẹp, vẽ tranh sinh động với nhiều ý tưởng hay.",
-        "Em hoàn thành sản phẩm mĩ thuật xuất sắc, đẹp mắt và rất sáng tạo."
+        "Em hoàn thành sản phẩm mĩ thuật xuất sắc, đẹp mắt và rất sáng tạo.",
+        "Em có năng khiếu mĩ thuật, sản phẩm tranh vẽ có ý tưởng độc đáo và đẹp mắt.",
+        "Em phối màu hài hòa, bố cục cân đối và biểu đạt cảm xúc rất tinh tế."
       ],
       "tot": [
         "Em vẽ đẹp, sáng tạo và biết phối màu hài hòa trong tranh vẽ.",
@@ -364,19 +490,29 @@
         "Em yêu thích vẽ tranh, sáng tạo trong các sản phẩm mĩ thuật.",
         "Em sử dụng màu sắc hợp lí, bố cục tranh cân đối và đẹp mắt.",
         "Em biết cảm thụ cái đẹp, biểu đạt cảm xúc qua tranh vẽ tốt.",
-        "Em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng tốt."
+        "Em hoàn thành sản phẩm mĩ thuật đẹp, công phu và có ý tưởng tốt.",
+        "Em vẽ và tô màu cẩn thận, biết chọn màu phù hợp với nội dung tranh.",
+        "Em có ý tưởng sáng tạo trong các bài tạo hình, hoàn thành sản phẩm đẹp."
       ],
       "ht": [
         "Em đã vẽ được các bức tranh theo yêu cầu của chương trình.",
         "Em tham gia tích cực các hoạt động vẽ và tạo hình trong lớp.",
         "Em đã có tiến bộ trong việc sử dụng màu sắc và bố cục tranh.",
         "Em biết vẽ các hình cơ bản, tô màu theo hướng dẫn của cô.",
-        "Em có ý thức giữ gìn dụng cụ học tập, hoàn thành sản phẩm."
+        "Em có ý thức giữ gìn dụng cụ học tập, hoàn thành sản phẩm.",
+        "Em đã vẽ được các hình cơ bản và tô màu theo hướng dẫn của cô.",
+        "Em có ý thức học tập, hoàn thành sản phẩm cơ bản trong giờ học mĩ thuật."
       ],
       "cht": [
         "Em cần luyện vẽ các hình cơ bản và rèn cách tô màu cẩn thận hơn.",
         "Em hãy dành thời gian vẽ tranh và quan sát thiên nhiên xung quanh.",
-        "Em nên tham khảo cách vẽ của bạn và mạnh dạn sáng tạo trong tranh."
+        "Em nên tham khảo cách vẽ của bạn và mạnh dạn sáng tạo trong tranh.",
+        "Em ngoan và chuyên cần, cần luyện vẽ các nét cơ bản: thẳng, cong, gấp khúc.",
+        "Em đã có cố gắng, hãy luyện tô màu kín hình và không lan ra ngoài đường viền.",
+        "Em hãy quan sát đồ vật, cây cối quanh em và tập vẽ lại theo trí nhớ.",
+        "Em chăm chú nghe giảng, cần chuẩn bị đầy đủ dụng cụ vẽ trước mỗi giờ học.",
+        "Cô tin em sẽ tiến bộ, hãy mạnh dạn sáng tạo và đừng sợ vẽ chưa đẹp.",
+        "Em nên giữ vở vẽ sạch sẽ và tham khảo cách vẽ của bạn để học hỏi thêm."
       ]
     },
     "htn": {
@@ -387,7 +523,9 @@
         "Em có khả năng lãnh đạo nhóm, giao tiếp ứng xử tự tin và linh hoạt.",
         "Em tích cực hợp tác, có kĩ năng giải quyết vấn đề và tự lập rất tốt.",
         "Em chủ động tham gia mọi hoạt động, đoàn kết và truyền cảm hứng cho bạn.",
-        "Em có nhiều kĩ năng nổi bật, biết tự đánh giá và rút kinh nghiệm hiệu quả."
+        "Em có nhiều kĩ năng nổi bật, biết tự đánh giá và rút kinh nghiệm hiệu quả.",
+        "Em chủ động trong mọi hoạt động trải nghiệm, đưa ra nhiều sáng kiến hay.",
+        "Em có kĩ năng làm việc nhóm xuất sắc, biết lắng nghe và dẫn dắt bạn cùng tiến bộ."
       ],
       "tot": [
         "Em mạnh dạn tự tin khi tham gia các hoạt động trải nghiệm trên lớp.",
@@ -395,19 +533,29 @@
         "Em có kĩ năng sống tốt, biết tự lập trong sinh hoạt hàng ngày.",
         "Em năng động, có ý tưởng hay khi tham gia các hoạt động nhóm.",
         "Em có kĩ năng giao tiếp tự tin, ứng xử phù hợp với tình huống.",
-        "Em yêu lao động, tích cực tham gia các công việc của tập thể."
+        "Em yêu lao động, tích cực tham gia các công việc của tập thể.",
+        "Em mạnh dạn chia sẻ ý kiến trong nhóm và biết phối hợp với bạn để hoàn thành công việc.",
+        "Em có kĩ năng tự phục vụ tốt, biết sắp xếp đồ dùng và giữ gìn vệ sinh cá nhân."
       ],
       "ht": [
         "Em đã tham gia tích cực các hoạt động trải nghiệm trên lớp.",
         "Em có ý thức hợp tác với bạn bè trong các hoạt động nhóm.",
         "Em đã mạnh dạn hơn khi tham gia các hoạt động tập thể.",
         "Em biết thực hiện các kĩ năng sống cơ bản theo hướng dẫn.",
-        "Em đã có tiến bộ trong giao tiếp và ứng xử hàng ngày."
+        "Em đã có tiến bộ trong giao tiếp và ứng xử hàng ngày.",
+        "Em tham gia các hoạt động tập thể, hợp tác với bạn theo hướng dẫn của cô.",
+        "Em có tiến bộ trong giao tiếp và biết thực hiện một số kĩ năng sống cơ bản."
       ],
       "cht": [
         "Em cần mạnh dạn hơn trong các hoạt động tập thể và làm việc nhóm.",
         "Em hãy chủ động tham gia và đóng góp ý kiến trong các hoạt động lớp.",
-        "Em nên rèn luyện thêm kĩ năng giao tiếp và hợp tác với bạn bè."
+        "Em nên rèn luyện thêm kĩ năng giao tiếp và hợp tác với bạn bè.",
+        "Em ngoan và hiền lành, cần mạnh dạn hơn khi giao tiếp với cô và bạn trong lớp.",
+        "Em đã có cố gắng, hãy chủ động tham gia các trò chơi và hoạt động nhóm.",
+        "Em hãy luyện kĩ năng tự phục vụ: gấp quần áo, sắp xếp sách vở và giúp việc nhà.",
+        "Em chăm chú nghe giảng, cần luyện đặt câu hỏi và chia sẻ suy nghĩ với bạn.",
+        "Cô tin em sẽ tiến bộ, hãy mạnh dạn nhận nhiệm vụ trong nhóm và cố gắng hoàn thành.",
+        "Em nên rèn thói quen tự lập trong sinh hoạt và đoàn kết với các bạn ở lớp."
       ]
     }
   },
@@ -417,15 +565,20 @@
         "tot": [
           "Em tự giác, chủ động trong học tập; Mạnh dạn, tự tin khi giao tiếp và hợp tác với bạn bè; Biết giải quyết vấn đề linh hoạt và sáng tạo.",
           "Em có ý thức tự học tốt, hoàn thành nhiệm vụ không cần nhắc nhở; Giao tiếp cởi mở, hợp tác hiệu quả trong nhóm; Sáng tạo khi xử lí tình huống học tập.",
-          "Em chủ động lập kế hoạch và tự hoàn thành công việc; Tích cực trao đổi, lắng nghe và chia sẻ với bạn; Tư duy nhanh, biết tìm cách giải quyết vấn đề mới."
+          "Em chủ động lập kế hoạch và tự hoàn thành công việc; Tích cực trao đổi, lắng nghe và chia sẻ với bạn; Tư duy nhanh, biết tìm cách giải quyết vấn đề mới.",
+          "Em chủ động trong học tập và giao tiếp; Hợp tác tốt với bạn bè; Linh hoạt khi xử lí vấn đề mới."
         ],
         "ht": [
           "Em có ý thức tự học, cần chủ động hơn ở một số nhiệm vụ; Biết giao tiếp và hợp tác với bạn bè; Bước đầu biết giải quyết vấn đề trong học tập.",
-          "Em hoàn thành nhiệm vụ học tập theo hướng dẫn; Tham gia trao đổi, hợp tác cùng các bạn; Cần mạnh dạn hơn khi xử lí tình huống mới."
+          "Em hoàn thành nhiệm vụ học tập theo hướng dẫn; Tham gia trao đổi, hợp tác cùng các bạn; Cần mạnh dạn hơn khi xử lí tình huống mới.",
+          "Em có ý thức tự học; Đã biết hợp tác trong nhóm; Cần phát huy thêm khả năng tự giải quyết vấn đề."
         ],
         "cht": [
           "Em ngoan, lễ phép với thầy cô và bạn bè; Cần cố gắng tự giác hơn trong học tập; Thầy cô và gia đình cùng hỗ trợ em rèn kĩ năng giao tiếp, hợp tác.",
-          "Em đã có cố gắng bước đầu; Cần chủ động hơn trong tự học và mạnh dạn hơn khi giao tiếp; Rất cần sự động viên, giúp đỡ thường xuyên của thầy cô."
+          "Em đã có cố gắng bước đầu; Cần chủ động hơn trong tự học và mạnh dạn hơn khi giao tiếp; Rất cần sự động viên, giúp đỡ thường xuyên của thầy cô.",
+          "Em ngoan và lễ phép; Cần cố gắng tự giác hơn trong học tập và mạnh dạn giao tiếp; Thầy cô và gia đình sẽ cùng đồng hành giúp em tiến bộ.",
+          "Em đã có nỗ lực ban đầu; Cần rèn thói quen tự học và làm việc nhóm; Rất cần sự khích lệ thường xuyên của thầy cô, cha mẹ.",
+          "Em chăm chú nghe giảng; Cần chủ động hơn trong các tình huống học tập; Cô tin em sẽ tiến bộ qua từng ngày với sự cố gắng của em."
         ]
       },
       "tu_chu_tu_hoc": {
@@ -433,16 +586,22 @@
           "Em chủ động học tập, có ý thức tự giác cao trong mọi việc.",
           "Em biết tự lập kế hoạch và hoàn thành nhiệm vụ học tập tốt.",
           "Em tự tin trong học tập, biết quản lí thời gian hợp lí.",
-          "Em có ý thức tự học cao, chủ động tìm tòi kiến thức mới."
+          "Em có ý thức tự học cao, chủ động tìm tòi kiến thức mới.",
+          "Em tự giác cao trong học tập, biết tự đặt mục tiêu và thực hiện đến cùng."
         ],
         "ht": [
           "Em đã có ý thức tự học, hoàn thành nhiệm vụ được giao.",
           "Em chăm chỉ học tập, biết tự làm bài theo hướng dẫn của cô.",
-          "Em có tiến bộ trong việc tự giác học tập và rèn luyện."
+          "Em có tiến bộ trong việc tự giác học tập và rèn luyện.",
+          "Em đã biết tự làm bài tập đơn giản và chuẩn bị sách vở trước khi đến lớp."
         ],
         "cht": [
           "Em ngoan và lễ phép, cần luyện thói quen tự học và tự làm bài ở nhà.",
-          "Em đã có cố gắng, cần rèn ý thức tự giác trong học tập hàng ngày."
+          "Em đã có cố gắng, cần rèn ý thức tự giác trong học tập hàng ngày.",
+          "Em ngoan và hiền, cần rèn thói quen tự soạn sách vở và làm bài đầy đủ ở nhà.",
+          "Em đã có cố gắng, hãy lập thời gian biểu hằng ngày để học tập đều đặn hơn.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô và gia đình hỗ trợ trong những việc còn khó khăn.",
+          "Em chăm chú nghe giảng, cần chủ động ôn lại bài cũ trước khi học bài mới."
         ]
       },
       "giao_tiep_hop_tac": {
@@ -450,16 +609,22 @@
           "Em mạnh dạn tự tin khi giao tiếp với thầy cô và bạn bè.",
           "Em có khả năng giao tiếp tốt, hợp tác hiệu quả trong nhóm.",
           "Em biết lắng nghe ý kiến của bạn, trình bày rõ ràng suy nghĩ.",
-          "Em hòa nhã thân thiện, được bạn bè yêu quý và tin tưởng."
+          "Em hòa nhã thân thiện, được bạn bè yêu quý và tin tưởng.",
+          "Em giao tiếp cởi mở, biết tôn trọng và lắng nghe ý kiến của các bạn."
         ],
         "ht": [
           "Em đã biết giao tiếp lễ phép với thầy cô và hòa đồng với bạn.",
           "Em có ý thức hợp tác trong các hoạt động nhóm trên lớp.",
-          "Em đã mạnh dạn hơn trong giao tiếp và làm việc với bạn bè."
+          "Em đã mạnh dạn hơn trong giao tiếp và làm việc với bạn bè.",
+          "Em đã biết chào hỏi và tham gia trao đổi với bạn trong các hoạt động nhóm."
         ],
         "cht": [
           "Em ngoan và hiền, cần mạnh dạn hơn khi giao tiếp với bạn và thầy cô.",
-          "Em đã có tiến bộ nhỏ, cần luyện thói quen hợp tác trong nhóm tốt hơn."
+          "Em đã có tiến bộ nhỏ, cần luyện thói quen hợp tác trong nhóm tốt hơn.",
+          "Em ngoan và lễ phép, cần mạnh dạn hơn khi nói chuyện với cô và các bạn trong lớp.",
+          "Em đã có tiến bộ, hãy luyện cách lắng nghe bạn nói xong rồi mới trả lời.",
+          "Cô tin em sẽ tiến bộ, hãy cùng bạn thực hiện các nhiệm vụ học tập theo nhóm.",
+          "Em chuyên cần đi học, cần tích cực phát biểu và đặt câu hỏi trong giờ học."
         ]
       },
       "giai_quyet_van_de": {
@@ -467,16 +632,22 @@
           "Em có tư duy linh hoạt, biết tìm cách giải quyết vấn đề sáng tạo.",
           "Em phát hiện vấn đề nhanh, đưa ra giải pháp phù hợp và hiệu quả.",
           "Em có khả năng tư duy sáng tạo, học hỏi linh hoạt và nhanh nhạy.",
-          "Em biết suy luận logic, giải quyết tốt các tình huống trong học tập."
+          "Em biết suy luận logic, giải quyết tốt các tình huống trong học tập.",
+          "Em linh hoạt trước tình huống mới, biết phân tích vấn đề và đề xuất hướng giải quyết."
         ],
         "ht": [
           "Em đã biết phát hiện vấn đề và tìm cách giải quyết đơn giản.",
           "Em có tư duy độc lập, cố gắng tự tìm câu trả lời cho bài tập.",
-          "Em đã có tiến bộ trong việc suy nghĩ và giải quyết vấn đề."
+          "Em đã có tiến bộ trong việc suy nghĩ và giải quyết vấn đề.",
+          "Em đã biết suy nghĩ tìm cách làm khi gặp bài tập khó, cần phát huy thêm."
         ],
         "cht": [
           "Em ngoan và chăm chỉ, cần luyện thói quen suy nghĩ và đặt câu hỏi tích cực.",
-          "Em đã có cố gắng, cần tự tin hơn khi giải quyết các tình huống học tập."
+          "Em đã có cố gắng, cần tự tin hơn khi giải quyết các tình huống học tập.",
+          "Em ngoan và chuyên cần, cần luyện đọc kĩ đề và suy nghĩ trước khi làm bài tập.",
+          "Em đã có cố gắng, hãy mạnh dạn hỏi cô và bạn khi chưa biết cách giải quyết.",
+          "Cô tin em sẽ tiến bộ, hãy thử làm theo các bước nhỏ và kiên trì với từng bài tập.",
+          "Em chăm chú nghe giảng, cần tự tin đưa ra suy nghĩ của mình trong các tình huống học tập."
         ]
       }
     },
@@ -485,15 +656,20 @@
         "tot": [
           "Em có năng lực ngôn ngữ tốt, diễn đạt rõ ràng; Tính toán nhanh và chính xác; Yêu thích tìm hiểu khoa học; Có óc thẩm mĩ; Tích cực rèn luyện thể chất.",
           "Em đọc viết lưu loát, dùng từ phong phú; Tư duy toán học tốt; Ham khám phá thế giới xung quanh; Cảm nhận cái đẹp tinh tế; Khỏe mạnh, nhanh nhẹn.",
-          "Em giao tiếp bằng ngôn ngữ mạch lạc; Vận dụng tính toán linh hoạt; Hiểu biết khoa học vững; Sáng tạo trong nghệ thuật; Vận động khéo léo, dẻo dai."
+          "Em giao tiếp bằng ngôn ngữ mạch lạc; Vận dụng tính toán linh hoạt; Hiểu biết khoa học vững; Sáng tạo trong nghệ thuật; Vận động khéo léo, dẻo dai.",
+          "Em phát triển toàn diện về ngôn ngữ, tính toán, khoa học, thẩm mĩ và thể chất."
         ],
         "ht": [
           "Em diễn đạt được ý của mình; Thực hiện được các phép tính cơ bản; Bước đầu yêu thích khoa học và nghệ thuật; Tham gia đầy đủ các hoạt động thể chất.",
-          "Em có tiến bộ về ngôn ngữ và tính toán; Biết quan sát, tìm hiểu khoa học; Cần phát huy thêm năng lực thẩm mĩ và thể chất."
+          "Em có tiến bộ về ngôn ngữ và tính toán; Biết quan sát, tìm hiểu khoa học; Cần phát huy thêm năng lực thẩm mĩ và thể chất.",
+          "Em đạt yêu cầu cơ bản về ngôn ngữ, tính toán và các năng lực đặc thù khác."
         ],
         "cht": [
           "Em ngoan và chăm chỉ; Cần luyện thêm kĩ năng đọc, viết và tính toán; Thầy cô sẽ đồng hành giúp em tiến bộ ở từng môn học.",
-          "Em đã có tiến bộ nhỏ; Cần kiên trì rèn luyện ngôn ngữ, tính toán và các kĩ năng đặc thù; Rất cần sự hỗ trợ thường xuyên của thầy cô, gia đình."
+          "Em đã có tiến bộ nhỏ; Cần kiên trì rèn luyện ngôn ngữ, tính toán và các kĩ năng đặc thù; Rất cần sự hỗ trợ thường xuyên của thầy cô, gia đình.",
+          "Em ngoan và chăm chỉ; Cần luyện thêm các kĩ năng cơ bản về đọc viết và tính toán; Cô và gia đình sẽ cùng em luyện tập từng kĩ năng nhỏ.",
+          "Em đã có nỗ lực; Cần kiên trì rèn kĩ năng ngôn ngữ, tính toán và vận động hằng ngày; Cô tin em sẽ vững vàng hơn ở học kì tới.",
+          "Em chuyên cần đi học; Cần tăng cường luyện tập các kĩ năng đặc thù dưới sự hướng dẫn của cô; Rất cần sự đồng hành của gia đình."
         ]
       },
       "ngon_ngu": {
@@ -501,16 +677,22 @@
           "Em có vốn từ phong phú, diễn đạt mạch lạc và truyền cảm tốt.",
           "Em sử dụng ngôn ngữ tốt cả trong nói và viết, lập luận rõ ràng.",
           "Em có năng khiếu ngôn ngữ, biểu đạt suy nghĩ tinh tế và sáng tạo.",
-          "Em đọc to rõ ràng, viết câu đúng và có hình ảnh sinh động."
+          "Em đọc to rõ ràng, viết câu đúng và có hình ảnh sinh động.",
+          "Em sử dụng từ ngữ phong phú, diễn đạt suy nghĩ trôi chảy và tự tin."
         ],
         "ht": [
           "Em đã đạt được các kĩ năng ngôn ngữ cơ bản theo chương trình.",
           "Em biết diễn đạt ý của mình bằng câu nói rõ ràng và dễ hiểu.",
-          "Em có tiến bộ trong việc sử dụng ngôn ngữ trong giao tiếp."
+          "Em có tiến bộ trong việc sử dụng ngôn ngữ trong giao tiếp.",
+          "Em đã diễn đạt được ý chính bằng câu rõ ràng, cần phát huy thêm."
         ],
         "cht": [
           "Em ngoan và lễ phép, cần luyện đọc to và viết chính tả thường xuyên ở nhà.",
-          "Em đã có cố gắng, cần luyện diễn đạt rõ ràng và mạnh dạn phát biểu hơn."
+          "Em đã có cố gắng, cần luyện diễn đạt rõ ràng và mạnh dạn phát biểu hơn.",
+          "Em ngoan và hiền, cần luyện đọc to và viết các từ thường gặp mỗi ngày.",
+          "Em đã có cố gắng, hãy mạnh dạn kể chuyện hoặc đọc bài cho gia đình nghe.",
+          "Cô tin em sẽ tiến bộ, hãy luyện đặt câu ngắn với từ mới đã học trên lớp.",
+          "Em chăm chú nghe giảng, cần phát biểu nhiều hơn để rèn kĩ năng nói trước lớp."
         ]
       },
       "tinh_toan": {
@@ -518,16 +700,22 @@
           "Em có tư duy toán học tốt, tính nhẩm nhanh và chính xác cao.",
           "Em vận dụng linh hoạt kiến thức toán vào giải quyết bài tập.",
           "Em có năng khiếu tính toán, giải toán có lời văn mạch lạc.",
-          "Em tính toán cẩn thận, ít sai sót và trình bày khoa học."
+          "Em tính toán cẩn thận, ít sai sót và trình bày khoa học.",
+          "Em tính nhẩm nhanh, vận dụng linh hoạt vào giải toán có lời văn."
         ],
         "ht": [
           "Em đã làm được các phép tính cơ bản theo chương trình.",
           "Em có tiến bộ trong tính toán và giải các bài toán đơn giản.",
-          "Em chăm chỉ luyện tập, thực hiện đúng các phép tính cộng trừ."
+          "Em chăm chỉ luyện tập, thực hiện đúng các phép tính cộng trừ.",
+          "Em thực hiện được phép tính cơ bản và giải bài toán đơn giản."
         ],
         "cht": [
           "Em ngoan và chăm chỉ, cần luyện thuộc bảng cửu chương và phép tính cơ bản.",
-          "Em đã có cố gắng, cần luyện tính nhẩm và làm phép cộng trừ thường xuyên."
+          "Em đã có cố gắng, cần luyện tính nhẩm và làm phép cộng trừ thường xuyên.",
+          "Em ngoan và chăm chỉ, cần ôn thuộc bảng cộng trừ và luyện tính nhẩm mỗi ngày.",
+          "Em đã có cố gắng, hãy luyện đặt tính thẳng cột và đọc kĩ đề trước khi làm.",
+          "Cô tin em sẽ tiến bộ, hãy nhờ cô hướng dẫn từng dạng toán cơ bản.",
+          "Em chuyên cần đi học, cần kiên trì làm bài tập về nhà và kiểm tra lại kết quả."
         ]
       },
       "khoa_hoc": {
@@ -535,16 +723,22 @@
           "Em yêu khoa học, biết quan sát tìm hiểu thế giới xung quanh.",
           "Em có tư duy khoa học, biết đặt câu hỏi và suy luận logic.",
           "Em ham học hỏi, có nhiều hiểu biết về tự nhiên và xã hội.",
-          "Em biết vận dụng kiến thức khoa học vào cuộc sống hàng ngày."
+          "Em biết vận dụng kiến thức khoa học vào cuộc sống hàng ngày.",
+          "Em quan sát tinh tế và biết liên hệ kiến thức khoa học vào cuộc sống."
         ],
         "ht": [
           "Em đã nắm được các kiến thức khoa học cơ bản theo chương trình.",
           "Em có ý thức tìm hiểu thế giới xung quanh, đặt câu hỏi thông minh.",
-          "Em biết quan sát và mô tả các sự vật hiện tượng quen thuộc."
+          "Em biết quan sát và mô tả các sự vật hiện tượng quen thuộc.",
+          "Em đã hiểu các kiến thức khoa học cơ bản, cần vận dụng thêm vào thực tế."
         ],
         "cht": [
           "Em ngoan và chuyên cần, cần luyện quan sát và đặt câu hỏi về thế giới xung quanh.",
-          "Em đã có cố gắng, cần chủ động tìm hiểu thêm các kiến thức khoa học."
+          "Em đã có cố gắng, cần chủ động tìm hiểu thêm các kiến thức khoa học.",
+          "Em ngoan và lễ phép, cần đọc lại bài học và quan sát kĩ tranh ảnh trong sách giáo khoa.",
+          "Em đã có cố gắng, hãy thử thí nghiệm đơn giản tại nhà cùng gia đình.",
+          "Cô tin em sẽ tiến bộ, hãy mạnh dạn đặt câu hỏi khi gặp hiện tượng lạ xung quanh.",
+          "Em chăm chú nghe giảng, cần ôn lại bài và làm bài tập trong vở thực hành."
         ]
       },
       "tham_mi": {
@@ -552,16 +746,22 @@
           "Em có óc thẩm mĩ tốt, biết cảm thụ cái đẹp trong cuộc sống.",
           "Em yêu nghệ thuật, sáng tạo trong vẽ tranh và ca hát.",
           "Em có năng khiếu nghệ thuật, biểu diễn tự tin và sinh động.",
-          "Em biết tạo ra sản phẩm đẹp, có ý tưởng độc đáo và sáng tạo."
+          "Em biết tạo ra sản phẩm đẹp, có ý tưởng độc đáo và sáng tạo.",
+          "Em cảm thụ cái đẹp tinh tế, sáng tạo trong các hoạt động nghệ thuật."
         ],
         "ht": [
           "Em đã đạt được các yêu cầu cơ bản về vẽ và ca hát trong lớp.",
           "Em có tiến bộ trong các hoạt động nghệ thuật và thẩm mĩ.",
-          "Em biết yêu cái đẹp, giữ gìn sản phẩm và đồ dùng cá nhân."
+          "Em biết yêu cái đẹp, giữ gìn sản phẩm và đồ dùng cá nhân.",
+          "Em yêu cái đẹp, đã hoàn thành cơ bản các sản phẩm vẽ và hát trên lớp."
         ],
         "cht": [
           "Em ngoan và hiền, cần luyện thêm các kĩ năng vẽ tranh và ca hát ở nhà.",
-          "Em đã có cố gắng, cần mạnh dạn tham gia hoạt động nghệ thuật hơn."
+          "Em đã có cố gắng, cần mạnh dạn tham gia hoạt động nghệ thuật hơn.",
+          "Em ngoan và hiền, cần luyện hát đúng giai điệu và vẽ các nét cơ bản tại nhà.",
+          "Em đã có cố gắng, hãy mạnh dạn biểu diễn và sáng tạo trong tranh vẽ.",
+          "Cô tin em sẽ tiến bộ, hãy quan sát cái đẹp xung quanh và tập diễn đạt bằng hình vẽ.",
+          "Em chăm chú nghe giảng, cần chuẩn bị đầy đủ dụng cụ học mĩ thuật và âm nhạc."
         ]
       },
       "the_chat": {
@@ -569,16 +769,22 @@
           "Em có thể lực tốt, nhanh nhẹn và khéo léo trong vận động.",
           "Em yêu thể thao, thực hiện đúng các động tác và bài tập.",
           "Em có ý thức rèn luyện sức khỏe, chăm chỉ tập luyện hàng ngày.",
-          "Em năng động trong các hoạt động thể chất, sức khỏe rất tốt."
+          "Em năng động trong các hoạt động thể chất, sức khỏe rất tốt.",
+          "Em vận động khéo léo, có sức bền tốt và phối hợp nhịp nhàng với bạn."
         ],
         "ht": [
           "Em đã thực hiện được các động tác thể dục cơ bản theo yêu cầu.",
           "Em tham gia tích cực các hoạt động thể chất trong giờ học.",
-          "Em có ý thức rèn luyện sức khỏe, tham gia trò chơi vận động tốt."
+          "Em có ý thức rèn luyện sức khỏe, tham gia trò chơi vận động tốt.",
+          "Em đã thực hiện được các động tác cơ bản và tham gia tốt trò chơi vận động."
         ],
         "cht": [
           "Em ngoan và chuyên cần, cần luyện tập thể dục thường xuyên để khỏe hơn.",
-          "Em đã có cố gắng, cần kiên trì vận động và rèn luyện sức khỏe hàng ngày."
+          "Em đã có cố gắng, cần kiên trì vận động và rèn luyện sức khỏe hàng ngày.",
+          "Em ngoan và chuyên cần, cần luyện tập thể dục buổi sáng đều đặn để rèn sức khỏe.",
+          "Em đã có cố gắng, hãy mạnh dạn tham gia các trò chơi vận động cùng bạn.",
+          "Cô tin em sẽ tiến bộ, hãy kiên trì luyện các động tác cơ bản mỗi ngày.",
+          "Em chăm chú nghe giảng, cần ăn uống đủ chất và ngủ đủ giấc để có thể lực tốt."
         ]
       },
       "cong_nghe": {
@@ -586,16 +792,22 @@
           "Em hiểu biết tốt về công nghệ, biết sử dụng đồ dùng an toàn và đúng cách.",
           "Em sáng tạo trong thực hành công nghệ, hoàn thành sản phẩm khéo léo.",
           "Em có tư duy kĩ thuật tốt, biết quan sát và làm theo quy trình chính xác.",
-          "Em yêu thích môn Công nghệ, vận dụng kiến thức vào cuộc sống hằng ngày."
+          "Em yêu thích môn Công nghệ, vận dụng kiến thức vào cuộc sống hằng ngày.",
+          "Em sáng tạo trong thực hành công nghệ, làm sản phẩm khéo léo và đúng quy trình."
         ],
         "ht": [
           "Em đã biết sử dụng đồ dùng học tập và đồ dùng gia đình an toàn.",
           "Em hoàn thành các bài thực hành Công nghệ theo hướng dẫn của thầy cô.",
-          "Em có ý thức giữ gìn đồ dùng, biết làm theo các bước quy trình đơn giản."
+          "Em có ý thức giữ gìn đồ dùng, biết làm theo các bước quy trình đơn giản.",
+          "Em đã biết sử dụng đồ dùng học tập an toàn và làm theo các bước đơn giản."
         ],
         "cht": [
           "Em ngoan và chuyên cần, cần luyện kĩ năng sử dụng đồ dùng và làm theo quy trình.",
-          "Em đã có cố gắng, cần cẩn thận hơn khi thực hành và giữ gìn đồ dùng."
+          "Em đã có cố gắng, cần cẩn thận hơn khi thực hành và giữ gìn đồ dùng.",
+          "Em ngoan và hiền, cần luyện thao tác cẩn thận với các đồ dùng học tập đơn giản.",
+          "Em đã có cố gắng, hãy quan sát cô làm mẫu rồi tự thực hành theo từng bước.",
+          "Cô tin em sẽ tiến bộ, hãy giữ gìn đồ dùng cẩn thận và làm theo đúng quy trình.",
+          "Em chăm chú nghe giảng, cần mạnh dạn thử nghiệm và hỏi cô khi gặp khó khăn."
         ]
       },
       "tin_hoc": {
@@ -603,16 +815,22 @@
           "Em sử dụng máy tính thành thạo, làm quen tốt với các phần mềm học tập.",
           "Em có tư duy tin học tốt, thao tác chuột bàn phím nhanh và chính xác.",
           "Em yêu thích môn Tin học, biết khai thác thông tin an toàn và hiệu quả.",
-          "Em vận dụng kiến thức tin học vào học tập, có nhiều sáng tạo trong giờ học."
+          "Em vận dụng kiến thức tin học vào học tập, có nhiều sáng tạo trong giờ học.",
+          "Em thao tác máy tính linh hoạt, vận dụng tốt vào học tập và sáng tạo sản phẩm."
         ],
         "ht": [
           "Em đã làm quen với máy tính, thực hiện được các thao tác cơ bản theo yêu cầu.",
           "Em sử dụng được chuột và bàn phím, hoàn thành các bài tập tin học trên lớp.",
-          "Em có ý thức tốt khi học Tin học, biết bảo quản thiết bị và bật/tắt đúng cách."
+          "Em có ý thức tốt khi học Tin học, biết bảo quản thiết bị và bật/tắt đúng cách.",
+          "Em đã sử dụng được chuột và bàn phím, hoàn thành thao tác cơ bản trên máy tính."
         ],
         "cht": [
           "Em ngoan và chuyên cần, cần luyện thao tác chuột bàn phím và làm bài thực hành.",
-          "Em đã có cố gắng, cần mạnh dạn thao tác máy tính theo hướng dẫn của thầy cô."
+          "Em đã có cố gắng, cần mạnh dạn thao tác máy tính theo hướng dẫn của thầy cô.",
+          "Em ngoan và chuyên cần, cần luyện di chuyển chuột và gõ phím chậm mà đúng.",
+          "Em đã có cố gắng, hãy quan sát bạn ngồi cạnh và làm theo cô hướng dẫn.",
+          "Cô tin em sẽ tiến bộ, hãy giữ tư thế ngồi đúng và bảo quản thiết bị cẩn thận.",
+          "Em chăm chú nghe giảng, cần ghi nhớ các bước thực hành trước khi bắt đầu làm bài."
         ]
       }
     },
@@ -622,16 +840,21 @@
           "Em có phẩm chất tốt; Biết yêu quê hương, đất nước; Nhân ái, biết giúp đỡ mọi người; Chăm chỉ, siêng năng; Luôn trung thực; Có ý thức trách nhiệm cao.",
           "Em yêu trường lớp, quê hương; Sống nhân ái, chan hòa với bạn bè; Chăm chỉ học tập và lao động; Thật thà, trung thực; Có trách nhiệm với công việc được giao.",
           "Em tự hào về truyền thống dân tộc; Biết yêu thương, chia sẻ với bạn; Chăm chỉ, cần cù; Trung thực trong học tập; Hoàn thành tốt nhiệm vụ của mình.",
-          "Em hội tụ nhiều phẩm chất đáng quý: yêu nước, nhân ái, chăm chỉ, trung thực và trách nhiệm; Là tấm gương cho các bạn noi theo."
+          "Em hội tụ nhiều phẩm chất đáng quý: yêu nước, nhân ái, chăm chỉ, trung thực và trách nhiệm; Là tấm gương cho các bạn noi theo.",
+          "Em hội tụ đầy đủ phẩm chất tốt đẹp: yêu nước, nhân ái, chăm chỉ, trung thực và trách nhiệm."
         ],
         "ht": [
           "Em yêu quê hương, trường lớp; Hòa nhã với bạn bè; Có ý thức chăm chỉ học tập; Trung thực và biết nhận lỗi; Cần phát huy thêm tinh thần trách nhiệm.",
           "Em ngoan ngoãn, lễ phép; Biết quan tâm giúp đỡ bạn; Chăm chỉ trong học tập; Thật thà; Cần chủ động hơn với nhiệm vụ được giao.",
-          "Em có ý thức rèn luyện các phẩm chất tốt; Yêu thương bạn bè; Trung thực, chăm chỉ; Cần giữ tinh thần trách nhiệm đều đặn hơn."
+          "Em có ý thức rèn luyện các phẩm chất tốt; Yêu thương bạn bè; Trung thực, chăm chỉ; Cần giữ tinh thần trách nhiệm đều đặn hơn.",
+          "Em ngoan ngoãn, lễ phép; Có ý thức chăm học; Cần phát huy thêm tinh thần trách nhiệm."
         ],
         "cht": [
           "Em ngoan và lễ phép với thầy cô, bạn bè; Cần rèn thêm tính chăm chỉ và tinh thần trách nhiệm; Thầy cô và gia đình cùng động viên, giúp đỡ em.",
-          "Em đã có cố gắng; Cần kiên trì rèn luyện tính trung thực, chăm chỉ và trách nhiệm hằng ngày; Rất cần sự nhắc nhở, khích lệ thường xuyên."
+          "Em đã có cố gắng; Cần kiên trì rèn luyện tính trung thực, chăm chỉ và trách nhiệm hằng ngày; Rất cần sự nhắc nhở, khích lệ thường xuyên.",
+          "Em ngoan và hiền lành; Cần rèn thêm tính chăm chỉ, trung thực và trách nhiệm; Cô và gia đình sẽ cùng động viên em mỗi ngày.",
+          "Em đã có cố gắng trong rèn luyện phẩm chất; Cần kiên trì duy trì hành vi tốt; Rất cần sự khích lệ thường xuyên của thầy cô và cha mẹ.",
+          "Em chuyên cần đi học; Cần phát huy thêm tinh thần đoàn kết và yêu thương bạn bè; Cô tin em sẽ ngày càng tiến bộ."
         ]
       },
       "yeu_nuoc": {
@@ -639,16 +862,22 @@
           "Em yêu quê hương đất nước, tự hào về truyền thống dân tộc.",
           "Em biết kính trọng các vị anh hùng, yêu lá cờ Tổ quốc Việt Nam.",
           "Em yêu thiên nhiên, biết bảo vệ môi trường và cảnh đẹp quê hương.",
-          "Em tự hào là người Việt Nam, biết giữ gìn truyền thống văn hóa."
+          "Em tự hào là người Việt Nam, biết giữ gìn truyền thống văn hóa.",
+          "Em yêu trường lớp, quê hương và biết giữ gìn cảnh đẹp môi trường xung quanh."
         ],
         "ht": [
           "Em biết yêu quê hương, kính trọng các vị anh hùng dân tộc.",
           "Em có ý thức bảo vệ môi trường và cảnh đẹp quê hương Việt Nam.",
-          "Em đã hiểu về truyền thống dân tộc qua các bài học trên lớp."
+          "Em đã hiểu về truyền thống dân tộc qua các bài học trên lớp.",
+          "Em đã biết yêu quê hương và tham gia các hoạt động tập thể về truyền thống."
         ],
         "cht": [
           "Em ngoan và lễ phép, cần tìm hiểu thêm về truyền thống quê hương đất nước.",
-          "Em đã có ý thức tốt, cần tham gia tích cực các hoạt động về quê hương."
+          "Em đã có ý thức tốt, cần tham gia tích cực các hoạt động về quê hương.",
+          "Em ngoan và hiền, cần tham gia tích cực các hoạt động tìm hiểu quê hương đất nước.",
+          "Em đã có cố gắng, hãy kể cho gia đình nghe về một di tích hoặc danh nhân Việt Nam.",
+          "Cô tin em sẽ tiến bộ, hãy giữ gìn lá cờ Tổ quốc và lắng nghe các bài học lịch sử.",
+          "Em chăm chú nghe giảng, cần luyện hát Quốc ca trang nghiêm trong giờ chào cờ."
         ]
       },
       "nhan_ai": {
@@ -656,16 +885,22 @@
           "Em yêu thương giúp đỡ bạn bè, kính trên nhường dưới rất tốt.",
           "Em có tấm lòng nhân ái, biết quan tâm chia sẻ với mọi người.",
           "Em sống hòa nhã, được bạn bè và thầy cô yêu quý tin tưởng.",
-          "Em biết yêu thương gia đình, kính trọng ông bà cha mẹ thầy cô."
+          "Em biết yêu thương gia đình, kính trọng ông bà cha mẹ thầy cô.",
+          "Em yêu thương bạn bè và mọi người, biết chia sẻ niềm vui và an ủi khi bạn buồn."
         ],
         "ht": [
           "Em ngoan ngoãn, biết yêu thương bạn bè và người thân trong gia đình.",
           "Em đã có ý thức giúp đỡ bạn bè trong học tập và sinh hoạt.",
-          "Em hòa đồng với bạn, biết quan tâm đến mọi người xung quanh."
+          "Em hòa đồng với bạn, biết quan tâm đến mọi người xung quanh.",
+          "Em đã biết quan tâm bạn và sẵn sàng giúp đỡ khi bạn cần."
         ],
         "cht": [
           "Em hiền và ngoan, cần mạnh dạn quan tâm và giúp đỡ bạn bè trong lớp hơn.",
-          "Em đã có cố gắng hòa đồng, cần chủ động chia sẻ với mọi người xung quanh."
+          "Em đã có cố gắng hòa đồng, cần chủ động chia sẻ với mọi người xung quanh.",
+          "Em ngoan và hiền, cần mạnh dạn quan tâm bạn ngồi cùng bàn và hỏi thăm khi bạn ốm.",
+          "Em đã có cố gắng hòa đồng, hãy chia sẻ đồ dùng học tập với bạn khi cần.",
+          "Cô tin em sẽ tiến bộ, hãy lễ phép với người lớn và thân thiện với các em nhỏ hơn.",
+          "Em chăm chú nghe giảng, cần luyện thói quen cảm ơn và xin lỗi đúng lúc, đúng cách."
         ]
       },
       "cham_chi": {
@@ -673,16 +908,22 @@
           "Em chăm chỉ học tập, có ý thức tự giác cao trong mọi hoạt động.",
           "Em chuyên cần, không vắng học và luôn hoàn thành bài tập đầy đủ.",
           "Em chăm học chăm làm, là tấm gương về tinh thần học tập cho lớp.",
-          "Em có ý thức rèn luyện, kiên trì vượt khó trong học tập."
+          "Em có ý thức rèn luyện, kiên trì vượt khó trong học tập.",
+          "Em chăm chỉ học tập đều đặn, kiên trì hoàn thành nhiệm vụ dù khó."
         ],
         "ht": [
           "Em đã có ý thức học tập tốt, hoàn thành nhiệm vụ được giao.",
           "Em chuyên cần đi học, có tiến bộ trong rèn luyện học tập.",
-          "Em biết tự giác làm bài và chuẩn bị bài trước khi đến lớp."
+          "Em biết tự giác làm bài và chuẩn bị bài trước khi đến lớp.",
+          "Em chuyên cần đi học, hoàn thành bài tập cô giao và tự giác làm bài ở nhà."
         ],
         "cht": [
           "Em ngoan và lễ phép, cần rèn thói quen học và làm bài tập đầy đủ hơn.",
-          "Em đã có cố gắng, cần kiên trì học tập và làm bài đầy đủ mỗi ngày."
+          "Em đã có cố gắng, cần kiên trì học tập và làm bài đầy đủ mỗi ngày.",
+          "Em ngoan và lễ phép, cần rèn thói quen học bài và làm bài đầy đủ trước khi đến lớp.",
+          "Em đã có cố gắng, hãy lập thời gian biểu hằng ngày và thực hiện đều đặn.",
+          "Cô tin em sẽ tiến bộ, hãy kiên trì với từng bài tập và không bỏ cuộc khi gặp khó.",
+          "Em chuyên cần đi học, cần tự giác làm việc nhà phù hợp với lứa tuổi để rèn tính siêng năng."
         ]
       },
       "trung_thuc": {
@@ -690,16 +931,22 @@
           "Em trung thực thật thà, biết nhận lỗi và sửa lỗi kịp thời.",
           "Em luôn nói thật, có lòng tự trọng cao và đáng tin cậy.",
           "Em ngay thẳng trong học tập, không sao chép bài của bạn.",
-          "Em có phẩm chất trung thực, được thầy cô và bạn bè tin yêu."
+          "Em có phẩm chất trung thực, được thầy cô và bạn bè tin yêu.",
+          "Em trung thực trong học tập và sinh hoạt, được thầy cô và bạn bè tin yêu."
         ],
         "ht": [
           "Em đã biết nói thật, trung thực trong học tập và sinh hoạt.",
           "Em có ý thức rèn luyện tính trung thực, biết nhận lỗi khi sai.",
-          "Em ngay thẳng với bạn bè, không nói dối khi mắc khuyết điểm."
+          "Em ngay thẳng với bạn bè, không nói dối khi mắc khuyết điểm.",
+          "Em đã biết nói thật, nhận lỗi và sửa lỗi khi mắc khuyết điểm."
         ],
         "cht": [
           "Em ngoan ngoãn, cần luyện thói quen trung thực và nhận lỗi khi mắc sai.",
-          "Em đã có cố gắng, cần rèn tính thật thà và ngay thẳng hơn trong sinh hoạt."
+          "Em đã có cố gắng, cần rèn tính thật thà và ngay thẳng hơn trong sinh hoạt.",
+          "Em ngoan và hiền, cần rèn thói quen nói thật và nhận lỗi khi mắc sai sót.",
+          "Em đã có cố gắng, hãy mạnh dạn xin lỗi cô và bạn khi không làm đúng.",
+          "Cô tin em sẽ tiến bộ, hãy tự làm bài kiểm tra và không nhìn bài của bạn.",
+          "Em chăm chú nghe giảng, cần giữ lời hứa với cô, với cha mẹ và với bạn bè."
         ]
       },
       "trach_nhiem": {
@@ -707,16 +954,22 @@
           "Em có tinh thần trách nhiệm cao với việc học và việc tập thể.",
           "Em biết tự giác hoàn thành nhiệm vụ, không cần ai phải nhắc nhở.",
           "Em có ý thức giữ gìn của công, bảo vệ tài sản chung của lớp.",
-          "Em hoàn thành tốt mọi việc được giao, có tinh thần kỉ luật cao."
+          "Em hoàn thành tốt mọi việc được giao, có tinh thần kỉ luật cao.",
+          "Em có tinh thần trách nhiệm cao, hoàn thành công việc của mình và giúp đỡ tập thể."
         ],
         "ht": [
           "Em đã có ý thức trách nhiệm với việc học và nhiệm vụ được giao.",
           "Em biết giữ gìn đồ dùng học tập, tham gia trực nhật đầy đủ.",
-          "Em có tiến bộ trong rèn luyện tinh thần trách nhiệm hàng ngày."
+          "Em có tiến bộ trong rèn luyện tinh thần trách nhiệm hàng ngày.",
+          "Em biết giữ gìn của công, tham gia trực nhật và hoàn thành nhiệm vụ được giao."
         ],
         "cht": [
           "Em ngoan và lễ phép, cần rèn ý thức trách nhiệm với việc học và việc lớp.",
-          "Em đã có cố gắng, cần tự giác hoàn thành nhiệm vụ được giao tốt hơn."
+          "Em đã có cố gắng, cần tự giác hoàn thành nhiệm vụ được giao tốt hơn.",
+          "Em ngoan và lễ phép, cần luyện tự sắp xếp sách vở và giữ gìn đồ dùng cá nhân.",
+          "Em đã có cố gắng, hãy chủ động nhận và hoàn thành phần việc của mình trong nhóm.",
+          "Cô tin em sẽ tiến bộ, hãy tham gia trực nhật và giữ gìn vệ sinh lớp học.",
+          "Em chuyên cần đi học, cần chăm sóc cây xanh và giữ gìn của công của trường lớp."
         ]
       }
     }
