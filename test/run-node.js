@@ -217,21 +217,36 @@ async function assertThrows(fn, name) {
     const nxGhk2 = engine.sinhNhanXet(hsGioi, 'tieng-viet', 'ghk2');
     log('V2.0 sinhNhanXet ghk2 trả phrase', typeof nxGhk2 === 'string' && nxGhk2.length > 10);
 
-    // V2.0 — KHÔNG dùng temporal prefix ("Bước vào HK2", "Sau nghỉ Tết", "Đầu năm"...).
-    // Anh Chung phản hồi: phrases có temporal prefix lặp lại nhiều dạng → nhìn như máy sinh.
-    // Kiểm tra: KHÔNG có phrase nào trong cả 3 ky bắt đầu bằng các cụm thời gian.
-    const tempPrefixRe = /^(Bước vào|Sau (hơn|kì)|Đầu năm|Tiếp nối|Nửa đầu|Kết thúc HK|Qua một học kì|Trong HK|Trong những tuần|Trong học kì I|Hết HK|Em vào (học|năm)|Em khởi đầu)/;
-    let tempViolations = 0;
+    // V2.0 — KHÔNG dùng marker thời gian. Anh Chung phản hồi 2 lần: phrases dính
+    // temporal prefix (Bước vào HK2/Sau nghỉ Tết) hoặc temporal hint (ngày càng/hơn trước/
+    // tiếp tục/HK1/HK2/quay lại nề nếp...) đều khiến cột nhận xét nhìn như máy sinh.
+    // Style chuẩn = phong cách Cuối HK2 V1.6 (pool flat) — trung tính thời gian.
+    const temporalRe = new RegExp([
+        'Bước vào', 'Sau hơn', 'Đầu năm', 'Tiếp nối', 'Nửa đầu',
+        'Kết thúc HK', 'Sau kì nghỉ', 'Sau nghỉ Tết', 'sau Tết',
+        'Trong HK[12]', 'Qua một học kì', 'Hết HK', 'Em vào học', 'Em khởi đầu',
+        'những tuần đầu', 'trong những tuần', 'sau hơn một tháng',
+        'HK1', 'HK2', 'học kì I', 'học kì II', 'học kỳ I', 'học kỳ II',
+        'kì này', 'kỳ này', 'tuần qua', 'tuần này',
+        'thời gian qua', 'lúc đầu', 'ban đầu', 'hơn trước',
+        'so với đầu', 'so với cuối', 'so với trước',
+        'đã quay lại', 'lấy lại nhịp', 'quay lại nề nếp',
+        'tiếp tục', 'ngày càng', 'Em vẫn', 'Em duy trì',
+        'đầu kì', 'cuối kì', 'đầu kỳ', 'cuối kỳ',
+        'trong kì', 'trong kỳ', 'kì sau', 'kỳ sau', 'kì tới', 'kỳ tới'
+    ].join('|'));
+    const violations = [];
     for (const subj of Object.keys(kyData.subjects)) {
         for (const ky of ['ghk1', 'chk1', 'ghk2']) {
             for (const tier of ['tot_xs', 'tot', 'ht', 'cht']) {
                 for (const phrase of kyData.subjects[subj][ky][tier]) {
-                    if (tempPrefixRe.test(phrase)) tempViolations++;
+                    if (temporalRe.test(phrase)) violations.push(`${subj}/${ky}/${tier}: ${phrase}`);
                 }
             }
         }
     }
-    log('V2.0 KHÔNG có phrase nào dùng temporal prefix', tempViolations === 0, { violations: tempViolations });
+    log('V2.0 KHÔNG phrase nào dính marker thời gian (50+ pattern)',
+        violations.length === 0, violations.slice(0, 3));
 
     // Fallback: ky='chk2' hoặc undefined → flat pool (legacy)
     engine.resetUsedPhrases();
