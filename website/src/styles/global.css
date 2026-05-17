@@ -823,12 +823,7 @@ section { padding: var(--section-y) 0; position: relative; }
   .video-featured-content { grid-template-columns: 1fr; }
 }
 .video-featured .video-player {
-  position: relative;
   background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
-  aspect-ratio: 16 / 9;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
 }
 .video-featured .video-meta {
   padding: 40px;
@@ -868,15 +863,17 @@ section { padding: var(--section-y) 0; position: relative; }
   box-shadow: var(--shadow-lg);
   border-color: var(--brand-200);
 }
+/* Video player với tỉ lệ 16:9 — dùng kĩ thuật padding-top thay aspect-ratio
+   để tương thích mọi trình duyệt mobile (iOS Safari <15, Chrome Android <88 cũng OK) */
 .video-player {
   position: relative;
-  aspect-ratio: 16 / 9;
+  width: 100%;
+  padding-top: 56.25%; /* 9 / 16 = 0.5625 → 16:9 ratio */
   background: linear-gradient(135deg, var(--brand-800), var(--brand-600));
   overflow: hidden;
-  display: grid;
-  place-items: center;
 }
-.video-player iframe {
+.video-player iframe,
+.video-player > .video-placeholder {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -884,6 +881,8 @@ section { padding: var(--section-y) 0; position: relative; }
   border: 0;
 }
 .video-placeholder {
+  display: grid;
+  place-items: center;
   text-align: center;
   color: rgba(255, 255, 255, 0.85);
   padding: 20px;
