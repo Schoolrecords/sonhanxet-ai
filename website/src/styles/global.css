@@ -613,7 +613,6 @@ section { padding: var(--section-y) 0; position: relative; }
   animation: floaty 6s ease-in-out infinite;
 }
 .float-card-1 { top: -20px; left: -36px; animation-delay: 0s; max-width: 230px; }
-.float-card-2 { bottom: -20px; right: -28px; animation-delay: 1s; }
 .float-card .icon {
   width: 34px; height: 34px;
   border-radius: 8px;
@@ -621,7 +620,6 @@ section { padding: var(--section-y) 0; position: relative; }
   font-size: 16px;
 }
 .float-card-1 .icon { background: var(--success-light); color: var(--success); }
-.float-card-2 .icon { background: var(--brand-50); color: var(--brand-600); }
 .float-card .label { font-weight: 600; color: var(--brand-700); font-size: 13px; }
 .float-card .sub { color: var(--ink-400); font-size: 11px; }
 @keyframes floaty {
