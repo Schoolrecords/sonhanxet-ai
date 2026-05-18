@@ -75,6 +75,13 @@
         <div class="context-box" id="ctx-box"></div>
         <div class="stats" id="stats"></div>
         <div class="actions">
+            <div class="style-label">Phong cách câu nhận xét</div>
+            <select id="comment-style" class="style-select" title="Phong cách câu nhận xét — Tự động sẽ chọn vế phù hợp theo Giữa kỳ / Cuối HK1 / Cuối HK2">
+                <option value="auto" selected>Tự động theo kỳ nhận xét</option>
+                <option value="dinhhuong">Có định hướng rèn luyện</option>
+                <option value="ngan">Ngắn gọn (không thêm vế cuối)</option>
+                <option value="cuoinam">Cuối năm (chỉ dùng khi Cuối HK2)</option>
+            </select>
             <button class="btn-primary" id="btn-generate">Tạo nhận xét</button>
         </div>
         <div class="student-list" id="student-list">

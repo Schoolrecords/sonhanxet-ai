@@ -98,6 +98,29 @@
         return m ? parseInt(m[0]) : null;
     }
 
+    /**
+     * V2.3.7: Map style từ dropdown sang style engine theo ky.
+     * - 'auto'    → tự theo ky: ghk* → giuaky, chk1 → cuoihk1, chk2 → cuoinam
+     * - 'cuoinam' (user chọn explicit) khi ky != chk2 → cảnh báo console + downgrade
+     *   theo ky (giuaky/cuoihk1). Tránh suffix "năm học tới" cho Giữa HK2.
+     * - 'dinhhuong' / 'ngan' / 'default' → giữ nguyên.
+     */
+    function resolveCommentStyle(effectiveKy, selectedStyle) {
+        if (!selectedStyle || selectedStyle === 'auto') {
+            if (effectiveKy === 'ghk1' || effectiveKy === 'ghk2') return 'giuaky';
+            if (effectiveKy === 'chk1') return 'cuoihk1';
+            if (effectiveKy === 'chk2') return 'cuoinam';
+            return 'default';
+        }
+        if (selectedStyle === 'cuoinam' && effectiveKy !== 'chk2') {
+            console.warn('[Sidebar V2.3.7] style "cuoinam" chỉ áp dụng cho Cuối HK2 — auto downgrade theo ky', effectiveKy);
+            if (effectiveKy === 'ghk1' || effectiveKy === 'ghk2') return 'giuaky';
+            if (effectiveKy === 'chk1') return 'cuoihk1';
+            return 'default';
+        }
+        return selectedStyle;
+    }
+
     /** BUG-006: Lọc field defs theo grade level. Field có minGrade=N chỉ hiển thị khi grade >= N.
      *  V.01 fix: KHÔNG detect được lớp → MẶC ĐỊNH HIỂN THỊ ĐỦ (an toàn cho lớp 3-5, lớp 1-2
      *  thừa 2 ô Vnedu không có → adapter sẽ skip, không gây lỗi). */
@@ -158,6 +181,19 @@
             console.log('[Sidebar] V2.0 ky data loaded:', Object.keys(kyData.subjects).length, 'môn × 3 kỳ');
         } catch (e) {
             console.warn('[Sidebar] V2.0 ky data load fail (engine vẫn chạy chk2 default):', e);
+        }
+
+        // V2.2: load grade-specific phrases (Toán + TV × lớp 1-5 × chk2 × trend).
+        // Nếu fail engine vẫn chạy với ky-data + flat pool.
+        try {
+            const gUrl = chrome.runtime.getURL('engine/data/nhanxet-grade.json');
+            const gRes = await fetch(gUrl);
+            const gData = await gRes.json();
+            engine.loadGradeData(gData);
+            const subs = Object.keys(gData.subjects).length;
+            console.log('[Sidebar] V2.2 grade data loaded:', subs, 'môn × 5 grade × chk2');
+        } catch (e) {
+            console.warn('[Sidebar] V2.2 grade data load fail (engine vẫn chạy ky-data + flat):', e);
         }
     }
 
@@ -762,7 +798,16 @@
         engine.options.gvLa = settings.gvLa;
 
         try {
-            const result = engine.sinhCaLop(toGenerate, subjectCode, getEffectiveKy());
+            // V2.3.7: dùng resolveCommentStyle để map dropdown → engine style theo ky
+            const styleSelect = document.getElementById('comment-style');
+            const effectiveKy = getEffectiveKy();
+            const selectedStyle = (styleSelect && styleSelect.value) || 'auto';
+            const engineCtx = {
+                gradeLevel: getGradeLevel(currentContext?.lop),
+                kyCode: effectiveKy,
+                style: resolveCommentStyle(effectiveKy, selectedStyle)
+            };
+            const result = engine.sinhCaLop(toGenerate, subjectCode, effectiveKy, engineCtx);
 
             generatedNhanXet.clear();
             for (const r of result) {
@@ -927,8 +972,20 @@
             let attempts = 0;
             let newNx = oldNx;
 
+            // V2.3.7: regenerate dùng cùng resolveCommentStyle để đảm bảo style đúng ky
+            const styleSel = document.getElementById('comment-style');
+            const regenKy = getEffectiveKy();
+            const selectedStyleRegen = (styleSel && styleSel.value) || 'auto';
+            const regenCtx = {
+                gradeLevel: getGradeLevel(currentContext?.lop),
+                kyCode: regenKy,
+                style: resolveCommentStyle(regenKy, selectedStyleRegen)
+            };
             while (newNx === oldNx && attempts < 5) {
-                newNx = engine.sinhNhanXet(hsInput, subjectCode);
+                engine.resetUsedPhrases();
+                // Thêm random salt vào tên để seeded index ra index khác mỗi lần
+                const hsInputWithSalt = { ...hsInput, hoVaTen: hsInput.hoVaTen + '|r' + Date.now() + attempts };
+                newNx = engine.sinhNhanXet(hsInputWithSalt, subjectCode, regenKy, regenCtx);
                 attempts++;
             }
 

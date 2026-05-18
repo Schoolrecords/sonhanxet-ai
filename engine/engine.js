@@ -1,14 +1,257 @@
 /**
- * NhanXetEngine v2.0 - Phiên bản NGẮN GỌN
+ * NhanXetEngine v2.2 — Nâng cấp theo TT27/2020 + CT GDPT 2018
  *
- * Khác với v1:
- *   - KHÔNG còn composition (opener + content + encouragement)
- *   - Mỗi phrase là 1 câu hoàn chỉnh 12-18 từ
- *   - KHÔNG chèn tên HS, chỉ dùng "em"
- *   - Anti-duplication: 1 lớp không lặp lại phrase
+ * Khác v2.0:
+ *   - Pool chia theo grade × ky × tier × trend (Phase 1 ưu tiên Toán + TV chk2)
+ *   - Engine detect trend từ lịch sử điểm 4 kỳ (ghk1/chk1/ghk2/chk2)
+ *   - validateComment với ban-list + check độ dài 16-28 từ
+ *   - Safe fallback theo môn × tier khi mọi phrase fail validate
+ *   - Backward compat: nếu không có grade-data, dùng ky-data, cuối cùng flat pool
  *
- * Bám sát học bạ tiểu học chuẩn TT27/2020
+ * Bám sát học bạ tiểu học chuẩn TT27/2020 + CT GDPT 2018 (TT32/2018).
  */
+
+// V4.0: HARD_BAN giữ nguyên (V2.3.9) — cấm cụm tiêu cực cụ thể.
+const HARD_BAN_WORDS = Object.freeze([
+    'học yếu', 'còn yếu', 'yếu kém', 'yếu môn', 'năng lực yếu',
+    'lười', 'không biết', 'chưa ngoan', 'mất gốc',
+    'rất tệ', 'tệ', 'dốt', 'ngu', 'kinh khủng', 'không có ý thức'
+]);
+
+// V4.0: SOFT_BAN_PHRASES nâng cao — cấm cụm sai giới tính GV trong NHẬN XÉT MÔN HỌC.
+// CHO PHÉP "thầy cô" trong NL/PC (mẫu THDienLien có "lễ phép với thầy cô"),
+// nhưng cấm các cụm chỉ rõ "cô" / "thầy" như chủ thể giảng dạy (sai khi GV nam/nữ).
+const SOFT_BAN_PHRASES_SUBJECT = Object.freeze([
+    'bài cô giao', 'cô giao bài', 'bài cô đã hướng dẫn',
+    'cô giảng', 'cô hướng dẫn', 'cô đặt câu hỏi',
+    'hỏi cô', 'nhờ cô', 'theo cô', 'cùng cô',
+    'của cô', 'gợi ý của cô', 'theo cô gợi ý',
+    'cô bạn', 'cô và bạn'
+]);
+
+// V4.0: SOFT_BAN cho NL/PC — cho phép "thầy cô" nhưng vẫn cấm cụm sai giới tính rõ ràng
+const SOFT_BAN_PHRASES_NLPC = Object.freeze([
+    'bài cô giao', 'cô giảng', 'cô hướng dẫn', 'cô đặt câu hỏi',
+    'hỏi cô', 'nhờ cô riêng'
+]);
+
+// Backward compat — default vẫn dùng phiên bản subject (chặt hơn)
+const SOFT_BAN_PHRASES = SOFT_BAN_PHRASES_SUBJECT;
+
+// V4.0: TEACHER_PRONOUN — bắt "cô"/"thầy" đứng riêng (không kèm "thầy cô")
+// để KHÔNG match "thầy cô" hợp lệ ở NL/PC nhưng vẫn bắt "cô giảng" ở subject.
+// Áp dụng riêng cho subject comment (cho qua ở NLPC).
+const TEACHER_PRONOUN_REGEX = /(?:^|[^a-zA-ZÀ-ỹ0-9])(cô|thầy)(?:\s+(?!cô\b))/i;
+
+// V2.3.9: BỎ VAGUE_PHRASES check (vì pool THDienLien dùng cụm chung là OK)
+const VAGUE_PHRASES = Object.freeze([]);
+
+// V2.3.7: Biểu hiện môn học cụ thể — phrase VAGUE chỉ qua được validate nếu chứa ÍT NHẤT
+// 1 trong các cụm sau (theo môn). Không có biểu hiện cụ thể → câu chung chung, loại.
+const SUBJECT_SIGNALS = Object.freeze({
+    toan: [
+        'số thập phân', 'phân số', 'tỉ số phần trăm', 'tỉ số',
+        'đo lường', 'đo đại lượng', 'đo độ dài', 'đo khối lượng', 'đại lượng',
+        'đơn vị đo', 'đơn vị đại lượng', 'đổi đơn vị',
+        'hình học', 'diện tích', 'thể tích', 'chu vi',
+        'giải toán', 'bài toán', 'lời văn', 'lời giải', 'đáp số',
+        'phân tích đề', 'trình bày bài giải', 'kiểm tra kết quả',
+        'tính toán', 'tính nhẩm', 'tính nhanh', 'tính giá trị biểu thức', 'biểu thức',
+        'phép cộng', 'phép trừ', 'phép nhân', 'phép chia',
+        'cộng trừ', 'nhân chia', 'bảng nhân', 'bảng chia', 'phép tính',
+        'số tự nhiên', 'so sánh số', 'đọc viết số', 'nhận biết số', 'đếm',
+        'nhận biết hình', 'các hình', 'hình vuông', 'hình tròn', 'hình tam giác',
+        'hình bình hành', 'hình thoi', 'hình thang', 'hình hộp', 'hình chữ nhật', 'hình tứ giác',
+        'đường thẳng', 'đường cong', 'đường gấp khúc',
+        'chuyển động', 'biểu đồ', 'đặt phép tính', 'đặt tính',
+        'xem giờ', 'số có hai chữ số', 'số có ba chữ số', 'lớp triệu', 'phạm vi'
+    ],
+    'tieng-viet': [
+        'đọc hiểu', 'đọc trơn', 'đọc thầm', 'đọc lưu loát', 'đọc to', 'đọc tiếng',
+        'đọc âm', 'đọc bài', 'đọc văn bản',
+        'dùng từ', 'đặt câu', 'luyện từ và câu', 'luyện từ',
+        'chính tả', 'viết chữ', 'viết câu', 'viết đoạn', 'viết bài', 'viết đúng',
+        'bài văn', 'đoạn văn', 'bố cục', 'diễn đạt', 'trình bày ý',
+        'nói và nghe', 'kể chuyện', 'kể lại', 'phát âm', 'nghe nói',
+        'vốn từ', 'mở rộng vốn từ', 'từ loại', 'từ đồng nghĩa', 'từ trái nghĩa', 'tiếng và câu',
+        'đại từ', 'quan hệ từ', 'danh từ', 'động từ', 'tính từ',
+        'câu ghép', 'câu kể', 'câu hỏi', 'câu cảm', 'dấu câu',
+        'âm vần', 'phụ âm', 'ngữ pháp', 'thuyết trình', 'tô chữ', 'ghi âm',
+        'văn bản', 'cảm thụ', 'tả cảnh', 'tả người', 'miêu tả', 'câu chuyện',
+        'câu chào hỏi', 'chào hỏi'
+    ]
+});
+
+// V4.0: GIỮ rỗng BEHAVIOR_WORDS — anh user OK phong cách THDienLien dùng
+// "tích cực phát biểu / có năng khiếu / tấm gương".
+const BEHAVIOR_WORDS_WITHOUT_DATA = Object.freeze([]);
+
+// V4.0: REMEDIATION_PHRASES — tier ht/cht BẮT BUỘC có ≥1 cụm rèn luyện.
+const REMEDIATION_PHRASES = Object.freeze([
+    'cần luyện thêm', 'cần rèn thêm', 'cần củng cố',
+    'cần được hỗ trợ', 'cần chú ý', 'cần ôn lại',
+    'nên luyện tập', 'nên rèn', 'nên đọc thêm', 'nên cố gắng',
+    'gia đình phối hợp', 'gia đình cùng', 'hỗ trợ thêm',
+    'cần tiếp tục luyện', 'cần tiếp tục rèn',
+    'hãy luyện', 'hãy rèn', 'hãy ôn', 'hãy đọc', 'hãy cùng',
+    'cần dành thời gian', 'kiên trì', 'cần cố gắng',
+    'cần phát huy thêm', 'cần luyện', 'cần rèn',
+    'phát huy thêm', 'cố gắng thêm'
+]);
+
+// V2.3.9: Giữ guard wrong-ky — đây vẫn là nghiệp vụ đúng (GHK2 không nói "năm học tới")
+const WRONG_KY_PHRASES = Object.freeze({
+    ghk1: ['năm học tới', 'năm sau', 'cuối năm', 'trong hè', 'lớp học tiếp theo', 'học kỳ ii', 'học kỳ 2'],
+    chk1: ['năm học tới', 'năm sau', 'cuối năm', 'trong hè', 'lớp học tiếp theo'],
+    ghk2: ['năm học tới', 'năm sau', 'cuối năm', 'trong hè', 'lớp học tiếp theo', 'sang học kỳ ii'],
+    chk2: []
+});
+
+// Từ chỉ dùng cho tier tot_xs (9-10)
+const TIER_RESTRICTED_WORDS = Object.freeze({
+    tot_xs: [],
+    tot: ['xuất sắc', 'vượt trội', 'sáng tạo vượt trội', 'nâng cao'],
+    ht: ['xuất sắc', 'vượt trội', 'sáng tạo vượt trội', 'nâng cao', 'thành thạo'],
+    cht: ['xuất sắc', 'vượt trội', 'sáng tạo vượt trội', 'nâng cao', 'thành thạo', 'tốt']
+});
+
+// V2.3.7: STYLE_SUFFIX viết lại theo KỲ NHẬN XÉT (không dùng "năm học tới" cho ghk*/chk1)
+//   giuaky    : ghk1, ghk2  — chỉ nhắc "các tuần học tiếp theo"
+//   cuoihk1   : chk1        — chỉ nhắc "học kỳ II"
+//   cuoinam   : chk2        — có thể nhắc "lớp học tiếp theo"
+//   dinhhuong : user chọn   — vế định hướng rèn luyện
+//   ngan/default : không suffix
+const STYLE_SUFFIX = Object.freeze({
+    giuaky: {
+        tot_xs: '',
+        tot: '',
+        ht: ' Em cần luyện tập đều hơn trong các tuần học tiếp theo.',
+        cht: ' Gia đình phối hợp hỗ trợ để em củng cố kiến thức từng bước.'
+    },
+    cuoihk1: {
+        tot_xs: '',
+        tot: '',
+        ht: ' Em cần tiếp tục rèn luyện trong học kỳ II để kết quả vững chắc hơn.',
+        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ hơn trong học kỳ II.'
+    },
+    cuoinam: {
+        tot_xs: '',
+        tot: '',
+        ht: ' Em cần tiếp tục luyện tập để chuẩn bị tốt cho lớp học tiếp theo.',
+        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ từng bước.'
+    },
+    dinhhuong: {
+        tot_xs: ' Em tiếp tục phát huy.',
+        tot: ' Em tiếp tục giữ nề nếp học tập tốt.',
+        ht: ' Em cần luyện tập đều hơn để kết quả vững chắc hơn.',
+        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ từng bước.'
+    },
+    ngan: { tot_xs: '', tot: '', ht: '', cht: '' },
+    default: { tot_xs: '', tot: '', ht: '', cht: '' }
+});
+
+// V2.3: Focus theo môn × lớp cho fallback template (port từ V3.0 ChatGPT, có chỉnh)
+const FOCUS_BY_GRADE = Object.freeze({
+    toan: {
+        1: ['đếm, đọc viết số trong phạm vi 100 và phép cộng trừ không nhớ',
+            'nhận biết hình khối, đo độ dài bằng đơn vị quen thuộc',
+            'giải bài toán đơn giản và trình bày phép tính rõ ràng'],
+        2: ['cộng trừ có nhớ trong phạm vi 1000 và nhân chia bước đầu',
+            'đo đại lượng, tính chu vi hình tứ giác cơ bản',
+            'giải bài toán có lời văn ngắn theo gợi ý'],
+        3: ['nhân chia với số có hai chữ số và tính giá trị biểu thức',
+            'tính chu vi và diện tích hình chữ nhật, hình vuông',
+            'giải bài toán có lời văn nhiều bước trình bày khoa học'],
+        4: ['bốn phép tính với số tự nhiên lớn và phân số bước đầu',
+            'tính diện tích hình bình hành, hình thoi và đổi đơn vị đo',
+            'giải bài toán nhiều bước, trình bày bài rõ ràng'],
+        5: ['phân số, số thập phân và tỉ số phần trăm',
+            'diện tích hình tam giác, hình thang, hình tròn và thể tích hình hộp',
+            'bài toán chuyển động đều và toán tỉ số phần trăm']
+    },
+    'tieng-viet': {
+        1: ['đọc trơn câu ngắn và viết chữ ghi vần quen thuộc',
+            'viết chính tả các từ quen thuộc và nói câu chào hỏi',
+            'nghe nói rõ ý và đọc bài tập đọc đúng yêu cầu'],
+        2: ['đọc lưu loát đoạn văn và viết đoạn 3-4 câu theo chủ đề',
+            'đặt câu đúng ngữ pháp và dùng dấu câu cơ bản',
+            'kể lại câu chuyện ngắn theo chủ đề quen thuộc'],
+        3: ['đọc hiểu đoạn dài và viết đoạn văn 4-5 câu mạch lạc',
+            'mở rộng vốn từ và đặt câu theo các kiểu đã học',
+            'kể chuyện trước lớp và viết chính tả đúng'],
+        4: ['đọc hiểu văn bản và viết bài văn miêu tả theo chủ đề',
+            'phân biệt từ loại danh từ, động từ, tính từ trong câu',
+            'thuyết trình ngắn và viết chính tả phân biệt phụ âm'],
+        5: ['đọc hiểu sâu văn bản và viết bài văn tả cảnh, tả người',
+            'dùng đại từ, quan hệ từ và đặt câu ghép đúng cấu trúc',
+            'trình bày ý kiến trong thảo luận và viết bài rõ bố cục']
+    }
+});
+
+// V2.3: Template fallback — khi pool grade-data cạn nhưng vẫn còn slot trống.
+// Câu ra có placeholder {focus} fill từ FOCUS_BY_GRADE.
+const TEMPLATE_FALLBACK = Object.freeze({
+    tot_xs: {
+        default: [
+            'Em nắm chắc kiến thức ở {focus}, trình bày bài giải khoa học và biết kiểm tra kết quả.',
+            'Em vận dụng linh hoạt {focus}, làm bài chính xác và lập luận chặt chẽ.',
+            'Em hiểu vững {focus}, trình bày bài giải rõ ràng và ít mắc sai sót.'
+        ],
+        tien_bo: [
+            'Em tiến bộ rõ rệt ở {focus}, làm bài ngày càng chắc chắn và mạch lạc hơn.',
+            'Em đã thành thạo {focus}, làm bài chính xác và biết kiểm tra lại kết quả.'
+        ]
+    },
+    tot: {
+        default: [
+            'Em thực hiện thành thạo {focus}, làm bài cẩn thận và hoàn thành đúng yêu cầu.',
+            'Em hiểu bài và làm tốt {focus}, trình bày bài rõ ràng và ít mắc sai sót.',
+            'Em nắm chắc {focus}, biết áp dụng vào bài tập quen thuộc một cách thành thạo.'
+        ],
+        tien_bo: [
+            'Em có nhiều tiến bộ ở {focus}, làm bài ngày càng cẩn thận và chính xác hơn.',
+            'Em tiến bộ rõ ở {focus}, làm bài chắc chắn hơn và đáng được ghi nhận.'
+        ]
+    },
+    ht: {
+        default: [
+            'Em đã thực hiện được {focus} ở mức cơ bản, cần luyện tập đều đặn để vững hơn.',
+            'Em hoàn thành yêu cầu cơ bản ở {focus}, cần phát huy thêm trong thời gian tới.',
+            'Em có cố gắng ở {focus}, cần rèn thêm để trình bày bài chắc chắn hơn.'
+        ],
+        tien_bo: [
+            'Em có tiến bộ ở {focus}, cần tiếp tục luyện tập để kết quả vững chắc hơn.',
+            'Em đã cố gắng hơn ở {focus}, cần duy trì nề nếp học tập và hỏi khi chưa rõ.'
+        ]
+    },
+    cht: {
+        default: [
+            'Em cần củng cố {focus}, học chậm chắc và hỏi lại khi chưa hiểu để vững nền tảng.',
+            'Em đã có cố gắng ở {focus}, cần được hỗ trợ thêm và luyện tập từng bước hằng ngày.',
+            'Em hãy ôn lại {focus} đều đặn mỗi tối để củng cố kiến thức từng bước.'
+        ],
+        can_ho_tro: [
+            'Em cần được hỗ trợ thường xuyên ở {focus}, kiên trì luyện tập mỗi ngày để tiến bộ.',
+            'Em hãy luyện {focus} chậm và chắc, hỏi ngay khi chưa rõ để củng cố kiến thức.'
+        ]
+    }
+});
+
+// Nội dung sai cấp lớp — phrase chứa cụm này KHÔNG được dùng cho gradeLevel trong key
+const GRADE_FORBIDDEN_CONTENT = Object.freeze({
+    1: [], // lớp 1 không cấm gì — đặc thù lớp 1 OK
+    2: ['phân số', 'số thập phân', 'tỉ số phần trăm'],
+    3: ['số thập phân', 'tỉ số phần trăm'],
+    4: ['bảng chữ cái', 'đánh vần', 'ghép vần', 'đếm xuôi đếm ngược'],
+    5: [
+        'bảng chữ cái', 'đánh vần', 'ghép vần',
+        'đếm xuôi đếm ngược', 'đếm xuôi', 'đếm ngược',
+        'bảng cửu chương', 'bảng cộng trừ', 'cộng trừ nhân chia',
+        'di chuyển chuột', 'gõ bàn phím chậm',
+        'thao tác di chuyển chuột', 'nét cơ bản: thẳng, cong'
+        // V2.3.8: bỏ "phép tính cộng trừ" — vì "phép tính cộng trừ với phân số" hợp lệ cho L4-5
+    ]
+});
 
 class NhanXetEngineV2 {
     constructor(options = {}) {
@@ -26,11 +269,8 @@ class NhanXetEngineV2 {
     }
 
     /**
-     * V2.0: Load thêm ky-specific data (Giữa HK1 / Cuối HK1 / Giữa HK2) từ file
+     * V2.0: Load ky-specific data (Giữa HK1 / Cuối HK1 / Giữa HK2) từ
      * nhanxet-ky.json, merge vào this.data.subjects[code][ky].
-     * Pool ky-specific KHÔNG ghi đè flat pool (chk2 default) — sinhNhanXet sẽ
-     * pick theo param ky truyền vào: có ky → dùng pool[ky][tier]; không ky hoặc
-     * ky='chk2' → fallback về flat pool gốc.
      */
     loadKyData(kyData) {
         if (!this.data || !this.data.subjects) {
@@ -47,6 +287,29 @@ class NhanXetEngineV2 {
         return this;
     }
 
+    /**
+     * V2.2: Load grade-specific data từ nhanxet-grade.json.
+     * Cấu trúc gradeData.subjects[code].grades[gradeNum][ky][tier][trend] = [phrase...]
+     * Merge vào this.data.subjects[code].grades — không ghi đè pool flat.
+     */
+    loadGradeData(gradeData) {
+        if (!this.data || !this.data.subjects) {
+            console.warn('[Engine] loadGradeData: chưa loadData() trước, bỏ qua');
+            return this;
+        }
+        if (!gradeData || !gradeData.subjects) return this;
+        for (const [subj, payload] of Object.entries(gradeData.subjects)) {
+            if (!this.data.subjects[subj]) continue;
+            if (!this.data.subjects[subj].grades) {
+                this.data.subjects[subj].grades = {};
+            }
+            for (const [grade, kyMap] of Object.entries(payload.grades || {})) {
+                this.data.subjects[subj].grades[grade] = kyMap;
+            }
+        }
+        return this;
+    }
+
     phanLoaiMuc(diem) {
         if (diem === null || diem === undefined) return 'ht';
         const d = parseFloat(diem);
@@ -55,6 +318,30 @@ class NhanXetEngineV2 {
         if (d >= 7) return 'tot';
         if (d >= 5) return 'ht';
         return 'cht';
+    }
+
+    /**
+     * V2.3.1: Chọn tier cho việc pick phrase.
+     * Quy tắc:
+     *   - Có điểm → dùng phanLoaiMuc(diem) (chi tiết hơn — phân biệt tot_xs vs tot).
+     *     Vnedu chỉ có 3 mức T/H/C cho cột "Xếp loại", không có T+. Nếu trust mucDat
+     *     thì 10đ và 7đ đều ra "T" → pick cùng pool tier `tot` → mất phân biệt.
+     *   - Không có điểm (môn T/H/C: TNXH, ĐĐ, ÂN, MT, GDTC, HĐTN) → dùng mucDat
+     *     normalize về key chuẩn.
+     */
+    _resolveTier(hs) {
+        const d = parseFloat(hs && hs.diem);
+        if (!isNaN(d)) return this.phanLoaiMuc(d);
+        if (hs && hs.mucDat) {
+            const m = String(hs.mucDat).trim().toLowerCase();
+            // Map các biến thể về key chuẩn
+            if (m === 'tot_xs' || m === 't+' || m === 'htt') return 'tot_xs';
+            if (m === 'tot' || m === 't' || m === 'tốt' || m === 'hoan thanh tot') return 'tot';
+            if (m === 'ht' || m === 'h' || m === 'đ' || m === 'd' || m === 'đạt' || m === 'dat' ||
+                m === 'hoan thanh' || m === 'hoàn thành') return 'ht';
+            if (m === 'cht' || m === 'c' || m === 'chua hoan thanh' || m === 'chưa hoàn thành') return 'cht';
+        }
+        return 'ht';
     }
 
     xepLoaiText(mucDo) {
@@ -76,21 +363,60 @@ class NhanXetEngineV2 {
         return Math.floor(Math.random() * max);
     }
 
-    chonNgauNhien(arr) {
+    /**
+     * V2.3: Seeded index — deterministic theo seedText, dùng FNV-1a hash.
+     * Cùng seed + length → cùng index. Đảm bảo cùng HS regenerate ra cùng phrase.
+     * Port từ V3.0 ChatGPT.
+     */
+    _seededIndex(seedText, length, salt = 0) {
+        if (!length) return 0;
+        const s = String(seedText || '') + '|' + salt;
+        let h = 2166136261;
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return Math.abs(h) % length;
+    }
+
+    chonNgauNhien(arr, seed) {
         if (!arr || arr.length === 0) return null;
+        if (seed) return arr[this._seededIndex(seed, arr.length)];
         return arr[this.randInt(arr.length)];
     }
 
-    chonKhongTrungLap(pool) {
+    /**
+     * V2.3: Pick phrase từ pool, ưu tiên seeded (anti-flicker khi regenerate cùng HS),
+     * fallback random nếu seed null. Anti-dup: nếu phrase seeded đã used → walk forward
+     * tìm phrase chưa used.
+     */
+    chonKhongTrungLap(pool, seed) {
         if (!pool || pool.length === 0) return null;
 
-        const available = pool.filter(p => !this.usedPhrases.has(p));
+        if (seed) {
+            // Seeded mode: bắt đầu từ seeded index, walk forward tìm phrase chưa used
+            const startIdx = this._seededIndex(seed, pool.length);
+            for (let offset = 0; offset < pool.length; offset++) {
+                const idx = (startIdx + offset) % pool.length;
+                const phrase = pool[idx];
+                if (!this.usedPhrases.has(phrase)) {
+                    this.usedPhrases.add(phrase);
+                    return phrase;
+                }
+            }
+            // Mọi phrase đã used → reset, lấy đúng seeded index
+            this.usedPhrases.clear();
+            const phrase = pool[startIdx];
+            this.usedPhrases.add(phrase);
+            return phrase;
+        }
 
+        // Random mode (legacy)
+        const available = pool.filter(p => !this.usedPhrases.has(p));
         if (available.length === 0) {
             this.usedPhrases.clear();
             return this.chonNgauNhien(pool);
         }
-
         const phrase = this.chonNgauNhien(available);
         this.usedPhrases.add(phrase);
         return phrase;
@@ -100,7 +426,332 @@ class NhanXetEngineV2 {
         this.usedPhrases.clear();
     }
 
-    sinhNhanXet(hs, subjectCode, ky) {
+    /**
+     * V2.2: detect trend từ lịch sử điểm 4 kỳ.
+     * Input: { ghk1, chk1, ghk2, chk2 } — có thể missing key nào cũng được.
+     * Output: 'tien_bo' | 'on_dinh_tot' | 'on_dinh_dat' | 'giam_sut' | 'chua_on_dinh' | 'can_ho_tro' | 'default'
+     *
+     * Quy tắc:
+     *   - Nếu kỳ hiện tại < 5 → can_ho_tro
+     *   - ≥2 kỳ và tăng đơn điệu ≥1.5đ → tien_bo
+     *   - ≥2 kỳ và giảm đơn điệu ≥1đ → giam_sut
+     *   - Tất cả ≥8 → on_dinh_tot
+     *   - Tất cả ≥5 và <8 → on_dinh_dat
+     *   - Biến động ≥2đ giữa các kỳ → chua_on_dinh
+     *   - Còn lại → default
+     */
+    detectTrend(history, currentDiem) {
+        const cur = parseFloat(currentDiem);
+        if (!isNaN(cur) && cur < 5) return 'can_ho_tro';
+
+        const seq = ['ghk1', 'chk1', 'ghk2', 'chk2']
+            .map(k => history && history[k])
+            .filter(v => v !== null && v !== undefined && !isNaN(parseFloat(v)))
+            .map(v => parseFloat(v));
+
+        // 0 hoặc 1 kỳ trong history → không đủ để xác trend, suy từ điểm hiện tại.
+        if (seq.length < 2) {
+            if (!isNaN(cur) && cur >= 8) return 'on_dinh_tot';
+            if (!isNaN(cur) && cur >= 5) return 'on_dinh_dat';
+            return 'default';
+        }
+
+        // Tăng đơn điệu ≥1.5đ giữa đầu và cuối
+        const first = seq[0];
+        const last = seq[seq.length - 1];
+        const allInc = seq.every((v, i) => i === 0 || v >= seq[i - 1] - 0.1);
+        const allDec = seq.every((v, i) => i === 0 || v <= seq[i - 1] + 0.1);
+
+        if (allInc && (last - first) >= 1.5) return 'tien_bo';
+        if (allDec && (first - last) >= 1) return 'giam_sut';
+
+        const maxDelta = Math.max(...seq) - Math.min(...seq);
+        if (maxDelta >= 2 && !allInc && !allDec) return 'chua_on_dinh';
+
+        const minScore = Math.min(...seq);
+        const maxScore = Math.max(...seq);
+        if (minScore >= 8) return 'on_dinh_tot';
+        if (minScore >= 5 && maxScore < 8) return 'on_dinh_dat';
+        return 'default';
+    }
+
+    /**
+     * V2.2: Pool lookup chain.
+     * Priority:
+     *   1. subject.grades[grade][ky][tier][trend]
+     *   2. subject.grades[grade][ky][tier].default
+     *   3. subject.grades[grade][ky][tier] (array trực tiếp — chấp nhận structure cũ)
+     *   4. subject[ky][tier]   (ky-data)
+     *   5. subject[tier]        (flat pool — backward compat)
+     */
+    /**
+     * V2.3.9: Pool lookup chain mới — phù hợp ngân hàng THDienLien (chung mọi lớp/kỳ).
+     * Priority:
+     *   1. subject.grades[grade][ky][tier][trend]
+     *   2. subject.grades[grade][ky][tier].default
+     *   3. subject.grades['all']['all_ky'][tier].default  ← THDienLien style (V2.3.9)
+     *   4. subject.grades['all']['all_ky'][tier][trend]
+     *   5. subject[ky][tier]  (ky-data)
+     *   6. subject[tier]       (flat pool)
+     */
+    _resolvePool(subject, ky, tier, grade, trend, subjectCode) {
+        if (!subject) return [];
+
+        // 1-2. Grade-specific theo lớp (nếu có data riêng cho lớp đó)
+        if (grade && subject.grades && subject.grades[grade]) {
+            const gNode = subject.grades[grade];
+            const kyKey = ky || 'chk2';
+            if (gNode[kyKey] && gNode[kyKey][tier]) {
+                const tierNode = gNode[kyKey][tier];
+                if (Array.isArray(tierNode)) return tierNode;
+                if (trend && Array.isArray(tierNode[trend]) && tierNode[trend].length > 0) {
+                    return tierNode[trend];
+                }
+                if (Array.isArray(tierNode.default) && tierNode.default.length > 0) {
+                    return tierNode.default;
+                }
+            }
+        }
+
+        // 3-4. V2.3.9: 'all' / 'all_ky' (THDienLien style — chung mọi lớp/kỳ)
+        if (subject.grades && subject.grades['all'] && subject.grades['all']['all_ky']) {
+            const allNode = subject.grades['all']['all_ky'];
+            if (allNode[tier]) {
+                const tierNode = allNode[tier];
+                if (Array.isArray(tierNode)) return tierNode;
+                if (trend && Array.isArray(tierNode[trend]) && tierNode[trend].length > 0) {
+                    return tierNode[trend];
+                }
+                if (Array.isArray(tierNode.default) && tierNode.default.length > 0) {
+                    return tierNode.default;
+                }
+            }
+        }
+
+        // 5-6. Fallback ky-data → flat (cho data cũ legacy)
+        const isChk2 = !ky || ky === 'chk2';
+        if (!isChk2 && subject[ky] && subject[ky][tier]) {
+            return subject[ky][tier];
+        }
+        if (!isChk2 && subject[ky] && subject[ky].ht) {
+            return subject[ky].ht;
+        }
+        return subject[tier] || subject.ht || [];
+    }
+
+    /**
+     * V2.3.8: Kiểm chất lượng 1 phrase trong context cụ thể.
+     * Trả { ok: true } hoặc { ok: false, reason }.
+     *
+     * Khác V2.3.7:
+     *   - Toán/TV BẮT BUỘC có SUBJECT_SIGNAL (không chỉ khi có VAGUE)
+     *   - Tier ht/cht BẮT BUỘC có REMEDIATION_PHRASE
+     *   - Word-boundary cho "cô"/"thầy" (không match "công nghệ")
+     *   - !ctx.hasHistory → reject "tiến bộ rõ rệt" / "giảm sút" / "chưa ổn định"
+     */
+    /**
+     * V2.3.9: Validate đơn giản theo phong cách THDienLien:
+     * - Bắt đầu "Em" hoặc "Biết" / "Hoàn thành" / "Thuộc" (động từ kĩ năng — câu mẫu có)
+     * - Cấm cụm tiêu cực rõ ràng (học yếu/lười/dốt/...)
+     * - Cấm "bài cô giao" cụ thể
+     * - Wrong-ky guard giữ nguyên
+     * - Tier word restriction (không "xuất sắc" cho tier <T+)
+     * - Grade forbidden (không "bảng chữ cái" cho lớp ≥4)
+     * - Độ dài 7-35 từ (cho phép câu ngắn)
+     * KHÔNG còn: subject signal bắt buộc, behavior ban, remediation bắt buộc, teacher pronoun
+     */
+    /**
+     * V4.0: Validate phong cách THDienLien + áp dụng quy tắc context-aware.
+     * ctx.context: 'subject' (default) | 'nlpc' — quyết định soft-ban dùng phiên bản nào.
+     */
+    validateComment(comment, ctx = {}) {
+        if (!comment || typeof comment !== 'string') {
+            return { ok: false, reason: 'empty' };
+        }
+        const trimmed = comment.trim();
+        const lower = trimmed.toLowerCase();
+        const isNlpc = ctx.context === 'nlpc';
+
+        // Câu phải bắt đầu bằng "Em" hoặc động từ phổ biến của GV
+        if (!/^(em|biết|hoàn thành|thuộc|thành thạo|đạt)\b/i.test(trimmed)) {
+            return { ok: false, reason: 'bad_start' };
+        }
+
+        // Hard ban (mọi context)
+        for (const w of HARD_BAN_WORDS) {
+            if (lower.includes(w)) return { ok: false, reason: `hard_ban:${w}` };
+        }
+
+        // V4.0: Soft ban context-aware — subject chặt hơn NL/PC
+        const banList = isNlpc ? SOFT_BAN_PHRASES_NLPC : SOFT_BAN_PHRASES_SUBJECT;
+        for (const p of banList) {
+            if (lower.includes(p)) return { ok: false, reason: `soft_ban:${p}` };
+        }
+
+        // V4.0: Wrong-ky guard
+        const ky = ctx.kyCode || ctx.ky;
+        if (ky && WRONG_KY_PHRASES[ky]) {
+            for (const w of WRONG_KY_PHRASES[ky]) {
+                if (lower.includes(w)) return { ok: false, reason: `wrong_ky:${ky}:${w}` };
+            }
+        }
+
+        // Tier word restriction
+        if (ctx.tier && TIER_RESTRICTED_WORDS[ctx.tier]) {
+            for (const w of TIER_RESTRICTED_WORDS[ctx.tier]) {
+                if (lower.includes(w)) return { ok: false, reason: `tier_word:${w}` };
+            }
+        }
+
+        // Grade forbidden content
+        if (ctx.gradeLevel && GRADE_FORBIDDEN_CONTENT[ctx.gradeLevel]) {
+            for (const w of GRADE_FORBIDDEN_CONTENT[ctx.gradeLevel]) {
+                if (lower.includes(w)) return { ok: false, reason: `grade_forbidden:${w}` };
+            }
+        }
+
+        // V4.0: Tier ht/cht BẮT BUỘC có cụm rèn luyện
+        if (ctx.tier === 'ht' || ctx.tier === 'cht') {
+            const hasReme = REMEDIATION_PHRASES.some(r => lower.includes(r));
+            if (!hasReme) return { ok: false, reason: 'no_remediation' };
+        }
+
+        // Độ dài 7-35 từ
+        const wordCount = trimmed.split(/\s+/).length;
+        if (wordCount < 7) return { ok: false, reason: 'too_short' };
+        if (wordCount > 40) return { ok: false, reason: 'too_long' };
+
+        return { ok: true };
+    }
+
+    /**
+     * V2.3: Template-focus fallback layer — port từ V3.0 ChatGPT.
+     * Khi pool grade-data cạn nhưng còn TEMPLATE_FALLBACK + FOCUS_BY_GRADE → fill template.
+     * Trả null nếu không có data tương ứng (để layer ngoài fallback xuống _safeFallback).
+     */
+    _tryTemplateFocus(subjectCode, tier, gradeLevel, trend, seed) {
+        const focusBranch = FOCUS_BY_GRADE[subjectCode];
+        if (!focusBranch) return null;
+        const focusPool = focusBranch[gradeLevel] || focusBranch[5] || Object.values(focusBranch)[0];
+        if (!focusPool || focusPool.length === 0) return null;
+
+        const tmplBranch = TEMPLATE_FALLBACK[tier];
+        if (!tmplBranch) return null;
+        // Ưu tiên trend-specific template, fallback default
+        let tmplPool = tmplBranch[trend] && tmplBranch[trend].length > 0
+            ? tmplBranch[trend]
+            : tmplBranch.default;
+        if (!tmplPool || tmplPool.length === 0) return null;
+
+        const focus = focusPool[this._seededIndex(seed, focusPool.length, 1)];
+        const tmpl = tmplPool[this._seededIndex(seed, tmplPool.length, 2)];
+        return tmpl.replace('{focus}', focus);
+    }
+
+    /**
+     * V2.3.7: Safe fallback theo tier × subject — câu trung tính an toàn, KHÔNG có
+     * "thầy cô và gia đình" / "tấm gương". Bám kỹ năng môn học cụ thể (Toán/TV).
+     * Cho môn khác (TNXH/ĐĐ/...) dùng câu chung trung tính.
+     */
+    _safeFallback(subjectCode, tier, gradeLevel) {
+        if (subjectCode === 'toan') {
+            return {
+                tot_xs: 'Em nắm chắc kiến thức môn Toán, tính toán chính xác và trình bày bài giải khoa học.',
+                tot: 'Em hoàn thành tốt yêu cầu môn Toán, biết vận dụng kiến thức vào bài tập quen thuộc.',
+                ht: 'Em hoàn thành yêu cầu cơ bản môn Toán, cần luyện thêm kĩ năng phân tích đề và kiểm tra kết quả.',
+                cht: 'Em cần được hỗ trợ thêm về kiến thức Toán cơ bản, luyện tính toán và trình bày bài từng bước.'
+            }[tier] || 'Em hoàn thành yêu cầu cơ bản môn Toán, cần luyện thêm kĩ năng phân tích đề và trình bày bài.';
+        }
+        if (subjectCode === 'tieng-viet') {
+            return {
+                tot_xs: 'Em đọc hiểu tốt văn bản, dùng từ phù hợp, viết bài rõ bố cục và diễn đạt mạch lạc.',
+                tot: 'Em hoàn thành tốt yêu cầu môn Tiếng Việt, đọc hiểu khá chắc và viết bài tương đối rõ.',
+                ht: 'Em hoàn thành yêu cầu cơ bản môn Tiếng Việt, cần luyện thêm đọc hiểu, dùng từ và viết câu rõ ý.',
+                cht: 'Em cần được hỗ trợ thêm về đọc hiểu, chính tả và viết câu; nên luyện đọc và viết đều đặn.'
+            }[tier] || 'Em hoàn thành yêu cầu cơ bản môn Tiếng Việt, cần luyện thêm đọc hiểu và viết câu rõ ý.';
+        }
+        // Môn khác — trung tính, KHÔNG có "thầy cô/cô giáo"
+        const subjName = (this.data && this.data.subjects[subjectCode] && this.data.subjects[subjectCode].name) || 'môn học';
+        return {
+            tot_xs: `Em hoàn thành rất tốt yêu cầu môn ${subjName}, có nhiều biểu hiện học tập tích cực và đáng ghi nhận.`,
+            tot: `Em hoàn thành tốt yêu cầu môn ${subjName}, đạt kết quả khá đều đặn trong cả kỳ học.`,
+            ht: `Em đã hoàn thành yêu cầu cơ bản môn ${subjName}, cần phát huy thêm trong thời gian tới.`,
+            cht: `Em cần được hỗ trợ thêm về môn ${subjName} để củng cố kiến thức cơ bản từng bước.`
+        }[tier] || `Em đã hoàn thành yêu cầu cơ bản môn ${subjName}, cần phát huy thêm trong thời gian tới.`;
+    }
+
+    /**
+     * V2.3.7: Sinh câu theo môn × lớp × tier × kỳ — fallback layer trên safe-fallback.
+     * Dùng khi pool grade-data cạn nhưng cần ra câu bám đặc thù lớp + tier.
+     * Câu trả ra ngắn gọn, không có vế suffix (suffix do _applyStyleSuffix thêm sau).
+     */
+    _tryGradeSubjectTemplate(subjectCode, tier, gradeLevel, ky, seed) {
+        const focusBranch = FOCUS_BY_GRADE[subjectCode];
+        if (!focusBranch) return null;
+        const focusPool = focusBranch[gradeLevel] || focusBranch[5] || Object.values(focusBranch)[0];
+        if (!focusPool || focusPool.length === 0) return null;
+
+        const focus = focusPool[this._seededIndex(seed, focusPool.length, 11)];
+
+        const templates = {
+            toan: {
+                tot_xs: `Em nắm chắc kiến thức ở ${focus}, làm bài chính xác và trình bày bài giải khoa học.`,
+                tot: `Em hoàn thành tốt nội dung ${focus}, làm bài cẩn thận và biết vận dụng vào bài tập quen thuộc.`,
+                ht: `Em đã thực hiện được nội dung ${focus} ở mức cơ bản, cần luyện thêm kĩ năng phân tích đề và kiểm tra kết quả.`,
+                cht: `Em cần được hỗ trợ thêm về ${focus}, luyện tính toán và trình bày bài giải từng bước.`
+            },
+            'tieng-viet': {
+                tot_xs: `Em vững kiến thức ở ${focus}, dùng từ phù hợp và diễn đạt rõ ý trong bài viết.`,
+                tot: `Em hoàn thành tốt nội dung ${focus}, viết câu rõ ý và trình bày bài tương đối rõ ràng.`,
+                ht: `Em đã thực hiện được nội dung ${focus} ở mức cơ bản, cần luyện thêm dùng từ và viết câu rõ ý.`,
+                cht: `Em cần được hỗ trợ thêm về ${focus}, luyện đọc và viết câu từng bước đều đặn.`
+            }
+        };
+        return (templates[subjectCode] && templates[subjectCode][tier]) || null;
+    }
+
+    /**
+     * V2.3.8: Apply style suffix vào cuối phrase.
+     * - Nếu !ky → coi là 'default' (KHÔNG coi là chk2 như V2.3.7)
+     * - Nếu style='cuoinam' nhưng ky != chk2 → downgrade theo ky (giuaky/cuoihk1/default)
+     */
+    _applyStyleSuffix(phrase, tier, style, ky) {
+        if (!phrase || !style) return phrase;
+        let effectiveStyle = style;
+        if (style === 'cuoinam' && ky && ky !== 'chk2') {
+            if (ky === 'ghk1' || ky === 'ghk2') effectiveStyle = 'giuaky';
+            else if (ky === 'chk1') effectiveStyle = 'cuoihk1';
+            else effectiveStyle = 'default';
+        }
+        if (style === 'cuoinam' && !ky) {
+            effectiveStyle = 'default';  // !ky không coi là chk2
+        }
+        const branch = STYLE_SUFFIX[effectiveStyle] || STYLE_SUFFIX.default;
+        const suffix = branch[tier] || '';
+        if (!suffix) return phrase;
+        return phrase.replace(/[.\s]+$/, '') + '.' + suffix;
+    }
+
+    /**
+     * V2.3.8: Resolve style theo ky chính thức. Caller phải dùng helper này hoặc
+     * tự suy. Engine còn check thêm trong _applyStyleSuffix.
+     */
+    resolveStyleByKy(ky, selectedStyle) {
+        if (!selectedStyle || selectedStyle === 'auto') {
+            if (ky === 'ghk1' || ky === 'ghk2') return 'giuaky';
+            if (ky === 'chk1') return 'cuoihk1';
+            if (ky === 'chk2') return 'cuoinam';
+            return 'default';
+        }
+        if (selectedStyle === 'cuoinam' && ky && ky !== 'chk2') {
+            if (ky === 'ghk1' || ky === 'ghk2') return 'giuaky';
+            if (ky === 'chk1') return 'cuoihk1';
+            return 'default';
+        }
+        return selectedStyle;
+    }
+
+    sinhNhanXet(hs, subjectCode, ky, ctx = {}) {
         if (!this.data || !this.data.subjects) {
             return 'Em chăm chỉ học tập và có nhiều tiến bộ trong học kì này.';
         }
@@ -110,24 +761,86 @@ class NhanXetEngineV2 {
             return 'Em chăm chỉ học tập và có nhiều tiến bộ trong học kì này.';
         }
 
-        // Ưu tiên mucDat (mức chữ T/H/C cho môn không có điểm — TNXH, ĐĐ, MT...)
-        // Sau đó mới phân loại từ điểm số.
-        const mucDo = hs.mucDat || this.phanLoaiMuc(hs.diem);
+        // V2.3.1: ưu tiên DIEM nếu có (chi tiết tot_xs/tot/ht/cht), fallback mucDat khi
+        // không có điểm. Lý do: Vnedu chỉ có 3 mức T/H/C — nếu trust mucDat, 10đ và 7đ
+        // đều ra "T" → pick cùng tier `tot`, mất phân biệt nổi trội cho HS điểm 9-10.
+        const mucDo = this._resolveTier(hs);
 
-        // V2.0: pick pool theo ky nếu có; fallback flat pool (chk2 mặc định).
-        // ky hợp lệ: 'ghk1' | 'chk1' | 'ghk2' | 'chk2'. ky='chk2' hoặc null → dùng pool flat.
-        let pool;
-        if (ky && ky !== 'chk2' && subject[ky] && subject[ky][mucDo]) {
-            pool = subject[ky][mucDo];
-        } else if (ky && ky !== 'chk2' && subject[ky] && subject[ky].ht) {
-            pool = subject[ky].ht;
-        } else {
-            pool = subject[mucDo] || subject.ht || [];
+        // V2.2: detect trend & grade context
+        const gradeLevel = ctx.gradeLevel || hs.gradeLevel || null;
+        const history = hs.diemHistory || ctx.diemHistory || null;
+        const trend = ctx.trend || (history ? this.detectTrend(history, hs.diem) : 'default');
+
+        // V2.3: seed deterministic theo HS → cùng HS regenerate ra cùng phrase
+        const seed = `${hs.hoVaTen || hs.stt || ''}|${subjectCode}|${gradeLevel || 0}|${mucDo}|${ky || 'chk2'}`;
+
+        // V2.3.7: style — chấp nhận giuaky/cuoihk1/cuoinam/dinhhuong/ngan/default từ caller.
+        // Nếu caller không truyền, tự suy theo ky: ghk* → giuaky, chk1 → cuoihk1, chk2 → cuoinam
+        const autoStyle = (() => {
+            if (ky === 'ghk1' || ky === 'ghk2') return 'giuaky';
+            if (ky === 'chk1') return 'cuoihk1';
+            if (!ky || ky === 'chk2') return 'cuoinam';
+            return 'default';
+        })();
+        const style = ctx.style || this.options.style || autoStyle;
+
+        const pool = this._resolvePool(subject, ky, mucDo, gradeLevel, trend, subjectCode);
+
+        // V2.3.7: validate ctx — kèm kyCode để check sai kỳ
+        const validateCtx = {
+            tier: mucDo, gradeLevel, subjectCode, ky,
+            kyCode: ky,
+            hasObservation: !!ctx.hasObservation
+        };
+
+        // V2.3.7: candidate-and-validate flow — pick candidate → apply suffix → validate
+        // câu CUỐI cùng. Nếu fail → pick candidate khác (tối đa 10 lần).
+        let phrase = null;
+        const tryValidate = (raw) => {
+            if (!raw) return null;
+            const withSuffix = this._applyStyleSuffix(raw, mucDo, style, ky);
+            const v = this.validateComment(withSuffix, validateCtx);
+            return v.ok ? withSuffix : null;
+        };
+
+        for (let attempt = 0; attempt < 10; attempt++) {
+            const candidate = this.chonKhongTrungLap(pool, seed ? seed + '|' + attempt : null);
+            if (!candidate) break;
+            const result = tryValidate(candidate);
+            if (result) { phrase = result; break; }
         }
 
-        const phrase = this.chonKhongTrungLap(pool);
+        // Pool grade-data cạn / fail toàn bộ → thử _tryGradeSubjectTemplate
+        if (!phrase) {
+            const tmpl = this._tryGradeSubjectTemplate(subjectCode, mucDo, gradeLevel, ky, seed);
+            const result = tryValidate(tmpl);
+            if (result) phrase = result;
+        }
 
-        return this.applyGvPersona(phrase) || 'Em chăm chỉ học tập và có nhiều tiến bộ.';
+        // Tiếp theo: TEMPLATE_FALLBACK với {focus}
+        if (!phrase) {
+            const tmpl = this._tryTemplateFocus(subjectCode, mucDo, gradeLevel, trend, seed);
+            const result = tryValidate(tmpl);
+            if (result) phrase = result;
+        }
+
+        // Cuối cùng: safe fallback hardcode (đã có sẵn cho 4 tier × Toán/TV/khác)
+        if (!phrase) {
+            const safe = this._safeFallback(subjectCode, mucDo, gradeLevel);
+            // Safe fallback luôn validate được (đã design an toàn) → apply suffix
+            phrase = this._applyStyleSuffix(safe, mucDo, style, ky);
+        }
+
+        // V4.0: Apply persona + sanitize lần cuối (bắt edge case persona swap "cô↔thầy"
+        // làm câu vi phạm soft ban). Nếu fail sau persona → quay lại safe fallback.
+        const afterPersona = this.applyGvPersona(phrase);
+        const finalCheck = this.validateComment(afterPersona, validateCtx);
+        if (!finalCheck.ok) {
+            // Persona làm hỏng câu → dùng safe fallback (không qua persona)
+            const safe = this._safeFallback(subjectCode, mucDo, gradeLevel);
+            return this._applyStyleSuffix(safe, mucDo, style, ky);
+        }
+        return afterPersona;
     }
 
     applyGvPersona(text) {
@@ -157,13 +870,13 @@ class NhanXetEngineV2 {
         return result.join('');
     }
 
-    sinhCaLop(danhSachHS, subjectCode, ky) {
+    sinhCaLop(danhSachHS, subjectCode, ky, ctx = {}) {
         this.resetUsedPhrases();
 
         return danhSachHS.map(hs => {
-            const nhanXet = this.sinhNhanXet(hs, subjectCode, ky);
-            // Ưu tiên mucDat (môn không điểm) trước phân loại theo điểm
-            const mucDo = hs.mucDat || this.phanLoaiMuc(hs.diem);
+            const nhanXet = this.sinhNhanXet(hs, subjectCode, ky, ctx);
+            // V2.3.1: dùng cùng logic _resolveTier như sinhNhanXet (ưu tiên điểm hơn mucDat)
+            const mucDo = this._resolveTier(hs);
 
             return {
                 stt: hs.stt,

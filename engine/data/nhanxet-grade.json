@@ -1,0 +1,540 @@
+{
+  "meta": {
+    "version": "2.3.10",
+    "source": "Port + phân hoá từ ngân hàng THDienLien — tier tot_xs (9-10đ) ngôn ngữ MẠNH hơn tier tot (7-8đ).",
+    "framework": "TT27/2020",
+    "tier_map": {
+      "tot_xs": "Điểm 9-10 — phrase nhấn 'rất tốt / xuất sắc / sáng tạo / nhanh nhẹn / vượt mức'",
+      "tot": "Điểm 7-8 — phrase nhấn 'tốt / khá tốt / chính xác / chăm chỉ'",
+      "ht": "Điểm 5-6 — 'cần luyện thêm / cần rèn / có cố gắng'",
+      "cht": "Điểm <5 — 'cần được hỗ trợ / gia đình phối hợp'"
+    },
+    "style_note": "Phong cách GV thật TT27, NGẮN 10-25 từ, TRUNG TÍNH (không bám bộ sách). Tot_xs PHẢI khác tot."
+  },
+  "subjects": {
+    "toan": {
+      "name": "Toán",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em có năng khiếu môn Toán, tính toán nhanh nhẹn và chính xác.",
+                "Em nắm vững kiến thức môn Toán, vận dụng linh hoạt vào giải toán.",
+                "Em học tập rất tốt môn Toán, hoàn thành xuất sắc các bài kiểm tra.",
+                "Em có tư duy logic rất tốt, giải toán nhanh, chính xác và sáng tạo.",
+                "Em hiểu bài rất tốt, tính toán nhanh và trình bày bài giải mạch lạc.",
+                "Em làm bài cẩn thận, kết quả chính xác cao và biết kiểm tra lại bài.",
+                "Em tích cực giơ tay phát biểu, tính toán nhanh và lập luận chặt chẽ.",
+                "Em nắm chắc kỹ năng làm toán, làm bài đạt kết quả cao trong các bài kiểm tra."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em hoàn thành tốt yêu cầu môn Toán, tính toán đúng và trình bày bài rõ ràng.",
+                "Em nắm chắc kiến thức môn Toán, biết vận dụng vào bài tập quen thuộc.",
+                "Em có ý thức học tập tốt môn Toán, làm bài đầy đủ và đúng yêu cầu.",
+                "Em hiểu bài, tính toán chính xác và làm bài cẩn thận.",
+                "Em chăm chỉ học tập môn Toán, hoàn thành tốt các bài kiểm tra.",
+                "Em tích cực trong học tập, làm bài đúng yêu cầu và trình bày khá rõ ràng.",
+                "Em làm được các yêu cầu của bài toán, biết kiểm tra lại kết quả.",
+                "Em nắm được kiến thức môn Toán, vận dụng tốt vào bài tập."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em hoàn thành kiến thức môn Toán, cần rèn thêm kỹ năng tính toán.",
+                "Em nắm được kiến thức cơ bản, cần cố gắng thêm trong giải toán.",
+                "Em hoàn thành các yêu cầu môn Toán, cần luyện thêm để tính toán nhanh hơn.",
+                "Em làm được bài cơ bản, cần rèn thêm cách trình bày bài giải.",
+                "Em đã có cố gắng, cần luyện thêm tính toán và giải toán có lời văn.",
+                "Em đạt yêu cầu môn Toán, cần phát huy thêm trong thời gian tới."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn trong học tập môn Toán, gia đình phối hợp hỗ trợ thêm.",
+                "Em chưa hoàn thành yêu cầu môn Toán, cần được hỗ trợ và luyện tập thêm.",
+                "Em cần luyện tập từng bước môn Toán, gia đình cùng đồng hành để em tiến bộ.",
+                "Em cần củng cố kiến thức cơ bản môn Toán, kiên trì luyện tập hằng ngày."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "tieng-viet": {
+      "name": "Tiếng Việt",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em đọc lưu loát và diễn cảm, viết chữ đẹp, trình bày bài sạch sẽ.",
+                "Em có vốn từ phong phú, diễn đạt mạch lạc, viết văn rất hay.",
+                "Em đọc hiểu bài rất tốt, viết đúng chính tả và viết câu giàu ý.",
+                "Em nắm vững kiến thức Tiếng Việt, đọc viết thành thạo và viết bài sáng tạo.",
+                "Em có kỹ năng nghe nói rất tốt, mạnh dạn và tự tin trong giao tiếp.",
+                "Em học bài rất chăm chỉ, tích cực phát biểu và viết bài đầy đủ ý.",
+                "Em viết bài rõ ý, dùng từ hay và trình bày bài cẩn thận.",
+                "Em đọc bài tốt, hiểu nội dung sâu và trả lời câu hỏi đầy đủ, chính xác."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em đọc lưu loát, viết chữ đẹp, trình bày sạch sẽ.",
+                "Em học bài chăm chỉ, tích cực phát biểu ý kiến xây dựng bài.",
+                "Em đọc bài tốt, viết đúng chính tả và diễn đạt rõ ý.",
+                "Em có vốn từ khá phong phú, đặt câu đúng ngữ pháp.",
+                "Em hoàn thành tốt yêu cầu môn Tiếng Việt, viết bài tương đối rõ ý.",
+                "Em đọc hiểu được bài, viết câu đúng và trình bày sạch.",
+                "Em nắm chắc kiến thức Tiếng Việt, làm bài đúng yêu cầu.",
+                "Em viết câu rõ ý, dùng từ phù hợp với chủ đề."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em đọc được bài, cần rèn thêm kỹ năng viết và trình bày.",
+                "Em hoàn thành bài tập, cần chú ý hơn về chính tả và diễn đạt.",
+                "Em đã đọc được bài, cần luyện thêm viết câu rõ ý hơn.",
+                "Em hoàn thành các yêu cầu cơ bản, cần rèn thêm cách dùng từ và đặt câu.",
+                "Em có cố gắng trong học Tiếng Việt, cần luyện thêm đọc hiểu và viết bài.",
+                "Em đạt yêu cầu môn Tiếng Việt, cần phát huy thêm trong thời gian tới."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn trong học tập môn Tiếng Việt, gia đình phối hợp hỗ trợ thêm.",
+                "Em chưa hoàn thành yêu cầu, cần được hỗ trợ luyện đọc và viết.",
+                "Em cần luyện đọc và viết từng bước, gia đình cùng đồng hành để em tiến bộ.",
+                "Em cần củng cố kĩ năng đọc viết cơ bản, kiên trì luyện tập hằng ngày."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "tieng-anh": {
+      "name": "Tiếng Anh",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em hoàn thành rất tốt môn học, kỹ năng nói tự tin và vốn từ vựng rộng.",
+                "Em phát âm chuẩn, mạnh dạn và linh hoạt trong giao tiếp bằng tiếng Anh.",
+                "Em nắm vững từ vựng và ngữ pháp, đọc hiểu sâu các đoạn văn ngắn.",
+                "Em có năng khiếu ngoại ngữ, học bài rất nhanh và tự tin sử dụng tiếng Anh.",
+                "Em yêu thích môn Tiếng Anh, ghi nhớ từ vựng nhanh và phát âm chính xác."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em hoàn thành tốt yêu cầu môn học, kỹ năng nói khá tốt.",
+                "Em phát âm tương đối chuẩn, biết giao tiếp bằng tiếng Anh.",
+                "Em nắm được từ vựng và ngữ pháp cơ bản, đọc hiểu khá tốt.",
+                "Em học bài chăm chỉ, ghi nhớ từ vựng tốt.",
+                "Em hoàn thành tốt các yêu cầu môn học, biết áp dụng vào giao tiếp."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em hoàn thành kiến thức cơ bản môn tiếng Anh, cần rèn thêm kỹ năng nghe nói.",
+                "Em nắm được từ vựng cơ bản, cần cố gắng thêm.",
+                "Em đạt yêu cầu môn học, cần luyện thêm phát âm và giao tiếp.",
+                "Em có cố gắng, cần rèn thêm kỹ năng nghe và nói tiếng Anh."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm.",
+                "Em chưa hoàn thành yêu cầu, cần được hỗ trợ luyện nghe và nói.",
+                "Em cần luyện từ vựng và phát âm từng bước, kiên trì luyện tập."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "tnxh": {
+      "name": "Tự nhiên và Xã hội",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em nắm vững kiến thức TN&XH, biết liên hệ thực tế rất tốt.",
+                "Em rất tích cực tìm hiểu thế giới xung quanh, có nhiều câu trả lời sáng tạo.",
+                "Em quan sát tinh tế, hiểu biết phong phú và giải thích hiện tượng tốt.",
+                "Em hoàn thành rất tốt các nhiệm vụ học tập, có tinh thần ham học hỏi."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em nắm được kiến thức về tự nhiên và xã hội, biết liên hệ thực tế.",
+                "Em tích cực tìm hiểu về thế giới xung quanh.",
+                "Em hoàn thành tốt các nhiệm vụ học tập môn TN&XH.",
+                "Em hiểu biết khá tốt về tự nhiên và xã hội xung quanh."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em nắm được kiến thức cơ bản về tự nhiên và xã hội.",
+                "Em hoàn thành các bài học về TN&XH.",
+                "Em đạt yêu cầu môn học, cần phát huy thêm tinh thần khám phá."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm.",
+                "Em chưa hoàn thành yêu cầu, cần được hỗ trợ tìm hiểu thêm về tự nhiên và xã hội."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "khoahoc": {
+      "name": "Khoa học",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em nắm rất chắc kiến thức khoa học, có tư duy quan sát và lập luận tốt.",
+                "Em rất tích cực tìm hiểu, khám phá và vận dụng kiến thức khoa học sâu sắc.",
+                "Em yêu thích khoa học, ham học hỏi và có nhiều câu hỏi rất hay trong giờ học.",
+                "Em có tư duy khoa học sắc bén, biết quan sát và liên hệ thực tế nhanh nhẹn."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em học tập tốt, nắm được kiến thức khoa học.",
+                "Em tích cực tìm hiểu, biết vận dụng kiến thức khoa học vào thực tế.",
+                "Em hoàn thành tốt các yêu cầu môn Khoa học.",
+                "Em quan sát tốt, biết liên hệ kiến thức với cuộc sống."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em nắm được kiến thức khoa học cơ bản.",
+                "Em hoàn thành bài học môn Khoa học.",
+                "Em đạt yêu cầu môn học, cần phát huy thêm tinh thần tìm tòi."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn Khoa học.",
+                "Em chưa hoàn thành yêu cầu, cần được hỗ trợ tìm hiểu thêm kiến thức khoa học."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "lichsudia": {
+      "name": "Lịch sử và Địa lí",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em nắm rất chắc kiến thức lịch sử, địa lí và liên hệ thực tế tốt.",
+                "Em hiểu biết sâu về sự kiện lịch sử và đặc điểm địa lí Việt Nam.",
+                "Em rất tích cực tìm hiểu lịch sử dân tộc, ghi nhớ chính xác các mốc thời gian.",
+                "Em yêu thích lịch sử, kể chuyện lịch sử sinh động và lôi cuốn."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em nắm được kiến thức về lịch sử, địa lí.",
+                "Em hiểu biết khá tốt về các sự kiện lịch sử và đặc điểm địa lí.",
+                "Em tích cực tìm hiểu lịch sử và địa lí.",
+                "Em hoàn thành tốt các yêu cầu môn học."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em nắm được kiến thức cơ bản về lịch sử, địa lí.",
+                "Em hoàn thành các bài học LS&ĐL.",
+                "Em đạt yêu cầu môn học, cần ghi nhớ thêm các sự kiện."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm.",
+                "Em chưa hoàn thành yêu cầu, cần được hỗ trợ tìm hiểu thêm lịch sử và địa lí."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "daoduc": {
+      "name": "Đạo đức",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em rất ngoan ngoãn, lễ phép, là tấm gương sáng cho các bạn noi theo.",
+                "Em thực hiện rất tốt các chuẩn mực đạo đức, biết yêu thương và chia sẻ.",
+                "Em có ý thức rèn luyện đạo đức rất tốt, sẵn sàng giúp đỡ bạn bè.",
+                "Em biết áp dụng linh hoạt các hành vi đạo đức đã học vào cuộc sống hằng ngày."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em thực hiện tốt các chuẩn mực đạo đức.",
+                "Em ngoan ngoãn, lễ phép, biết yêu thương bạn bè.",
+                "Em có ý thức rèn luyện đạo đức tốt.",
+                "Em biết áp dụng các hành vi đạo đức vào thực tế."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em thực hiện được các chuẩn mực đạo đức cơ bản.",
+                "Em ngoan ngoãn, biết nghe lời người lớn.",
+                "Em đạt yêu cầu môn học, cần rèn thêm các hành vi đạo đức."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần rèn luyện thêm các hành vi đạo đức, gia đình phối hợp hỗ trợ.",
+                "Em cần được hỗ trợ thêm để rèn luyện các chuẩn mực đạo đức."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "tinhoc": {
+      "name": "Tin học",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em rất thành thạo các kỹ năng thực hành trên máy tính.",
+                "Em sử dụng máy tính rất tốt, làm sản phẩm sáng tạo và đẹp mắt.",
+                "Em có năng khiếu tin học, thao tác nhanh và biết vận dụng vào học tập.",
+                "Em yêu thích môn Tin học, hoàn thành rất tốt các bài thực hành."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em sử dụng máy tính khá thành thạo, hoàn thành tốt bài thực hành.",
+                "Em có kỹ năng tin học cơ bản tốt.",
+                "Em hoàn thành tốt các yêu cầu môn Tin học.",
+                "Em biết áp dụng kỹ năng tin học vào học tập."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em thực hiện được các thao tác cơ bản trên máy tính.",
+                "Em hoàn thành các bài thực hành tin học.",
+                "Em đạt yêu cầu môn học, cần luyện thêm kĩ năng thực hành."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn Tin học.",
+                "Em cần được hỗ trợ rèn luyện các thao tác cơ bản trên máy tính."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "congnghe": {
+      "name": "Công nghệ",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em rất khéo léo, sản phẩm công nghệ đẹp và biết vận dụng vào thực tiễn.",
+                "Em nắm vững kiến thức công nghệ, có ý thức giữ gìn sản phẩm rất tốt.",
+                "Em có kĩ năng thực hành công nghệ rất tốt, làm sản phẩm sáng tạo.",
+                "Em yêu thích môn Công nghệ, hoàn thành xuất sắc các yêu cầu của môn học."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em thực hiện tốt các yêu cầu môn Công nghệ.",
+                "Em nắm được kiến thức công nghệ, biết vận dụng vào thực tiễn.",
+                "Em hoàn thành tốt các sản phẩm thực hành.",
+                "Em có ý thức giữ gìn sản phẩm công nghệ tốt."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em hoàn thành các yêu cầu cơ bản môn Công nghệ.",
+                "Em nắm được kiến thức cơ bản về công nghệ.",
+                "Em đạt yêu cầu môn học, cần luyện thêm kĩ năng thực hành."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm.",
+                "Em cần được hỗ trợ rèn luyện các thao tác cơ bản."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "amnhac": {
+      "name": "Âm nhạc",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em hát rất hay, đúng nhạc và biểu diễn tự tin trước lớp.",
+                "Em có năng khiếu âm nhạc, hát đúng giai điệu và lời ca sinh động.",
+                "Em yêu thích âm nhạc, rất tích cực tham gia các hoạt động âm nhạc.",
+                "Em thuộc lời, hát rõ ràng, đúng nhịp và biểu diễn rất tự tin."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em thuộc lời, hát đúng giai điệu lời ca.",
+                "Em hát đúng nhạc, tích cực tham gia hoạt động âm nhạc.",
+                "Em hoàn thành tốt các bài hát đã học.",
+                "Em mạnh dạn biểu diễn trước lớp."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em hát được bài, cần rèn thêm về giai điệu.",
+                "Em hoàn thành các bài học âm nhạc.",
+                "Em đạt yêu cầu môn học, cần luyện thêm hát đúng nhạc."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn Âm nhạc.",
+                "Em cần được hỗ trợ luyện hát và cảm thụ âm nhạc."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "mithuat": {
+      "name": "Mĩ thuật",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em vẽ rất đẹp, sáng tạo và phối màu hài hòa, sinh động.",
+                "Em có óc thẩm mĩ tốt, sản phẩm mĩ thuật có ý tưởng riêng và rất đẹp.",
+                "Em yêu thích mĩ thuật, thể hiện nét vẽ sinh động và có cá tính.",
+                "Em nắm vững cách thực hành, tạo sản phẩm mĩ thuật rất sáng tạo."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em nắm được cách thực hành và tạo sản phẩm mĩ thuật.",
+                "Em vẽ khá đẹp, biết phối màu hài hòa.",
+                "Em hoàn thành tốt các bài tập mĩ thuật.",
+                "Em có ý thức rèn luyện kĩ năng vẽ và tạo hình."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em vẽ được theo yêu cầu, cần sáng tạo thêm.",
+                "Em hoàn thành bài tập mĩ thuật.",
+                "Em đạt yêu cầu môn học, cần luyện thêm cách phối màu."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn Mĩ thuật.",
+                "Em cần được hỗ trợ luyện vẽ và phối màu."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "gdtc": {
+      "name": "Giáo dục thể chất",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em hoàn thành rất tốt các nội dung bài học, động tác đẹp và chuẩn xác.",
+                "Em rất tích cực rèn luyện thể dục thể thao, có thể lực và sức khỏe tốt.",
+                "Em nhanh nhẹn, phối hợp vận động linh hoạt và thực hiện tốt kĩ thuật.",
+                "Em có năng khiếu thể thao, biểu diễn các động tác đẹp và rõ ràng."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em hoàn thành tốt các nội dung bài học.",
+                "Em tích cực rèn luyện thể dục thể thao.",
+                "Em thực hiện đúng các bài tập thể chất.",
+                "Em có ý thức rèn luyện sức khỏe tốt."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em hoàn thành các bài tập thể chất cơ bản.",
+                "Em tham gia đầy đủ các giờ thể dục.",
+                "Em đạt yêu cầu môn học, cần luyện thêm động tác."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn Thể chất.",
+                "Em cần được hỗ trợ luyện các bài tập thể chất cơ bản."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "htn": {
+      "name": "Hoạt động trải nghiệm",
+      "grades": {
+        "all": {
+          "all_ky": {
+            "tot_xs": {
+              "default": [
+                "Em rất mạnh dạn, tự tin khi tham gia các hoạt động trải nghiệm.",
+                "Em rất tích cực tham gia, biết chia sẻ và hợp tác với bạn bè hiệu quả.",
+                "Em có kĩ năng giao tiếp tốt, biết phối hợp với bạn để hoàn thành nhiệm vụ.",
+                "Em năng động, sáng tạo và là hạt nhân trong các hoạt động tập thể."
+              ]
+            },
+            "tot": {
+              "default": [
+                "Em tích cực tham gia các hoạt động trải nghiệm.",
+                "Em biết chia sẻ và hợp tác với bạn bè.",
+                "Em hoàn thành tốt các hoạt động trải nghiệm.",
+                "Em mạnh dạn, tự tin trong giao tiếp."
+              ]
+            },
+            "ht": {
+              "default": [
+                "Em tham gia các hoạt động trải nghiệm, cần mạnh dạn hơn.",
+                "Em hoàn thành các hoạt động trải nghiệm.",
+                "Em đạt yêu cầu môn học, cần phát huy thêm tinh thần chủ động."
+              ]
+            },
+            "cht": {
+              "default": [
+                "Em cần cố gắng hơn, gia đình phối hợp hỗ trợ thêm về môn HĐTN.",
+                "Em cần được hỗ trợ rèn luyện kĩ năng tham gia hoạt động tập thể."
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
