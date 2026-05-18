@@ -1,14 +1,18 @@
 /**
- * NhanXetEngine v2.2 — Nâng cấp theo TT27/2020 + CT GDPT 2018
+ * NhanXetEngine V4.1 — Câu nền chuẩn (TT27/2020 + CT GDPT 2018)
  *
- * Khác v2.0:
- *   - Pool chia theo grade × ky × tier × trend (Phase 1 ưu tiên Toán + TV chk2)
- *   - Engine detect trend từ lịch sử điểm 4 kỳ (ghk1/chk1/ghk2/chk2)
- *   - validateComment với ban-list + check độ dài 16-28 từ
- *   - Safe fallback theo môn × tier khi mọi phrase fail validate
- *   - Backward compat: nếu không có grade-data, dùng ky-data, cuối cùng flat pool
+ * Khác V4.0:
+ *   - +260 phrase (5/tier × 4 tier × 13 môn) đưa vào grade.all_ky + ngan flat
+ *   - TẮT toàn bộ STYLE_SUFFIX cứng (mục IV spec V4.1) — câu trong bank đã hoàn chỉnh
+ *   - _safeFallback rewrite theo spec (13 môn × 4 tier)
+ *   - REMEDIATION_PHRASES mở rộng (cần được hướng dẫn / cần ôn / cần thực hành / cần cẩn thận / cần chủ động)
  *
- * Bám sát học bạ tiểu học chuẩn TT27/2020 + CT GDPT 2018 (TT32/2018).
+ * Nguyên tắc V4.1 (đọc thêm spec mục I):
+ *   - Câu mở đầu "Em", không gắn tên HS
+ *   - Không phụ thuộc giới tính GV (cô/thầy/thầy cô/cô giảng…)
+ *   - Không suy diễn hành vi từ điểm số (yêu thích/phát biểu/năng khiếu/tấm gương…)
+ *   - Tier ht/cht BẮT BUỘC có định hướng rèn luyện cụ thể
+ *   - KHÔNG ghép suffix khiên cưỡng kiểu "trong các tuần học tiếp theo"
  */
 
 // V4.0: HARD_BAN giữ nguyên (V2.3.9) — cấm cụm tiêu cực cụ thể.
@@ -18,15 +22,33 @@ const HARD_BAN_WORDS = Object.freeze([
     'rất tệ', 'tệ', 'dốt', 'ngu', 'kinh khủng', 'không có ý thức'
 ]);
 
-// V4.0: SOFT_BAN_PHRASES nâng cao — cấm cụm sai giới tính GV trong NHẬN XÉT MÔN HỌC.
-// CHO PHÉP "thầy cô" trong NL/PC (mẫu THDienLien có "lễ phép với thầy cô"),
-// nhưng cấm các cụm chỉ rõ "cô" / "thầy" như chủ thể giảng dạy (sai khi GV nam/nữ).
+// V4.1: SOFT_BAN_PHRASES_SUBJECT — cấm 3 nhóm trong NHẬN XÉT MÔN HỌC (subject):
+//   (a) Phụ thuộc giới tính GV (cô/thầy/cô giảng/...)
+//   (b) Suy diễn hành vi từ điểm số (phát biểu/yêu thích/năng khiếu/sáng tạo/tấm gương/...)
+//       theo spec V4.1 mục I.5 + I.9
+//   (c) Hậu tố khiên cưỡng (trong các tuần học tiếp theo / chuẩn bị tốt cho lớp học tiếp theo / ...)
+//       theo spec V4.1 mục I.10 + IV.2
+// NLPC dùng SOFT_BAN_PHRASES_NLPC riêng — vẫn cho phép "ngoan/lễ phép/chuyên cần/...".
 const SOFT_BAN_PHRASES_SUBJECT = Object.freeze([
+    // (a) Giới tính GV
     'bài cô giao', 'cô giao bài', 'bài cô đã hướng dẫn',
     'cô giảng', 'cô hướng dẫn', 'cô đặt câu hỏi',
     'hỏi cô', 'nhờ cô', 'theo cô', 'cùng cô',
     'của cô', 'gợi ý của cô', 'theo cô gợi ý',
-    'cô bạn', 'cô và bạn'
+    'cô bạn', 'cô và bạn',
+    // (b) Suy diễn hành vi từ điểm số
+    'hăng hái phát biểu', 'tích cực phát biểu', 'giơ tay phát biểu', 'phát biểu xây dựng bài',
+    'xây dựng bài', 'yêu thích', 'tự tin', 'chăm chú nghe giảng',
+    'có năng khiếu', 'năng khiếu', 'tư duy sắc bén', 'vượt trội',
+    'rất sáng tạo', 'tấm gương',
+    'bài viết lôi cuốn', 'bài viết giàu hình ảnh',
+    // (c) Hậu tố khiên cưỡng (spec IV.2)
+    'trong các tuần học tiếp theo',
+    'chuẩn bị tốt cho lớp học tiếp theo',
+    'gia đình phối hợp hỗ trợ để em tiến bộ từng bước',
+    'gia đình phối hợp hỗ trợ để em củng cố kiến thức từng bước',
+    'gia đình phối hợp hỗ trợ để em tiến bộ hơn trong học kỳ ii',
+    'em cố gắng hơn ở năm học tới'
 ]);
 
 // V4.0: SOFT_BAN cho NL/PC — cho phép "thầy cô" nhưng vẫn cấm cụm sai giới tính rõ ràng
@@ -86,10 +108,14 @@ const SUBJECT_SIGNALS = Object.freeze({
 // "tích cực phát biểu / có năng khiếu / tấm gương".
 const BEHAVIOR_WORDS_WITHOUT_DATA = Object.freeze([]);
 
-// V4.0: REMEDIATION_PHRASES — tier ht/cht BẮT BUỘC có ≥1 cụm rèn luyện.
+// V4.1: REMEDIATION_PHRASES — tier ht/cht BẮT BUỘC có ≥1 cụm rèn luyện.
+// Mở rộng cho phong cách câu nền chuẩn V4.1 (cần được hướng dẫn / cần ôn / cần thực hành...).
 const REMEDIATION_PHRASES = Object.freeze([
     'cần luyện thêm', 'cần rèn thêm', 'cần củng cố',
-    'cần được hỗ trợ', 'cần chú ý', 'cần ôn lại',
+    'cần được hỗ trợ', 'cần được hướng dẫn',
+    'cần chú ý', 'cần ôn',
+    'cần thực hành', 'thực hành thường xuyên', 'luyện tập thường xuyên',
+    'cần cẩn thận', 'cần chủ động',
     'nên luyện tập', 'nên rèn', 'nên đọc thêm', 'nên cố gắng',
     'gia đình phối hợp', 'gia đình cùng', 'hỗ trợ thêm',
     'cần tiếp tục luyện', 'cần tiếp tục rèn',
@@ -121,33 +147,16 @@ const TIER_RESTRICTED_WORDS = Object.freeze({
 //   cuoinam   : chk2        — có thể nhắc "lớp học tiếp theo"
 //   dinhhuong : user chọn   — vế định hướng rèn luyện
 //   ngan/default : không suffix
+// V4.1: TẮT toàn bộ suffix cứng. Mỗi câu trong ngân hàng phải hoàn chỉnh
+// (đã chứa định hướng rèn luyện cho ht/cht), không cần engine ghép thêm đuôi.
+// Spec V4.1 yêu cầu: "Nếu câu đã có định hướng rèn luyện thì tuyệt đối không nối thêm suffix."
 const STYLE_SUFFIX = Object.freeze({
-    giuaky: {
-        tot_xs: '',
-        tot: '',
-        ht: ' Em cần luyện tập đều hơn trong các tuần học tiếp theo.',
-        cht: ' Gia đình phối hợp hỗ trợ để em củng cố kiến thức từng bước.'
-    },
-    cuoihk1: {
-        tot_xs: '',
-        tot: '',
-        ht: ' Em cần tiếp tục rèn luyện trong học kỳ II để kết quả vững chắc hơn.',
-        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ hơn trong học kỳ II.'
-    },
-    cuoinam: {
-        tot_xs: '',
-        tot: '',
-        ht: ' Em cần tiếp tục luyện tập để chuẩn bị tốt cho lớp học tiếp theo.',
-        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ từng bước.'
-    },
-    dinhhuong: {
-        tot_xs: ' Em tiếp tục phát huy.',
-        tot: ' Em tiếp tục giữ nề nếp học tập tốt.',
-        ht: ' Em cần luyện tập đều hơn để kết quả vững chắc hơn.',
-        cht: ' Gia đình phối hợp hỗ trợ để em tiến bộ từng bước.'
-    },
-    ngan: { tot_xs: '', tot: '', ht: '', cht: '' },
-    default: { tot_xs: '', tot: '', ht: '', cht: '' }
+    giuaky:    { tot_xs: '', tot: '', ht: '', cht: '' },
+    cuoihk1:   { tot_xs: '', tot: '', ht: '', cht: '' },
+    cuoinam:   { tot_xs: '', tot: '', ht: '', cht: '' },
+    dinhhuong: { tot_xs: '', tot: '', ht: '', cht: '' },
+    ngan:      { tot_xs: '', tot: '', ht: '', cht: '' },
+    default:   { tot_xs: '', tot: '', ht: '', cht: '' }
 });
 
 // V2.3: Focus theo môn × lớp cho fallback template (port từ V3.0 ChatGPT, có chỉnh)
@@ -653,31 +662,104 @@ class NhanXetEngineV2 {
      * "thầy cô và gia đình" / "tấm gương". Bám kỹ năng môn học cụ thể (Toán/TV).
      * Cho môn khác (TNXH/ĐĐ/...) dùng câu chung trung tính.
      */
+    /**
+     * V4.1: Safe fallback theo môn × tier — câu hoàn chỉnh đúng spec, đã có
+     * định hướng rèn luyện cho ht/cht (đáp ứng validate no_remediation).
+     * KHÔNG ghép suffix vì câu đã đầy đủ.
+     */
     _safeFallback(subjectCode, tier, gradeLevel) {
-        if (subjectCode === 'toan') {
-            return {
-                tot_xs: 'Em nắm chắc kiến thức môn Toán, tính toán chính xác và trình bày bài giải khoa học.',
-                tot: 'Em hoàn thành tốt yêu cầu môn Toán, biết vận dụng kiến thức vào bài tập quen thuộc.',
-                ht: 'Em hoàn thành yêu cầu cơ bản môn Toán, cần luyện thêm kĩ năng phân tích đề và kiểm tra kết quả.',
-                cht: 'Em cần được hỗ trợ thêm về kiến thức Toán cơ bản, luyện tính toán và trình bày bài từng bước.'
-            }[tier] || 'Em hoàn thành yêu cầu cơ bản môn Toán, cần luyện thêm kĩ năng phân tích đề và trình bày bài.';
-        }
-        if (subjectCode === 'tieng-viet') {
-            return {
-                tot_xs: 'Em đọc hiểu tốt văn bản, dùng từ phù hợp, viết bài rõ bố cục và diễn đạt mạch lạc.',
-                tot: 'Em hoàn thành tốt yêu cầu môn Tiếng Việt, đọc hiểu khá chắc và viết bài tương đối rõ.',
-                ht: 'Em hoàn thành yêu cầu cơ bản môn Tiếng Việt, cần luyện thêm đọc hiểu, dùng từ và viết câu rõ ý.',
-                cht: 'Em cần được hỗ trợ thêm về đọc hiểu, chính tả và viết câu; nên luyện đọc và viết đều đặn.'
-            }[tier] || 'Em hoàn thành yêu cầu cơ bản môn Tiếng Việt, cần luyện thêm đọc hiểu và viết câu rõ ý.';
-        }
-        // Môn khác — trung tính, KHÔNG có "thầy cô/cô giáo"
+        const TABLE = {
+            toan: {
+                tot_xs: 'Em nắm chắc kiến thức môn Toán, tính toán chính xác và trình bày bài giải rõ ràng.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Toán, biết vận dụng kiến thức vào bài tập quen thuộc.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Toán, cần rèn thêm kĩ năng phân tích đề và kiểm tra kết quả.',
+                cht:    'Em cần được hỗ trợ thêm về kiến thức Toán cơ bản, luyện tính toán và trình bày bài giải từng bước.'
+            },
+            'tieng-viet': {
+                tot_xs: 'Em đọc hiểu tốt văn bản, dùng từ phù hợp, viết bài có bố cục rõ và diễn đạt mạch lạc.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Tiếng Việt, đọc hiểu khá chắc và viết bài tương đối rõ.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Tiếng Việt, cần luyện thêm đọc hiểu, dùng từ và viết câu rõ ý.',
+                cht:    'Em cần được hỗ trợ thêm về đọc hiểu, chính tả và viết câu; nên luyện đọc, viết đều đặn.'
+            },
+            tienganh: {
+                tot_xs: 'Em nắm chắc từ vựng và mẫu câu Tiếng Anh, thực hiện tốt các yêu cầu nghe, nói, đọc, viết.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Tiếng Anh, nhận biết được từ vựng và sử dụng mẫu câu khá phù hợp.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Tiếng Anh, cần luyện thêm từ vựng và mẫu câu đã học.',
+                cht:    'Em cần được hỗ trợ thêm về từ vựng, mẫu câu và kĩ năng nghe, nói, đọc, viết cơ bản.'
+            },
+            tnxh: {
+                tot_xs: 'Em nắm chắc kiến thức môn Tự nhiên và Xã hội, biết quan sát và vận dụng vào tình huống thực tế.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Tự nhiên và Xã hội, biết quan sát và nêu được nội dung chính của bài học.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Tự nhiên và Xã hội, cần luyện thêm quan sát và trả lời câu hỏi rõ ý.',
+                cht:    'Em cần được hỗ trợ thêm trong nhận biết sự vật, hiện tượng và nội dung gần gũi trong cuộc sống.'
+            },
+            khoahoc: {
+                tot_xs: 'Em nắm chắc kiến thức môn Khoa học, biết giải thích hiện tượng đơn giản và vận dụng vào thực tế.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Khoa học, biết quan sát, nhận xét và vận dụng kiến thức vào bài tập quen thuộc.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Khoa học, cần luyện thêm quan sát và giải thích hiện tượng đơn giản.',
+                cht:    'Em cần được hỗ trợ thêm trong ghi nhớ kiến thức khoa học và giải thích các hiện tượng đơn giản.'
+            },
+            lichsudia: {
+                tot_xs: 'Em nắm chắc kiến thức Lịch sử và Địa lí, trình bày rõ sự kiện, nhân vật, địa danh và nội dung bài học.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Lịch sử và Địa lí, nắm được nội dung chính của bài học.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Lịch sử và Địa lí, cần luyện thêm ghi nhớ sự kiện và địa danh.',
+                cht:    'Em cần được hỗ trợ thêm trong ghi nhớ sự kiện, nhân vật, địa danh và nội dung bài học cơ bản.'
+            },
+            daoduc: {
+                tot_xs: 'Em nắm chắc nội dung môn Đạo đức, biết phân tích hành vi và lựa chọn cách ứng xử phù hợp.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Đạo đức, biết nhận xét hành vi và nêu cách ứng xử phù hợp.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Đạo đức, cần luyện thêm cách nhận xét hành vi và xử lí tình huống.',
+                cht:    'Em cần được hỗ trợ thêm trong nhận biết hành vi đúng, chưa đúng và cách ứng xử phù hợp.'
+            },
+            tinhoc: {
+                tot_xs: 'Em nắm chắc kiến thức môn Tin học, thao tác máy tính chính xác và hoàn thành tốt sản phẩm học tập.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Tin học, thực hiện được các thao tác cơ bản và sử dụng phần mềm phù hợp.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Tin học, cần luyện thêm thao tác máy tính và thực hành theo quy trình.',
+                cht:    'Em cần được hỗ trợ thêm về thao tác máy tính, sử dụng phần mềm và thực hiện nhiệm vụ học tập cơ bản.'
+            },
+            congnghe: {
+                tot_xs: 'Em nắm chắc kiến thức môn Công nghệ, thực hiện tốt quy trình và hoàn thành sản phẩm rõ yêu cầu.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Công nghệ, biết thực hiện nhiệm vụ theo quy trình và đảm bảo an toàn.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Công nghệ, cần rèn thêm thao tác thực hành và thực hiện đúng quy trình.',
+                cht:    'Em cần được hỗ trợ thêm trong nhận biết sản phẩm công nghệ, quy trình thực hiện và thao tác an toàn.'
+            },
+            gdtc: {
+                tot_xs: 'Em hoàn thành rất tốt yêu cầu môn Giáo dục thể chất, thực hiện động tác chính xác và phối hợp vận động tốt.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Giáo dục thể chất, thực hiện được động tác và phối hợp vận động khá tốt.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Giáo dục thể chất, cần luyện thêm động tác và phối hợp vận động.',
+                cht:    'Em cần được hỗ trợ thêm trong thực hiện động tác, phối hợp vận động và luyện tập theo yêu cầu.'
+            },
+            amnhac: {
+                tot_xs: 'Em hoàn thành rất tốt yêu cầu môn Âm nhạc, hát đúng giai điệu, rõ lời và giữ nhịp tốt.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Âm nhạc, hát tương đối đúng giai điệu và biết giữ nhịp cơ bản.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Âm nhạc, cần luyện thêm hát đúng lời, đúng nhịp và giai điệu.',
+                cht:    'Em cần được hỗ trợ thêm trong hát đúng giai điệu, giữ nhịp và nhận biết nội dung âm nhạc cơ bản.'
+            },
+            mithuat: {
+                tot_xs: 'Em hoàn thành rất tốt yêu cầu môn Mĩ thuật, sử dụng đường nét, màu sắc và bố cục hài hòa.',
+                tot:    'Em hoàn thành tốt yêu cầu môn Mĩ thuật, biết sử dụng đường nét, màu sắc và bố cục tương đối phù hợp.',
+                ht:     'Em hoàn thành yêu cầu cơ bản môn Mĩ thuật, cần rèn thêm cách sắp xếp bố cục và phối hợp màu sắc.',
+                cht:    'Em cần được hỗ trợ thêm trong sử dụng đường nét, màu sắc, bố cục và hoàn thành sản phẩm tạo hình.'
+            },
+            htn: {
+                tot_xs: 'Em hoàn thành rất tốt yêu cầu Hoạt động trải nghiệm, biết hợp tác, chia sẻ và thực hiện nhiệm vụ hiệu quả.',
+                tot:    'Em hoàn thành tốt yêu cầu Hoạt động trải nghiệm, biết tham gia hoạt động và thực hiện nhiệm vụ được giao.',
+                ht:     'Em hoàn thành yêu cầu cơ bản của Hoạt động trải nghiệm, cần rèn thêm kĩ năng hợp tác và thực hiện nhiệm vụ.',
+                cht:    'Em cần được hỗ trợ thêm trong tham gia hoạt động, thực hiện nhiệm vụ và chia sẻ ý kiến theo gợi ý.'
+            }
+        };
+
+        const row = TABLE[subjectCode];
+        if (row && row[tier]) return row[tier];
+
+        // Môn lạ chưa có trong TABLE → câu trung tính theo tên môn
         const subjName = (this.data && this.data.subjects[subjectCode] && this.data.subjects[subjectCode].name) || 'môn học';
         return {
-            tot_xs: `Em hoàn thành rất tốt yêu cầu môn ${subjName}, có nhiều biểu hiện học tập tích cực và đáng ghi nhận.`,
-            tot: `Em hoàn thành tốt yêu cầu môn ${subjName}, đạt kết quả khá đều đặn trong cả kỳ học.`,
-            ht: `Em đã hoàn thành yêu cầu cơ bản môn ${subjName}, cần phát huy thêm trong thời gian tới.`,
-            cht: `Em cần được hỗ trợ thêm về môn ${subjName} để củng cố kiến thức cơ bản từng bước.`
-        }[tier] || `Em đã hoàn thành yêu cầu cơ bản môn ${subjName}, cần phát huy thêm trong thời gian tới.`;
+            tot_xs: `Em hoàn thành rất tốt yêu cầu môn ${subjName}, thực hiện tốt các nội dung đã học.`,
+            tot:    `Em hoàn thành tốt yêu cầu môn ${subjName}, thực hiện được các nội dung đã học phù hợp.`,
+            ht:     `Em hoàn thành yêu cầu cơ bản môn ${subjName}, cần luyện thêm các nội dung bài học.`,
+            cht:    `Em cần được hỗ trợ thêm về môn ${subjName}, luyện các nội dung cơ bản theo gợi ý từng bước.`
+        }[tier] || `Em hoàn thành yêu cầu cơ bản môn ${subjName}, cần luyện thêm các nội dung đã học.`;
     }
 
     /**
