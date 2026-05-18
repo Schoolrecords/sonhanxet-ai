@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
   "version": "4.0.0",
-  "description": "Sổ nhận xét - AI v4.0 · Sinh nhận xét môn học + NL/PC tự động cho GV tiểu học trên Vnedu theo Thông tư 27/2020. Phong cách câu trung tính, đúng kỳ/mức điểm, không bám bộ sách.",
+  "description": "Sinh nhận xét môn học và NL/PC tự động cho GV tiểu học trên Vnedu theo Thông tư 27/2020. Trung tính, đúng kỳ và mức điểm.",
   "author": "Phát triển bởi giáo viên cho giáo viên",
 
   "permissions": [
