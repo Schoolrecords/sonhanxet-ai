@@ -42,27 +42,155 @@ const supportZalo = `https://zalo.me/${supportPhone}`;
 
       <!-- ============== INSTALL STEPS ============== -->
       <div style="text-align: center; margin-bottom: 40px;">
-        <h2 style="font-size: 1.75rem; color: var(--brand-700); margin-bottom: 12px;">3 bước cài đặt</h2>
-        <p style="color: var(--ink-500);">Tổng cộng dưới 30 giây — không cần biết kỹ thuật.</p>
+        <h2 style="font-size: 1.75rem; color: var(--brand-700); margin-bottom: 12px;">3 bước cài đặt — có hình ảnh minh họa</h2>
+        <p style="color: var(--ink-500);">Tổng cộng dưới 30 giây — không cần biết kỹ thuật. Thầy/cô làm theo đúng như hình bên dưới.</p>
       </div>
 
-      <div class="steps" style="margin-bottom: 72px;">
-        <div class="step">
-          <h3>Mở Chrome Web Store</h3>
-          <p>Bấm nút <strong>“Cài đặt cho Chrome”</strong> ở trên — trang sản phẩm trên Chrome Web Store sẽ mở trong tab mới.</p>
+      <div class="install-walkthrough" style="margin-bottom: 72px;">
+
+        <!-- Bước 1 -->
+        <div class="walk-step">
+          <div class="walk-step-head">
+            <span class="walk-step-num">1</span>
+            <h3>Bấm nút <strong>"Cài đặt cho Chrome"</strong></h3>
+          </div>
+          <p class="walk-step-desc">
+            Trên trang này, bấm nút <strong>"Cài đặt cho Chrome"</strong> (màu xanh, có icon Chrome).
+            Trình duyệt sẽ tự mở <strong>trang sản phẩm "Sổ nhận xét - AI" trên Chrome Web Store</strong> trong tab mới.
+          </p>
+          <div class="walk-images walk-images-2">
+            <figure class="walk-fig">
+              <img src="/cai-dat-buoc1-nut-cai.png" alt="Nút Cài đặt cho Chrome trên trang sonhanxet-ai" loading="lazy" />
+              <figcaption>Bấm nút này trên trang web</figcaption>
+            </figure>
+            <div class="walk-arrow" aria-hidden="true">→</div>
+            <figure class="walk-fig">
+              <img src="/cai-dat-buoc1-trang-cws.png" alt="Trang sản phẩm Sổ nhận xét - AI trên Chrome Web Store" loading="lazy" />
+              <figcaption>Trang Chrome Web Store mở ra</figcaption>
+            </figure>
+          </div>
         </div>
 
-        <div class="step">
-          <h3>Thêm tiện ích</h3>
-          <p>Tại trang Chrome Web Store, bấm nút <strong>“Thêm vào Chrome”</strong> (Add to Chrome) ở góc trên phải → khi Chrome hỏi xác nhận, bấm <strong>“Thêm tiện ích”</strong> (Add extension).</p>
-          <p style="font-size: 13px; color: var(--ink-400);">✓ Biểu tượng <strong>CT</strong> sẽ xuất hiện trên thanh công cụ Chrome (góc trên bên phải).</p>
+        <!-- Bước 2 -->
+        <div class="walk-step">
+          <div class="walk-step-head">
+            <span class="walk-step-num">2</span>
+            <h3>Bấm <strong>"Thêm vào Chrome"</strong></h3>
+          </div>
+          <p class="walk-step-desc">
+            Trên trang Chrome Web Store vừa mở, bấm nút màu xanh <strong>"Thêm vào Chrome"</strong> ở góc trên bên phải.
+          </p>
+          <div class="walk-images walk-images-1">
+            <figure class="walk-fig walk-fig-small">
+              <img src="/cai-dat-buoc2-them-vao-chrome.png" alt="Nút Thêm vào Chrome trên Chrome Web Store" loading="lazy" />
+              <figcaption>Nút "Thêm vào Chrome" trên Chrome Web Store</figcaption>
+            </figure>
+          </div>
         </div>
 
-        <div class="step">
-          <h3>Ghim tiện ích (khuyến nghị)</h3>
-          <p>Bấm icon <strong>🧩 Tiện ích</strong> trên thanh công cụ → tìm <strong>“Sổ nhận xét - AI”</strong> → bấm <strong>biểu tượng ghim (📌)</strong> bên cạnh để icon luôn hiển thị, tiện thao tác.</p>
+        <!-- Bước 3 -->
+        <div class="walk-step">
+          <div class="walk-step-head">
+            <span class="walk-step-num">3</span>
+            <h3>Bấm <strong>"Thêm tiện ích"</strong> để xác nhận</h3>
+          </div>
+          <p class="walk-step-desc">
+            Chrome sẽ hiện hộp thoại hỏi xác nhận. Bấm <strong>"Thêm tiện ích"</strong> (màu xanh, bên trái) để hoàn tất cài đặt.
+          </p>
+          <div class="walk-images walk-images-1">
+            <figure class="walk-fig walk-fig-small">
+              <img src="/cai-dat-buoc3-them-tien-ich.png" alt="Hộp thoại xác nhận Thêm tiện ích" loading="lazy" />
+              <figcaption>Bấm "Thêm tiện ích" (KHÔNG bấm "Huỷ")</figcaption>
+            </figure>
+          </div>
         </div>
+
+        <!-- Hoàn tất -->
+        <div class="walk-done">
+          <div class="walk-done-badge">✓ Hoàn tất</div>
+          <h3>Sổ nhận xét - AI đã được cài đặt thành công!</h3>
+          <p>
+            Thầy/cô sẽ thấy thông báo <strong>"Sổ nhận xét - AI đã được thêm vào Chrome"</strong> hiện ra ở góc trên bên phải trình duyệt.
+            Bây giờ chỉ cần <strong>mở Vnedu</strong>, vào <kbd>Sổ điểm → Sổ nhận xét</kbd> — sidebar <strong>"Sổ nhận xét - AI"</strong> sẽ tự xuất hiện bên phải để giúp thầy/cô tạo nhận xét cho cả lớp.
+          </p>
+          <div class="walk-images walk-images-1">
+            <figure class="walk-fig walk-fig-small">
+              <img src="/cai-dat-thanh-cong.png" alt="Thông báo Sổ nhận xét - AI đã được thêm vào Chrome" loading="lazy" />
+              <figcaption>Thông báo cài đặt thành công</figcaption>
+            </figure>
+          </div>
+        </div>
+
       </div>
+
+      <style>
+        .install-walkthrough { display: flex; flex-direction: column; gap: 32px; }
+        .walk-step, .walk-done {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--r-xl);
+          padding: 28px 28px 32px;
+          box-shadow: var(--shadow-sm);
+        }
+        .walk-step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+        .walk-step-num {
+          flex-shrink: 0;
+          width: 38px; height: 38px;
+          border-radius: 50%;
+          background: var(--brand-600);
+          color: #fff;
+          display: inline-flex; align-items: center; justify-content: center;
+          font-weight: 800; font-size: 17px;
+        }
+        .walk-step-head h3 { margin: 0; font-size: 1.2rem; color: var(--brand-700); font-weight: 700; line-height: 1.35; }
+        .walk-step-desc { color: var(--ink-700); margin: 6px 0 18px; line-height: 1.65; }
+        .walk-images {
+          display: flex; align-items: center; justify-content: center;
+          gap: 16px; flex-wrap: wrap;
+          background: linear-gradient(180deg, #F8FAFF 0%, #EEF2FA 100%);
+          border: 1px dashed #C5CFE5;
+          border-radius: var(--r-lg);
+          padding: 20px;
+        }
+        .walk-fig { margin: 0; text-align: center; max-width: 100%; }
+        .walk-fig img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          box-shadow: 0 4px 14px rgba(20, 36, 79, 0.12);
+          background: #fff;
+        }
+        .walk-fig-small img { max-height: 220px; }
+        .walk-images-2 .walk-fig { flex: 1 1 320px; max-width: 460px; }
+        .walk-fig figcaption { margin-top: 10px; font-size: 13px; color: var(--ink-500); font-style: italic; }
+        .walk-arrow {
+          font-size: 28px; color: var(--brand-600); font-weight: 700;
+          flex-shrink: 0;
+        }
+        .walk-done {
+          background: linear-gradient(180deg, #ECFDF5 0%, #FFFFFF 100%);
+          border-color: #A7F3D0;
+          text-align: center;
+        }
+        .walk-done-badge {
+          display: inline-block;
+          background: var(--success, #059669);
+          color: #fff;
+          font-weight: 700;
+          padding: 6px 16px;
+          border-radius: 999px;
+          font-size: 13px;
+          margin-bottom: 12px;
+          letter-spacing: 0.02em;
+        }
+        .walk-done h3 { font-size: 1.35rem; color: var(--brand-700); margin: 4px 0 12px; font-weight: 800; }
+        .walk-done p { color: var(--ink-700); max-width: 640px; margin: 0 auto 18px; line-height: 1.65; }
+        @media (max-width: 640px) {
+          .walk-step, .walk-done { padding: 22px 18px 26px; }
+          .walk-arrow { transform: rotate(90deg); }
+          .walk-images-2 .walk-fig { flex-basis: 100%; }
+        }
+      </style>
 
       <!-- ============== USAGE GUIDE ============== -->
       <div style="text-align: center; margin-bottom: 40px;">
