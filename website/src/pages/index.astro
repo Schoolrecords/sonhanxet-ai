@@ -135,11 +135,6 @@ const faqs = [
             📖 Xem hướng dẫn
           </a>
         </div>
-        <div class="hero-trust">
-          <span><span class="check">✓</span> Miễn phí cài đặt</span>
-          <span><span class="check">✓</span> Chỉ ở máy thầy cô</span>
-          <span><span class="check">✓</span> Mã nguồn mở</span>
-        </div>
       </div>
 
       <div class="hero-visual">
@@ -183,25 +178,56 @@ const faqs = [
     </div>
   </section>
 
-  <!-- ============== STATS STRIP ============== -->
-  <section class="stats-strip" style="padding: 56px 0;">
+  <!-- ============== PILLARS (4 cards icon) ============== -->
+  <section class="stats-strip pillars-section">
     <div class="container">
-      <div class="stats-grid">
-        <div>
-          <div class="stat-value">5 phút</div>
-          <div class="stat-label">cho HS cả lớp</div>
+      <div class="pillar-grid">
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="16" cy="17" r="11" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M16 11v6l4 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M11 5l-3 2M21 5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="pillar-title">5 phút</div>
+          <div class="pillar-sub">hoàn thành nhận xét cả lớp</div>
+          <span class="pillar-divider"></span>
         </div>
-        <div>
-          <div class="stat-value">12 môn</div>
-          <div class="stat-label">được hỗ trợ riêng</div>
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="8" y="9" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 14h8M12 17h8M12 20h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M11 5v4M16 5v4M21 5v4M11 25v4M16 25v4M21 25v4M5 11h4M5 16h4M5 21h4M25 11h4M25 16h4M25 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="pillar-title">AI tự động</div>
+          <div class="pillar-sub">phân tích kết quả học sinh</div>
+          <span class="pillar-divider"></span>
         </div>
-        <div>
-          <div class="stat-value">13 mục</div>
-          <div class="stat-label">đánh giá NL/PC auto-fill</div>
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16 4l10 4v8c0 6-4.5 10.5-10 12-5.5-1.5-10-6-10-12V8l10-4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M11 16l3.5 3.5L21 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="pillar-title">Theo TT27</div>
+          <div class="pillar-sub">phù hợp đánh giá tiểu học</div>
+          <span class="pillar-divider"></span>
         </div>
-        <div>
-          <div class="stat-value">0 server</div>
-          <div class="stat-label">thông tin HS chỉ ở máy thầy cô</div>
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="14" cy="11" r="4.5" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M5 27c0-4.5 4-8 9-8 2 0 3.8.55 5.3 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M19 24l6.5-6.5 2.5 2.5L21.5 26.5 18 27l1-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="pillar-title">Giáo viên toàn quyền</div>
+          <div class="pillar-sub">chỉnh sửa trước khi lưu</div>
+          <span class="pillar-divider"></span>
         </div>
       </div>
     </div>
@@ -278,7 +304,7 @@ const faqs = [
   </section>
 
   <!-- ============== FEATURES ============== -->
-  <section id="tinh-nang">
+  <section id="tinh-nang" class="section-dark features-section-dark">
     <div class="container">
       <div class="section-title">
         <span class="eyebrow">Giải pháp</span>
@@ -293,41 +319,6 @@ const faqs = [
             <p>{f.desc}</p>
           </div>
         ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== SECURITY ============== -->
-  <section id="bao-mat" class="section-dark">
-    <div class="container">
-      <div class="section-title">
-        <span class="eyebrow">Cam kết bảo mật</span>
-        <h2 class="text-balance">Dữ liệu học sinh là dữ liệu nhạy cảm — chúng tôi xử lý đúng tinh thần đó</h2>
-      </div>
-      <div class="security-grid">
-        <div class="security-card">
-          <div class="icon-wrap">🔒</div>
-          <h3>Không server</h3>
-          <p>Tên HS, điểm số chỉ tồn tại trong tab Chrome. Đóng tab là biến mất.</p>
-        </div>
-        <div class="security-card">
-          <div class="icon-wrap">📂</div>
-          <h3>Mã nguồn mở</h3>
-          <p>Toàn bộ code công khai. Thầy cô có kiến thức kỹ thuật đều kiểm tra được.</p>
-        </div>
-        <div class="security-card">
-          <div class="icon-wrap">🛂</div>
-          <h3>Permission tối thiểu</h3>
-          <p>Chỉ truy cập đúng 2 trang: vnedu.vn và license server.</p>
-        </div>
-        <div class="security-card">
-          <div class="icon-wrap">🇻🇳</div>
-          <h3>Made in Việt Nam</h3>
-          <p>Phát triển bởi CBGV trực tiếp, nắm chắc các văn bản pháp quy.</p>
-        </div>
-      </div>
-      <div class="security-callout">
-        Đọc <a href="/privacy"><strong>Chính sách Bảo mật đầy đủ</strong></a> để biết chi tiết những gì chúng tôi (không) thu thập.
       </div>
     </div>
   </section>

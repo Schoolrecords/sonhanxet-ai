@@ -734,6 +734,96 @@ section { padding: var(--section-y) 0; position: relative; }
   font-weight: 500;
 }
 
+/* ============== PILLARS (4 cards trong stats-strip) ============== */
+.pillars-section { padding: 64px 0; }
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 980px) {
+  .pillar-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+@media (max-width: 560px) {
+  .pillar-grid { grid-template-columns: 1fr; gap: 16px; }
+}
+.pillar {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 20px;
+  padding: 30px 22px 26px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s var(--ease-out), border-color 0.3s, background 0.3s;
+  box-shadow: 0 10px 24px rgba(6, 11, 30, 0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.pillar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,193,7,0.10), transparent 60%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+.pillar:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,193,7,0.45);
+  background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 100%);
+}
+.pillar-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.20) 0%, transparent 55%),
+    linear-gradient(140deg, var(--brand-500) 0%, var(--brand-700) 60%, var(--brand-800) 100%);
+  border: 1.5px solid rgba(255,255,255,0.22);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow:
+    0 10px 24px rgba(10, 18, 48, 0.55),
+    inset 0 0 18px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+  position: relative;
+  z-index: 1;
+}
+.pillar-icon svg { width: 32px; height: 32px; }
+.pillar-title {
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  font-weight: 800;
+  color: var(--gold-500);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+}
+.pillar-sub {
+  color: rgba(255,255,255,0.82);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.pillar-divider {
+  display: block;
+  width: 32px;
+  height: 3px;
+  background: var(--gold-500);
+  border-radius: 2px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
 /* ============== PROBLEM ============== */
 .problem-grid {
   display: grid;
@@ -828,6 +918,54 @@ section { padding: var(--section-y) 0; position: relative; }
 .feature h3 {
   color: var(--brand-700);
   margin-bottom: 10px;
+}
+
+/* ============== FEATURES on DARK (nền navy + chữ trắng/vàng) ============== */
+.features-section-dark .features-grid {
+  position: relative;
+  z-index: 1;
+}
+.features-section-dark .feature {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 12px 28px rgba(6, 11, 30, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.features-section-dark .feature::before {
+  background: linear-gradient(90deg, var(--feat-accent, var(--gold-500)) 0%, var(--gold-500) 100%);
+  height: 4px;
+}
+.features-section-dark .feature:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 193, 7, 0.45);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow:
+    0 18px 36px rgba(6, 11, 30, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.features-section-dark .feature-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.22) 0%, transparent 55%),
+    linear-gradient(140deg, var(--feat-accent, var(--brand-500)) 0%, rgba(10, 18, 48, 0.85) 110%);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  font-size: 26px;
+}
+.features-section-dark .feature h3 {
+  color: var(--gold-500);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.features-section-dark .feature p {
+  color: rgba(255, 255, 255, 0.80);
+  line-height: 1.65;
 }
 
 /* ============== VIDEO SECTION ============== */
