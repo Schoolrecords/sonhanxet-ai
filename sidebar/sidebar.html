@@ -198,33 +198,29 @@
                 Đang kiểm tra trạng thái...
             </div>
 
-            <!-- (A) ĐĂNG KÝ — chưa có mã -->
+            <!-- (A) V6 ĐĂNG KÝ — flow Một-chạm: chỉ cần Họ tên + SĐT -->
             <div id="lic-form-register" class="lic-form" style="display:none">
                 <input id="lic-reg-hoten" type="text" class="lic-input"
-                       placeholder="Họ và tên (vd: Nguyễn Thị Lan)">
+                       placeholder="Họ và tên (vd: Trần Thanh Chung)">
                 <input id="lic-reg-sdt" type="tel" maxlength="13" class="lic-input"
                        placeholder="Số điện thoại (vd: 0912345678)">
-                <button class="btn-primary lic-btn" id="lic-btn-register">Đăng ký nhận mã</button>
-
-                <div class="lic-divider">— hoặc —</div>
-
-                <button class="btn-secondary lic-btn" id="lic-link-to-login">
-                    Đã có mã · Đăng nhập
+                <button class="btn-primary lic-btn" id="lic-btn-register">
+                    ▶ Bắt đầu kích hoạt (30.000đ/năm)
                 </button>
 
                 <div id="lic-reg-error" class="lic-error" style="display:none"></div>
+
+                <a href="#" id="lic-link-to-login" class="lic-link-legacy">
+                    Tài khoản trước 19/05/2026? Đăng nhập bằng mã cũ
+                </a>
             </div>
 
-            <!-- (B) PENDING — đã đăng ký, đang chờ thanh toán -->
+            <!-- (B) V6 PENDING — đã đăng ký, polling tự kích hoạt -->
             <div id="lic-form-pending" class="lic-form" style="display:none">
                 <div class="lic-pending-info">
                     <div class="lic-pending-row"><span>SĐT:</span> <strong id="lic-pending-sdt">—</strong></div>
                     <div class="lic-pending-row"><span>Tên:</span> <strong id="lic-pending-name">—</strong></div>
                     <div class="lic-pending-row"><span>Số tiền:</span> <strong>30.000đ</strong></div>
-                    <div class="lic-pending-row lic-pending-ma-row">
-                        <span>Mã của bạn (= nội dung chuyển khoản):</span>
-                        <strong id="lic-pending-ma" class="lic-pending-ma">—</strong>
-                    </div>
                 </div>
 
                 <div class="lic-qr-wrap">
@@ -233,35 +229,58 @@
                         ⚠ Chưa có ảnh QR. Quản trị đặt file ảnh vào
                         <code>license/qr.png</code> trong thư mục extension.
                     </div>
-                    <div class="lic-qr-caption">
-                        Quét QR và thanh toán <strong>30.000đ</strong><br>
-                        Ghi rõ <strong>nội dung CK đúng mã ở trên</strong><br>
-                        Đợi xác nhận trong khoảng <strong>5-10 phút</strong><br>
-                        <em>(Liên hệ Zalo - Chung Trần 0913031073)</em>
+                </div>
+
+                <div class="lic-ck-block">
+                    <div class="lic-ck-label">📝 Nội dung chuyển khoản:</div>
+                    <div class="lic-ck-value-row">
+                        <strong id="lic-pending-ma" class="lic-pending-ma">—</strong>
+                        <button class="btn-secondary lic-btn-copy" id="lic-btn-copy-ma" title="Copy nội dung CK">
+                            📋 Copy
+                        </button>
+                    </div>
+                    <div class="lic-ck-hint">
+                        (Chính là số điện thoại của thầy/cô — gõ đúng để hệ thống nhận diện)
                     </div>
                 </div>
 
-                <button class="btn-primary lic-btn" id="lic-btn-go-login">
-                    Tôi đã chuyển khoản — đăng nhập
+                <div class="lic-waiting-block">
+                    <div class="lic-spinner"></div>
+                    <div class="lic-waiting-text">
+                        <strong>Đang chờ admin xác nhận...</strong><br>
+                        <span class="lic-waiting-sub">
+                            Trung bình 1-10 phút. Hệ thống sẽ <strong>tự kích hoạt</strong>,
+                            <strong>KHÔNG cần thao tác gì thêm, vui lòng đợi</strong>.
+                        </span>
+                    </div>
+                </div>
+
+                <button class="btn-secondary lic-btn-mini" id="lic-btn-check-now"
+                        style="display:none">
+                    🔄 Kiểm tra ngay
                 </button>
                 <button class="btn-secondary lic-btn-mini" id="lic-btn-cancel-pending">
                     Hủy đăng ký này
                 </button>
+                <div class="lic-pending-help">
+                    Liên hệ Zalo thầy Chung <strong>0913031073</strong> nếu chờ quá 30 phút.
+                </div>
             </div>
 
-            <!-- (C) ĐĂNG NHẬP — có mã rồi, kích hoạt máy -->
+            <!-- (C) LEGACY ĐĂNG NHẬP — chỉ cho GV v2 đã có mã 4 ký tự trước 19/05/2026 -->
             <div id="lic-form-login" class="lic-form" style="display:none">
+                <div class="lic-legacy-banner">
+                    Đăng nhập bằng mã cũ (4 ký tự) dành cho GV đã đăng ký trước 19/05/2026.
+                </div>
                 <input id="lic-login-sdt" type="tel" maxlength="13" class="lic-input"
                        placeholder="Số điện thoại đã đăng ký">
                 <input id="lic-login-ma" type="text" maxlength="4" class="lic-input lic-input-code"
                        placeholder="mã 4 ký tự (vd k7m3)">
                 <button class="btn-primary lic-btn" id="lic-btn-login">Đăng nhập / Kích hoạt</button>
 
-                <div class="lic-divider">— hoặc —</div>
-
-                <button class="btn-secondary lic-btn" id="lic-link-to-register">
-                    Chưa có mã · Đăng ký mới
-                </button>
+                <a href="#" id="lic-link-to-register" class="lic-link-legacy">
+                    ← Quay lại đăng ký mới (theo SĐT)
+                </a>
 
                 <div id="lic-login-error" class="lic-error" style="display:none"></div>
             </div>
@@ -298,6 +317,18 @@
         <div class="settings-section">
             <div class="section-title">Tùy chỉnh nhận xét</div>
             <div class="setting-row">
+                <label class="setting-label">Văn phong</label>
+                <div class="btn-group" id="setting-vanPhong">
+                    <button class="active" data-value="hocba">Học bạ / Vnedu</button>
+                    <button data-value="thanthien">Thân thiện</button>
+                </div>
+            </div>
+            <div class="setting-note">
+                Theo Thông tư 27/2020/TT-BGDĐT.
+                <br>• <strong>Học bạ / Vnedu</strong> (mặc định): mô tả khách quan, không xưng "Em". Ví dụ: <em>"Đọc lưu loát, viết câu rõ ý, vốn từ phong phú."</em>
+                <br>• <strong>Thân thiện</strong>: giữ xưng "Em" cho phong cách gần gũi. Ví dụ: <em>"Em đọc lưu loát, viết câu rõ ý..."</em>
+            </div>
+            <div class="setting-row" style="margin-top:14px">
                 <label class="setting-label">Giáo viên là</label>
                 <div class="btn-group" id="setting-gvLa">
                     <button class="active" data-value="co">Cô</button>
@@ -305,9 +336,7 @@
                 </div>
             </div>
             <div class="setting-note">
-                Tùy chọn này ảnh hưởng đến cách xưng hô trong nhận xét. Ví dụ:
-                <br>• Chọn <strong>Cô</strong>: "Cô tin em sẽ tiến bộ..."
-                <br>• Chọn <strong>Thầy</strong>: "Thầy tin em sẽ tiến bộ..."
+                Chỉ ảnh hưởng khi câu nhận xét có nhắc "thầy cô" trong văn phong thân thiện.
             </div>
         </div>
 

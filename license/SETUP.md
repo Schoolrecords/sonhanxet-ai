@@ -1,12 +1,14 @@
-# Hướng dẫn cài License Server (v2 — self-serve)
+# Hướng dẫn cài License Server v3 (V6.0 — Một-chạm)
 
-Hệ thống bản quyền mô hình **tự phục vụ**:
-- GV nhập [họ tên + SĐT] → hệ thống cấp mã 6 ký tự (vd `k7m3pr`)
-- GV chuyển khoản 50k, nội dung CK = mã đó
-- Thầy quản trị tick "đã thanh toán" trong Sheet (~10 giây/lần)
-- GV đăng nhập bằng [SĐT + mã] → bind máy → mở khóa extension
+Hệ thống bản quyền **một-chạm tự kích hoạt**:
+- GV nhập [họ tên + SĐT] → hệ thống tự tạo tài khoản với **MÃ = chính SĐT của GV**
+- GV chuyển khoản 30k, nội dung CK = **SĐT của chính cô** (không cần nhớ mã random)
+- Thầy quản trị tick "đã thanh toán theo SĐT" trong Sheet (~5 giây/lần)
+- Extension của GV **tự ping server mỗi 20-120s**, khi thấy đã tick là **tự kích hoạt** — GV KHÔNG cần thao tác lần 2
 
 Backend: 1 Google Apps Script bound vào 1 Google Sheet. Free, không cần host.
+
+Chính sách: **30.000đ cho 1 máy tính**. GV đổi máy → nhắn Zalo thầy, thầy reset trong Sheet.
 
 Tổng thời gian setup lần đầu: ~10 phút.
 
@@ -44,7 +46,7 @@ Tổng thời gian setup lần đầu: ~10 phút.
 ### Bước 5: Deploy Web App
 1. **Deploy** → **New deployment** → type **Web app**
 2. Cấu hình:
-   - Description: `License server v2`
+   - Description: `License server v3 (V6.0 — Một-chạm)`
    - Execute as: **Me**
    - Who has access: **Anyone**
 3. **Deploy** → COPY URL `/exec`
@@ -57,7 +59,7 @@ Tổng thời gian setup lần đầu: ~10 phút.
 ### Bước 6: Đặt ảnh QR thanh toán
 1. Lấy ảnh QR (VietQR) tài khoản nhận tiền của thầy — file PNG/JPG
 2. Đổi tên thành `qr.png`
-3. Copy vào thư mục **`D:\XebatcheoTrT\2\cogiao-ai-extension\license\qr.png`**
+3. Copy vào thư mục **`D:\XebatcheoTrT\2\SoNhanXet_AI\license\qr.png`**
 4. Reload extension. GV sẽ thấy ảnh QR khi đăng ký.
 
 ### Bước 7 (khuyến nghị): Auto dọn mã chưa thanh toán
@@ -74,30 +76,41 @@ Hàm này tự xóa các mã `cho_thanh_toan` quá 7 ngày để sheet không ph
 
 ---
 
-## Phần 2 · Quy trình hằng ngày
+## Phần 2 · Quy trình hằng ngày (V6 — Một-chạm)
 
-### Khi GV chuyển khoản
+### Khi GV chuyển khoản (flow mới)
 
-1. Thầy mở app ngân hàng → thấy CK 50.000đ, nội dung VD `k7m3pr`
+1. Thầy mở app ngân hàng → thấy CK 30.000đ, **nội dung CK = SĐT của GV** (vd `0913456789`)
 2. Mở Google Sheet `SoNhanXetAI-License`
-3. Menu **🔑 Sổ NX - AI** → **💰 Tick đã thanh toán cho mã...**
-4. Nhập 6 ký tự mã (`k7m3pr`) → OK
+3. Menu **🔑 Sổ NX - AI** → **💰 Tick thanh toán theo SĐT... (V6 — khuyên dùng)**
+4. Paste SĐT vào ô prompt (có thể có space/dấu chấm, hệ thống tự bỏ) → OK
 5. Hệ thống tự set: `da_thanh_toan=TRUE`, `ngay_thanh_toan=now`, `ngay_het_han=now+365`
-6. GV mở extension → đăng nhập SĐT+mã → vào dùng được
+6. **Extension của GV tự ping server mỗi 20-120 giây → tự kích hoạt — GV không cần làm gì thêm**
 
-### Khi GV đổi máy / cài lại Windows
+**Tổng thao tác thầy: ~5 giây/ca** (nhanh hơn flow cũ vì SĐT copy thẳng từ sao kê NH).
+
+### Khi GV v2 cũ (đăng ký trước 19/05/2026) chuyển khoản
+
+1. Họ vẫn dùng mã 4 ký tự cũ (vd `k7m3`) làm nội dung CK
+2. Menu **🔑 Sổ NX - AI** → **💰 Tick theo mã 4 ký tự... (GV v2 cũ)**
+3. Nhập 4 ký tự → OK
+4. GV cũ sẽ tự kích hoạt qua extension như flow mới (polling sẽ phát hiện)
+
+### Khi GV đổi máy / cài lại Windows (chính sách 30k/1 máy)
 
 GV nhắn Zalo cho thầy. Thầy:
 - Menu **🔑 Sổ NX - AI** → **🔄 Reset thiết bị (theo SĐT)...**
-- Nhập SĐT → GV đăng nhập lại trên máy mới với SĐT+mã cũ
+- Nhập SĐT → cô vào extension trên máy mới, nhập SĐT + tên → tự kích hoạt lại (KHÔNG phải CK lại 30k)
 
-### Khi nghi chia sẻ mã
+**Nguyên tắc**: thầy tự đánh giá lý do (máy hỏng / cài lại Win / mua máy mới). Nếu nghi share → có thể từ chối hoặc khóa SĐT.
+
+### Khi nghi chia sẻ tài khoản
 
 - Menu **🔑 Sổ NX - AI** → **🔒 Khóa 1 SĐT (nghi share)...**
 
-### Cấp mã vĩnh viễn / tặng dùng thử
+### Cấp tài khoản vĩnh viễn / tặng dùng thử
 
-Cấp mã bình thường rồi mở sheet → sửa cột `ngay_het_han` (cột I):
+Cấp tài khoản bình thường (GV đăng ký + thầy tick), sau đó mở sheet → sửa cột `ngay_het_han` (cột I):
 - Vĩnh viễn: `2099-01-01`
 - Thử 30 ngày: ngày cách hôm nay 30 ngày
 
@@ -105,18 +118,20 @@ Cấp mã bình thường rồi mở sheet → sửa cột `ngay_het_han` (cột
 
 ## Phần 3 · Cấu trúc Sheet `License` (13 cột)
 
+Schema **KHÔNG đổi** từ v2 — GV cũ tiếp tục dùng bình thường.
+
 | Cột | Tên | Mô tả |
 |---|---|---|
 | A | sdt | SĐT GV (`0912345678`) |
 | B | gv_ho_ten | Họ tên GV nhập |
-| C | ma_bi_mat | 6 ký tự — server sinh, = nội dung CK |
+| C | ma_bi_mat | **V6: = SĐT** (cho user mới) / **V2: 4 ký tự** (cho GV cũ) — nội dung CK |
 | D | ngay_dang_ky | Auto |
-| E | so_tien | Auto = 50.000 |
+| E | so_tien | Auto = 30.000 |
 | F | da_thanh_toan | Checkbox — thầy tick |
 | G | ngay_thanh_toan | Auto khi tick |
-| H | ngay_kich_hoat | Auto khi GV đăng nhập |
+| H | ngay_kich_hoat | Auto khi GV bind máy |
 | I | ngay_het_han | Auto = ngày tick + 365 |
-| J | device_fp | Hash thiết bị (auto bind) |
+| J | device_fp | Hash thiết bị (auto bind, 1 SĐT = 1 máy) |
 | K | last_check | Lần check gần nhất |
 | L | trang_thai | `cho_thanh_toan` / `da_tra_tien` / `da_kich_hoat` / `het_han` / `khoa` |
 | M | ghi_chu | Thiết bị info + note thủ công |
@@ -135,11 +150,33 @@ Thầy được sửa tay: B, F, G, I, M. KHÔNG nên sửa: A, C, D, E, H, J, K
 
 ---
 
-## Phần 5 · Khi từ v1 (mã `GV000001`) lên v2 (self-serve)
+## Phần 5 · Migration từ v2 (5.x) lên v3 (V6.0)
 
-Nếu sheet đã có data v1 (cột `ma`, `email`):
-1. Backup sheet (File → Make a copy)
-2. Chạy lại `setupSheet()` — xóa data cũ và tạo schema mới
-3. Hoặc tạo Sheet mới hoàn toàn
+**GV v2 cũ KHÔNG bị ảnh hưởng gì**:
+- Sheet schema giữ nguyên 13 cột
+- Mã 4 ký tự của GV cũ vẫn match khi bind device
+- Extension V6.0 nhận diện cả 2 loại mã (SĐT 10 số HOẶC 4 ký tự)
+- Menu Sheet giữ song song 2 tùy chọn tick: theo SĐT (mới) và theo mã (cũ)
 
-Sheet hiện tại của thầy chưa có data → chạy `setupSheet()` lại là an toàn.
+**Khi GV v2 cũ đổi máy** sau khi đã update V6.0:
+- Họ vào extension trên máy mới, nhập SĐT + tên (KHÔNG cần nhớ mã cũ)
+- Server tự nhận diện qua SĐT, trả lại mã legacy
+- Extension tự bind device (nếu thầy đã reset thiết bị trong Sheet)
+
+**Lưu ý**: schema Sheet không đổi → KHÔNG cần chạy `setupSheet()` lại. Chỉ deploy New version của Apps Script là đủ.
+
+---
+
+## Phần 6 · Endpoint reference (cho dev)
+
+Apps Script Web App accept POST với JSON body `{action, ...payload}`:
+
+| Action | Payload | Trả về |
+|---|---|---|
+| `dangKy` | `{sdt, hoTen}` | `{ok, daDangKyTruoc?, alreadyPaid?, sdt, hoTen, ma, soTien}` |
+| `checkPaymentStatus` | `{sdt}` | `{ok, status, sdt, hoTen, ma}` — V6 mới, dùng cho polling |
+| `dangNhap` | `{sdt, ma, deviceFp, deviceInfo}` | `{ok, sdt, gv_ho_ten, validUntil, activatedAt}` |
+| `checkLicense` | `{sdt, deviceFp}` | `{ok, sdt, validUntil, gv_ho_ten}` |
+| `resetDevice` | `{sdt, adminKey}` | `{ok, message}` |
+
+`status` (cho checkPaymentStatus): `cho_thanh_toan` / `da_tra_tien` / `da_kich_hoat` / `het_han` / `khoa` / `khong_ton_tai`

@@ -20,7 +20,9 @@
     let currentStudents = [];
     let generatedNhanXet = new Map();
     let settings = {
-        gvLa: 'co'
+        gvLa: 'co',
+        // V6.1: Văn phong nhận xét — 'hocba' (TT27 khách quan, mặc định) | 'thanthien' (xưng "Em")
+        vanPhong: 'hocba'
     };
 
     // V2.0: Ky override — GV có thể chọn kỳ thủ công khi auto-detect không chính xác.
@@ -159,6 +161,7 @@
     async function loadEngineWithData() {
         engine = new NhanXetEngineV2();
         engine.options.gvLa = settings.gvLa;
+        engine.options.vanPhong = settings.vanPhong;
 
         try {
             const url = chrome.runtime.getURL('engine/data/nhanxet-ngan.json');
@@ -220,6 +223,9 @@
         document.querySelectorAll('#setting-gvLa button').forEach(b => {
             b.classList.toggle('active', b.dataset.value === settings.gvLa);
         });
+        document.querySelectorAll('#setting-vanPhong button').forEach(b => {
+            b.classList.toggle('active', b.dataset.value === settings.vanPhong);
+        });
     }
 
     function bindEvents() {
@@ -256,6 +262,18 @@
             };
         });
 
+        // V6.1: Toggle văn phong (Học bạ/Vnedu ↔ Thân thiện)
+        document.querySelectorAll('#setting-vanPhong button').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('#setting-vanPhong button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                settings.vanPhong = btn.dataset.value;
+                if (engine) engine.options.vanPhong = settings.vanPhong;
+                saveSettings();
+                showToast(`Đã đổi văn phong sang "${btn.textContent}"`);
+            };
+        });
+
         // Phase 2: Tab navigation
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.onclick = () => switchTab(btn.dataset.tab);
@@ -276,22 +294,14 @@
         document.getElementById('nlpc-btn-generate').onclick = generateNLPCText;
         document.getElementById('nlpc-btn-apply').onclick = applyNLPCToVnedu;
 
-        // v0.1.18 License controls — luồng self-serve (đăng ký → CK → đăng nhập)
+        // V6.0 License controls — flow Một-chạm (1 form đăng ký, tự polling)
         const bind = (id, handler) => {
             const el = document.getElementById(id);
             if (el) el.onclick = handler;
         };
         bind('lic-btn-register', handleRegisterClick);
-        bind('lic-btn-go-login', () => {
-            // Chuyển từ pending → form login. renderLicenseSection sẽ tự prefill
-            // SĐT + mã từ pending data nhờ licUiMode='login'.
-            licUiMode = 'login';
-            renderLicenseSection(licenseState);
-            setTimeout(() => {
-                const maIn = document.getElementById('lic-login-ma');
-                if (maIn) maIn.focus();
-            }, 100);
-        });
+        bind('lic-btn-copy-ma', handleCopyMaClick);
+        bind('lic-btn-check-now', handleCheckNowClick);
         bind('lic-btn-cancel-pending', handleCancelPending);
         bind('lic-btn-login', handleLoginClick);
         bind('lic-btn-remove', handleRemoveLicense);
@@ -796,6 +806,7 @@
         }
 
         engine.options.gvLa = settings.gvLa;
+        engine.options.vanPhong = settings.vanPhong;
 
         try {
             // V2.3.7: dùng resolveCommentStyle để map dropdown → engine style theo ky
@@ -959,6 +970,7 @@
         if (!subjectCode) return;
 
         engine.options.gvLa = settings.gvLa;
+        engine.options.vanPhong = settings.vanPhong;
 
         const hsInput = {
             stt: result.stt,
@@ -1331,6 +1343,7 @@
         }
 
         engine.options.gvLa = settings.gvLa;
+        engine.options.vanPhong = settings.vanPhong;
         const hs = nlpcStudents.find(s => s.stt === nlpcSelectedStt);
         const gradeLevel = getGradeLevel(currentContext?.lop);
 
@@ -1547,6 +1560,11 @@
         formLogin.style.display = 'none';
         info.style.display = 'none';
 
+        // V6: nếu rời pending → dừng polling
+        if (state.status !== 'pending' && window.LicenseClient && LicenseClient.isPolling()) {
+            LicenseClient.stopPolling();
+        }
+
         const settingNote = document.getElementById('lic-setting-note');
 
         if (state.status === 'active') {
@@ -1567,25 +1585,14 @@
         if (settingNote) settingNote.style.display = '';
 
         if (state.status === 'pending') {
-            // Khi thầy bấm "Tôi đã CK — đăng nhập", licUiMode='login' → hiện form Login
-            // prefill sẵn SĐT + mã từ pending state, để GV chỉ việc bấm Đăng nhập.
-            if (licUiMode === 'login') {
-                box.className = 'lic-status lic-status-free';
-                box.innerHTML = '⏳ Nhập SĐT + mã đã đăng ký để hoàn tất kích hoạt';
-                formLogin.style.display = 'block';
-                const sdtIn = document.getElementById('lic-login-sdt');
-                const maIn = document.getElementById('lic-login-ma');
-                if (sdtIn && !sdtIn.value) sdtIn.value = state.sdt || '';
-                if (maIn && !maIn.value) maIn.value = state.ma || '';
-                return;
-            }
-
             box.className = 'lic-status lic-status-pending';
             box.innerHTML = '⏳ Đã đăng ký — vui lòng chuyển khoản để hoàn tất';
             formPending.style.display = 'block';
             document.getElementById('lic-pending-sdt').textContent = state.sdt || '—';
             document.getElementById('lic-pending-name').textContent = state.hoTen || '—';
+            // V6: mã = SĐT cho user mới, hoặc mã 4 ký tự cho user cũ. Server đã trả `ma`.
             document.getElementById('lic-pending-ma').textContent = state.ma || '—';
+
             // Load ảnh QR từ thư mục extension
             const qrImg = document.getElementById('lic-qr-img');
             try {
@@ -1593,6 +1600,9 @@
                 qrImg.style.display = '';
                 document.getElementById('lic-qr-fallback').style.display = 'none';
             } catch (e) { /* extension context khác */ }
+
+            // V6: bắt đầu polling adaptive nếu chưa chạy
+            startLicensePolling_(state.sdt);
             return;
         }
 
@@ -1665,8 +1675,17 @@
         try {
             const res = await LicenseClient.dangKy(sdtRaw, hoTen);
             if (res.ok) {
+                // V6: case đặc biệt — đã paid trước đó (đổi máy / admin) → auto-activated
+                if (res.autoActivated) {
+                    showToast('✓ Đã kích hoạt cho ' + (res.gv_ho_ten || res.sdt));
+                    document.getElementById('lic-reg-hoten').value = '';
+                    document.getElementById('lic-reg-sdt').value = '';
+                    await refreshLicenseUI();
+                    closeLockModal();
+                    return;
+                }
                 showToast(res.daDangKyTruoc
-                    ? 'SĐT đã đăng ký — hiển thị lại mã cũ'
+                    ? 'SĐT đã đăng ký — hiển thị lại nội dung CK'
                     : '✓ Đăng ký thành công, vui lòng chuyển khoản');
                 document.getElementById('lic-reg-hoten').value = '';
                 document.getElementById('lic-reg-sdt').value = '';
@@ -1678,6 +1697,88 @@
         } finally {
             btn.disabled = false; btn.textContent = oldText;
         }
+    }
+
+    // V6: copy nội dung CK (= SĐT) vào clipboard
+    async function handleCopyMaClick() {
+        const ma = (document.getElementById('lic-pending-ma').textContent || '').trim();
+        if (!ma || ma === '—') return;
+        try {
+            await navigator.clipboard.writeText(ma);
+            showToast('✓ Đã copy "' + ma + '" — dán vào nội dung CK');
+        } catch (e) {
+            // Fallback cho môi trường không có Clipboard API
+            const ta = document.createElement('textarea');
+            ta.value = ma;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); showToast('✓ Đã copy ' + ma); }
+            catch (err) { showToast('Không copy được, vui lòng chọn và Ctrl+C'); }
+            document.body.removeChild(ta);
+        }
+    }
+
+    // V6: cô bấm "Kiểm tra ngay" sau khi polling auto đã give up
+    async function handleCheckNowClick() {
+        const state = licenseState;
+        if (!state || state.status !== 'pending' || !state.sdt) return;
+
+        const btn = document.getElementById('lic-btn-check-now');
+        btn.disabled = true; const oldText = btn.textContent; btn.textContent = 'Đang kiểm tra...';
+        try {
+            const res = await LicenseClient.checkPaymentStatus(state.sdt);
+            if (res.ok && res.status === 'da_tra_tien') {
+                // Thầy đã tick — gọi dangKy lại để trigger flow autoActivated
+                const dk = await LicenseClient.dangKy(state.sdt, state.hoTen || 'GV');
+                if (dk.ok && dk.autoActivated) {
+                    showToast('✓ Đã kích hoạt cho ' + (dk.gv_ho_ten || dk.sdt));
+                    await refreshLicenseUI();
+                    closeLockModal();
+                    return;
+                }
+            } else if (res.ok && res.status === 'cho_thanh_toan') {
+                showToast('Thầy chưa xác nhận. Vui lòng đợi hoặc nhắn Zalo 0913031073.');
+                startLicensePolling_(state.sdt);  // tiếp tục poll
+            } else if (res.ok && res.status === 'khong_ton_tai') {
+                showToast('Pending lệch server. Đang đăng ký lại...');
+                await LicenseClient.clearPending();
+                await refreshLicenseUI();
+            } else {
+                showToast(mapLicenseError(res));
+            }
+        } finally {
+            btn.disabled = false; btn.textContent = oldText;
+        }
+    }
+
+    // V6 polling helper — gọi từ renderLicenseSection khi vào pending.
+    // Tránh start trùng (LicenseClient tự dọn timer cũ trong startPolling).
+    function startLicensePolling_(sdt) {
+        if (!sdt || !window.LicenseClient) return;
+        document.getElementById('lic-btn-check-now').style.display = 'none';
+
+        LicenseClient.startPolling(sdt, {
+            onActivated: async (bindRes) => {
+                showToast('🎉 Đã kích hoạt thành công cho ' + (bindRes.gv_ho_ten || bindRes.sdt));
+                await refreshLicenseUI();
+                closeLockModal();
+            },
+            onGiveUp: async (errRes) => {
+                // Hết 30 phút polling, hoặc bind fail (đã active máy khác)
+                if (errRes && errRes.error) {
+                    showToast(mapLicenseError(errRes));
+                    if (errRes.error === 'da_kich_hoat_o_may_khac' ||
+                        errRes.error === 'da_dung_cho_may_khac') {
+                        // Xóa pending vì SĐT đã active ở máy khác — trở lại form đăng ký
+                        await LicenseClient.clearPending();
+                        await refreshLicenseUI();
+                        return;
+                    }
+                }
+                const btn = document.getElementById('lic-btn-check-now');
+                if (btn) btn.style.display = 'block';
+            }
+        });
     }
 
     async function handleLoginClick() {
@@ -1713,7 +1814,8 @@
     }
 
     async function handleCancelPending() {
-        if (!confirm('Hủy đăng ký này? (Mã hiện tại sẽ không dùng được nữa, phải đăng ký mới)')) return;
+        if (!confirm('Hủy đăng ký này? (Nếu đã chuyển khoản, vui lòng nhắn Zalo thầy Chung 0913031073)')) return;
+        if (window.LicenseClient && LicenseClient.stopPolling) LicenseClient.stopPolling();
         await LicenseClient.clearPending();
         licUiMode = 'register';
         showToast('Đã hủy đăng ký pending');
@@ -1732,20 +1834,21 @@
         const errMap = {
             'sdt_sai': 'Số điện thoại sai định dạng. Đúng dạng: 10 số bắt đầu bằng 0 (vd 0912345678).',
             'ho_ten_sai': 'Họ tên cần ít nhất 3 ký tự.',
-            'ma_sai_dinh_dang': 'Mã phải đúng 4 ký tự (chữ thường + số, vd k7m3).',
-            'sdt_chua_dang_ky': 'SĐT chưa đăng ký. Bấm "Đăng ký mới" trước.',
+            'ma_sai_dinh_dang': 'Mã không hợp lệ. Vui lòng kiểm tra lại.',
+            'sdt_chua_dang_ky': 'SĐT chưa đăng ký. Bấm "Bắt đầu kích hoạt" trước.',
             'ma_khong_dung': 'Mã không khớp với SĐT. Kiểm tra lại.',
-            'chua_thanh_toan': 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi 1-24h sau khi CK. Nếu đã CK lâu, liên hệ quản trị.',
-            'da_dung_cho_may_khac': 'SĐT này đã kích hoạt ở máy khác. Liên hệ quản trị để reset.',
-            'da_kich_hoat_o_may_khac': 'SĐT đã kích hoạt ở máy khác. Liên hệ quản trị.',
-            'da_tra_tien_hay_dang_nhap': 'SĐT đã thanh toán — bấm "Đã có mã? Đăng nhập" để vào tiếp.',
+            'chua_thanh_toan': 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi CK. Nếu đã CK lâu, nhắn Zalo thầy Chung 0913031073.',
+            'da_dung_cho_may_khac': 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 30k/1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.',
+            'da_kich_hoat_o_may_khac': 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 30k/1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.',
             'het_han': 'Đã hết hạn. Đăng ký gia hạn (thao tác lại từ đầu).',
-            'sdt_da_bi_khoa': 'SĐT đã bị khóa. Liên hệ quản trị.',
+            'sdt_da_bi_khoa': 'SĐT đã bị khóa. Nhắn Zalo thầy Chung 0913031073.',
             'thieu_device_fingerprint': 'Không lấy được mã định danh thiết bị.',
             'network': 'Lỗi kết nối mạng. Thử lại sau.',
             'rate_limit': 'Quá nhiều yêu cầu. Đợi 1 phút rồi thử lại.',
             'server_chua_cau_hinh': 'Hệ thống license chưa cấu hình. Báo quản trị.',
-            'chua_setup_sheet': 'Server chưa setup sheet. Báo quản trị.'
+            'chua_setup_sheet': 'Server chưa setup sheet. Báo quản trị.',
+            'server_chua_deploy_v3': 'Apps Script server chưa deploy phiên bản v3. Báo quản trị: Apps Script → Deploy → Manage deployments → New version.',
+            'unknown_action': 'Server không hiểu yêu cầu. Báo quản trị deploy lại Apps Script v3.'
         };
         return res.message || errMap[res.error] || ('Lỗi: ' + (res.error || 'không rõ'));
     }

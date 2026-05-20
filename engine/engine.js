@@ -276,6 +276,46 @@ class NhanXetEngineV2 {
     }
 
     /**
+     * V6.1.1: Enrich câu Toán + TV ở chế độ học bạ — thêm 1 vế phụ
+     * khi câu < 18 từ để đạt độ dài chuẩn Vnedu (18-25 từ).
+     * Trả nguyên câu nếu không thuộc Toán/TV hoặc đã đủ dài.
+     */
+    _enrichHocBaPhrase(text, subjectCode, tier) {
+        if (!text || this.options.vanPhong !== 'hocba') return text;
+        if (subjectCode !== 'toan' && subjectCode !== 'tieng-viet') return text;
+        const wc = text.trim().split(/\s+/).length;
+        if (wc >= 18) return text;
+
+        const bank = NhanXetEngineV2.ENRICH_BANK_HOCBA[subjectCode];
+        if (!bank) return text;
+        const pool = bank[tier] || bank.ht;
+        if (!pool || pool.length === 0) return text;
+
+        // Anti-duplicate: walk forward từ seeded index, bỏ qua vế đã có trong câu gốc.
+        // Heuristic: bất kỳ 3 từ liên tiếp nào của vế enrich xuất hiện trong text gốc → trùng.
+        const lowerText = text.toLowerCase();
+        const overlap = (enrich) => {
+            const tokens = enrich.toLowerCase().split(/\s+/);
+            for (let i = 0; i <= tokens.length - 3; i++) {
+                if (lowerText.includes(tokens.slice(i, i+3).join(' '))) return true;
+            }
+            return false;
+        };
+
+        const startIdx = this._seededIndex(text, pool.length, 7);
+        let enrich = null;
+        for (let off = 0; off < pool.length; off++) {
+            const cand = pool[(startIdx + off) % pool.length];
+            if (!overlap(cand)) { enrich = cand; break; }
+        }
+        if (!enrich) return text; // mọi vế đều trùng → giữ nguyên câu gốc
+
+        // Nối: nếu câu đã có "; ..." (đa-vế) thì dùng "; "; còn lại dùng ", "
+        const sep = /;\s/.test(text) ? '; ' : ', ';
+        return text.replace(/[.\s]+$/, '') + sep + enrich + '.';
+    }
+
+    /**
      * V6.1: Chuyển câu sang Văn phong học bạ/Vnedu (TT27).
      * Nguyên tắc:
      *  - KHÔNG xưng "Em" / "con" / gọi tên HS trực tiếp
@@ -996,6 +1036,8 @@ class NhanXetEngineV2 {
         // để chế độ 'thanthien' vẫn dùng nguyên si.
         if (this.options.vanPhong === 'hocba') {
             finalText = this._toHocBaStyle(finalText);
+            // V6.1.1: Toán + TV ở mode hocba thường ngắn (12-14 từ) — enrich lên 18-25 từ
+            finalText = this._enrichHocBaPhrase(finalText, subjectCode, mucDo);
         }
         return finalText;
     }
@@ -1161,6 +1203,71 @@ class NhanXetEngineV2 {
         return phrase.replace(/[\.\s]+$/, '') + ' ' + enrich + '.';
     }
 }
+
+// V6.1.1: ENRICH_BANK_HOCBA — pool vế phụ cho Toán + TV ở chế độ học bạ.
+// Áp dụng khi câu sau transform < 18 từ. Mỗi vế ~6-15 từ, phong cách TT27.
+// 4 tier: tot_xs (T+) / tot (T) / ht (H) / cht (C).
+NhanXetEngineV2.ENRICH_BANK_HOCBA = Object.freeze({
+    toan: {
+        tot_xs: [
+            'biết lập luận chặt chẽ và kiểm tra kết quả trước khi nộp bài',
+            'vận dụng linh hoạt kiến thức vào các tình huống thực tế',
+            'trình bày bài giải khoa học và đặt phép tính rõ ràng',
+            'biết phân tích đề bài và đề xuất nhiều cách giải',
+            'tính toán nhanh, chính xác và sáng tạo trong giải toán',
+            'có tư duy logic rõ ràng và làm chủ kiến thức môn học'
+        ],
+        tot: [
+            'biết vận dụng kiến thức vào bài tập quen thuộc',
+            'trình bày bài giải tương đối khoa học và đầy đủ',
+            'biết đặt phép tính rõ ràng và kiểm tra lại kết quả',
+            'làm bài cẩn thận và ít mắc sai sót khi tính toán',
+            'có cố gắng trong rèn kĩ năng giải toán có lời văn'
+        ],
+        ht: [
+            'cần rèn thêm kĩ năng phân tích đề và trình bày bài giải',
+            'cần luyện tính nhẩm, đặt phép tính cẩn thận hơn',
+            'cần đọc kĩ đề bài và kiểm tra kết quả trước khi nộp',
+            'nên làm thêm bài tập về nhà để củng cố kiến thức',
+            'cần phát huy thêm trong các tuần học tiếp theo'
+        ],
+        cht: [
+            'cần được hỗ trợ thêm và luyện tập tính toán hằng ngày',
+            'gia đình phối hợp kèm thêm các phép tính cơ bản tại nhà',
+            'cần kiên trì luyện đọc đề và đặt phép tính từng bước',
+            'nên ôn lại các phép tính đã học mỗi tối để vững nền tảng'
+        ]
+    },
+    'tieng-viet': {
+        tot_xs: [
+            'viết bài có bố cục rõ ràng, diễn đạt mạch lạc và giàu hình ảnh',
+            'biết kể chuyện sáng tạo và sử dụng từ ngữ chính xác',
+            'đọc hiểu sâu sắc văn bản và biết liên hệ thực tế',
+            'có vốn từ phong phú và biết vận dụng vào bài viết',
+            'trình bày ý kiến mạch lạc, lập luận chặt chẽ và thuyết phục'
+        ],
+        tot: [
+            'biết viết câu đúng ngữ pháp và sử dụng dấu câu phù hợp',
+            'dùng từ phù hợp với chủ đề và diễn đạt khá rõ ý',
+            'biết kể lại nội dung bài đọc bằng câu đầy đủ và rõ ràng',
+            'trình bày bài viết khá sạch đẹp và có bố cục cơ bản',
+            'có cố gắng trong rèn chữ viết và mở rộng vốn từ'
+        ],
+        ht: [
+            'cần luyện thêm đọc hiểu, dùng từ và viết câu rõ ý hơn',
+            'cần rèn thêm chính tả và cách diễn đạt trong bài viết',
+            'cần chú ý hơn khi trả lời câu hỏi và trình bày bài',
+            'nên đọc thêm sách truyện để mở rộng vốn từ',
+            'cần phát huy thêm trong các tuần học tiếp theo'
+        ],
+        cht: [
+            'cần được hỗ trợ thêm và luyện đọc viết đều đặn hằng ngày',
+            'gia đình phối hợp kèm thêm đọc to và chép chính tả tại nhà',
+            'nên luyện đọc trơn từng câu ngắn và viết từ quen thuộc',
+            'cần kiên trì luyện viết câu ngắn và đọc bài rõ ràng từng bước'
+        ]
+    }
+});
 
 // Pool vế bổ sung để enrich câu NLPC < 65 ký tự lên ~75-95 ký tự.
 // Mỗi vế ~10-25 ký tự, đa dạng để câu không bị lặp khi enrich nhiều HS.

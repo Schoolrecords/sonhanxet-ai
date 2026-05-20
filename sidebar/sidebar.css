@@ -1547,3 +1547,121 @@ body {
     font-weight: 500;
 }
 .setting-hint a:hover { text-decoration: underline; }
+
+/* ======================================================================
+ * V6.0 — Flow Một-chạm: khối nội dung CK, spinner chờ, link legacy
+ * ==================================================================== */
+
+/* Khối "Nội dung CK = SĐT" — nổi bật, có nút Copy */
+.lic-ck-block {
+    background: #FFF7E0;
+    border: 1px solid #F0D88A;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+.lic-ck-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #6B4F00;
+    margin-bottom: 6px;
+}
+.lic-ck-value-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.lic-ck-value-row .lic-pending-ma {
+    /* Override .lic-pending-ma defaults — phù hợp với nút Copy bên cạnh */
+    flex: 1;
+    margin: 0 !important;
+    font-size: 22px !important;
+    letter-spacing: 4px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #E4D08C;
+}
+.lic-btn-copy {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+.lic-ck-hint {
+    font-size: 11px;
+    color: #6B4F00;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Khối spinner "Đang chờ thầy xác nhận" */
+.lic-waiting-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #E6F1FB;
+    border: 1px solid #85B7EB;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+.lic-spinner {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 3px solid #D0E2F4;
+    border-top-color: #2B4F9E;
+    border-radius: 50%;
+    animation: lic-spin 0.9s linear infinite;
+}
+@keyframes lic-spin {
+    to { transform: rotate(360deg); }
+}
+.lic-waiting-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #0C447C;
+}
+.lic-waiting-sub {
+    font-size: 11.5px;
+    color: #325D8F;
+}
+
+.lic-pending-help {
+    font-size: 11px;
+    color: #888780;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+/* Link "Tài khoản trước 19/05/2026" — kín đáo, GV mới không bị nhiễu */
+.lic-link-legacy {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: #888780;
+    text-decoration: none;
+    padding: 4px;
+}
+.lic-link-legacy:hover {
+    color: #2B4F9E;
+    text-decoration: underline;
+}
+
+/* Banner trên form legacy login */
+.lic-legacy-banner {
+    background: #F4F5F7;
+    border: 1px solid #D4D4D4;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+    color: #5F5E5A;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-style: italic;
+}

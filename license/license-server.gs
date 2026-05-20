@@ -1,12 +1,23 @@
 /**
- * LICENSE SERVER v2 cho extension "Sổ nhận xét - AI"
+ * LICENSE SERVER v3 cho extension "Sổ nhận xét - AI"
  * ===================================================
  *
- * MÔ HÌNH SELF-SERVE (đổi 2026-05-15):
- *   1. GV đăng ký bằng [Họ tên + SĐT] → hệ thống sinh mã 6 ký tự
- *   2. GV chuyển khoản 50k, nội dung = mã đó
- *   3. Thầy tick "đã thanh toán" trong Sheet
- *   4. GV đăng nhập bằng [SĐT + mã] → bind thiết bị → mở khóa extension
+ * MÔ HÌNH "MỘT-CHẠM" (V6.0.0 — đổi 2026-05-19):
+ *   1. GV nhập [Họ tên + SĐT] → server tạo row với MÃ = SĐT (không random).
+ *   2. GV chuyển khoản, nội dung CK = SĐT của chính cô (cô đã thuộc).
+ *   3. Thầy quản trị mở Sheet → menu "Tick theo SĐT" → paste SĐT từ sao kê.
+ *   4. Extension cô tự ping server mỗi 20-120s → khi thấy đã tick, tự bind device,
+ *      tự kích hoạt — cô KHÔNG cần thao tác lần 2.
+ *
+ * CHÍNH SÁCH 30k / 1 MÁY:
+ *   - 1 SĐT bind 1 device cứng. Cô đổi máy/cài lại Windows → server từ chối,
+ *     yêu cầu liên hệ Zalo thầy. Thầy mở Sheet → menu "Reset thiết bị" →
+ *     cô đăng nhập lại trên máy mới.
+ *
+ * COMPAT GV V2 CŨ:
+ *   - GV đã đăng ký trước 2026-05-19 với mã 4 ký tự (k7m3...) vẫn dùng bình thường.
+ *   - Sheet schema KHÔNG đổi 1 cột nào. Menu "Tick theo mã" cũ vẫn giữ.
+ *   - Endpoint dangNhap accept cả mã 4 ký tự cũ lẫn SĐT 10 số mới.
  *
  * Apps Script BOUND vào 1 Google Sheet (sheets.new → Extensions → Apps Script).
  *
@@ -41,18 +52,23 @@ const COL = {
 };
 const TT = {
   CHO_THANH_TOAN: 'cho_thanh_toan',  // vừa đăng ký, chưa CK
-  DA_TRA_TIEN: 'da_tra_tien',         // thầy đã tick, chờ GV đăng nhập
+  DA_TRA_TIEN: 'da_tra_tien',         // thầy đã tick, chờ extension bind device
   DA_KICH_HOAT: 'da_kich_hoat',       // đã bind thiết bị
   HET_HAN: 'het_han',
   KHOA: 'khoa'
 };
-const SO_TIEN_MAC_DINH = 30000;   // V.05: đổi 50k → 30k
+const SO_TIEN_MAC_DINH = 30000;
 const HAN_DUNG_NGAY = 365;
-const MA_BI_MAT_LEN = 4;  // 4 ký tự cho GV dễ gõ. 31^4 ≈ 923k tổ hợp, đủ.
-// Bộ ký tự cho mã: chữ thường + số, BỎ ký tự dễ nhầm (0, o, 1, l, i)
+
+// V6: tolerant — mã có thể là SĐT 10 số (flow mới) HOẶC 4 ký tự (flow cũ GV v2).
+const MA_LEN_MIN = 4;
+const MA_LEN_MAX = 10;
+const MA_LEN_LEGACY = 4;  // cho GV v2 cũ (giữ tham chiếu)
+
+// Bộ ký tự cho mã LEGACY: chữ thường + số, BỎ ký tự dễ nhầm (0, o, 1, l, i)
 const MA_CHARSET = 'abcdefghjkmnpqrstuvwxyz23456789';
 
-// V.05: SĐT admin/test — tự động bypass payment + cho phép re-register/re-bind
+// SĐT admin/test — tự động bypass payment + cho phép re-register/re-bind
 // để admin test flow nhanh không cần tick checkbox + reset device thủ công.
 const ADMIN_SDTS = ['0913031073'];
 // Mã cố định cho admin (4 ký tự, lowercase + số, theo MA_CHARSET). Thầy luôn dùng
@@ -66,8 +82,8 @@ function isAdminSdt_(sdt) {
 
 function doGet(e) {
   return ContentService
-    .createTextOutput('Sổ nhận xét - AI · License server v2 đang hoạt động.\n' +
-                      'Endpoint POST với action: dangKy | dangNhap | checkLicense | resetDevice')
+    .createTextOutput('Sổ nhận xét - AI · License server v3 đang hoạt động.\n' +
+                      'Endpoint POST với action: dangKy | dangNhap | checkPaymentStatus | checkLicense | resetDevice')
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -78,10 +94,11 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents || '{}');
     const action = body.action;
 
-    if (action === 'dangKy')        return jsonOut_(dangKy_(body));
-    if (action === 'dangNhap')      return jsonOut_(dangNhap_(body));
-    if (action === 'checkLicense')  return jsonOut_(checkLicense_(body));
-    if (action === 'resetDevice')   return jsonOut_(resetDevice_(body));
+    if (action === 'dangKy')              return jsonOut_(dangKy_(body));
+    if (action === 'dangNhap')            return jsonOut_(dangNhap_(body));
+    if (action === 'checkPaymentStatus')  return jsonOut_(checkPaymentStatus_(body));
+    if (action === 'checkLicense')        return jsonOut_(checkLicense_(body));
+    if (action === 'resetDevice')         return jsonOut_(resetDevice_(body));
 
     return jsonOut_({ ok: false, error: 'unknown_action' });
   } catch (err) {
@@ -101,14 +118,20 @@ function rateLimitOK_(e) {
     const ua = (e && e.parameter && e.parameter.ua) || 'anon';
     const key = 'rl_' + Utilities.base64EncodeWebSafe(ua).slice(0, 20);
     const count = parseInt(cache.get(key) || '0', 10) + 1;
+    // V6: nới rate limit từ 30 lên 60/phút vì polling adaptive có thể bùng nhẹ
+    // khi nhiều cô cùng đăng ký một lúc đầu giờ.
     cache.put(key, String(count), 60);
-    return count <= 30;
+    return count <= 60;
   } catch (e) { return true; }
 }
 
 // =============== ĐĂNG KÝ ===============
-// GV nhập [họ tên + SĐT] → server sinh mã 6 ký tự, lưu sheet, trả mã.
-// Idempotent: nếu SĐT đã đăng ký mà chưa thanh toán → trả lại mã cũ (không sinh mới).
+// V6 flow "Một-chạm":
+//   - GV nhập [Họ tên + SĐT] → server tạo row với MÃ = SĐT (không random).
+//   - Nếu SĐT đã có row chưa kích hoạt → trả lại pending (idempotent).
+//   - Nếu SĐT đã `da_tra_tien` (thầy đã tick) → trả {ok:true, alreadyPaid:true, ma:...}
+//     để client tự gọi dangNhap ngay → bind device → kích hoạt liền (không cần CK lại).
+//   - Nếu SĐT đã `da_kich_hoat` ở máy khác → từ chối (chính sách 30k/1 máy).
 
 function dangKy_(body) {
   const sdt = chuanHoaSdt_(body.sdt);
@@ -122,10 +145,9 @@ function dangKy_(body) {
   if (!sheet) return { ok: false, error: 'chua_setup_sheet' };
 
   const row = findRowBySdt_(sheet, sdt);
-  const isAdmin = isAdminSdt_(sdt);  // V.05: admin bypass
+  const isAdmin = isAdminSdt_(sdt);
 
-  // V.05: Admin SĐT — luôn cho phép re-register, reset state về da_tra_tien để
-  // có thể đăng nhập ngay (không cần thầy tick "da_thanh_toan" trong sheet).
+  // ADMIN: luôn cho phép re-register, reset state về da_tra_tien để có thể bind ngay.
   // Mã dùng ADMIN_FIXED_MA → thầy luôn dùng cùng 1 mã, dễ nhớ.
   if (row && isAdmin) {
     const ma = ADMIN_FIXED_MA;
@@ -134,62 +156,77 @@ function dangKy_(body) {
     sheet.getRange(row, COL.ho_ten).setValue(hoTen);
     sheet.getRange(row, COL.ngay_dang_ky).setValue(now);
     sheet.getRange(row, COL.so_tien).setValue(SO_TIEN_MAC_DINH);
-    sheet.getRange(row, COL.da_thanh_toan).setValue(true);   // ADMIN auto-pay
+    sheet.getRange(row, COL.da_thanh_toan).setValue(true);
     sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
     sheet.getRange(row, COL.ngay_kich_hoat).setValue('');
     sheet.getRange(row, COL.ngay_het_han).setValue('');
-    sheet.getRange(row, COL.device_fp).setValue('');  // Clear → cho phép re-bind
+    sheet.getRange(row, COL.device_fp).setValue('');
     sheet.getRange(row, COL.last_check).setValue('');
     sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
     sheet.getRange(row, COL.ghi_chu).setValue('ADMIN · auto-bypass');
     return {
-      ok: true, daDangKyTruoc: false,
+      ok: true, alreadyPaid: true,
       sdt: sdt, hoTen: hoTen, ma: ma,
-      soTien: 0,  // admin = miễn phí
-      message: '[ADMIN] Đã reset. Đăng nhập ngay với mã: ' + ma
+      soTien: 0,
+      message: '[ADMIN] Đã reset. Tự bind máy ngay.'
     };
   }
 
   if (row) {
     const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+    autoUpgradePaid_(sheet, row, v);  // tick tay cột F → tự đồng bộ G+I+L
     const trangThai = v[COL.trang_thai - 1];
-    const ma = v[COL.ma_bi_mat - 1];
+    const maCu = chuanHoaMa_(v[COL.ma_bi_mat - 1]);  // có thể là SĐT (mới) hoặc mã 4 ký tự (cũ)
 
     if (trangThai === TT.CHO_THANH_TOAN) {
-      // Idempotent: trả lại mã cũ
+      // Idempotent: trả lại pending cũ (mã có thể là sdt hoặc legacy)
       return {
         ok: true, daDangKyTruoc: true,
-        sdt: sdt, hoTen: v[COL.ho_ten - 1], ma: ma,
+        sdt: sdt, hoTen: v[COL.ho_ten - 1], ma: maCu,
         soTien: SO_TIEN_MAC_DINH,
-        message: 'SĐT này đã đăng ký trước. Mã: ' + ma
+        message: 'SĐT này đã đăng ký trước. Vui lòng chuyển khoản với nội dung: ' + maCu
       };
     }
+
     if (trangThai === TT.DA_TRA_TIEN) {
+      // V6: thầy đã tick → client tự bind device ngay, không cần GV CK lại.
+      // Trả mã (sdt mới hoặc legacy 4 ký tự) để client gọi tiếp dangNhap.
       return {
-        ok: false, error: 'da_tra_tien_hay_dang_nhap',
-        message: 'SĐT đã thanh toán. Hãy chuyển sang tab Đăng nhập với mã: ' + ma
+        ok: true, alreadyPaid: true,
+        sdt: sdt, hoTen: v[COL.ho_ten - 1], ma: maCu,
+        message: 'Đã ghi nhận thanh toán. Đang kích hoạt máy này...'
       };
     }
+
     if (trangThai === TT.DA_KICH_HOAT) {
+      // CHÍNH SÁCH 30k/1 MÁY: từ chối, yêu cầu Zalo thầy reset.
       return {
         ok: false, error: 'da_kich_hoat_o_may_khac',
-        message: 'SĐT đã kích hoạt ở máy khác. Liên hệ admin nếu cần reset.'
+        message: 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 1 license cho 1 máy, vui lòng nhắn Zalo thầy Chung 0913031073 để được hỗ trợ.'
       };
     }
+
     if (trangThai === TT.KHOA) {
-      return { ok: false, error: 'sdt_da_bi_khoa' };
+      return {
+        ok: false, error: 'sdt_da_bi_khoa',
+        message: 'SĐT đã bị khóa. Liên hệ Zalo thầy Chung 0913031073.'
+      };
     }
+
     if (trangThai === TT.HET_HAN) {
-      // Cho đăng ký lại — sinh mã mới
+      // Cho đăng ký lại — reset row với mã mới (= SĐT, theo flow V6)
     }
   }
 
-  // Sinh mã: admin dùng mã cố định, user thường dùng mã random
-  const ma = isAdmin ? ADMIN_FIXED_MA : sinhMaKhongTrung_(sheet);
+  // Sinh mã:
+  //   - admin → ADMIN_FIXED_MA
+  //   - user thường → MÃ = SĐT (V6 flow)
+  const ma = isAdmin ? ADMIN_FIXED_MA : sdt;
   const now = new Date();
 
   if (row) {
-    // Reset lại row cũ (HẾT_HAN) với mã mới — prefix "'" để force text, giữ số 0 đầu
+    // Reset lại row cũ (HET_HAN) với mã mới
+    // Prefix "'" cho ma_bi_mat để Google Sheets giữ dạng text (giữ số 0 đầu của SĐT)
     sheet.getRange(row, COL.ma_bi_mat).setValue("'" + ma);
     sheet.getRange(row, COL.ho_ten).setValue(hoTen);
     sheet.getRange(row, COL.ngay_dang_ky).setValue(now);
@@ -204,7 +241,6 @@ function dangKy_(body) {
   } else {
     // QUAN TRỌNG: prefix "'" cho SĐT và mã để Google Sheets giữ dạng text,
     // không cắt số 0 đầu. Apostrophe không hiển thị trong cell.
-    // V.05: Admin SĐT new → auto-pay + DA_TRA_TIEN state để đăng nhập ngay.
     sheet.appendRow([
       "'" + sdt, hoTen, "'" + ma,
       now, SO_TIEN_MAC_DINH, isAdmin, isAdmin ? now : '',
@@ -218,14 +254,44 @@ function dangKy_(body) {
     ok: true, daDangKyTruoc: false,
     sdt: sdt, hoTen: hoTen, ma: ma,
     soTien: isAdmin ? 0 : SO_TIEN_MAC_DINH,
+    alreadyPaid: !!isAdmin,
     message: isAdmin
-      ? '[ADMIN] Đăng ký thành công. Đăng nhập ngay với mã: ' + ma
+      ? '[ADMIN] Đăng ký thành công. Tự bind máy ngay.'
       : 'Đăng ký thành công. Vui lòng chuyển khoản với nội dung: ' + ma
   };
 }
 
-// =============== ĐĂNG NHẬP ===============
+// =============== CHECK PAYMENT STATUS (V6 mới) ===============
+// Client poll endpoint này để biết khi nào thầy đã tick. KHÔNG cần device fingerprint.
+// Khi server trả 'da_thanh_toan' → client gọi tiếp dangNhap để bind device.
+
+function checkPaymentStatus_(body) {
+  const sdt = chuanHoaSdt_(body.sdt);
+  if (!sdt) return { ok: false, error: 'sdt_sai' };
+
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (!sheet) return { ok: false, error: 'chua_setup_sheet' };
+
+  const row = findRowBySdt_(sheet, sdt);
+  if (!row) return { ok: true, status: 'khong_ton_tai', sdt: sdt };
+
+  const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+  autoUpgradePaid_(sheet, row, v);  // tick tay cột F → tự đồng bộ G+I+L
+  const trangThai = v[COL.trang_thai - 1];
+  const ma = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
+
+  return {
+    ok: true,
+    status: trangThai,
+    sdt: sdt,
+    hoTen: String(v[COL.ho_ten - 1] || ''),
+    ma: ma
+  };
+}
+
+// =============== ĐĂNG NHẬP (bind device) ===============
 // GV nhập [SĐT + mã] trên thiết bị → server verify đã trả tiền → bind device.
+// V6: mã có thể là SĐT 10 số (mới) HOẶC 4 ký tự (legacy GV v2).
 
 function dangNhap_(body) {
   const sdt = chuanHoaSdt_(body.sdt);
@@ -234,7 +300,9 @@ function dangNhap_(body) {
   const deviceInfo = String(body.deviceInfo || '').slice(0, 200);
 
   if (!sdt) return { ok: false, error: 'sdt_sai' };
-  if (!ma || ma.length !== MA_BI_MAT_LEN) return { ok: false, error: 'ma_sai_dinh_dang' };
+  if (!ma || ma.length < MA_LEN_MIN || ma.length > MA_LEN_MAX) {
+    return { ok: false, error: 'ma_sai_dinh_dang' };
+  }
   if (!deviceFp || deviceFp.length < 8) return { ok: false, error: 'thieu_device_fingerprint' };
 
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
@@ -249,17 +317,17 @@ function dangNhap_(body) {
   const maTrenSheet = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
   const daTraTien = v[COL.da_thanh_toan - 1] === true || v[COL.da_thanh_toan - 1] === 'TRUE';
   const fpHienTai = String(v[COL.device_fp - 1] || '').trim();
-  let ngayHetHan = v[COL.ngay_het_han - 1];  // V.05: let (có thể reassign khi auto-set bên dưới)
+  let ngayHetHan = v[COL.ngay_het_han - 1];
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
 
   if (ma !== maTrenSheet) return { ok: false, error: 'ma_khong_dung' };
 
   if (!daTraTien) return { ok: false, error: 'chua_thanh_toan',
-                           message: 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi 1-24h sau khi chuyển khoản. Nếu đã CK lâu, liên hệ admin.' };
+                           message: 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi chuyển khoản. Nếu đã CK lâu, liên hệ Zalo thầy Chung.' };
 
-  // v0.1.21: nếu admin chỉ tick checkbox bằng tay (không dùng menu) → ngay_het_han
-  // chưa được set. Tự động set = ngay_thanh_toan + 365 ngày (mặc định 1 năm).
+  // Nếu admin chỉ tick checkbox bằng tay (không dùng menu) → ngay_het_han chưa được set.
+  // Tự động set = ngay_thanh_toan + 365 ngày (mặc định 1 năm).
   if (!ngayHetHan) {
     const ngayTraTien = v[COL.ngay_thanh_toan - 1] ? new Date(v[COL.ngay_thanh_toan - 1]) : new Date();
     if (!v[COL.ngay_thanh_toan - 1]) {
@@ -274,10 +342,10 @@ function dangNhap_(body) {
     return { ok: false, error: 'het_han' };
   }
 
-  // V.05: Admin SĐT — luôn cho phép re-bind device khác (đỡ phải reset thủ công khi test).
+  // CHÍNH SÁCH 30k/1 MÁY: nếu đã bind máy khác, từ chối (trừ admin).
   if (fpHienTai && fpHienTai !== deviceFp && !isAdminSdt_(sdt)) {
     return { ok: false, error: 'da_dung_cho_may_khac',
-             message: 'Tài khoản đã kích hoạt ở máy khác. Liên hệ admin để reset.' };
+             message: 'Tài khoản đã kích hoạt ở máy khác. Theo chính sách 1 license cho 1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.' };
   }
 
   // OK: bind máy này (admin: luôn ghi đè fp)
@@ -318,7 +386,7 @@ function checkLicense_(body) {
   const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
   const trangThai = v[COL.trang_thai - 1];
   const fpHienTai = String(v[COL.device_fp - 1] || '').trim();
-  let ngayHetHan = v[COL.ngay_het_han - 1];  // V.05: let (có thể reassign khi auto-set bên dưới)
+  let ngayHetHan = v[COL.ngay_het_han - 1];
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
   if (fpHienTai && fpHienTai !== deviceFp) return { ok: false, error: 'sai_thiet_bi' };
@@ -370,8 +438,48 @@ function chuanHoaMa_(s) {
   return String(s || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-function sinhMaKhongTrung_(sheet) {
-  // Lấy danh sách mã hiện có để tránh trùng (mã 6 ký tự ~9 tỷ tổ hợp, gần như không trùng)
+/**
+ * Tự nâng cấp row khi thầy quản trị tick tay cột F (da_thanh_toan) thay vì
+ * dùng menu "Tick thanh toán theo SĐT...". Tick tay chỉ đổi cột F = TRUE,
+ * KHÔNG đụng cột G (ngay_thanh_toan), I (ngay_het_han), L (trang_thai)
+ * → client polling thấy trang_thai vẫn 'cho_thanh_toan' nên quay mãi.
+ *
+ * Hàm này mutate v in place + update sheet → caller dùng v ngay sau khi gọi
+ * sẽ thấy giá trị mới. Idempotent: chạy nhiều lần không tạo side effect.
+ */
+function autoUpgradePaid_(sheet, row, v) {
+  const daTraTien = v[COL.da_thanh_toan - 1] === true || v[COL.da_thanh_toan - 1] === 'TRUE';
+  const trangThai = v[COL.trang_thai - 1];
+  if (!daTraTien || trangThai !== TT.CHO_THANH_TOAN) return v;
+
+  const now = new Date();
+  if (!v[COL.ngay_thanh_toan - 1]) {
+    sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
+    v[COL.ngay_thanh_toan - 1] = now;
+  }
+  if (!v[COL.ngay_het_han - 1]) {
+    const ngayTraTien = new Date(v[COL.ngay_thanh_toan - 1] || now);
+    const hetHan = new Date(ngayTraTien.getFullYear() + 1, ngayTraTien.getMonth(), ngayTraTien.getDate());
+    sheet.getRange(row, COL.ngay_het_han).setValue(hetHan);
+    v[COL.ngay_het_han - 1] = hetHan;
+  }
+  sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
+  v[COL.trang_thai - 1] = TT.DA_TRA_TIEN;
+
+  // Đánh dấu để thầy biết row này được auto-upgrade (debug/audit)
+  const oldNote = String(v[COL.ghi_chu - 1] || '');
+  const tag = 'auto-upgrade (tick tay F)';
+  if (oldNote.indexOf(tag) < 0) {
+    const newNote = ((oldNote ? oldNote + ' | ' : '') + tag).slice(0, 500);
+    sheet.getRange(row, COL.ghi_chu).setValue(newNote);
+    v[COL.ghi_chu - 1] = newNote;
+  }
+  return v;
+}
+
+function sinhMaLegacyKhongTrung_(sheet) {
+  // V6: chỉ dùng để test/debug — flow mới mã = sdt, không gọi hàm này.
+  // Giữ để fallback nếu cần sinh mã random sau này.
   const last = sheet.getLastRow();
   const existing = new Set();
   if (last >= 2) {
@@ -380,13 +488,12 @@ function sinhMaKhongTrung_(sheet) {
   }
   for (let attempt = 0; attempt < 20; attempt++) {
     let ma = '';
-    for (let i = 0; i < MA_BI_MAT_LEN; i++) {
+    for (let i = 0; i < MA_LEN_LEGACY; i++) {
       ma += MA_CHARSET.charAt(Math.floor(Math.random() * MA_CHARSET.length));
     }
     if (!existing.has(ma)) return ma;
   }
-  // Cực kỳ khó xảy ra
-  throw new Error('Không sinh được mã không trùng sau 20 lần thử');
+  throw new Error('Không sinh được mã legacy không trùng sau 20 lần thử');
 }
 
 function findRowBySdt_(sheet, sdt) {
@@ -447,7 +554,9 @@ function setupSheet() {
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('🔑 Sổ NX - AI')
-    .addItem('💰 Tick đã thanh toán cho mã...', 'tickDaThanhToan')
+    .addItem('💰 Tick thanh toán theo SĐT... (V6 — khuyên dùng)', 'tickThanhToanTheoSdt')
+    .addItem('💰 Tick theo mã 4 ký tự... (GV v2 cũ)', 'tickDaThanhToan')
+    .addSeparator()
     .addItem('🔄 Reset thiết bị (theo SĐT)...', 'resetThietBiUI')
     .addItem('🔒 Khóa 1 SĐT (nghi share)...', 'khoaSdtUI')
     .addSeparator()
@@ -457,17 +566,69 @@ function onOpen() {
 }
 
 /**
- * Thầy mở app bank thấy CK → ghi nhớ mã trong nội dung → mở Sheet → menu này → nhập mã.
+ * V6 — flow MỘT-CHẠM: thầy nhập SĐT từ sao kê NH (= chính nội dung CK của cô).
  * Hệ thống tự set ngày thanh toán, ngày hết hạn = +365 ngày, trạng thái da_tra_tien.
+ * Cô KHÔNG cần thao tác — extension tự ping server mỗi 20-120s, sẽ tự bind máy.
+ */
+function tickThanhToanTheoSdt() {
+  const ui = SpreadsheetApp.getUi();
+  const res = ui.prompt('Nhập SĐT trong nội dung chuyển khoản',
+                        'VD: 0912345678 (có thể có space/dấu chấm, hệ thống tự bỏ)',
+                        ui.ButtonSet.OK_CANCEL);
+  if (res.getSelectedButton() !== ui.Button.OK) return;
+
+  const sdt = chuanHoaSdt_(res.getResponseText());
+  if (!sdt) { ui.alert('SĐT sai định dạng. Đúng dạng: 10 số bắt đầu bằng 0.'); return; }
+
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const row = findRowBySdt_(sheet, sdt);
+  if (!row) {
+    ui.alert('Không tìm thấy SĐT ' + sdt + ' trong sheet. Cô có thể chưa bấm "Bắt đầu" trong extension.');
+    return;
+  }
+
+  const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+  const hoTen = v[COL.ho_ten - 1];
+  const trangThai = v[COL.trang_thai - 1];
+
+  if (trangThai === TT.DA_KICH_HOAT) {
+    ui.alert('SĐT ' + sdt + ' (' + hoTen + ') đã kích hoạt rồi. Không cần tick nữa.');
+    return;
+  }
+  if (trangThai === TT.DA_TRA_TIEN) {
+    ui.alert('SĐT ' + sdt + ' (' + hoTen + ') đã được tick trước đó. Đang chờ cô bind máy.');
+    return;
+  }
+
+  const now = new Date();
+  const hetHan = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+
+  sheet.getRange(row, COL.da_thanh_toan).setValue(true);
+  sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
+  sheet.getRange(row, COL.ngay_het_han).setValue(hetHan);
+  sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
+
+  ui.alert('✓ Đã ghi nhận thanh toán cho:\n\n' +
+           '  SĐT: ' + sdt + '\n' +
+           '  GV: ' + hoTen + '\n' +
+           '  Hạn dùng: ' + Utilities.formatDate(hetHan, 'GMT+7', 'dd/MM/yyyy') + '\n\n' +
+           'Extension của cô sẽ tự kích hoạt trong 20-120 giây tới.\n' +
+           '(Cô KHÔNG cần thao tác thêm gì.)');
+}
+
+/**
+ * LEGACY V2 — tick theo mã 4 ký tự cho GV cũ.
+ * Giữ để không phá flow của 41 GV đã đăng ký trước 2026-05-19.
  */
 function tickDaThanhToan() {
   const ui = SpreadsheetApp.getUi();
-  const res = ui.prompt('Nhập mã ' + MA_BI_MAT_LEN + ' ký tự trong nội dung chuyển khoản',
-                        'VD: k7m3', ui.ButtonSet.OK_CANCEL);
+  const res = ui.prompt('Nhập mã 4 ký tự trong nội dung chuyển khoản (GV v2 cũ)',
+                        'VD: k7m3 — chỉ dùng cho GV đăng ký trước 19/05/2026',
+                        ui.ButtonSet.OK_CANCEL);
   if (res.getSelectedButton() !== ui.Button.OK) return;
 
   const ma = chuanHoaMa_(res.getResponseText());
-  if (ma.length !== MA_BI_MAT_LEN) { ui.alert('Mã phải đúng ' + MA_BI_MAT_LEN + ' ký tự'); return; }
+  if (ma.length !== MA_LEN_LEGACY) { ui.alert('Mã phải đúng ' + MA_LEN_LEGACY + ' ký tự'); return; }
 
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
   const row = findRowByMa_(sheet, ma);
@@ -501,7 +662,8 @@ function tickDaThanhToan() {
 
 function resetThietBiUI() {
   const ui = SpreadsheetApp.getUi();
-  const res = ui.prompt('Reset thiết bị cho SĐT nào?', 'VD: 0912345678', ui.ButtonSet.OK_CANCEL);
+  const res = ui.prompt('Reset thiết bị cho SĐT nào?\n(Cô đã liên hệ Zalo, máy hỏng/đổi máy)',
+                        'VD: 0912345678', ui.ButtonSet.OK_CANCEL);
   if (res.getSelectedButton() !== ui.Button.OK) return;
   const sdt = chuanHoaSdt_(res.getResponseText());
   if (!sdt) { ui.alert('SĐT sai định dạng'); return; }
@@ -512,7 +674,7 @@ function resetThietBiUI() {
 
   sheet.getRange(row, COL.device_fp).setValue('');
   sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
-  ui.alert('✓ Đã reset thiết bị cho ' + sdt + '. GV có thể đăng nhập lại trên máy mới.');
+  ui.alert('✓ Đã reset thiết bị cho ' + sdt + '.\n\nCô có thể vào extension trên máy mới, nhập SĐT + tên → tự kích hoạt.');
 }
 
 function khoaSdtUI() {
@@ -564,7 +726,7 @@ function donDepMaCho() {
 }
 
 /**
- * V.05: Dồn dữ liệu lên đầu sheet bắt đầu từ A2.
+ * Dồn dữ liệu lên đầu sheet bắt đầu từ A2.
  * Khi sheet có nhiều hàng trống xen kẽ (do user xóa nội dung), `appendRow` vẫn
  * append ở cuối sheet (vd row 1004) thay vì row 2. Hàm này quét toàn bộ data,
  * lọc hàng có SĐT, xóa hết hàng dưới header, ghi data nén liền mạch từ row 2.
