@@ -1593,6 +1593,16 @@
             // V6: mã = SĐT cho user mới, hoặc mã 4 ký tự cho user cũ. Server đã trả `ma`.
             document.getElementById('lic-pending-ma').textContent = state.ma || '—';
 
+            // V6.1.2: caption dynamic — admin/legacy có mã khác SĐT
+            const hintEl = document.getElementById('lic-ck-hint');
+            if (hintEl) {
+                const maEqualsSdt = state.ma && state.sdt &&
+                    String(state.ma).replace(/\s+/g,'') === String(state.sdt).replace(/\s+/g,'');
+                hintEl.textContent = maEqualsSdt
+                    ? '(Chính là số điện thoại của thầy/cô — gõ đúng để hệ thống nhận diện)'
+                    : '(Gõ đúng nội dung trên khi chuyển khoản — hệ thống sẽ tự nhận diện thanh toán)';
+            }
+
             // Load ảnh QR từ thư mục extension
             const qrImg = document.getElementById('lic-qr-img');
             try {
