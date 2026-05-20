@@ -266,10 +266,79 @@ class NhanXetEngineV2 {
     constructor(options = {}) {
         this.options = {
             antiDupLevel: 'normal',
+            // V6.1: vanPhong = 'hocba' (Văn phong học bạ/Vnedu — TT27 chuẩn, mặc định)
+            //                 'thanthien' (Văn phong thân thiện — giữ xưng "Em")
+            vanPhong: 'hocba',
             ...options
         };
         this.data = null;
         this.usedPhrases = new Set();
+    }
+
+    /**
+     * V6.1: Chuyển câu sang Văn phong học bạ/Vnedu (TT27).
+     * Nguyên tắc:
+     *  - KHÔNG xưng "Em" / "con" / gọi tên HS trực tiếp
+     *  - KHÔNG dùng "em hãy", "con nhé", "cô tin/thầy tin/thầy cô tin"
+     *  - Mô tả khách quan: "Em đọc lưu loát..." → "Đọc lưu loát..."
+     *  - "Em hãy luyện..." → "Cần luyện..."
+     *  - "Em cần..." → "Cần..."
+     *  - "Em biết..." → "Biết..."
+     */
+    _toHocBaStyle(text) {
+        if (!text || typeof text !== 'string') return text;
+        let s = text;
+
+        // Step 1: Thay cụm "Em <động từ>" có ngữ nghĩa khuyến nghị/khách quan
+        // (xử lý TRƯỚC khi bỏ "Em " trần để bảo toàn ngữ nghĩa)
+        s = s.replace(/\bEm hãy\b/g, 'Cần');
+        s = s.replace(/\bem hãy\b/g, 'cần');
+        s = s.replace(/\bEm cần\b/g, 'Cần');
+        s = s.replace(/\bem cần\b/g, 'cần');
+        s = s.replace(/\bEm nên\b/g, 'Nên');
+        s = s.replace(/\bem nên\b/g, 'nên');
+
+        // Step 1b: "Em sẽ tiến bộ/tự tin/..." hơn, hãy/cần X — học bạ ưu tiên câu khuyến nghị trực tiếp
+        // → bỏ vế đầu, giữ vế sau "X" (capitalize sau)
+        // Match cả dấu "," (câu thường) và ";" (câu NLPC đa-vế)
+        s = s.replace(/\bEm sẽ\s+[^,;]+\s+hơn[,;]\s+(hãy|cần|nên)?\s*/gi, '');
+
+        // Step 2: Bỏ cụm xưng hô / tin tưởng cảm tính (TT27 cấm)
+        s = s.replace(/\b(thầy cô tin|cô tin|thầy tin)\s+(tưởng\s+)?(rằng\s+|là\s+)?em\s+(sẽ\s+)?/gi, '');
+        s = s.replace(/\b(thầy cô tin|cô tin|thầy tin)\s+(tưởng\s+)?(rằng|là)?\s*/gi, '');
+        s = s.replace(/[,;]?\s*(con nhé|em nhé|nhé con|nhé em|con ạ|em ạ)\s*([.,;!?]|$)/gi, '$2');
+
+        // Step 3: Bỏ "Em " ở đầu câu / đầu vế (sau ". ", "; ", "! ", "? ")
+        s = s.replace(/(^|[.!?;]\s+)Em\s+/g, '$1');
+        // Bỏ "em " mid-clause sau dấu phẩy (vế tiếp theo trong câu ghép)
+        s = s.replace(/(,\s+)em\s+/g, '$1');
+
+        // Step 4: "hãy" còn lại đầu vế (do bỏ "Em" mà ra) → "cần"
+        s = s.replace(/(^|[.!?;]\s+)Hãy\s+/g, '$1Cần ');
+        s = s.replace(/(,\s+)hãy\s+/gi, '$1cần ');
+
+        // Step 5: Capitalize chữ đầu mỗi vế (sau khi bỏ "Em " có thể còn chữ thường)
+        s = s.replace(/(^|[.!?]\s+)([a-zà-ỹ])/g, (m, p1, p2) => p1 + p2.toLocaleUpperCase('vi-VN'));
+
+        // Step 6: Bỏ các đại từ tham chiếu HS còn sót (mid-clause)
+        // "với em" / "cho em" / "của em" / "giúp em" — TT27 không xưng
+        s = s.replace(/\b(với|cho|của|giúp|để|cùng|từ|về)\s+em\b/gi, '$1 học sinh');
+        // Cuối cùng: cụm "em" độc lập còn sót → "học sinh"
+        s = s.replace(/\bem\b/g, 'học sinh');
+        s = s.replace(/\bEm\b/g, 'Học sinh');
+
+        // Step 7: Dọn whitespace + dấu câu
+        s = s.replace(/\s{2,}/g, ' ');
+        s = s.replace(/\s+([,;.!?])/g, '$1');
+        s = s.replace(/^[,;\s]+/, '');
+        s = s.trim();
+
+        // Step 8: Capitalize chữ cái đầu câu (sau dọn)
+        if (s.length > 0) {
+            s = s[0].toLocaleUpperCase('vi-VN') + s.slice(1);
+        }
+
+        return s;
     }
 
     loadData(data) {
@@ -917,12 +986,18 @@ class NhanXetEngineV2 {
         // làm câu vi phạm soft ban). Nếu fail sau persona → quay lại safe fallback.
         const afterPersona = this.applyGvPersona(phrase);
         const finalCheck = this.validateComment(afterPersona, validateCtx);
+        let finalText = afterPersona;
         if (!finalCheck.ok) {
             // Persona làm hỏng câu → dùng safe fallback (không qua persona)
             const safe = this._safeFallback(subjectCode, mucDo, gradeLevel);
-            return this._applyStyleSuffix(safe, mucDo, style, ky);
+            finalText = this._applyStyleSuffix(safe, mucDo, style, ky);
         }
-        return afterPersona;
+        // V6.1: Áp văn phong cuối cùng — mặc định 'hocba' (TT27). Pool gốc giữ "Em..."
+        // để chế độ 'thanthien' vẫn dùng nguyên si.
+        if (this.options.vanPhong === 'hocba') {
+            finalText = this._toHocBaStyle(finalText);
+        }
+        return finalText;
     }
 
     applyGvPersona(text) {
@@ -995,7 +1070,12 @@ class NhanXetEngineV2 {
         const pickFrom = (branch, mucDo) => {
             const pool = branch[mucDo] || branch.ht || [];
             const phrase = this.chonKhongTrungLap(pool) || '';
-            return this._enrichNLPCPhrase(phrase, mucDo);
+            const enriched = this._enrichNLPCPhrase(phrase, mucDo);
+            // V6.1: NLPC cũng áp văn phong học bạ (TT27 — không xưng "Em")
+            if (this.options.vanPhong === 'hocba') {
+                return this._toHocBaStyle(enriched);
+            }
+            return enriched;
         };
 
         const nlpc = this.data.nlpc;

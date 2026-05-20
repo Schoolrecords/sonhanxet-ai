@@ -72,7 +72,7 @@
           "Em cần luyện đọc to và viết câu đúng ngữ pháp hằng ngày.",
           "Em hãy dành thời gian đọc bài và viết lại nội dung bạn đã dạy.",
           "Em đã có cố gắng, hãy mạnh dạn đọc bài cho bạn và gia đình nghe.",
-          "Em sẽ tiến bộ hơn, hãy gia đình phối hợp hỗ trợ kèm thêm đọc viết.",
+          "Em sẽ tiến bộ hơn, cần gia đình phối hợp hỗ trợ kèm thêm đọc viết.",
           "Em hãy luyện viết chính tả các từ thường gặp mỗi tối để rèn kĩ năng."
         ]
       },
@@ -94,7 +94,7 @@
           "Em đã đọc và viết được các nội dung theo yêu cầu chương trình.",
           "Em có tiến bộ trong viết câu và dùng từ phù hợp với chủ đề.",
           "Em viết chính tả khá đúng, biết kể lại nội dung chính của bài.",
-          "Em chăm chỉ học tập, đọc và viết bài cơ bản theo yêu cầu của em.",
+          "Em chăm chỉ học tập, đọc và viết bài cơ bản theo yêu cầu của chương trình.",
           "Em đã viết được câu rõ ý hơn và đọc bài lưu loát hơn các bạn.",
           "Em có ý thức học tập, hoàn thành bài đọc viết theo hướng dẫn.",
           "Em viết được câu theo mẫu và đọc bài rõ ràng đầy đủ."
@@ -219,7 +219,7 @@
         "tot_xs": [
           "Em ham học hỏi, quan sát thế giới xung quanh tinh tế và đầy hứng thú.",
           "Em có vốn hiểu biết phong phú về tự nhiên và xã hội xung quanh em.",
-          "Em mô tả sự vật hiện tượng sinh động, đặt câu hỏi rất thông minh.",
+          "Em mô tả sự vật hiện tượng sinh động, đặt câu hỏi sâu sắc và phù hợp.",
           "Em vận dụng kiến thức vào cuộc sống hằng ngày rất tốt.",
           "Em yêu thiên nhiên, có ý thức bảo vệ môi trường và sức khỏe.",
           "Em có tinh thần ham tìm hiểu, vận dụng kiến thức linh hoạt vào thực tế."
@@ -249,7 +249,7 @@
       "chk1": {
         "tot_xs": [
           "Em có vốn hiểu biết phong phú về tự nhiên và xã hội xung quanh em.",
-          "Em quan sát tinh tế, mô tả sinh động và đặt câu hỏi rất thông minh.",
+          "Em quan sát tinh tế, mô tả sinh động và đặt câu hỏi sâu sắc, phù hợp bài học.",
           "Em hiểu sâu các bài học, biết liên hệ và so sánh sự vật hiện tượng.",
           "Em có tư duy khoa học, biết bảo vệ sức khỏe và môi trường tốt.",
           "Em ham học hỏi, vận dụng kiến thức vào cuộc sống rất linh hoạt."
@@ -739,7 +739,7 @@
         ],
         "ht": [
           "Em đã biết sử dụng đồ dùng học tập theo hướng dẫn an toàn.",
-          "Em hoàn thành các bài thực hành theo yêu cầu của gia đình.",
+          "Em hoàn thành các bài thực hành theo yêu cầu cơ bản của chương trình.",
           "Em biết các đồ dùng quen thuộc cần sử dụng cẩn thận trong gia đình.",
           "Em đã có ý thức bảo quản đồ dùng học tập của mình.",
           "Em tham gia học tập đều đặn, hoàn thành yêu cầu cơ bản trên lớp.",
@@ -750,7 +750,7 @@
           "Em hãy quan sát bạn làm mẫu rồi thực hành theo từng bước nhỏ.",
           "Em đã có cố gắng, hãy sử dụng đồ dùng học tập cẩn thận và đúng cách.",
           "Em sẽ tiến bộ hơn, hãy nhờ gia đình hướng dẫn an toàn cơ bản.",
-          "Em hãy giữ gìn đồ dùng cẩn thận và làm theo đúng quy trình của em."
+          "Em hãy giữ gìn đồ dùng cẩn thận và làm theo đúng quy trình của bài học."
         ]
       },
       "chk1": {
@@ -770,7 +770,7 @@
         ],
         "ht": [
           "Em đã biết sử dụng đồ dùng học tập và gia đình an toàn theo hướng dẫn.",
-          "Em hoàn thành các bài thực hành theo yêu cầu của gia đình.",
+          "Em hoàn thành các bài thực hành theo yêu cầu cơ bản của chương trình.",
           "Em chăm chỉ học tập và có tiến bộ trong các bài thực hành.",
           "Em biết bảo quản đồ dùng và sử dụng đúng cách an toàn.",
           "Em đã làm được sản phẩm đơn giản trong giờ thực hành.",
@@ -796,14 +796,14 @@
         "tot": [
           "Em làm sản phẩm thủ công khéo léo theo hướng dẫn.",
           "Em sử dụng đồ dùng an toàn và biết tiết kiệm trong sinh hoạt.",
-          "Em chăm chỉ thực hành và hoàn thành bài tập theo yêu cầu của em.",
+          "Em chăm chỉ thực hành và hoàn thành bài tập theo yêu cầu của chương trình.",
           "Em có ý thức an toàn khi sử dụng đồ dùng và bảo quản cẩn thận.",
           "Em quan sát tốt và làm theo các bước quy trình kĩ thuật trên lớp.",
           "Em yêu lao động và biết bảo vệ thiên nhiên xung quanh hằng ngày."
         ],
         "ht": [
-          "Em đã biết sử dụng đồ dùng học tập theo hướng dẫn của em.",
-          "Em hoàn thành các bài thực hành theo yêu cầu của gia đình.",
+          "Em đã biết sử dụng đồ dùng học tập theo hướng dẫn của thầy cô.",
+          "Em hoàn thành các bài thực hành theo yêu cầu cơ bản của chương trình.",
           "Em chăm chỉ học tập và có tiến bộ trong các bài thực hành.",
           "Em biết tiết kiệm và bảo quản đồ dùng theo hướng dẫn.",
           "Em đã làm được sản phẩm đơn giản trong giờ thực hành.",
@@ -838,7 +838,7 @@
         ],
         "ht": [
           "Em đã thuộc một số từ vựng quen thuộc ở mức cơ bản của môn học.",
-          "Em đọc và viết được câu đơn giản theo yêu cầu của em.",
+          "Em đọc và viết được câu đơn giản theo yêu cầu cơ bản của chương trình.",
           "Em chăm chỉ học tập và có tiến bộ trong phát âm Tiếng Anh.",
           "Em đã biết chào hỏi và giao tiếp đơn giản bằng Tiếng Anh.",
           "Em tham gia học tập tích cực và hoàn thành các bài tập cơ bản.",
@@ -850,7 +850,7 @@
           "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
           "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo bạn dù chưa chuẩn.",
           "Em sẽ tiến bộ hơn, hãy nghe bài hát Tiếng Anh thiếu nhi mỗi tối.",
-          "Em hãy gia đình phối hợp hỗ trợ hỏi đáp các câu chào hỏi đơn giản."
+          "Em cần gia đình phối hợp hỗ trợ hỏi đáp các câu chào hỏi đơn giản."
         ]
       },
       "chk1": {
@@ -870,7 +870,7 @@
         ],
         "ht": [
           "Em đã nắm được từ vựng và mẫu câu cơ bản theo chương trình.",
-          "Em đọc và viết được các câu đơn giản theo yêu cầu của em.",
+          "Em đọc và viết được các câu đơn giản theo yêu cầu cơ bản của chương trình.",
           "Em chăm chỉ học tập và có nhiều tiến bộ trong phát âm.",
           "Em đã biết chào hỏi và giao tiếp đơn giản bằng Tiếng Anh.",
           "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
@@ -881,7 +881,7 @@
           "Em cần luyện phát âm và học thuộc các từ vựng cơ bản hằng ngày.",
           "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
           "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo bạn dù chưa chuẩn.",
-          "Em sẽ tiến bộ hơn, hãy gia đình phối hợp hỗ trợ hỏi đáp đơn giản.",
+          "Em sẽ tiến bộ hơn, cần gia đình phối hợp hỗ trợ hỏi đáp đơn giản.",
           "Em hãy nghe bài hát Tiếng Anh thiếu nhi mỗi tối để quen ngữ điệu."
         ]
       },
@@ -902,7 +902,7 @@
         ],
         "ht": [
           "Em đã nắm được từ vựng và mẫu câu cơ bản theo chương trình.",
-          "Em đọc và viết được các câu đơn giản theo yêu cầu của em.",
+          "Em đọc và viết được các câu đơn giản theo yêu cầu cơ bản của chương trình.",
           "Em chăm chỉ học tập, có nhiều tiến bộ trong phát âm Tiếng Anh.",
           "Em đã biết chào hỏi và giới thiệu bản thân bằng Tiếng Anh.",
           "Em tham gia học tập tích cực, hoàn thành các bài tập cơ bản.",
@@ -913,7 +913,7 @@
           "Em cần luyện phát âm và học thuộc các từ vựng cơ bản hằng ngày.",
           "Em hãy dành thời gian nghe và đọc Tiếng Anh ở nhà mỗi tối.",
           "Em đã có cố gắng, hãy mạnh dạn lặp lại câu theo bạn dù chưa chuẩn.",
-          "Em sẽ tiến bộ hơn, hãy gia đình phối hợp hỗ trợ hỏi đáp Tiếng Anh.",
+          "Em sẽ tiến bộ hơn, cần gia đình phối hợp hỗ trợ hỏi đáp Tiếng Anh.",
           "Em hãy nghe bài hát Tiếng Anh thiếu nhi mỗi tối để quen ngữ điệu."
         ]
       }
