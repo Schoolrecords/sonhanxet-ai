@@ -148,11 +148,12 @@ window.VneduAdapter = {
         // pass _isVisible strict (gồm _isOnTop / elementFromPoint) → window đó đang
         // ACTIVE và TOP. Form active check (_isNLPCFormActive) chỉ dùng để LOG warning,
         // không gate. Lý do: Vnedu có nhiều version DOM khác nhau → form check brittle.
+        // V.06 REVERT: bỏ _isMarkerInTopWindow_ (gây regression — reject sai marker hợp lệ).
+        // Quay lại logic V.05: trust _findStrictVisibleText_ (đã có _isOnTop / elementFromPoint
+        // strict check). Auto-hide vẫn hoạt động vì khi rời module, marker thực sự sẽ bị
+        // ancestor display:none che → _isVisible fail → return null.
         const nlpcMarker = this._findStrictVisibleText_(/Phẩm chất\s*[-–—]\s*Năng lực ghi học bạ|Năng lực ghi học bạ/i);
         if (nlpcMarker) {
-            // BUG-010: Trust marker visibility (đã pass _isVisible strict / _isOnTop).
-            // Đổi console.warn → console.log để Chrome không đánh dấu "Lỗi" trong
-            // chrome://extensions cho user.
             this._logDetectOnce_('marker NLPC', nlpcMarker, 'nlpc');
             return 'nlpc';
         }
@@ -172,6 +173,12 @@ window.VneduAdapter = {
     },
 
     _findStrictVisibleText_(pattern) {
+        const el = this._findStrictVisibleTextEl_(pattern);
+        return el ? (el.textContent || '').trim() : '';
+    },
+
+    /** Version trả element (cho phép caller verify ancestor / z-index). */
+    _findStrictVisibleTextEl_(pattern) {
         const els = document.querySelectorAll('div, span, h1, h2, h3, h4, td, th, b, strong, a, label, legend, p');
         for (const el of els) {
             if (el.children.length > 0) continue;  // LEAF only
@@ -179,9 +186,47 @@ window.VneduAdapter = {
             if (!text || text.length > 80) continue;
             if (!pattern.test(text)) continue;
             if (!this._isVisible(el)) continue;
-            return text;
+            return el;
         }
-        return '';
+        return null;
+    },
+
+    /**
+     * V.06: Verify marker element nằm trong x-window có z-index CAO NHẤT
+     * (= window đang active). Loại false positive khi marker nằm trong:
+     *   - taskbar bottom Vnedu (tab list các window đang mở)
+     *   - window cũ chưa unmount (z-index thấp, vẫn visible kỹ thuật)
+     */
+    _isMarkerInTopWindow_(markerEl) {
+        // Tìm ancestor x-window của marker
+        let markerWindow = markerEl;
+        while (markerWindow && !(markerWindow.classList && markerWindow.classList.contains('x-window'))) {
+            markerWindow = markerWindow.parentElement;
+        }
+        if (!markerWindow) {
+            // Không trong x-window → có thể là static text (header trang) → trust
+            return true;
+        }
+
+        // Tìm tất cả x-window visible, lấy z-index cao nhất
+        const allWindows = Array.from(document.querySelectorAll('.x-window'))
+            .filter(w => {
+                if (w.offsetWidth <= 0 || w.offsetHeight <= 0) return false;
+                if (w.offsetParent === null) return false;
+                const s = window.getComputedStyle(w);
+                if (s.display === 'none' || s.visibility === 'hidden') return false;
+                return true;
+            });
+        if (allWindows.length <= 1) return true;  // chỉ 1 window — chắc chắn nó top
+
+        let maxZ = -Infinity;
+        let topWindow = null;
+        for (const w of allWindows) {
+            const z = parseInt(window.getComputedStyle(w).zIndex) || 0;
+            if (z > maxZ) { maxZ = z; topWindow = w; }
+        }
+
+        return markerWindow === topWindow;
     },
 
     /**
@@ -1149,9 +1194,12 @@ window.VneduAdapter = {
         const target = students.find(s => s.stt === stt);
         if (!target?.tr) return false;
         try {
-            target.tr.click();
-            // Một số Vnedu cần thêm dblclick để load form
-            target.tr.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            // V.06 fix BUG-005 cho queue: Ext.js grid không phản hồi với native .click().
+            // Dùng sequence event đầy đủ (mousemove → mouseover → mousedown → mouseup →
+            // click → dblclick) trên CELL đầu tiên (TD STT) thay vì TR — vì Ext.js gắn
+            // click handler ở cell level, không phải row level.
+            const targetEl = target.tr.querySelector('td') || target.tr;
+            this._dispatchClickSequence_(targetEl, true);
             return true;
         } catch (e) {
             console.warn('[VneduAdapter] selectNLPCStudent lỗi:', e);
@@ -1339,7 +1387,9 @@ window.VneduAdapter = {
 
     _assignNLPCField(result, fieldKey, ta, labelCenterX, splitX) {
         // "Nhận xét chung" có 2 instance (NL chung + PC chung).
-        // Distinguish bằng KHOẢNG CÁCH đến section header "NĂNG LỰC" / "PHẨM CHẤT".
+        // Layout Vnedu là 2 CỘT: NĂNG LỰC bên trái, PHẨM CHẤT bên phải.
+        // → Phân biệt bằng KHOẢNG CÁCH X đến header "NĂNG LỰC" / "PHẨM CHẤT".
+        // KHÔNG dùng trục Y (cả 2 label cùng hàng dưới header section → Y tương đương).
         if (fieldKey === 'nlc_chung') {
             const headers = this._findNLPCSectionHeaders();
 
@@ -1349,7 +1399,7 @@ window.VneduAdapter = {
                 const distPC = Math.abs(labelCenterX - headers.pc.centerX);
                 assignTo = distNLC <= distPC ? 'nang_luc_chung' : 'pham_chat';
             } else {
-                // Fallback nếu không tìm được header: dùng splitX
+                // Fallback nếu không tìm được header: dùng splitX (median centerX của textarea)
                 assignTo = labelCenterX > splitX ? 'pham_chat' : 'nang_luc_chung';
             }
 
@@ -1460,6 +1510,285 @@ window.VneduAdapter = {
         return { success, failed, detail };
     },
 
+    /* ====================================================================
+     * V.06 — Đọc T/Đ/C từ form Vnedu (thay thế cache chrome.storage)
+     * ================================================================== */
+
+    /**
+     * Section mapping cho từng field NLPC.
+     */
+    _NLPC_SECTION_BY_KEY: {
+        tu_chu_tu_hoc: 'nang_luc_chung',
+        giao_tiep_hop_tac: 'nang_luc_chung',
+        giai_quyet_van_de: 'nang_luc_chung',
+        ngon_ngu: 'nang_luc_dac_thu',
+        tinh_toan: 'nang_luc_dac_thu',
+        khoa_hoc: 'nang_luc_dac_thu',
+        tham_mi: 'nang_luc_dac_thu',
+        the_chat: 'nang_luc_dac_thu',
+        cong_nghe: 'nang_luc_dac_thu',
+        tin_hoc: 'nang_luc_dac_thu',
+        yeu_nuoc: 'pham_chat',
+        nhan_ai: 'pham_chat',
+        cham_chi: 'pham_chat',
+        trung_thuc: 'pham_chat',
+        trach_nhiem: 'pham_chat'
+    },
+
+    /**
+     * Đọc grade T/Đ/C cho từng field NLPC trực tiếp từ form Vnedu đang active.
+     * Vnedu hiển thị badge T/Đ/C bên cạnh label (ví dụ "Tự chủ và tự học: T").
+     *
+     * Trả {nang_luc_chung: {tu_chu_tu_hoc:'tot'}, nang_luc_dac_thu:{...}, pham_chat:{...}}
+     * Grade map: T → 'tot', Đ → 'ht', C → 'cht'.
+     *
+     * Field nào không có badge → bỏ qua (caller fallback 'ht' nếu muốn).
+     */
+    readNLPCGradesFromActiveForm() {
+        const result = { nang_luc_chung: {}, nang_luc_dac_thu: {}, pham_chat: {} };
+        const container = this._getActiveNLPCContainer();
+        if (!container) {
+            console.warn('[VneduAdapter] readNLPCGradesFromActiveForm: no active container');
+            return result;
+        }
+
+        const gradeMap = { 'T': 'tot', 'Đ': 'ht', 'C': 'cht' };
+
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+            acceptNode: (n) => {
+                const p = n.parentElement;
+                if (!p) return NodeFilter.FILTER_REJECT;
+                if (p.closest('#cogiao-ai-sidebar')) return NodeFilter.FILTER_REJECT;
+                const tag = p.tagName;
+                if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA') return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        let textNode;
+        let foundCount = 0;
+        let labelCount = 0;
+        let inlineCount = 0;
+
+        while ((textNode = walker.nextNode())) {
+            const text = textNode.textContent.trim();
+            if (!text || text.length > 80) continue;
+
+            // Case 1: Label + badge nằm CÙNG text node, dạng "Tự chủ và tự học: T"
+            // (Vnedu hay render thế này cho compact layout — label đậm + badge color riêng
+            // qua CSS sibling selector hoặc :after).
+            const inlineMatch = text.match(/^(.+?):\s*([TĐC])\s*$/);
+            if (inlineMatch) {
+                const labelPart = inlineMatch[1].trim().toLowerCase();
+                const inlineBadge = inlineMatch[2];
+                const fieldKey = this._NLPC_LABEL_MAP[labelPart];
+                if (fieldKey) {
+                    const section = this._NLPC_SECTION_BY_KEY[fieldKey];
+                    if (section && gradeMap[inlineBadge]) {
+                        result[section][fieldKey] = gradeMap[inlineBadge];
+                        foundCount++;
+                        inlineCount++;
+                        continue;
+                    }
+                }
+            }
+
+            // Case 2: Label đứng riêng, badge ở sibling/ancestor element
+            const clean = text.replace(/^[*:\s]+|[*:\s]+$/g, '').toLowerCase();
+            const fieldKey = this._NLPC_LABEL_MAP[clean];
+            if (!fieldKey) continue;
+
+            const section = this._NLPC_SECTION_BY_KEY[fieldKey];
+            if (!section) continue;  // bỏ nlc_chung/nldt_chung — không có grade per field
+
+            labelCount++;
+            const labelEl = textNode.parentElement;
+            const badge = this._findGradeBadgeNearLabel_(labelEl);
+            if (badge && gradeMap[badge]) {
+                result[section][fieldKey] = gradeMap[badge];
+                foundCount++;
+            }
+        }
+
+        console.log(`[VneduAdapter] readNLPCGradesFromActiveForm: đọc được ${foundCount} grade ` +
+            `(${inlineCount} inline + ${foundCount - inlineCount} sibling từ ${labelCount} label riêng)`, result);
+        return result;
+    },
+
+    /**
+     * Tìm badge text "T", "Đ", "C" 1-ký-tự gần labelEl.
+     * Strategy: walk up max 4 ancestors → tìm text node 1 ký tự match T/Đ/C
+     * cùng Y với label (±25px).
+     */
+    _findGradeBadgeNearLabel_(labelEl) {
+        const labelRect = labelEl.getBoundingClientRect();
+        const labelCY = (labelRect.top + labelRect.bottom) / 2;
+
+        let container = labelEl;
+        for (let depth = 0; depth < 6; depth++) {
+            if (!container.parentElement) break;
+            container = container.parentElement;
+
+            const cr = container.getBoundingClientRect();
+            if (cr.width > 900) break;  // ra ngoài cell (mở rộng từ 600 → 900)
+
+            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+                acceptNode: (n) => {
+                    const p = n.parentElement;
+                    if (!p) return NodeFilter.FILTER_REJECT;
+                    if (p.tagName === 'TEXTAREA' || p.tagName === 'SCRIPT' || p.tagName === 'STYLE') {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            let node;
+            while ((node = walker.nextNode())) {
+                const text = node.textContent.trim();
+                if (text !== 'T' && text !== 'Đ' && text !== 'C') continue;
+
+                const p = node.parentElement;
+                const r = p.getBoundingClientRect();
+                const cy = (r.top + r.bottom) / 2;
+                // Cùng Y với label (±30px) và bên phải label (trong vòng 400px)
+                if (Math.abs(cy - labelCY) > 30) continue;
+                if (r.left < labelRect.left - 5) continue;  // không phải trước label
+                if (r.left > labelRect.right + 400) continue;  // mở rộng từ 250 → 400
+                return text;
+            }
+        }
+        return null;
+    },
+
+    /**
+     * Bulk read: select HS → đợi active → đọc grades → trả về.
+     * Dùng trong generate phase bulk (thay vì cache).
+     */
+    async readGradesForStudent(stt, expectedHS) {
+        const selected = this.selectNLPCStudent(stt);
+        if (!selected) {
+            return { success: false, reason: 'select_failed', stt, expectedHS };
+        }
+        const waitRes = await this._waitForHSActive(expectedHS, 2500);
+        if (!waitRes.success) {
+            return { success: false, reason: 'wait_active_timeout', stt, expectedHS, lastSeen: waitRes.lastSeen };
+        }
+        // Đợi DOM render textarea (Vnedu lazy render form sau khi switch HS)
+        await this._sleep_(180);
+        const grades = this.readNLPCGradesFromActiveForm();
+
+        const totalFound = Object.values(grades).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
+        return { success: true, stt, expectedHS, grades, totalFound };
+    },
+
+    /* ====================================================================
+     * V.06 — NLPC Bulk: 1-chạm cho cả lớp
+     * Race-safe helpers + single-HS pipeline (select → wait → fill → save → confirm).
+     * Sidebar gọi selectAndFillNLPC cho từng HS trong queue.
+     * ================================================================== */
+
+    /**
+     * Polling: chờ HS có hoVaTen === expectedHS trở thành isSelected trong Vnedu.
+     * Tránh BUG-005 race: nếu Vnedu chưa switch form xong, dừng lại không fill.
+     */
+    async _waitForHSActive(expectedHS, timeoutMs = 2500) {
+        const start = Date.now();
+        let lastSeen = '(none)';
+        while (Date.now() - start < timeoutMs) {
+            const cur = this.getNLPCStudentList().find(s => s.isSelected);
+            lastSeen = cur?.hoVaTen || '(none)';
+            if (cur && cur.hoVaTen === expectedHS) {
+                await this._sleep_(140);
+                return { success: true, hoVaTen: cur.hoVaTen };
+            }
+            await this._sleep_(90);
+        }
+        return { success: false, expected: expectedHS, lastSeen };
+    },
+
+    /**
+     * Chờ Vnedu hiện toast/popup "Đã lưu" hoặc "thành công" sau khi click Lưu.
+     * Best-effort: nếu timeout vẫn coi như success (Vnedu không luôn có popup).
+     */
+    async _waitForLuuConfirmation(timeoutMs = 3000) {
+        const start = Date.now();
+        const seenInitially = new WeakSet();
+        document.querySelectorAll('div, span, td, li').forEach(el => {
+            const txt = (el.textContent || '').trim().toLowerCase();
+            if (txt.includes('đã lưu') || txt.includes('thành công') || txt.includes('cập nhật thành công')) {
+                seenInitially.add(el);
+            }
+        });
+
+        while (Date.now() - start < timeoutMs) {
+            const allEls = document.querySelectorAll('div, span, td, li');
+            for (const el of allEls) {
+                if (seenInitially.has(el)) continue;
+                if (el.offsetWidth === 0 || el.offsetHeight === 0) continue;
+                const txt = (el.textContent || '').trim().toLowerCase();
+                if (txt && txt.length < 80 && (txt.includes('đã lưu') || txt.includes('cập nhật thành công'))) {
+                    await this._sleep_(200);
+                    return { success: true, detected: true, message: el.textContent.trim() };
+                }
+            }
+            await this._sleep_(150);
+        }
+        return { success: true, detected: false, timeout: true };
+    },
+
+    /**
+     * 1 HS đầy đủ vòng đời: select → wait active → fill → (optional) save → confirm.
+     * Trả {success, stage, reason, ...} để sidebar quyết định dừng queue hay tiếp.
+     *
+     * stage ∈ 'select' | 'wait_active' | 'fill' | 'save' | 'save_confirm' | 'done'
+     */
+    async selectAndFillNLPC({ stt, expectedHS, payload, autoSave = true }) {
+        console.log(`[NLPC-BULK] STT#${stt} (${expectedHS}) — START`);
+
+        // Step 1: select HS
+        const selected = this.selectNLPCStudent(stt);
+        if (!selected) {
+            return { success: false, stage: 'select', reason: 'select_failed', stt, expectedHS };
+        }
+
+        // Step 2: wait for active
+        const waitRes = await this._waitForHSActive(expectedHS, 2500);
+        if (!waitRes.success) {
+            return {
+                success: false, stage: 'wait_active', reason: 'timeout', stt, expectedHS,
+                lastSeen: waitRes.lastSeen
+            };
+        }
+
+        // Step 3: fill (with _expectedHS guard — BUG-005)
+        const fillRes = this.fillNLPCFields({ ...payload, _expectedHS: expectedHS });
+        if (fillRes.error) {
+            return {
+                success: false, stage: 'fill', reason: fillRes.error, stt, expectedHS,
+                actual: fillRes.actual
+            };
+        }
+        if (fillRes.success === 0) {
+            return { success: false, stage: 'fill', reason: 'no_fields_filled', stt, expectedHS };
+        }
+
+        // Step 4: optional save
+        if (autoSave) {
+            const luuRes = this.clickLuuButton();
+            if (!luuRes.success) {
+                return { success: false, stage: 'save', reason: luuRes.reason || 'click_failed', stt, expectedHS };
+            }
+            const confirmRes = await this._waitForLuuConfirmation(3000);
+            if (!confirmRes.success) {
+                return { success: false, stage: 'save_confirm', reason: 'timeout', stt, expectedHS };
+            }
+            await this._sleep_(250);
+        }
+
+        console.log(`[NLPC-BULK] STT#${stt} — DONE (filled=${fillRes.success}, saved=${autoSave})`);
+        return { success: true, stage: 'done', stt, expectedHS, filled: fillRes.success };
+    },
+
     async silentCacheScores() {
         try {
             if (typeof window.CacheManager === 'undefined') {
@@ -1503,83 +1832,128 @@ window.VneduAdapter = {
      * ================================================================== */
 
     /**
-     * Mở module Vnedu bằng cách click theo menu:
-     *   Start → Quản lý nhà trường → Quản lý học tập → [Nhập sổ điểm | Phẩm chất - Năng lực ghi học bạ]
+     * Mở module Vnedu programmatically.
+     *
+     * Strategy 2-pha (robust cho cả 2 layout Start menu Vnedu):
+     *   - Cascade legacy (cũ): hover "Quản lý nhà trường" → cascade "Quản lý học tập" → cascade leaf
+     *   - Flat 2-cột mới: click category bên trái → list item bên phải update → click leaf
+     *
+     * Cách làm:
+     *   1) Open Start menu
+     *   2) Thử tìm LEAF ("Phẩm chất - Năng lực ghi học bạ") trong menu đang mở
+     *   3) Nếu chưa thấy → click+hover lần lượt các CATEGORY trung gian
+     *      ("Quản lý nhà trường", "Quản lý học tập"), sau mỗi click re-check leaf
+     *   4) Khi leaf xuất hiện → click leaf
      *
      * @param {string} module - 'so-diem' hoặc 'nlpc'
-     * @returns {Promise<{success, reason?, missing?, step?}>}
      */
     async openVneduModule(module) {
-        // V.05: Hiển thị overlay che animation menu (UX nhẹ nhàng, không "robot")
         const moduleLabel = module === 'nlpc' ? 'Phẩm chất - Năng lực' : 'Sổ nhận xét môn';
         const overlay = this._showLoadingOverlay_(`Đang mở ${moduleLabel}...`);
 
         try {
-            // Step 0: Thử click DESKTOP ICON trước (đơn giản, reliable hơn navigate menu)
+            // Step 0: Desktop icon (Sổ NX môn có icon riêng; NLPC thường không)
             const desktopIcon = this._findDesktopIcon_(module);
             if (desktopIcon) {
                 console.log('[VneduAdapter] openVneduModule: tìm thấy desktop icon, dblclick trực tiếp');
-                const rect = desktopIcon.getBoundingClientRect();
-                const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: rect.left + rect.width/2, clientY: rect.top + rect.height/2 };
-                desktopIcon.dispatchEvent(new MouseEvent('mousedown', opts));
-                desktopIcon.dispatchEvent(new MouseEvent('mouseup', opts));
-                desktopIcon.dispatchEvent(new MouseEvent('click', opts));
-                desktopIcon.dispatchEvent(new MouseEvent('dblclick', opts));
+                this._dispatchClickSequence_(desktopIcon, true);
                 await this._sleep_(500);
                 return { success: true, via: 'desktop_icon' };
             }
 
-            // Fallback: navigate qua Start menu
-            const TARGET_PATH = module === 'nlpc'
-                ? ['Quản lý nhà trường', 'Quản lý học tập', 'Phẩm chất - Năng lực ghi học bạ']
-                : ['Quản lý nhà trường', 'Quản lý học tập', 'Nhập số điểm'];
-
-            // Bước 0: Click Start button — chỉ làm nếu menu Start chưa mở
-            const startMenu = document.getElementById('startmenu_container');
-            const startMenuOpen = startMenu && this._isMenuOpen_(startMenu);
+            // Step 1: Open Start menu nếu chưa mở
+            const startMenuEl = document.getElementById('startmenu_container');
+            const startMenuOpen = startMenuEl && this._isMenuOpen_(startMenuEl);
             if (!startMenuOpen) {
                 const startBtn = this._findStartButton_();
                 if (!startBtn) {
                     return { success: false, reason: 'no_start_btn' };
                 }
                 startBtn.click();
-                await this._sleep_(400);
+                await this._sleep_(500);
             }
 
-            // Bước 1..N: Hover non-leaf, click leaf
-            for (let i = 0; i < TARGET_PATH.length; i++) {
-                const text = TARGET_PATH[i];
-                const isLeaf = i === TARGET_PATH.length - 1;
-                const item = this._findVisibleMenuItem_(text);
-                if (!item) {
-                    console.warn(`[VneduAdapter] openVneduModule: không tìm thấy "${text}" ở bước ${i + 1}`);
-                    return { success: false, reason: 'menu_item_not_found', missing: text, step: i + 1 };
-                }
+            // Step 2: Navigate — leaf-first; click intermediates nếu cần
+            const LEAF_TEXT = module === 'nlpc'
+                ? 'Phẩm chất - Năng lực ghi học bạ'
+                : 'Nhập số điểm';
+            const INTERMEDIATES = ['Quản lý nhà trường', 'Quản lý học tập'];
 
-                if (isLeaf) {
-                    item.click();
-                    await this._sleep_(500);
-                } else {
-                    const rect = item.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
-                    const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: cx, clientY: cy };
-                    item.dispatchEvent(new MouseEvent('mousemove', opts));
-                    item.dispatchEvent(new MouseEvent('mouseover', opts));
-                    item.dispatchEvent(new MouseEvent('mouseenter', opts));
-                    await this._sleep_(700);
+            let leaf = await this._pollFor_(() => this._findVisibleMenuItem_(LEAF_TEXT), 500, 100);
+            if (!leaf) {
+                for (const cat of INTERMEDIATES) {
+                    // Poll cho intermediate xuất hiện (cascade trước đó render xong)
+                    const catItem = await this._pollFor_(() => this._findVisibleMenuItem_(cat), 1500, 120);
+                    if (!catItem) {
+                        console.log(`[VneduAdapter] openVneduModule: chưa thấy intermediate "${cat}" sau 1.5s`);
+                        continue;
+                    }
+                    // V.06 FIX REGRESSION: Vnedu Ext.js cascade mở theo HOVER, KHÔNG phải click.
+                    // Click intermediate → Ext.js lazy-load StartMenu.js → 404 → constructor crash
+                    // → cascade KHÔNG render → leaf không xuất hiện.
+                    // → Chỉ fire mousemove/over/enter (hover events thuần) cho intermediate.
+                    console.log(`[VneduAdapter] openVneduModule: hover intermediate "${cat}"`);
+                    this._hoverElement_(catItem);
+
+                    // Poll cho leaf xuất hiện (cascade thứ N có thể render chậm trên Vnedu v5)
+                    leaf = await this._pollFor_(() => this._findVisibleMenuItem_(LEAF_TEXT), 3000, 150);
+                    if (leaf) break;
+                    console.log(`[VneduAdapter] openVneduModule: sau hover "${cat}" chưa thấy leaf, thử intermediate kế tiếp`);
                 }
             }
 
-            console.log(`[VneduAdapter] openVneduModule(${module}) success — đã mở module`);
+            if (!leaf) {
+                console.warn(`[VneduAdapter] openVneduModule: không tìm thấy leaf "${LEAF_TEXT}" sau khi thử ${INTERMEDIATES.length} intermediates (đã poll 3s mỗi cascade)`);
+                return { success: false, reason: 'leaf_not_found', missing: LEAF_TEXT };
+            }
+
+            // LEAF: click thật (không phải hover) để Vnedu mở module
+            console.log(`[VneduAdapter] openVneduModule: click leaf "${LEAF_TEXT}"`);
+            leaf.click();
+            await this._sleep_(500);
+
+            console.log(`[VneduAdapter] openVneduModule(${module}) success`);
             return { success: true };
         } catch (e) {
             console.error('[VneduAdapter] openVneduModule lỗi:', e);
             return { success: false, reason: 'exception', error: e.message };
         } finally {
-            // Wait nhẹ cho Vnedu render window xong rồi mới gỡ overlay → tránh flash
-            await this._sleep_(250);
+            await this._sleep_(300);
             this._hideLoadingOverlay_(overlay);
+        }
+    },
+
+    /**
+     * Hover thuần (mousemove → mouseover → mouseenter), KHÔNG fire mousedown/mouseup/click.
+     * Dùng để mở cascade Vnedu Ext.js mà không kích lazy-load StartMenu.js (404).
+     */
+    _hoverElement_(el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: cx, clientY: cy };
+        el.dispatchEvent(new MouseEvent('mousemove', opts));
+        el.dispatchEvent(new MouseEvent('mouseover', opts));
+        el.dispatchEvent(new MouseEvent('mouseenter', opts));
+    },
+
+    /**
+     * Dispatch full click sequence (hover + mousedown/up + click [+ dblclick]).
+     * Hover events kích cascade cũ; click events kích flat menu mới.
+     */
+    _dispatchClickSequence_(el, withDblClick) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const opts = { bubbles: true, cancelable: true, view: window, button: 0, clientX: cx, clientY: cy };
+        el.dispatchEvent(new MouseEvent('mousemove', opts));
+        el.dispatchEvent(new MouseEvent('mouseover', opts));
+        el.dispatchEvent(new MouseEvent('mouseenter', opts));
+        el.dispatchEvent(new MouseEvent('mousedown', opts));
+        el.dispatchEvent(new MouseEvent('mouseup', opts));
+        el.click();
+        if (withDblClick) {
+            el.dispatchEvent(new MouseEvent('dblclick', opts));
         }
     },
 
@@ -1720,34 +2094,71 @@ window.VneduAdapter = {
     },
 
     /**
-     * Tìm menu item visible khớp text. Scope vào .x-menu visible để tránh false match.
+     * Tìm menu item visible khớp text.
+     *
+     * Scope:
+     *   - #startmenu_container (Vnedu Start menu UI mới — flat 2 cột, KHÔNG có .x-menu class)
+     *   - .x-menu visible (Ext.js cascade legacy)
+     *
+     * Trả về element clickable (đi UP ancestors để bắt container click thực — .x-menu-item,
+     * [role=menuitem], <a>, <li>, <button>, hoặc [onclick]).
      */
     _findVisibleMenuItem_(targetText) {
-        const visibleMenus = Array.from(document.querySelectorAll('.x-menu')).filter(m => this._isMenuOpen_(m));
+        const scopes = [];
 
-        // Sort: menu mới mở (top z-index cao) ưu tiên trước
-        visibleMenus.sort((a, b) => {
-            const za = parseInt(window.getComputedStyle(a).zIndex) || 0;
-            const zb = parseInt(window.getComputedStyle(b).zIndex) || 0;
-            return zb - za;
-        });
+        // 1. Start menu Vnedu (UI mới flat 2 cột) — ưu tiên search trước
+        const startMenu = document.getElementById('startmenu_container');
+        if (startMenu && this._isMenuOpen_(startMenu)) {
+            scopes.push(startMenu);
+        }
 
-        for (const menu of visibleMenus) {
-            const candidates = menu.querySelectorAll(
-                '.x-menu-item, [role="menuitem"], a.x-menu-item-link, span.x-menu-item-text, .x-menu-item-text-default'
+        // 2. .x-menu visible (cascade Ext.js cũ)
+        const visibleMenus = Array.from(document.querySelectorAll('.x-menu'))
+            .filter(m => this._isMenuOpen_(m))
+            .sort((a, b) => {
+                const za = parseInt(window.getComputedStyle(a).zIndex) || 0;
+                const zb = parseInt(window.getComputedStyle(b).zIndex) || 0;
+                return zb - za;
+            });
+        scopes.push(...visibleMenus);
+
+        if (scopes.length === 0) return null;
+
+        for (const scope of scopes) {
+            // Selector rộng: cascade cũ (.x-menu-item, [role=menuitem]) + flat mới (a/li/div/span/button)
+            const candidates = scope.querySelectorAll(
+                '.x-menu-item, [role="menuitem"], a.x-menu-item-link, ' +
+                'span.x-menu-item-text, .x-menu-item-text-default, ' +
+                'a, li, button, span, div'
             );
+
             for (const el of candidates) {
                 const text = (el.textContent || '').trim();
-                if (text !== targetText && !text.endsWith(targetText)) continue;
+                if (!text || text.length > 80) continue;
+
+                // Exact match, hoặc leaf element (không có child) chứa target ở đầu/cuối
+                const isExact = text === targetText;
+                const isLeafMatch = el.children.length === 0 &&
+                    (text.endsWith(targetText) || text.startsWith(targetText));
+                if (!isExact && !isLeafMatch) continue;
+
                 const r = el.getBoundingClientRect();
                 if (r.width <= 0 || r.height <= 0) continue;
-                // Walk up nếu cần — find clickable container
+
+                const s = window.getComputedStyle(el);
+                if (s.display === 'none' || s.visibility === 'hidden') continue;
+
+                // Walk up tìm clickable container
                 let clickable = el;
-                for (let depth = 0; depth < 4; depth++) {
+                for (let depth = 0; depth < 5; depth++) {
                     if (!clickable) break;
                     if (clickable.matches && (
                         clickable.matches('.x-menu-item') ||
-                        clickable.matches('[role="menuitem"]')
+                        clickable.matches('[role="menuitem"]') ||
+                        clickable.matches('[onclick]') ||
+                        clickable.tagName === 'A' ||
+                        clickable.tagName === 'BUTTON' ||
+                        clickable.tagName === 'LI'
                     )) {
                         return clickable;
                     }
@@ -1761,5 +2172,21 @@ window.VneduAdapter = {
 
     _sleep_(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+    /**
+     * Poll checkFn() every intervalMs until truthy or timeout.
+     * Trả về kết quả checkFn (element/value) hoặc null nếu timeout.
+     * Dùng thay cho sleep cố định khi đợi DOM Vnedu render (cascade menu, switch HS, ...).
+     */
+    async _pollFor_(checkFn, timeoutMs = 3000, intervalMs = 150) {
+        const start = Date.now();
+        let result = null;
+        while (Date.now() - start < timeoutMs) {
+            try { result = checkFn(); } catch (e) { result = null; }
+            if (result) return result;
+            await this._sleep_(intervalMs);
+        }
+        return null;
     }
 };

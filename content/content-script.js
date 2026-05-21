@@ -66,6 +66,7 @@
     let _lastDetectedModule = null;
     let _lastContextKey = null;  // pathname|lop|mon (Sổ NX) hoặc pathname|lop (NLPC)
     let _lastDataSignature = null;  // chữ ký dữ liệu HS — đổi khi GV nhập/sửa điểm trên Vnedu
+    let _consecutiveNullCount = 0;  // V.06: phân biệt popup/mask thoáng (null 1-2 lần) vs navigation thật (null 3+)
 
     // V.05 fix lag: throttle checkModuleChange để giảm tải CPU khi Vnedu animation
     // gây mutation observer fire liên tục (sau save / switch class).
@@ -155,9 +156,8 @@
             attributeFilter: ['style', 'class', 'hidden']
         });
 
-        // 2) Polling backup (V.05: 1500 → 3000ms — Observer + input/change đã đủ nhạy,
-        //    polling chỉ là backup an toàn)
-        setInterval(checkModuleChange, 3000);
+        // 2) Polling backup (V.06: 3000 → 1500ms — auto-hide/auto-show cần nhanh hơn)
+        setInterval(checkModuleChange, 1500);
 
         // 3) Bắt GV nhập/sửa điểm trực tiếp trên Vnedu (V.05: 600 → 1000ms debounce).
         ['input', 'change'].forEach(evt => {
@@ -207,8 +207,10 @@
 
     function checkModuleChange() {
         if (!window.VneduAdapter) return;
-        // V.05: User toggle "Tạm dừng AI"
-        if (_aiPaused) return;
+        // V.06: BỎ early return khi _aiPaused — detect cần chạy CẢ KHI sidebar ẩn,
+        // để auto-show có cơ hội fire khi GV vào module NX (sidebar "thức dậy").
+        // Tradeoff CPU rất nhỏ vì throttle 1200ms + detectModule chỉ tìm 1 text marker.
+        //
         // V.05: Auto-pause khi Vnedu đang busy (loading mask, spinner)
         if (isVneduBusy()) return;
         // BUG-010: suppress sau autoSave
@@ -224,11 +226,21 @@
 
         const current = window.VneduAdapter.detectModule();
 
-        // V.05: Nếu detectModule trả null (không thấy marker visible — thường do Vnedu
-        // popup/mask phủ màn sau save) → GIỮ NGUYÊN state cũ, KHÔNG đổi sidebar.
-        // Chỉ chuyển khi có MARKER MỚI visible → tránh bouncing sang lớp/môn cũ stale.
-        if (current === null && _lastDetectedModule !== null) {
-            return;
+        // V.05/V.06: Phân biệt popup/mask thoáng vs navigation thật.
+        // - Null 1-2 lần liên tiếp (~2s) → có thể là popup/mask Vnedu sau save → giữ state cũ
+        // - Null 3+ lần liên tiếp (~3-6s) → GV thực sự đã rời module NX → cho phép process
+        //   (sẽ trigger auto-hide sidebar nếu module trước là NX)
+        if (current === null) {
+            _consecutiveNullCount++;
+            // V.06 SAFE: nâng threshold lên 4 (~6s) — Vnedu animation/popup có thể gây
+            // null thoáng 2-3s, không được hiểu nhầm thành "rời module" → false auto-hide
+            // làm sidebar biến mất giữa lúc GV đang làm việc.
+            if (_lastDetectedModule !== null && _consecutiveNullCount < 4) {
+                return;
+            }
+            // Null 4+ lần (~6s) → confirm navigation thật → fall through
+        } else {
+            _consecutiveNullCount = 0;
         }
 
         let contextKey = current || 'null';
@@ -250,6 +262,31 @@
             console.log(`[Sổ nhận xét - AI] %cAuto-detect change%c: ${_lastDetectedModule}/${_lastContextKey} → ${current}/${contextKey}` +
                 (dataChanged && !moduleOrCtxChanged ? ' (dữ liệu HS thay đổi)' : ''),
                 'color:#2B4F9E;font-weight:bold', 'color:inherit');
+
+            // V.06: Auto show/hide sidebar 2 chiều theo module Vnedu.
+            //   - Rời NX → ẩn (giải phóng không gian khi GV làm việc khác)
+            //   - Vào NX → hiện (sidebar "thức dậy" khi đến nhiệm vụ của nó)
+            // KHÔNG persist vào chrome.storage — auto là ephemeral. Manual toggle vẫn persist.
+            if (moduleOrCtxChanged) {
+                const wasNX = _lastDetectedModule === 'so-nhan-xet' || _lastDetectedModule === 'nlpc';
+                const isNX = current === 'so-nhan-xet' || current === 'nlpc';
+                const iframe = document.getElementById(SIDEBAR_ID);
+
+                if (wasNX && !isNX && iframe && !iframe.classList.contains('cogiao-ai-hidden')) {
+                    // Auto-HIDE: rời NX → ẩn
+                    iframe.classList.add('cogiao-ai-hidden');
+                    _aiPaused = true;
+                    console.log(`[Sổ nhận xét - AI] %cAuto-hide sidebar%c: rời module NX (${_lastDetectedModule} → ${current || 'khác'})`,
+                        'color:#B65000;font-weight:bold', 'color:inherit');
+                } else if (!wasNX && isNX && iframe && iframe.classList.contains('cogiao-ai-hidden')) {
+                    // Auto-SHOW: vào NX → hiện (sidebar "thức dậy")
+                    iframe.classList.remove('cogiao-ai-hidden');
+                    _aiPaused = false;
+                    console.log(`[Sổ nhận xét - AI] %cAuto-show sidebar%c: vào module NX (${_lastDetectedModule || 'khác'} → ${current})`,
+                        'color:#1D9E75;font-weight:bold', 'color:inherit');
+                }
+            }
+
             _lastContextKey = contextKey;
             _lastDataSignature = dataSig;
             sendContextToSidebar();
@@ -356,6 +393,16 @@
             case 'COGIAO_APPLY_NLPC':
                 handleApplyNLPC(data.payload);
                 break;
+
+            // V.06 NLPC Bulk: 1-chạm cả lớp — step per HS, sidebar điều phối queue
+            case 'COGIAO_NLPC_BULK_STEP':
+                handleNLPCBulkStep(data.payload);
+                break;
+
+            // V.06 Bulk Read: đọc T/Đ/C từ form Vnedu cho 1 HS (generate phase)
+            case 'COGIAO_NLPC_BULK_READ':
+                handleNLPCBulkRead(data.payload);
+                break;
         }
     });
 
@@ -378,6 +425,51 @@
             type: 'COGIAO_NLPC_APPLY_RESULT',
             payload: result
         }, '*');
+    }
+
+    /**
+     * V.06 NLPC Bulk: 1 step = 1 HS (select → wait → fill → save → confirm).
+     * Sidebar gửi step liên tục cho 35 HS, await response qua requestId.
+     * Suppress watcher trong suốt step để Vnedu re-render không quấy rầy.
+     */
+    async function handleNLPCBulkRead(payload) {
+        const { requestId, stt, expectedHS } = payload || {};
+        _suppressUpdatesUntil = Date.now() + 4000;
+        const iframe = document.getElementById(SIDEBAR_ID);
+        try {
+            const result = await window.VneduAdapter.readGradesForStudent(stt, expectedHS);
+            iframe?.contentWindow?.postMessage({
+                type: 'COGIAO_NLPC_BULK_READ_RESULT',
+                payload: { requestId, ...result }
+            }, '*');
+        } catch (e) {
+            console.error('[Sổ nhận xét - AI] handleNLPCBulkRead lỗi:', e);
+            iframe?.contentWindow?.postMessage({
+                type: 'COGIAO_NLPC_BULK_READ_RESULT',
+                payload: { requestId, success: false, reason: e.message, stt, expectedHS }
+            }, '*');
+        }
+    }
+
+    async function handleNLPCBulkStep(payload) {
+        const { requestId, stt, expectedHS, fillPayload, autoSave } = payload || {};
+        _suppressUpdatesUntil = Date.now() + 6000; // mỗi step ~3-4s, đệm 6s
+        const iframe = document.getElementById(SIDEBAR_ID);
+        try {
+            const result = await window.VneduAdapter.selectAndFillNLPC({
+                stt, expectedHS, payload: fillPayload, autoSave: autoSave !== false
+            });
+            iframe?.contentWindow?.postMessage({
+                type: 'COGIAO_NLPC_BULK_STEP_RESULT',
+                payload: { requestId, ...result }
+            }, '*');
+        } catch (e) {
+            console.error('[Sổ nhận xét - AI] handleNLPCBulkStep lỗi:', e);
+            iframe?.contentWindow?.postMessage({
+                type: 'COGIAO_NLPC_BULK_STEP_RESULT',
+                payload: { requestId, success: false, stage: 'exception', reason: e.message, stt, expectedHS }
+            }, '*');
+        }
     }
 
     async function handleCacheStatsRequest() {

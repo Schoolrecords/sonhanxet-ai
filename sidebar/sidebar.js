@@ -62,6 +62,14 @@
     let nlpcOverrides = {};          // GV override: { tu_chu_tu_hoc: 'cht', ... } (overlay lên auto)
     let nlpcGenerated = null;        // payload sau khi tạo nhận xét text từ engine
 
+    // V.06 NLPC Bulk: 1-chạm cho cả lớp
+    // Map<stt, {stt, hoVaTen, payload, lowConfidence, status: 'pending'|'done'|'fail'|'skipped'|'running', reason?}>
+    let nlpcBulkPayloads = null;     // null = chưa generate; Map khi đã có
+    let nlpcBulkRunning = false;     // queue đang chạy → khóa thao tác
+    let nlpcBulkAbort = false;       // user bấm Dừng
+    let nlpcBulkStartFrom = null;    // stt để resume từ
+    let _bulkStepResolvers = new Map(); // requestId → resolve fn cho async wait
+
     // V1.5: Định nghĩa các field NL/PC theo CT GDPT 2018 + TT27/2020.
     //   Lớp 1-2: 4 NL đặc thù (Ngôn ngữ, Tính toán, Thẩm mĩ, Thể chất).
     //   Lớp 3:   6 NL đặc thù (+ Công nghệ, Tin học).
@@ -293,6 +301,20 @@
         };
         document.getElementById('nlpc-btn-generate').onclick = generateNLPCText;
         document.getElementById('nlpc-btn-apply').onclick = applyNLPCToVnedu;
+
+        // V.06 NLPC Bulk handlers
+        document.getElementById('nlpc-btn-bulk-generate').onclick = generateNLPCBulk;
+        document.getElementById('bulk-btn-back').onclick = () => {
+            if (nlpcBulkRunning) { showToast('Đang đẩy — hãy bấm Dừng trước'); return; }
+            showView('nlpc');
+        };
+        document.getElementById('bulk-btn-apply').onclick = () => runBulkApplyQueue();
+        document.getElementById('bulk-btn-stop').onclick = () => { nlpcBulkAbort = true; };
+        document.getElementById('bulk-result-close').onclick = closeBulkResultModal;
+        document.getElementById('bulk-result-resume').onclick = () => {
+            closeBulkResultModal();
+            runBulkApplyQueue(nlpcBulkStartFrom);
+        };
 
         // V6.0 License controls — flow Một-chạm (1 form đăng ký, tự polling)
         const bind = (id, handler) => {
@@ -632,6 +654,15 @@
         }
         if (type === 'COGIAO_NLPC_APPLY_RESULT') {
             handleNLPCApplyResult(payload);
+        }
+        // V.06 NLPC Bulk: nhận kết quả 1 step → resolve Promise tương ứng
+        if (type === 'COGIAO_NLPC_BULK_STEP_RESULT' || type === 'COGIAO_NLPC_BULK_READ_RESULT') {
+            const rid = payload?.requestId;
+            const resolver = _bulkStepResolvers.get(rid);
+            if (resolver) {
+                _bulkStepResolvers.delete(rid);
+                resolver(payload);
+            }
         }
         if (type === 'COGIAO_OPEN_VNEDU_MODULE_RESULT') {
             if (!payload.success) {
@@ -1136,6 +1167,14 @@
             ${ctx.hocKy ? ' · ' + escapeHtml(ctx.hocKy) : ''}
         `;
 
+        // V.06: cập nhật label "Cả lớp (N HS · HK)" trong bulk section
+        const bulkTitleEl = document.getElementById('nlpc-bulk-title');
+        if (bulkTitleEl) {
+            const n = nlpcStudents.length;
+            const ky = ctx.hocKy ? ' · ' + ctx.hocKy : '';
+            bulkTitleEl.textContent = n > 0 ? `Cả lớp (${n} HS${ky})` : 'Cả lớp';
+        }
+
         // Populate dropdown HS
         // BUG-002 fix: KHÔNG dùng s.isSelected để set attribute "selected" trong HTML
         // (sẽ override lựa chọn của user mỗi khi rescan). Dùng nlpcSelectedStt thay.
@@ -1522,6 +1561,433 @@
 
         cancelBtn.onclick = closeModal;
         confirmBtn.onclick = confirmAutoSave;
+    }
+
+    /* ====================================================================
+     * V.06 — NLPC Bulk: 1-chạm cho cả lớp (2 pha: tạo & duyệt → đẩy queue)
+     * ================================================================== */
+
+    /**
+     * Pha 1: sinh payload NLPC cho TẤT CẢ HS đang có trong nlpcStudents.
+     * License gate 1 lần. Mỗi HS: autoSuggest từ cache → engine.sinhNLPCDayDu.
+     * HS không có cache → đánh dấu lowConfidence, dùng mức 'ht' mặc định.
+     */
+    async function generateNLPCBulk() {
+        if (!engine || !engine.data) {
+            alert('Ngân hàng nhận xét chưa load. Hãy đợi giây lát rồi thử lại.');
+            return;
+        }
+        if (!nlpcStudents || nlpcStudents.length === 0) {
+            alert('Chưa có danh sách HS. Hãy mở form NL-PC trong Vnedu trước.');
+            return;
+        }
+
+        // License gate — 1 lần cho cả batch
+        if (window.LicenseClient) {
+            const gate = await LicenseClient.canUseFeature('nlpc');
+            if (!gate.allowed) {
+                showLockModal(gate.reason, gate);
+                return;
+            }
+        }
+
+        const className = (currentContext || {}).lop || '';
+        if (!className) {
+            alert('Chưa nhận được tên lớp từ Vnedu. Hãy bấm "Quét lại" rồi thử lại.');
+            return;
+        }
+        const gradeLevel = getGradeLevel(className);
+
+        engine.options.gvLa = settings.gvLa;
+        engine.options.vanPhong = settings.vanPhong;
+
+        const btn = document.getElementById('nlpc-btn-bulk-generate');
+        const originalLabel = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span><span>Đang tạo...</span>';
+
+        nlpcBulkPayloads = new Map();
+        let withGradesCount = 0, defaultCount = 0;
+
+        // V.06: ĐỌC T/Đ/C TRỰC TIẾP TỪ FORM VNEDU thay cho cache chrome.storage.
+        // Mỗi HS: select trong Vnedu → đợi form active → đọc badge T/Đ/C → sinh NX.
+        // Lý do: chrome.storage.local bị xóa khi reinstall extension, nhưng Vnedu form
+        // luôn có T/Đ/C do GV đã chấm — đó là source of truth thật.
+        //
+        // Hiển thị overlay progress để GV biết đang đọc cả lớp (35 HS × ~1.5s = ~50s).
+        const readOverlay = document.getElementById('bulk-running-overlay');
+        const readProgressFill = document.getElementById('bulk-progress-fill');
+        const readProgressText = document.getElementById('bulk-progress-text');
+        const readCurrentLabel = document.getElementById('bulk-running-current');
+        const readBoxTitle = readOverlay?.querySelector('.bulk-running-title');
+        const readBoxIcon = readOverlay?.querySelector('.bulk-running-icon');
+        const readBoxWarn = readOverlay?.querySelector('.bulk-running-warn');
+        const originalBoxTitle = readBoxTitle?.textContent;
+        const originalBoxIcon = readBoxIcon?.textContent;
+        const originalBoxWarn = readBoxWarn?.textContent;
+        if (readBoxTitle) readBoxTitle.textContent = 'Đang đọc đánh giá NL-PC từ Vnedu…';
+        if (readBoxIcon) readBoxIcon.textContent = '📖';
+        if (readBoxWarn) readBoxWarn.textContent = 'Đang select từng HS để đọc badge T/Đ/C — đừng tab ra khỏi Vnedu';
+        // Switch sang view bulk SỚM để hiện overlay (view nlpc-bulk có overlay).
+        showView('nlpc-bulk');
+        // Tạo entry pending cho từng HS để view bulk có khung hiển thị
+        for (const hs of nlpcStudents) {
+            nlpcBulkPayloads.set(hs.stt, {
+                stt: hs.stt, hoVaTen: hs.hoVaTen,
+                payload: { nang_luc_chung: {}, nang_luc_dac_thu: {}, pham_chat: {} },
+                lowConfidence: true, status: 'pending'
+            });
+        }
+        renderBulkPreview();
+        if (readOverlay) readOverlay.style.display = 'flex';
+
+        nlpcBulkAbort = false;
+
+        try {
+            for (let i = 0; i < nlpcStudents.length; i++) {
+                if (nlpcBulkAbort) break;
+                const hs = nlpcStudents[i];
+
+                // Update progress
+                const pct = Math.round((i / nlpcStudents.length) * 100);
+                if (readProgressFill) readProgressFill.style.width = pct + '%';
+                if (readProgressText) readProgressText.textContent = `${i} / ${nlpcStudents.length}`;
+                if (readCurrentLabel) readCurrentLabel.textContent = `Đọc HS #${hs.stt} — ${hs.hoVaTen}`;
+
+                // Gọi adapter read T/Đ/C cho HS này
+                const readRes = await sendBulkReadStep(hs.stt, hs.hoVaTen);
+
+                // Build danhGia từ grades đọc được; field nào không có badge → fallback 'ht'
+                const danhGia = { nang_luc_chung: {}, nang_luc_dac_thu: {}, pham_chat: {} };
+                let foundForHS = 0;
+                for (const sec of Object.keys(NLPC_FIELD_DEFS)) {
+                    for (const def of getActiveFieldDefs(sec)) {
+                        const gradeFromForm = readRes?.grades?.[sec]?.[def.key];
+                        if (gradeFromForm) {
+                            danhGia[sec][def.key] = gradeFromForm;
+                            foundForHS++;
+                        } else {
+                            danhGia[sec][def.key] = 'ht';
+                        }
+                    }
+                }
+
+                const lowConfidence = foundForHS === 0; // không đọc được badge nào → default
+                if (lowConfidence) defaultCount++;
+                else withGradesCount++;
+
+                const result = engine.sinhNLPCDayDu(
+                    { hoVaTen: hs.hoVaTen, gradeLevel },
+                    danhGia
+                );
+                const payload = convertGeneratedToPayload(result);
+
+                nlpcBulkPayloads.set(hs.stt, {
+                    stt: hs.stt,
+                    hoVaTen: hs.hoVaTen,
+                    payload,
+                    lowConfidence,
+                    status: 'pending'
+                });
+            }
+
+            // Cleanup overlay
+            if (readOverlay) readOverlay.style.display = 'none';
+            if (readBoxTitle) readBoxTitle.textContent = originalBoxTitle;
+            if (readBoxIcon) readBoxIcon.textContent = originalBoxIcon;
+            if (readBoxWarn) readBoxWarn.textContent = originalBoxWarn;
+
+            btn.innerHTML = originalLabel;
+            btn.disabled = false;
+
+            renderBulkPreview();
+            const msg = withGradesCount > 0
+                ? `Đã đọc đánh giá NL-PC từ Vnedu cho ${withGradesCount}/${nlpcStudents.length} HS`
+                : `Đã tạo NX cho ${nlpcStudents.length} HS (mức mặc định)`;
+            showToast(msg);
+        } catch (e) {
+            console.error('[NLPC-BULK] generateNLPCBulk lỗi:', e);
+            if (readOverlay) readOverlay.style.display = 'none';
+            btn.innerHTML = originalLabel;
+            btn.disabled = false;
+            alert('Lỗi tạo NX cả lớp: ' + e.message);
+        }
+    }
+
+    /** Gửi step đọc grades cho 1 HS, await response */
+    function sendBulkReadStep(stt, expectedHS) {
+        return new Promise((resolve) => {
+            const requestId = `read-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+            _bulkStepResolvers.set(requestId, resolve);
+            setTimeout(() => {
+                if (_bulkStepResolvers.has(requestId)) {
+                    _bulkStepResolvers.delete(requestId);
+                    resolve({ success: false, reason: 'no_response_8s', stt, expectedHS });
+                }
+            }, 8000);
+            parent.postMessage({
+                type: 'COGIAO_NLPC_BULK_READ',
+                payload: { requestId, stt, expectedHS }
+            }, '*');
+        });
+    }
+
+    /** Render table 35 HS + summary + context */
+    function renderBulkPreview() {
+        if (!nlpcBulkPayloads) return;
+        const ctx = currentContext || {};
+        const kyTxt = ctx.hocKy || ctx.kyCode || '';
+        document.getElementById('bulk-context').textContent =
+            `Lớp ${ctx.lop || '?'} · ${nlpcBulkPayloads.size} HS${kyTxt ? ' · ' + kyTxt : ''}`;
+
+        let skipN = 0;
+        for (const item of nlpcBulkPayloads.values()) {
+            if (item.status === 'skipped') skipN++;
+        }
+        const toApply = nlpcBulkPayloads.size - skipN;
+        const summaryEl = document.getElementById('bulk-summary');
+
+        let summaryHtml = `Sẽ đẩy <strong>${toApply}/${nlpcBulkPayloads.size}</strong> HS sang Vnedu`;
+        if (skipN) summaryHtml += ` · ${skipN} HS đã bỏ`;
+        summaryEl.innerHTML = summaryHtml;
+
+        const applyBtnLabel = document.getElementById('bulk-btn-apply-label');
+        applyBtnLabel.textContent = `Đẩy ${toApply} HS sang Vnedu`;
+        document.getElementById('bulk-btn-apply').disabled = (toApply === 0);
+
+        // Render rows
+        const tbody = document.getElementById('bulk-table-body');
+        const rows = [];
+        const sorted = Array.from(nlpcBulkPayloads.values()).sort((a, b) => a.stt - b.stt);
+
+        for (const item of sorted) {
+            const nlcN = countSectionFields(item.payload.nang_luc_chung);
+            const nldtN = countSectionFields(item.payload.nang_luc_dac_thu);
+            const pcN = countSectionFields(item.payload.pham_chat);
+
+            let rowClass = '';
+            if (item.status === 'skipped') rowClass = 'bulk-row-skipped';
+            else if (item.status === 'done') rowClass = 'bulk-row-done';
+            else if (item.status === 'fail') rowClass = 'bulk-row-fail';
+            else if (item.status === 'running') rowClass = 'bulk-row-running';
+
+            // V.06: KHÔNG còn warning ⚠/⚠ per row. Nguồn dữ liệu là form Vnedu, badge
+            // T/Đ/C đọc trực tiếp. NX đã sinh theo grade thật → tin cậy được.
+            const warnIcon = '';
+
+            const statIcon = (n) => n > 0
+                ? `<span class="bulk-stat-ok">${n}</span>`
+                : `<span class="bulk-stat-empty">—</span>`;
+
+            const actionBtn = item.status === 'skipped'
+                ? `<button class="bulk-row-act-btn" data-act="unskip" data-stt="${item.stt}">Đưa lại</button>`
+                : `<button class="bulk-row-act-btn bulk-act-skip" data-act="skip" data-stt="${item.stt}">Bỏ</button>`;
+
+            const statusBadge = item.status === 'done' ? '✓ '
+                              : item.status === 'fail' ? '✗ '
+                              : item.status === 'running' ? '⏳ '
+                              : '';
+
+            rows.push(`
+                <tr class="${rowClass}">
+                    <td>${item.stt}</td>
+                    <td class="bulk-td-name">${statusBadge}${warnIcon}${escapeHtml(item.hoVaTen)}</td>
+                    <td>${statIcon(nlcN)}</td>
+                    <td>${statIcon(nldtN)}</td>
+                    <td>${statIcon(pcN)}</td>
+                    <td>${actionBtn}</td>
+                </tr>
+            `);
+        }
+        tbody.innerHTML = rows.join('');
+
+        // Bind action buttons
+        tbody.querySelectorAll('.bulk-row-act-btn').forEach(btn => {
+            btn.onclick = () => {
+                if (nlpcBulkRunning) return;
+                const stt = parseInt(btn.dataset.stt);
+                const act = btn.dataset.act;
+                const item = nlpcBulkPayloads.get(stt);
+                if (!item) return;
+                if (act === 'skip') item.status = 'skipped';
+                else if (act === 'unskip') item.status = 'pending';
+                renderBulkPreview();
+            };
+        });
+    }
+
+    function countSectionFields(secObj) {
+        if (!secObj) return 0;
+        return Object.values(secObj).filter(t => t && t.trim()).length;
+    }
+
+    /**
+     * Pha 2: chạy queue đẩy 35 HS sang Vnedu.
+     * Hard stop on first race/timeout. Resume từ HS lỗi qua startFromStt.
+     */
+    async function runBulkApplyQueue(startFromStt = null) {
+        if (!nlpcBulkPayloads || nlpcBulkPayloads.size === 0) {
+            showToast('Chưa có payload — hãy bấm "Tạo NL-PC cho cả lớp" trước');
+            return;
+        }
+        if (nlpcBulkRunning) return;
+
+        const sorted = Array.from(nlpcBulkPayloads.values()).sort((a, b) => a.stt - b.stt);
+        const queue = sorted.filter(item => {
+            if (item.status === 'skipped') return false;
+            if (item.status === 'done') return false; // đã làm rồi (resume)
+            if (startFromStt && item.stt < startFromStt) return false;
+            return true;
+        });
+
+        if (queue.length === 0) {
+            showToast('Không còn HS nào để đẩy');
+            return;
+        }
+
+        nlpcBulkRunning = true;
+        nlpcBulkAbort = false;
+        nlpcBulkStartFrom = null;
+
+        const overlay = document.getElementById('bulk-running-overlay');
+        const progressFill = document.getElementById('bulk-progress-fill');
+        const progressText = document.getElementById('bulk-progress-text');
+        const currentLabel = document.getElementById('bulk-running-current');
+        overlay.style.display = 'flex';
+
+        const total = queue.length;
+        let doneN = 0, failN = 0;
+        const failures = [];
+        let firstFailStt = null;
+
+        for (let i = 0; i < queue.length; i++) {
+            if (nlpcBulkAbort) break;
+            const item = queue[i];
+
+            // Update UI
+            item.status = 'running';
+            renderBulkPreview();
+            currentLabel.textContent = `HS #${item.stt} — ${item.hoVaTen}`;
+            const pct = Math.round((i / total) * 100);
+            progressFill.style.width = pct + '%';
+            progressText.textContent = `${i} / ${total}`;
+
+            const result = await sendBulkStep({
+                stt: item.stt,
+                expectedHS: item.hoVaTen,
+                fillPayload: { ...item.payload, _expectedHS: item.hoVaTen },
+                autoSave: true
+            });
+
+            if (result.success) {
+                item.status = 'done';
+                doneN++;
+            } else {
+                item.status = 'fail';
+                item.reason = `${result.stage}: ${result.reason}`;
+                failN++;
+                failures.push({ stt: item.stt, hoVaTen: item.hoVaTen, stage: result.stage, reason: result.reason, lastSeen: result.lastSeen, actual: result.actual });
+                if (!firstFailStt) firstFailStt = item.stt;
+
+                // Hard stop on race/mismatch — không cascade
+                if (result.stage === 'wait_active' || result.reason === 'hs_mismatch') {
+                    renderBulkPreview();
+                    progressText.textContent = `${i + 1} / ${total} · DỪNG`;
+                    break;
+                }
+                // Soft fail (no_fields_filled, save timeout) → skip HS này, tiếp tục
+            }
+
+            renderBulkPreview();
+            await new Promise(r => setTimeout(r, 200)); // breathing room giữa HS
+        }
+
+        // Cleanup
+        nlpcBulkRunning = false;
+        overlay.style.display = 'none';
+        renderBulkPreview();
+
+        // Hiện modal kết quả
+        nlpcBulkStartFrom = firstFailStt;
+        showBulkResultModal({ doneN, failN, total, failures, aborted: nlpcBulkAbort });
+    }
+
+    /** Gửi 1 step cho content-script, await response qua requestId */
+    function sendBulkStep({ stt, expectedHS, fillPayload, autoSave }) {
+        return new Promise((resolve, reject) => {
+            const requestId = `bulk-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+            _bulkStepResolvers.set(requestId, resolve);
+
+            // Timeout an toàn 12s (1 step ~3-4s, đệm gấp đôi)
+            setTimeout(() => {
+                if (_bulkStepResolvers.has(requestId)) {
+                    _bulkStepResolvers.delete(requestId);
+                    resolve({ success: false, stage: 'timeout', reason: 'no_response_12s', stt, expectedHS });
+                }
+            }, 12000);
+
+            parent.postMessage({
+                type: 'COGIAO_NLPC_BULK_STEP',
+                payload: { requestId, stt, expectedHS, fillPayload, autoSave }
+            }, '*');
+        });
+    }
+
+    function showBulkResultModal({ doneN, failN, total, failures, aborted }) {
+        const modal = document.getElementById('bulk-result-modal');
+        const iconEl = document.getElementById('bulk-result-icon');
+        const titleEl = document.getElementById('bulk-result-title');
+        const bodyEl = document.getElementById('bulk-result-body');
+        const resumeBtn = document.getElementById('bulk-result-resume');
+
+        // Tip phòng tránh Vnedu framework bug khi switch module (ext-all.js getAt undefined).
+        // Hiện trong MỌI trạng thái kết thúc bulk vì GV thường tiếp tục sang module khác sau đó.
+        const f5Tip = `
+            <div class="bulk-result-tip">
+                <span class="bulk-result-tip-icon">💡</span>
+                <span><strong>Mẹo:</strong> Trước khi chuyển sang module khác (Sổ NX môn / Sổ điểm),
+                bấm <strong>F5</strong> để làm mới trang Vnedu — tránh lỗi nội bộ của Vnedu khi
+                switch module.</span>
+            </div>
+        `;
+
+        if (failN === 0 && !aborted) {
+            iconEl.textContent = '✅';
+            titleEl.textContent = 'Xong! Đã đẩy tất cả NL-PC';
+            bodyEl.innerHTML = `Hoàn tất <strong>${doneN}/${total}</strong> HS. Tất cả đã được Lưu vào Vnedu.` + f5Tip;
+            resumeBtn.style.display = 'none';
+        } else if (aborted) {
+            iconEl.textContent = '⏸️';
+            titleEl.textContent = 'Đã dừng theo yêu cầu';
+            bodyEl.innerHTML = `Đã đẩy thành công <strong>${doneN}/${total}</strong> HS trước khi dừng.`
+                + (nlpcBulkStartFrom ? `<br><br>Có thể tiếp tục từ HS #${nlpcBulkStartFrom}.` : '')
+                + f5Tip;
+            resumeBtn.style.display = nlpcBulkStartFrom ? '' : 'none';
+        } else {
+            iconEl.textContent = '⚠️';
+            titleEl.textContent = `Đã dừng — ${doneN} OK, ${failN} lỗi`;
+            const failList = failures.map(f => {
+                const detail = f.stage === 'wait_active'
+                    ? `Vnedu hiển thị "${f.lastSeen || '?'}" thay vì "${f.hoVaTen}"`
+                    : f.actual
+                        ? `Vnedu đang ở "${f.actual}"`
+                        : `${f.stage}: ${f.reason}`;
+                return `<li><strong>HS #${f.stt}</strong> (${escapeHtml(f.hoVaTen)}): ${escapeHtml(detail)}</li>`;
+            }).join('');
+            bodyEl.innerHTML = `
+                <p>Đã làm thành công <strong>${doneN}/${total}</strong>. Dừng tại HS #${failures[0]?.stt}.</p>
+                <ul>${failList}</ul>
+                <p style="margin-top:8px;font-size:11.5px;color:#777">Kiểm tra panel HS bên trái Vnedu (đang ở đúng HS chưa?), sau đó bấm <strong>Tiếp tục</strong>.</p>
+                ${f5Tip}
+            `;
+            resumeBtn.style.display = nlpcBulkStartFrom ? '' : 'none';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeBulkResultModal() {
+        document.getElementById('bulk-result-modal').style.display = 'none';
     }
 
     /* ====================================================================

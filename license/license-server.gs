@@ -65,6 +65,13 @@ const MA_LEN_MIN = 4;
 const MA_LEN_MAX = 10;
 const MA_LEN_LEGACY = 4;  // cho GV v2 cũ (giữ tham chiếu)
 
+// V6.1.3 HOTFIX (2026-05-20) — toggle chế độ cấp mã trong dangKy:
+//   'v5' → cấp mã 4 ký tự random (tương thích V5.0 trên CWS: form Đăng nhập maxlength=4).
+//   'v6' → cấp mã = SĐT (flow "Một-chạm" gốc V6: cô CK với SĐT, dễ nhớ).
+// Khi nào Google CWS duyệt V6 → đổi thành 'v6' + redeploy (cùng URL, New version)
+// để khôi phục UX gốc. Không ảnh hưởng GV đã active (chỉ tác động dangKy mới).
+const MA_GEN_MODE = 'v5';
+
 // Bộ ký tự cho mã LEGACY: chữ thường + số, BỎ ký tự dễ nhầm (0, o, 1, l, i)
 const MA_CHARSET = 'abcdefghjkmnpqrstuvwxyz23456789';
 
@@ -89,9 +96,8 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    if (!rateLimitOK_(e)) return jsonOut_({ ok: false, error: 'rate_limit' });
-
     const body = JSON.parse(e.postData.contents || '{}');
+    if (!rateLimitOK_(body)) return jsonOut_({ ok: false, error: 'rate_limit' });
     const action = body.action;
 
     if (action === 'dangKy')              return jsonOut_(dangKy_(body));
@@ -112,16 +118,23 @@ function jsonOut_(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function rateLimitOK_(e) {
+// V6.1.4 HOTFIX (2026-05-21): rate limit PER-SĐT thay vì global.
+// Bug cũ: dùng e.parameter.ua nhưng extension POST không gửi ?ua=... → key luôn
+// = 'anon' → 60/phút share GLOBAL cho TẤT CẢ cô → ~20 cô polling concurrent đã
+// chạm trần → cô khác bấm "Đăng ký" thấy "Quá nhiều yêu cầu. Đợi 1 phút".
+// Fix: key theo SĐT, mỗi cô có quota riêng (60/phút đủ thoải mái cho polling
+// 20s + dangKy + dangNhap + recheck cùng lúc). Request không có sdt (vd resetDevice
+// với adminKey) dùng key 'anon' với quota 120/phút.
+function rateLimitOK_(body) {
   try {
     const cache = CacheService.getScriptCache();
-    const ua = (e && e.parameter && e.parameter.ua) || 'anon';
-    const key = 'rl_' + Utilities.base64EncodeWebSafe(ua).slice(0, 20);
+    const rawSdt = String((body && body.sdt) || '').replace(/\D/g, '');
+    const sdt = rawSdt.length >= 9 ? rawSdt.slice(-10) : '';
+    const key = sdt ? ('rl_sdt_' + sdt) : 'rl_anon';
     const count = parseInt(cache.get(key) || '0', 10) + 1;
-    // V6: nới rate limit từ 30 lên 60/phút vì polling adaptive có thể bùng nhẹ
-    // khi nhiều cô cùng đăng ký một lúc đầu giờ.
     cache.put(key, String(count), 60);
-    return count <= 60;
+    const limit = sdt ? 60 : 120;
+    return count <= limit;
   } catch (e) { return true; }
 }
 
@@ -219,9 +232,13 @@ function dangKy_(body) {
   }
 
   // Sinh mã:
-  //   - admin → ADMIN_FIXED_MA
-  //   - user thường → MÃ = SĐT (V6 flow)
-  const ma = isAdmin ? ADMIN_FIXED_MA : sdt;
+  //   - admin → ADMIN_FIXED_MA (cố định, dễ nhớ khi test)
+  //   - user thường → tùy MA_GEN_MODE:
+  //       'v5' (HOTFIX hiện tại): mã 4 ký tự random — V5.0 CWS gõ được.
+  //       'v6': mã = SĐT — flow "Một-chạm" gốc, đổi khi V6 được duyệt.
+  const ma = isAdmin
+    ? ADMIN_FIXED_MA
+    : (MA_GEN_MODE === 'v5' ? sinhMaLegacyKhongTrung_(sheet) : sdt);
   const now = new Date();
 
   if (row) {
@@ -496,6 +513,131 @@ function sinhMaLegacyKhongTrung_(sheet) {
   throw new Error('Không sinh được mã legacy không trùng sau 20 lần thử');
 }
 
+/**
+ * V6.1.3 HOTFIX — Khôi phục mã 4 ký tự cho các row đã đăng ký bằng flow V6 (mã = SĐT).
+ * Lý do: V5.0 trên CWS có form Đăng nhập maxlength=4 → cô không gõ được mã 10 số.
+ *
+ * Cách chạy: Apps Script editor → dropdown function → chọn "khoiPhucMaNgan_V5Compat"
+ *            → Run. Cấp quyền nếu hỏi. Đọc alert → copy danh sách → Zalo từng cô.
+ *
+ * Idempotent: chỉ regen mã cho row có ma_bi_mat === sdt. Skip row admin, row đã KHÓA,
+ * và row đã có mã ngắn ≠ sdt (vd GV v2 cũ).
+ */
+function khoiPhucMaNgan_V5Compat() {
+  const ui = SpreadsheetApp.getUi();
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (!sheet) { ui.alert('Chưa setup sheet License'); return; }
+
+  const last = sheet.getLastRow();
+  if (last < 2) { ui.alert('Sheet trống.'); return; }
+
+  const data = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+
+  // Pre-load mã đã có để tránh va chạm trong cùng batch
+  const usedMas = new Set();
+  for (const v of data) {
+    const m = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
+    if (m) usedMas.add(m);
+  }
+  function sinhMaUnique_() {
+    for (let attempt = 0; attempt < 50; attempt++) {
+      let ma = '';
+      for (let i = 0; i < MA_LEN_LEGACY; i++) {
+        ma += MA_CHARSET.charAt(Math.floor(Math.random() * MA_CHARSET.length));
+      }
+      if (!usedMas.has(ma)) { usedMas.add(ma); return ma; }
+    }
+    throw new Error('Không sinh được mã 4 ký tự không trùng sau 50 lần');
+  }
+
+  const updates = [];
+  for (let i = 0; i < data.length; i++) {
+    const v = data[i];
+    const sdt = chuanHoaSdt_(v[COL.sdt - 1]);
+    const ma = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
+    const trangThai = v[COL.trang_thai - 1];
+    if (!sdt || !ma) continue;
+    if (ma !== sdt) continue;             // mã đã ≠ sdt → skip
+    if (trangThai === TT.KHOA) continue;
+    if (isAdminSdt_(sdt)) continue;
+
+    const newMa = sinhMaUnique_();
+    const row = i + 2;
+    sheet.getRange(row, COL.ma_bi_mat).setValue("'" + newMa);
+    updates.push({
+      sdt: sdt,
+      hoTen: String(v[COL.ho_ten - 1] || ''),
+      maMoi: newMa,
+      trangThai: trangThai
+    });
+  }
+
+  if (updates.length === 0) {
+    ui.alert('Không có row nào cần khôi phục (mã của mọi GV đều ≠ SĐT).');
+    return;
+  }
+
+  const lines = updates.map(u =>
+    u.sdt + ' — ' + u.hoTen + ' — MÃ MỚI: ' + u.maMoi + ' (TT: ' + u.trangThai + ')'
+  );
+  const msg = '✓ Đã khôi phục ' + updates.length + ' mã 4 ký tự:\n\n' +
+              lines.join('\n') + '\n\n' +
+              'Thầy Zalo từng cô với template:\n' +
+              '"Cô vào extension Sổ NX-AI → tab Đăng nhập → nhập SĐT của cô + mã 4 ký tự: XXXX.\n' +
+              ' (Mã 10 số trước đó cô có thể bỏ qua.)"';
+  Logger.log(msg);
+  ui.alert(msg);
+}
+
+/**
+ * V6.1.4 FIX (2026-05-21) — Batch xử lý các row đã tick TAY checkbox cột F
+ * nhưng cột L trang_thai vẫn `cho_thanh_toan`. Bình thường khi cô polling
+ * ping server, hàm `autoUpgradePaid_` tự đồng bộ cột G + I + L. Nhưng nếu
+ * cô đã đóng sidebar (polling stop) thì không bao giờ trigger → cô không active.
+ *
+ * Hàm này quét toàn Sheet, gọi `autoUpgradePaid_` cho mọi row F=TRUE + L=cho_thanh_toan.
+ * Sau khi chạy, trạng thái = `da_tra_tien` ngay → cô next polling sẽ bind device.
+ * Nếu cô đã đóng sidebar → bảo cô mở lại tab Vnedu để polling restart.
+ *
+ * Idempotent: chạy nhiều lần OK (chỉ xử lý row CHO_THANH_TOAN).
+ */
+function dongBoTrangThaiTickTay() {
+  const ui = SpreadsheetApp.getUi();
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (!sheet) { ui.alert('Chưa setup sheet License'); return; }
+  const last = sheet.getLastRow();
+  if (last < 2) { ui.alert('Sheet trống.'); return; }
+
+  const data = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  const updated = [];
+  for (let i = 0; i < data.length; i++) {
+    const v = data[i];
+    if (!v[COL.sdt - 1]) continue;
+    const daTraTien = v[COL.da_thanh_toan - 1] === true || v[COL.da_thanh_toan - 1] === 'TRUE';
+    const trangThai = v[COL.trang_thai - 1];
+    if (daTraTien && trangThai === TT.CHO_THANH_TOAN) {
+      const row = i + 2;
+      autoUpgradePaid_(sheet, row, v);
+      updated.push({
+        sdt: chuanHoaSdt_(v[COL.sdt - 1]),
+        hoTen: String(v[COL.ho_ten - 1] || ''),
+        ma: chuanHoaMa_(v[COL.ma_bi_mat - 1])
+      });
+    }
+  }
+  if (updated.length === 0) {
+    ui.alert('Không có row nào cần đồng bộ. (Mọi row đã đúng trạng thái.)');
+    return;
+  }
+  const lines = updated.map(u => u.sdt + ' — ' + u.hoTen + ' (mã ' + u.ma + ')');
+  ui.alert(
+    '✓ Đã đồng bộ ' + updated.length + ' row sang da_tra_tien:\n\n' +
+    lines.join('\n') + '\n\n' +
+    'Cô nào còn mở sidebar → sẽ tự kích hoạt trong 20-120 giây tới.\n' +
+    'Cô đã đóng sidebar → bảo cô MỞ LẠI tab Vnedu (extension tự polling lại).'
+  );
+}
+
 function findRowBySdt_(sheet, sdt) {
   const last = sheet.getLastRow();
   if (last < 2) return null;
@@ -556,6 +698,10 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('🔑 Sổ NX - AI')
     .addItem('💰 Tick thanh toán theo SĐT... (V6 — khuyên dùng)', 'tickThanhToanTheoSdt')
     .addItem('💰 Tick theo mã 4 ký tự... (GV v2 cũ)', 'tickDaThanhToan')
+    .addSeparator()
+    .addItem('🔧 Khôi phục mã ngắn V5 (HOTFIX — chạy 1 lần)', 'khoiPhucMaNgan_V5Compat')
+    .addItem('⚡ Đồng bộ trạng thái các row tick tay cột F (FIX 21/5)', 'dongBoTrangThaiTickTay')
+    .addItem('🧹 Dồn dữ liệu lên đầu sheet (xoá dòng trống)', 'donDepHangTrong')
     .addSeparator()
     .addItem('🔄 Reset thiết bị (theo SĐT)...', 'resetThietBiUI')
     .addItem('🔒 Khóa 1 SĐT (nghi share)...', 'khoaSdtUI')

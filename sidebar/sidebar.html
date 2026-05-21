@@ -92,6 +92,22 @@
     <div id="view-nlpc" class="view view-hidden">
         <div class="nlpc-context-box" id="nlpc-context-box"></div>
 
+        <!-- V.06 NLPC Bulk: 1-chạm cho cả lớp -->
+        <div class="nlpc-bulk-section" id="nlpc-bulk-section">
+            <div class="nlpc-bulk-header">
+                <span class="nlpc-bulk-icon">📚</span>
+                <span class="nlpc-bulk-title" id="nlpc-bulk-title">Cả lớp</span>
+            </div>
+            <button class="btn-primary nlpc-bulk-btn" id="nlpc-btn-bulk-generate">
+                <span>✨</span>
+                <span>Tạo NL-PC cho cả lớp</span>
+            </button>
+            <div class="nlpc-bulk-hint">Tạo nhanh — xem trước, rồi đẩy hàng loạt sang Vnedu</div>
+            <div class="nlpc-bulk-tip">💡 <strong>Mẹo:</strong> Mỗi lần làm 1 module rồi <strong>F5</strong> trước khi sang module khác — tránh lỗi nội bộ Vnedu</div>
+        </div>
+
+        <div class="nlpc-divider"><span>HOẶC làm từng HS</span></div>
+
         <div class="nlpc-student-picker">
             <label class="nlpc-picker-label">Học sinh:</label>
             <select class="nlpc-student-select" id="nlpc-student-select"></select>
@@ -121,6 +137,70 @@
         <div class="nlpc-actions">
             <button class="btn-secondary" id="nlpc-btn-generate">Tạo nhận xét</button>
             <button class="btn-primary" id="nlpc-btn-apply" disabled>Áp dụng vào Vnedu</button>
+        </div>
+    </div>
+
+    <!-- V.06 NLPC Bulk view — preview 35 HS + đẩy hàng loạt -->
+    <div id="view-nlpc-bulk" class="view view-hidden">
+        <div class="bulk-topbar">
+            <button class="bulk-back-btn" id="bulk-btn-back" title="Quay lại">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Quay lại</span>
+            </button>
+            <div class="bulk-context" id="bulk-context"></div>
+        </div>
+
+        <div class="bulk-summary" id="bulk-summary"></div>
+
+        <div class="bulk-table-wrap">
+            <table class="bulk-table" id="bulk-table">
+                <thead>
+                    <tr>
+                        <th class="bulk-th-stt">STT</th>
+                        <th class="bulk-th-name">Họ tên</th>
+                        <th class="bulk-th-stat">NL.C</th>
+                        <th class="bulk-th-stat">NL.ĐT</th>
+                        <th class="bulk-th-stat">PC</th>
+                        <th class="bulk-th-act">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="bulk-table-body"></tbody>
+            </table>
+        </div>
+
+        <div class="bulk-actions">
+            <button class="btn-primary bulk-btn-apply" id="bulk-btn-apply">
+                <span>📤</span>
+                <span id="bulk-btn-apply-label">Đẩy sang Vnedu</span>
+            </button>
+        </div>
+
+        <!-- Overlay khóa khi queue đang chạy -->
+        <div class="bulk-running-overlay" id="bulk-running-overlay" style="display:none">
+            <div class="bulk-running-box">
+                <div class="bulk-running-icon">🚀</div>
+                <div class="bulk-running-title">Đang đẩy NL-PC sang Vnedu…</div>
+                <div class="bulk-running-progress">
+                    <div class="bulk-progress-bar"><div class="bulk-progress-fill" id="bulk-progress-fill"></div></div>
+                    <div class="bulk-progress-text" id="bulk-progress-text">0 / 0</div>
+                </div>
+                <div class="bulk-running-current" id="bulk-running-current">Chuẩn bị…</div>
+                <div class="bulk-running-warn">⚠️ Đừng tab ra khỏi Vnedu cho đến khi xong</div>
+                <button class="btn-secondary bulk-btn-stop" id="bulk-btn-stop">Dừng</button>
+            </div>
+        </div>
+
+        <!-- Modal kết quả khi queue dừng / xong -->
+        <div class="bulk-result-modal" id="bulk-result-modal" style="display:none">
+            <div class="bulk-result-box">
+                <div class="bulk-result-icon" id="bulk-result-icon">✅</div>
+                <div class="bulk-result-title" id="bulk-result-title">Xong</div>
+                <div class="bulk-result-body" id="bulk-result-body"></div>
+                <div class="bulk-result-actions">
+                    <button class="btn-secondary" id="bulk-result-close">Đóng</button>
+                    <button class="btn-primary" id="bulk-result-resume" style="display:none">Tiếp tục từ HS dở</button>
+                </div>
+            </div>
         </div>
     </div>
 
