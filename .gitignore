@@ -46,6 +46,7 @@ pnpm-debug.log*
 
 # ====== Build artifacts ======
 sonhanxet-ai-v*.zip
+SoNhanXetAI_V*.zip
 _stage_*/
 
 # ====== Backup files (created during refactor — not for repo) ======

@@ -1340,7 +1340,7 @@ window.VneduAdapter = {
 
             if (best) {
                 best.used = true;
-                this._assignNLPCField(result, lbl.fieldKey, best.ta, lbl.centerX, splitX);
+                this._assignNLPCField(result, lbl.fieldKey, best.ta, lbl.el, lbl.centerX, lbl.centerY, splitX);
             } else {
                 console.warn(`[VneduAdapter] không tìm được textarea cho label "${lbl.text}" (${lbl.fieldKey})`);
             }
@@ -1375,33 +1375,79 @@ window.VneduAdapter = {
             const norm = text.replace(/[:\s]+$/, '').toUpperCase();
             if (!headers.nlc && (norm === 'NĂNG LỰC' || norm === 'NANG LUC')) {
                 const r = el.getBoundingClientRect();
-                headers.nlc = { rect: r, centerX: (r.left + r.right) / 2, centerY: (r.top + r.bottom) / 2 };
+                headers.nlc = { el, rect: r, centerX: (r.left + r.right) / 2, centerY: (r.top + r.bottom) / 2 };
             }
             if (!headers.pc && (norm === 'PHẨM CHẤT' || norm === 'PHAM CHAT')) {
                 const r = el.getBoundingClientRect();
-                headers.pc = { rect: r, centerX: (r.left + r.right) / 2, centerY: (r.top + r.bottom) / 2 };
+                headers.pc = { el, rect: r, centerX: (r.left + r.right) / 2, centerY: (r.top + r.bottom) / 2 };
             }
         }
         return headers;
     },
 
-    _assignNLPCField(result, fieldKey, ta, labelCenterX, splitX) {
-        // "Nhận xét chung" có 2 instance (NL chung + PC chung).
-        // Layout Vnedu là 2 CỘT: NĂNG LỰC bên trái, PHẨM CHẤT bên phải.
-        // → Phân biệt bằng KHOẢNG CÁCH X đến header "NĂNG LỰC" / "PHẨM CHẤT".
-        // KHÔNG dùng trục Y (cả 2 label cùng hàng dưới header section → Y tương đương).
+    _assignNLPCField(result, fieldKey, ta, labelEl, labelCenterX, labelCenterY, splitX) {
+        // V6.0.2 FIX: "Nhận xét chung" có 2 instance (NL chung + PC chung).
+        // Logic cũ chỉ dùng X-distance → SAI khi máy GV có layout 1-cột (màn hẹp /
+        // zoom 125% / dock Vnedu chiếm chỗ): 2 header NL & PC cùng centerX → distance
+        // bằng nhau → cả 2 label "Nhận xét chung" bị gán nhầm chéo.
+        //
+        // 3 tầng phân biệt (fallback dần):
+        //   1) DOM-ANCESTOR: common ancestor của (label, header NL) vs (label, header PC).
+        //      Container nào HẸP hơn (height nhỏ hơn) = section đúng. DOM-aware, không
+        //      phụ thuộc layout pixel.
+        //   2) Y-DISTANCE: layout 1-cột thì PC nằm DƯỚI NL → Y header khác nhau rõ rệt
+        //      (yGap > 100). So Y của label với centerY mỗi header.
+        //   3) X-DISTANCE (logic cũ): layout 2-cột thì NL trái / PC phải → X khác rõ
+        //      (xGap > 50). So X của label với centerX mỗi header.
+        //   4) Fallback splitX: median centerX của textarea (giữ legacy).
         if (fieldKey === 'nlc_chung') {
             const headers = this._findNLPCSectionHeaders();
-
             let assignTo = null;
-            if (headers.nlc && headers.pc) {
-                const distNLC = Math.abs(labelCenterX - headers.nlc.centerX);
-                const distPC = Math.abs(labelCenterX - headers.pc.centerX);
-                assignTo = distNLC <= distPC ? 'nang_luc_chung' : 'pham_chat';
-            } else {
-                // Fallback nếu không tìm được header: dùng splitX (median centerX của textarea)
-                assignTo = labelCenterX > splitX ? 'pham_chat' : 'nang_luc_chung';
+            let matchedBy = 'none';
+
+            // Tầng 1: DOM ancestor
+            if (headers.nlc?.el && headers.pc?.el && labelEl) {
+                const ancNL = this._commonAncestor(labelEl, headers.nlc.el);
+                const ancPC = this._commonAncestor(labelEl, headers.pc.el);
+                if (ancNL && ancPC && ancNL !== ancPC) {
+                    const hNL = ancNL.getBoundingClientRect().height;
+                    const hPC = ancPC.getBoundingClientRect().height;
+                    if (Math.abs(hNL - hPC) > 5) {
+                        assignTo = hNL < hPC ? 'nang_luc_chung' : 'pham_chat';
+                        matchedBy = `dom-ancestor (hNL=${Math.round(hNL)}, hPC=${Math.round(hPC)})`;
+                    }
+                }
             }
+
+            // Tầng 2: Y-distance (layout 1-cột)
+            if (!assignTo && headers.nlc && headers.pc) {
+                const yGap = Math.abs(headers.nlc.centerY - headers.pc.centerY);
+                if (yGap > 100) {
+                    const dyNLC = Math.abs(labelCenterY - headers.nlc.centerY);
+                    const dyPC = Math.abs(labelCenterY - headers.pc.centerY);
+                    assignTo = dyNLC <= dyPC ? 'nang_luc_chung' : 'pham_chat';
+                    matchedBy = `y-distance (yGap=${Math.round(yGap)}, dyNL=${Math.round(dyNLC)}, dyPC=${Math.round(dyPC)})`;
+                }
+            }
+
+            // Tầng 3: X-distance (layout 2-cột)
+            if (!assignTo && headers.nlc && headers.pc) {
+                const xGap = Math.abs(headers.nlc.centerX - headers.pc.centerX);
+                if (xGap > 50) {
+                    const distNLC = Math.abs(labelCenterX - headers.nlc.centerX);
+                    const distPC = Math.abs(labelCenterX - headers.pc.centerX);
+                    assignTo = distNLC <= distPC ? 'nang_luc_chung' : 'pham_chat';
+                    matchedBy = `x-distance (xGap=${Math.round(xGap)}, dxNL=${Math.round(distNLC)}, dxPC=${Math.round(distPC)})`;
+                }
+            }
+
+            // Tầng 4: fallback splitX
+            if (!assignTo) {
+                assignTo = labelCenterX > splitX ? 'pham_chat' : 'nang_luc_chung';
+                matchedBy = `splitX-fallback (labelX=${Math.round(labelCenterX)}, splitX=${Math.round(splitX)})`;
+            }
+
+            console.log(`[NLPC-DBG] nlc_chung → ${assignTo} via ${matchedBy}`);
 
             // Nếu slot đã chiếm thì bỏ vào slot còn lại (đảm bảo không mất textarea)
             if (result[assignTo].fields.chung) {
@@ -1907,10 +1953,20 @@ window.VneduAdapter = {
                 return { success: false, reason: 'leaf_not_found', missing: LEAF_TEXT };
             }
 
+            // V6.0.2: Đợi Vnedu idle trước khi click leaf — fix race khi module CŨ
+            // (Sổ điểm) còn AJAX pending. Nếu click leaf ngay, response của Sổ điểm
+            // về sau khi store đã unmount → exception "getAt undefined" → spam vendor
+            // error → form NLPC bị đơ ở HS thứ 2-3.
+            await this._waitVneduIdle_(1500);
+
             // LEAF: click thật (không phải hover) để Vnedu mở module
             console.log(`[VneduAdapter] openVneduModule: click leaf "${LEAF_TEXT}"`);
             leaf.click();
             await this._sleep_(500);
+
+            // V6.0.2: Đợi idle thêm sau click — Vnedu load module mới, AJAX cũ vẫn
+            // có thể về trong khoảng này. Cộng thêm 500ms tổng buffer ~1s sau click.
+            await this._waitVneduIdle_(1500);
 
             console.log(`[VneduAdapter] openVneduModule(${module}) success`);
             return { success: true };
@@ -1921,6 +1977,41 @@ window.VneduAdapter = {
             await this._sleep_(300);
             this._hideLoadingOverlay_(overlay);
         }
+    },
+
+    /**
+     * V6.0.2: Detect Vnedu đang bận (loading mask Ext.js đang hiển thị).
+     * Khi busy → Vnedu đang xử lý AJAX hoặc render → KHÔNG nên trigger switch
+     * module hay click event mới, dễ gây race vendor exception.
+     */
+    _isVneduBusy_() {
+        const masks = document.querySelectorAll('.x-mask, .x-mask-loading, .x-mask-msg, .x-loading');
+        for (const m of masks) {
+            if (m.closest('#cogiao-ai-sidebar')) continue;
+            const s = window.getComputedStyle(m);
+            if (s.display === 'none' || s.visibility === 'hidden') continue;
+            const r = m.getBoundingClientRect();
+            if (r.width > 50 && r.height > 50) return true;
+        }
+        return false;
+    },
+
+    /**
+     * V6.0.2: Đợi Vnedu hết busy (loading mask ẩn hết) trong tối đa timeoutMs ms.
+     * Sau khi mask ẩn, đợi thêm 200ms để callback AJAX kịp settle.
+     * Resolve true nếu Vnedu idle, false nếu timeout (Vnedu vẫn busy).
+     */
+    async _waitVneduIdle_(timeoutMs) {
+        const start = Date.now();
+        const POLL_MS = 80;
+        while (Date.now() - start < timeoutMs) {
+            if (!this._isVneduBusy_()) {
+                await this._sleep_(200);
+                if (!this._isVneduBusy_()) return true;
+            }
+            await this._sleep_(POLL_MS);
+        }
+        return false;
     },
 
     /**

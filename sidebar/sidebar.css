@@ -150,7 +150,7 @@ body {
 }
 
 .rescan-bar {
-    padding: 8px 14px;
+    padding: 6px 12px;
     background: white;
     border-bottom: 0.5px solid #d4d4d4;
     flex-shrink: 0;
@@ -158,13 +158,13 @@ body {
 
 .btn-rescan {
     width: 100%;
-    background: white;
-    color: #0C447C;
-    border: 1px solid #2B4F9E;
-    padding: 8px 12px;
+    background: linear-gradient(135deg, #F1F5FC 0%, #E6EEF9 100%);
+    color: #2B4F9E;
+    border: 1px solid #D5DEEC;
+    padding: 6px 10px;
     border-radius: 6px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -175,8 +175,9 @@ body {
 }
 
 .btn-rescan:hover {
-    background: #E1F5EE;
-    border-color: #0C447C;
+    background: linear-gradient(135deg, #E6EEF9 0%, #D5E2F4 100%);
+    border-color: #2B4F9E;
+    box-shadow: 0 1px 3px rgba(43,79,158,0.15);
 }
 
 .btn-rescan:active {
@@ -184,6 +185,9 @@ body {
 }
 
 .btn-rescan svg {
+    width: 14px;
+    height: 14px;
+    color: #2B4F9E;
     transition: transform 0.3s;
 }
 
@@ -252,43 +256,56 @@ body {
 
 .context-box {
     flex: 1;
-    padding: 12px 16px;
-    background: #F1EFE8;
+    padding: 10px 14px 0;
+    background: linear-gradient(135deg, #2B4F9E 0%, #3E69BC 100%);
+    color: white;
+    border-bottom: 0.5px solid #d4d4d4;
 }
-.context-label { font-size: 11px; color: #888780; margin-bottom: 4px; }
-.context-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; }
-.context-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.context-label { font-size: 10px; color: rgba(255,255,255,0.78); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; text-align: center; }
+.context-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+.context-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 .pill {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 10px;
-    background: #E6F1FB;
-    color: #0C447C;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.28);
 }
 
-/* V2.0: ô chọn kỳ nhận xét trong context-box */
+/* V6.0.2: ô chọn kỳ nhận xét — break out khỏi navy context, nền trắng cho dropdown rõ */
 .context-ky-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px dashed #D4D4D4;
+    margin: 10px -14px 0;
+    padding: 8px 14px;
+    background: white;
+    border-top: 1px solid rgba(255,255,255,0.25);
 }
 .context-ky-label {
-    font-size: 12px;
-    color: #0C447C;
-    font-weight: 500;
+    font-size: 13px;
+    color: #2B4F9E;
+    font-weight: 600;
     white-space: nowrap;
 }
 .context-ky-select {
     flex: 1;
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 8px;
     border-radius: 6px;
     border: 1px solid #C0CDDE;
     background: white;
-    color: #0E5440;
+    color: #1F2937;
     font-family: inherit;
     cursor: pointer;
 }
@@ -345,14 +362,14 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    padding: 12px 16px;
+    padding: 8px 14px;
     border-bottom: 0.5px solid #d4d4d4;
 }
 .stat-card {
     background: #FAFBFC;
     border: 1px solid #EEF0F3;
     border-radius: 8px;
-    padding: 10px 6px;
+    padding: 6px 4px;
     text-align: center;
 }
 .stat-card .stat-value { color: #2B4F9E !important; }
@@ -364,16 +381,16 @@ body {
 .stat-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
 
 .actions {
-    padding: 14px 16px 12px;
+    padding: 10px 14px 10px;
     border-bottom: 0.5px solid #d4d4d4;
     background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
 }
 
-/* V2.3.10: Label phụ trên dropdown */
+/* V2.3.10: Label phụ trên dropdown — V6.0.2 đổi sang navy cho điểm nhấn */
 .style-label {
     font-size: 11px;
-    font-weight: 600;
-    color: #6b7280;
+    font-weight: 700;
+    color: #2B4F9E;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
@@ -386,8 +403,8 @@ body {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    padding: 10px 36px 10px 38px;
-    margin-bottom: 10px;
+    padding: 8px 36px 8px 38px;
+    margin-bottom: 8px;
     font-size: 13px;
     font-family: inherit;
     font-weight: 500;
@@ -746,20 +763,13 @@ body {
 }
 
 .footer {
-    padding: 8px 16px;
-    background: #F1EFE8;
-    font-size: 10px;
-    color: #888780;
+    padding: 4px 16px;
+    background: #F8F7F2;
+    font-size: 9px;
+    color: #B5B3AB;
     text-align: center;
-    border-top: 0.5px solid #d4d4d4;
+    border-top: 0.5px solid #E5E3DC;
     flex-shrink: 0;
-}
-
-.copyright {
-    font-size: 10px;
-    color: #042C53;
-    text-align: center;
-    margin-top: 4px;
     letter-spacing: 0.2px;
 }
 
@@ -846,6 +856,49 @@ body {
     color: #2C2C2A;
     font-weight: 500;
 }
+
+/* ========================================================================
+ * V6.0.2: Banner cảnh báo Vnedu vendor đang spam exception → đề xuất F5
+ * ====================================================================== */
+.vnedu-health-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #FFF3D6 0%, #FFE8B0 100%);
+    border-bottom: 1px solid #E5A93B;
+    color: #5A3500;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.vnedu-health-banner[hidden] { display: none !important; }
+.vhb-icon { font-size: 18px; line-height: 1; }
+.vhb-msg { flex: 1; min-width: 0; }
+.vhb-title { font-weight: 600; font-size: 12px; }
+.vhb-sub { font-size: 11px; opacity: 0.85; margin-top: 1px; }
+.vhb-btn {
+    background: #B65000;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.vhb-btn:hover { background: #8E3F00; }
+.vhb-close {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    color: #5A3500;
+    cursor: pointer;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+.vhb-close:hover { color: #000; }
 
 /* ========================================================================
  * Tab navigation (v0.1.6)

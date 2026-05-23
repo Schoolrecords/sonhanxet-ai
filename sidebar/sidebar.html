@@ -31,21 +31,15 @@
     </div>
 </header>
 
-<nav class="tab-bar" id="tab-bar">
-    <button class="tab-btn active" data-tab="nhanxet">📝 Tạo nhận xét</button>
-    <button class="tab-btn" data-tab="cache">💾 Lưu dữ liệu</button>
-</nav>
-
-<!-- V.05: Quick launcher — bấm 1 cái để Vnedu mở module tương ứng -->
-<div class="launcher-bar" id="launcher-bar">
-    <button class="btn-launcher btn-launcher-mon" id="btn-launcher-mon" title="Mở module Sổ điểm / Sổ nhận xét môn">
-        <span class="btn-launcher-icon">📋</span>
-        <span class="btn-launcher-label">Nhận xét theo môn học</span>
-    </button>
-    <button class="btn-launcher btn-launcher-nlpc" id="btn-launcher-nlpc" title="Mở module Phẩm chất - Năng lực ghi học bạ">
-        <span class="btn-launcher-icon">🌟</span>
-        <span class="btn-launcher-label">Nhận xét NL-PC</span>
-    </button>
+<!-- V6.0.2: Banner cảnh báo Vnedu vendor đang spam exception → đề xuất F5 -->
+<div class="vnedu-health-banner" id="vnedu-health-banner" hidden>
+    <div class="vhb-icon">⚠️</div>
+    <div class="vhb-msg">
+        <div class="vhb-title">Vnedu đang lỗi nội bộ</div>
+        <div class="vhb-sub">Form có thể "đơ" khi chọn HS. Nhấn F5 để khôi phục.</div>
+    </div>
+    <button class="vhb-btn" id="vnedu-health-f5">F5 ngay</button>
+    <button class="vhb-close" id="vnedu-health-dismiss" title="Tạm ẩn">×</button>
 </div>
 
 <div class="rescan-bar" id="rescan-bar">
@@ -103,7 +97,6 @@
                 <span>Tạo NL-PC cho cả lớp</span>
             </button>
             <div class="nlpc-bulk-hint">Tạo nhanh — xem trước, rồi đẩy hàng loạt sang Vnedu</div>
-            <div class="nlpc-bulk-tip">💡 <strong>Mẹo:</strong> Mỗi lần làm 1 module rồi <strong>F5</strong> trước khi sang module khác — tránh lỗi nội bộ Vnedu</div>
         </div>
 
         <div class="nlpc-divider"><span>HOẶC làm từng HS</span></div>
@@ -485,10 +478,7 @@
     </div>
 </div>
 
-<footer class="footer">
-    Sổ nhận xét - AI · V.05-dev
-    <div class="copyright">© 2026 Bản quyền thuộc ChungTran · 0913031073</div>
-</footer>
+<footer class="footer">© 2026 - ChungTran - 0913031073</footer>
 
 <script src="../engine/engine.js"></script>
 <script src="../license/client.js"></script>

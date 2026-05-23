@@ -15,19 +15,23 @@
  *   - KHÔNG ghép suffix khiên cưỡng kiểu "trong các tuần học tiếp theo"
  */
 
-// V4.0: HARD_BAN giữ nguyên (V2.3.9) — cấm cụm tiêu cực cụ thể.
+// V6.1.2: HARD_BAN giữ cấm cụ thể về con người. GỠ 'còn yếu' vì học bạ TT27 cho phép
+// "kĩ năng còn yếu / vốn từ còn yếu" (mô tả kĩ năng, không phải tả con người).
 const HARD_BAN_WORDS = Object.freeze([
-    'học yếu', 'còn yếu', 'yếu kém', 'yếu môn', 'năng lực yếu',
+    'học yếu', 'yếu kém', 'yếu môn', 'năng lực yếu',
     'lười', 'không biết', 'chưa ngoan', 'mất gốc',
     'rất tệ', 'tệ', 'dốt', 'ngu', 'kinh khủng', 'không có ý thức'
 ]);
 
-// V4.1: SOFT_BAN_PHRASES_SUBJECT — cấm 3 nhóm trong NHẬN XÉT MÔN HỌC (subject):
-//   (a) Phụ thuộc giới tính GV (cô/thầy/cô giảng/...)
-//   (b) Suy diễn hành vi từ điểm số (phát biểu/yêu thích/năng khiếu/sáng tạo/tấm gương/...)
-//       theo spec V4.1 mục I.5 + I.9
-//   (c) Hậu tố khiên cưỡng (trong các tuần học tiếp theo / chuẩn bị tốt cho lớp học tiếp theo / ...)
-//       theo spec V4.1 mục I.10 + IV.2
+// V6.1.2: SOFT_BAN_PHRASES_SUBJECT — chỉ cấm 2 nhóm:
+//   (a) Phụ thuộc giới tính GV (cô/thầy/cô giảng/...) — bắt buộc cho persona swap V4.0
+//   (c) Hậu tố khiên cưỡng (trong các tuần học tiếp theo / ...) — V4.1 mục IV.2
+//
+// Đã GỠ nhóm (b) suy diễn hành vi — vì học bạ TT27 cho phép mô tả tích cực ở tier T+:
+//   "có năng khiếu / vượt trội / tấm gương / rất sáng tạo / tư duy sắc bén" → cho phép.
+//   Lý do: phong cách V6.1.0 ưu tiên MÔ TẢ BIỂU HIỆN (năng khiếu/tiến bộ/hứng thú/sáng tạo)
+//   ở tier T+/T. TIER_RESTRICTED_WORDS vẫn giữ — tier <T+ không được "xuất sắc/vượt trội".
+//
 // NLPC dùng SOFT_BAN_PHRASES_NLPC riêng — vẫn cho phép "ngoan/lễ phép/chuyên cần/...".
 const SOFT_BAN_PHRASES_SUBJECT = Object.freeze([
     // (a) Giới tính GV
@@ -36,12 +40,7 @@ const SOFT_BAN_PHRASES_SUBJECT = Object.freeze([
     'hỏi cô', 'nhờ cô', 'theo cô', 'cùng cô',
     'của cô', 'gợi ý của cô', 'theo cô gợi ý',
     'cô bạn', 'cô và bạn',
-    // (b) Suy diễn hành vi từ điểm số
-    'hăng hái phát biểu', 'tích cực phát biểu', 'giơ tay phát biểu', 'phát biểu xây dựng bài',
-    'xây dựng bài', 'yêu thích', 'tự tin', 'chăm chú nghe giảng',
-    'có năng khiếu', 'năng khiếu', 'tư duy sắc bén', 'vượt trội',
-    'rất sáng tạo', 'tấm gương',
-    'bài viết lôi cuốn', 'bài viết giàu hình ảnh',
+    'nghe cô', 'theo cô giáo', 'của cô giáo', 'cô giáo',
     // (c) Hậu tố khiên cưỡng (spec IV.2)
     'trong các tuần học tiếp theo',
     'chuẩn bị tốt cho lớp học tiếp theo',
@@ -108,9 +107,13 @@ const SUBJECT_SIGNALS = Object.freeze({
 // "tích cực phát biểu / có năng khiếu / tấm gương".
 const BEHAVIOR_WORDS_WITHOUT_DATA = Object.freeze([]);
 
-// V4.1: REMEDIATION_PHRASES — tier ht/cht BẮT BUỘC có ≥1 cụm rèn luyện.
-// Mở rộng cho phong cách câu nền chuẩn V4.1 (cần được hướng dẫn / cần ôn / cần thực hành...).
+// V6.1.2: REMEDIATION_PHRASES — tier ht/cht BẮT BUỘC có ≥1 cụm:
+//   (a) Định hướng rèn (legacy V4.1): cần luyện / cần rèn / cần củng cố / hãy luyện...
+//   (b) Mô tả biểu hiện chưa hoàn thành (V6.1.0 phong cách học bạ TT27):
+//       chưa hoàn thành / còn chậm / còn hạn chế / chưa nắm vững / chưa đạt yêu cầu / ...
+//   Tinh thần: học bạ TT27 cho phép cả định hướng VÀ mô tả khách quan tier H/C.
 const REMEDIATION_PHRASES = Object.freeze([
+    // (a) Định hướng rèn luyện
     'cần luyện thêm', 'cần rèn thêm', 'cần củng cố',
     'cần được hỗ trợ', 'cần được hướng dẫn',
     'cần chú ý', 'cần ôn',
@@ -122,7 +125,15 @@ const REMEDIATION_PHRASES = Object.freeze([
     'hãy luyện', 'hãy rèn', 'hãy ôn', 'hãy đọc', 'hãy cùng',
     'cần dành thời gian', 'kiên trì', 'cần cố gắng',
     'cần phát huy thêm', 'cần luyện', 'cần rèn',
-    'phát huy thêm', 'cố gắng thêm'
+    'phát huy thêm', 'cố gắng thêm',
+    // (b) V6.1.2: Mô tả biểu hiện chưa hoàn thành (phong cách học bạ)
+    'còn chậm', 'còn hạn chế', 'còn nhiều lỗi', 'còn sai nhiều', 'còn sai',
+    'còn ấp úng', 'còn vấp', 'còn yếu',
+    'chưa hoàn thành', 'chưa đạt yêu cầu', 'chưa nắm vững', 'chưa rõ ý',
+    'chưa đầy đủ', 'chưa đầy đủ ý', 'chưa lưu loát', 'chưa đúng ngữ pháp',
+    'chưa đều nét', 'chưa biết', 'chưa có bố cục',
+    'chưa biết phối hợp', 'chưa vận dụng', 'còn ở mức thấp', 'còn ở mức rất hạn chế',
+    'ở mức rất hạn chế', 'mức thấp', 'mức rất hạn chế', 'cố gắng hơn', 'có cố gắng'
 ]);
 
 // V2.3.9: Giữ guard wrong-ky — đây vẫn là nghiệp vụ đúng (GHK2 không nói "năm học tới")
@@ -615,46 +626,57 @@ class NhanXetEngineV2 {
     _resolvePool(subject, ky, tier, grade, trend, subjectCode) {
         if (!subject) return [];
 
-        // 1-2. Grade-specific theo lớp (nếu có data riêng cho lớp đó)
+        // V6.1.2: Resolution chain mới — MERGE ky-data lên đầu để pool V6.1.0 (học bạ TT27)
+        // được ưu tiên cho ghk1/chk1/ghk2, kèm fallback all_ky (V4.1 THDienLien) phía sau
+        // để giữ pool đủ lớn cho lớp đông HS.
+        //
+        // Priority order (concat — pick walks forward, ưu tiên đầu):
+        //   1. grades[grade][ky][tier][trend|default]   — grade-specific (nếu có)
+        //   2. subject[ky][tier]                          — ky-data V6.1.0 học bạ
+        //   3. grades['all']['all_ky'][tier][trend|default] — THDienLien chung
+        //   4. subject[tier]                              — flat (legacy)
+        const merged = [];
+        const pushIfArr = (v) => { if (Array.isArray(v) && v.length) merged.push(...v); };
+
+        // 1. Grade-specific theo lớp
         if (grade && subject.grades && subject.grades[grade]) {
             const gNode = subject.grades[grade];
             const kyKey = ky || 'chk2';
             if (gNode[kyKey] && gNode[kyKey][tier]) {
                 const tierNode = gNode[kyKey][tier];
-                if (Array.isArray(tierNode)) return tierNode;
-                if (trend && Array.isArray(tierNode[trend]) && tierNode[trend].length > 0) {
-                    return tierNode[trend];
-                }
-                if (Array.isArray(tierNode.default) && tierNode.default.length > 0) {
-                    return tierNode.default;
+                if (Array.isArray(tierNode)) pushIfArr(tierNode);
+                else {
+                    if (trend) pushIfArr(tierNode[trend]);
+                    pushIfArr(tierNode.default);
                 }
             }
         }
 
-        // 3-4. V2.3.9: 'all' / 'all_ky' (THDienLien style — chung mọi lớp/kỳ)
+        // 2. V6.1.2: ky-data ƯU TIÊN hơn all_ky (cho ghk1/chk1/ghk2 — phong cách học bạ)
+        if (ky && ky !== 'chk2' && subject[ky] && Array.isArray(subject[ky][tier])) {
+            pushIfArr(subject[ky][tier]);
+        }
+
+        // 3. V2.3.9: 'all' / 'all_ky' (THDienLien — chung mọi lớp/kỳ)
         if (subject.grades && subject.grades['all'] && subject.grades['all']['all_ky']) {
             const allNode = subject.grades['all']['all_ky'];
             if (allNode[tier]) {
                 const tierNode = allNode[tier];
-                if (Array.isArray(tierNode)) return tierNode;
-                if (trend && Array.isArray(tierNode[trend]) && tierNode[trend].length > 0) {
-                    return tierNode[trend];
-                }
-                if (Array.isArray(tierNode.default) && tierNode.default.length > 0) {
-                    return tierNode.default;
+                if (Array.isArray(tierNode)) pushIfArr(tierNode);
+                else {
+                    if (trend) pushIfArr(tierNode[trend]);
+                    pushIfArr(tierNode.default);
                 }
             }
         }
 
-        // 5-6. Fallback ky-data → flat (cho data cũ legacy)
-        const isChk2 = !ky || ky === 'chk2';
-        if (!isChk2 && subject[ky] && subject[ky][tier]) {
-            return subject[ky][tier];
+        // 4. Flat fallback (legacy)
+        if (merged.length === 0) {
+            if (Array.isArray(subject[tier])) return subject[tier];
+            if (Array.isArray(subject.ht)) return subject.ht;
+            return [];
         }
-        if (!isChk2 && subject[ky] && subject[ky].ht) {
-            return subject[ky].ht;
-        }
-        return subject[tier] || subject.ht || [];
+        return merged;
     }
 
     /**
@@ -690,8 +712,35 @@ class NhanXetEngineV2 {
         const lower = trimmed.toLowerCase();
         const isNlpc = ctx.context === 'nlpc';
 
-        // Câu phải bắt đầu bằng "Em" hoặc động từ phổ biến của GV
-        if (!/^(em|biết|hoàn thành|thuộc|thành thạo|đạt)\b/i.test(trimmed)) {
+        // V6.1.2: Câu phải bắt đầu bằng "Em" (Văn phong thân thiện) HOẶC động từ/từ mở
+        // hợp lệ ở học bạ TT27 (Văn phong học bạ — mô tả biểu hiện, không xưng).
+        // Lưu ý: JS regex \b chỉ xem [a-zA-Z0-9_] là word — không khớp với dấu Vietnamese.
+        // Phải dùng lookahead `(?=\s|[.,;!?]|$)` thay cho \b.
+        const ALLOWED_STARTS = [
+            // Em (legacy / Văn phong thân thiện)
+            'em',
+            // Động từ kĩ năng / mức đạt
+            'biết', 'hoàn thành', 'thuộc', 'thành thạo', 'đạt', 'nắm', 'nắm vững', 'nắm chắc',
+            'vận dụng', 'đã', 'chưa',
+            // Mô tả biểu hiện học bạ — chung
+            'có', 'tiến bộ', 'hứng thú', 'vốn từ', 'kĩ năng', 'kỹ năng',
+            'tham gia', 'chăm chỉ', 'yêu thích', 'nhận biết', 'thực hiện', 'sử dụng',
+            'phối hợp', 'hợp tác', 'mạnh dạn', 'tự giác', 'tích cực', 'tự tin',
+            // Mô tả biểu hiện — môn Toán
+            'đếm', 'đo', 'so sánh', 'giải', 'đặt', 'đổi', 'hiểu', 'biểu thị',
+            'tính', 'làm', 'trình bày', 'phân tích', 'quan sát',
+            // Mô tả biểu hiện — môn Tiếng Việt / Văn / NN
+            'đọc', 'viết', 'nghe', 'nói', 'kể', 'tả', 'miêu tả',
+            // Mô tả biểu hiện — môn nghệ thuật / GDTC
+            'vẽ', 'hát', 'múa', 'chơi',
+            // Định hướng / mô tả tier C
+            'cần', 'cố gắng', 'còn'
+        ];
+        const startPattern = new RegExp(
+            '^(' + ALLOWED_STARTS.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(?=\\s|[.,;!?]|$)',
+            'i'
+        );
+        if (!startPattern.test(trimmed)) {
             return { ok: false, reason: 'bad_start' };
         }
 
@@ -728,8 +777,10 @@ class NhanXetEngineV2 {
             }
         }
 
-        // V4.0: Tier ht/cht BẮT BUỘC có cụm rèn luyện
-        if (ctx.tier === 'ht' || ctx.tier === 'cht') {
+        // V6.1.2: CHỈ tier cht BẮT BUỘC có cụm định hướng/mô tả chưa hoàn thành.
+        // Tier ht (Đạt - hoàn thành) trong học bạ TT27 chỉ cần mô tả khách quan "đã hoàn thành /
+        // đáp ứng yêu cầu cơ bản" — KHÔNG bắt buộc nói "cần rèn".
+        if (ctx.tier === 'cht') {
             const hasReme = REMEDIATION_PHRASES.some(r => lower.includes(r));
             if (!hasReme) return { ok: false, reason: 'no_remediation' };
         }

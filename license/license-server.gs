@@ -77,7 +77,10 @@ const MA_CHARSET = 'abcdefghjkmnpqrstuvwxyz23456789';
 
 // SĐT admin/test — tự động bypass payment + cho phép re-register/re-bind
 // để admin test flow nhanh không cần tick checkbox + reset device thủ công.
-const ADMIN_SDTS = ['0913031073'];
+// LƯU Ý BẢO MẬT: SĐT này KHÔNG được công khai ở bất kỳ đâu (website, docs,
+// README, error messages…) vì ai biết SĐT này nhập vào form sẽ được kích hoạt
+// MIỄN PHÍ. Số liên hệ hỗ trợ public dùng SĐT KHÁC.
+const ADMIN_SDTS = ['0913311301'];
 // Mã cố định cho admin (4 ký tự, lowercase + số, theo MA_CHARSET). Thầy luôn dùng
 // mã này thay vì mã random → dễ nhớ, không cần tra cứu mỗi lần test.
 const ADMIN_FIXED_MA = 'admn';

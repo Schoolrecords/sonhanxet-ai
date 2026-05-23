@@ -17,6 +17,62 @@
     const SIDEBAR_ID = 'cogiao-ai-sidebar';
     const TOGGLE_BTN_ID = 'cogiao-ai-toggle';
 
+    // V6.0.2: Vendor Vnedu (Ext.js) thỉnh thoảng throw uncaught exception khi
+    // switch module — Vnedu KHÔNG cleanup Ext.js component cũ → fire setValue/
+    // checkChange/updateCharCount đụng reference đã destroy → undefined.
+    //   - `Cannot read 'getAt' of undefined` (ext-all.js): AJAX store callback
+    //   - `Cannot read 'update' of undefined` (so_hoc_ba_c1.js): updateCharCount
+    // Spam exception này làm Vnedu form "đơ cục bộ" khi click HS thứ 2-3.
+    //
+    // Content-script chạy trong ISOLATED WORLD → window.addEventListener('error')
+    // KHÔNG bắt được lỗi từ PAGE CONTEXT (ext-all.js). Phải inject script vào
+    // page context (page-error-bridge.js) để bắt + postMessage bridge ra đây.
+    //
+    // Counter spam: >= 5 lỗi trong 10s → hiện banner đề xuất F5 trong sidebar.
+    let _vendorErrCount = 0;
+    let _vendorErrWindowStart = 0;
+    let _vendorErrAlertSent = false;
+    const _VENDOR_ERR_THRESHOLD = 5;
+    const _VENDOR_ERR_WINDOW_MS = 10000;
+
+    function handleVendorError(filename, message) {
+        const now = Date.now();
+        if (now - _vendorErrWindowStart > _VENDOR_ERR_WINDOW_MS) {
+            _vendorErrWindowStart = now;
+            _vendorErrCount = 0;
+            _vendorErrAlertSent = false;
+        }
+        _vendorErrCount++;
+        if (_vendorErrCount === 1) {
+            // V6.0.2: dùng console.log (info) thay warn — đây là VENDOR lỗi, không
+            // phải extension lỗi. Chrome Extensions panel "Lỗi" hiển thị warn → user
+            // hoang mang tưởng extension có vấn đề.
+            console.log(`[Sổ nhận xét - AI] Vnedu vendor exception: ${message} @ ${filename}`);
+        }
+        if (_vendorErrCount >= _VENDOR_ERR_THRESHOLD && !_vendorErrAlertSent) {
+            _vendorErrAlertSent = true;
+            console.log(`[Sổ nhận xét - AI] Vnedu lỗi nội bộ ${_vendorErrCount} lần trong 10s → đề xuất F5`);
+            const iframe = document.getElementById(SIDEBAR_ID);
+            iframe?.contentWindow?.postMessage({
+                type: 'COGIAO_VNEDU_HEALTH_BAD',
+                payload: { errCount: _vendorErrCount }
+            }, '*');
+        }
+    }
+
+    // Inject page-error-bridge vào main world để bắt lỗi vendor
+    function injectPageErrorBridge() {
+        try {
+            const s = document.createElement('script');
+            s.src = chrome.runtime.getURL('content/page-error-bridge.js');
+            s.onload = () => s.remove();
+            (document.head || document.documentElement).appendChild(s);
+        } catch (e) {
+            console.warn('[Sổ nhận xét - AI] Không inject được page-error-bridge:', e);
+        }
+    }
+    injectPageErrorBridge();
+
     function mountSidebar() {
         if (document.getElementById(SIDEBAR_ID)) return;
 
@@ -26,16 +82,12 @@
         iframe.setAttribute('frameborder', '0');
         iframe.setAttribute('allow', 'clipboard-write');
 
-        // V.05: Restore trạng thái đóng/mở từ phiên trước. Nếu GV đã đóng sidebar
-        // (= AI tạm dừng) → giữ trạng thái đóng + AI tiếp tục dừng.
-        try {
-            chrome.storage.local.get('ai_paused_v1', (r) => {
-                if (r && r.ai_paused_v1) {
-                    iframe.classList.add('cogiao-ai-hidden');
-                    _aiPaused = true;
-                }
-            });
-        } catch (e) { /* silent */ }
+        // V6.0.2: Sidebar LUÔN ẨN mặc định. Chỉ hiện khi GV vào module NX
+        // ("Nhập số điểm" hoặc "Phẩm chất - Năng lực ghi học bạ" từ Start Vnedu)
+        // → logic auto-show trong checkModuleChange kích hoạt. Khi GV rời module
+        // → auto-hide. Không persist auto-state.
+        iframe.classList.add('cogiao-ai-hidden');
+        _aiPaused = true;
 
         document.body.appendChild(iframe);
 
@@ -43,6 +95,16 @@
             setTimeout(() => {
                 sendContextToSidebar();
                 setupModuleWatcher();  // v0.1.12: bắt SPA navigation
+                // V6.0.2: Nếu GV reload page khi đang ở module NX, watcher chưa
+                // fire kịp → check current ngay sau mount để auto-show không trễ.
+                try {
+                    const current = window.VneduAdapter.detectModule();
+                    if (current === 'so-nhan-xet' || current === 'nlpc') {
+                        iframe.classList.remove('cogiao-ai-hidden');
+                        _aiPaused = false;
+                        console.log(`[Sổ nhận xét - AI] Mount xong, đang ở module "${current}" → auto-show`);
+                    }
+                } catch (e) { /* silent */ }
             }, 300);
         });
 
@@ -54,10 +116,10 @@
         const btn = document.createElement('button');
         btn.id = TOGGLE_BTN_ID;
         btn.title = 'Bấm để mở hoặc đóng Sổ nhận xét - AI';
-        // V.05: inner span xoay -90deg → text "Mở/Đóng Sổ nhận xét - AI" hiển thị dọc
+        // V.05: inner span xoay -90deg → text hiển thị dọc
         const label = document.createElement('span');
         label.className = 'toggle-label';
-        label.textContent = 'Mở/Đóng Sổ nhận xét - AI';
+        label.textContent = 'Đóng / Mở';
         btn.appendChild(label);
         btn.onclick = toggleSidebar;
         document.body.appendChild(btn);
@@ -232,13 +294,14 @@
         //   (sẽ trigger auto-hide sidebar nếu module trước là NX)
         if (current === null) {
             _consecutiveNullCount++;
-            // V.06 SAFE: nâng threshold lên 4 (~6s) — Vnedu animation/popup có thể gây
-            // null thoáng 2-3s, không được hiểu nhầm thành "rời module" → false auto-hide
-            // làm sidebar biến mất giữa lúc GV đang làm việc.
-            if (_lastDetectedModule !== null && _consecutiveNullCount < 4) {
+            // V6.0.2 compromise: threshold 3 (~3.6s) — giảm từ 4 theo yêu cầu user
+            // "ẩn nhanh hơn", nhưng KHÔNG xuống 2 (2.4s) vì Vnedu Ext.js loading mask
+            // có thể che detect ~2.5s gây show/hide loop → spam vendor exception khi
+            // re-query DOM mỗi cycle.
+            if (_lastDetectedModule !== null && _consecutiveNullCount < 3) {
                 return;
             }
-            // Null 4+ lần (~6s) → confirm navigation thật → fall through
+            // Null 3+ lần (~3.6s) → confirm navigation thật → fall through
         } else {
             _consecutiveNullCount = 0;
         }
@@ -347,6 +410,14 @@
         }
     }
 
+    // V6.0.2: Bridge message từ page-error-bridge (page context) → đếm vendor errors
+    window.addEventListener('message', (e) => {
+        if (e.source !== window) return;
+        const d = e.data;
+        if (!d || d.type !== '__COGIAO_VENDOR_ERROR__') return;
+        handleVendorError(d.filename || '', d.message || '');
+    });
+
     window.addEventListener('message', (e) => {
         const data = e.data;
         if (!data || !data.type || !data.type.startsWith('COGIAO_')) return;
@@ -360,6 +431,12 @@
                 sendContextToSidebar();
                 break;
 
+            case 'COGIAO_RELOAD_VNEDU':
+                // V6.0.2: User bấm "F5 ngay" trên banner cảnh báo Vnedu lỗi nội bộ
+                console.log('[Sổ nhận xét - AI] Reload Vnedu theo yêu cầu user');
+                location.reload();
+                break;
+
             case 'COGIAO_APPLY_NHAN_XET':
                 applyNhanXetToVnedu(data.payload);
                 break;
@@ -367,11 +444,6 @@
             case 'COGIAO_AUTO_SAVE':
                 autoSaveVnedu();
                 break;
-
-            case 'COGIAO_OPEN_VNEDU_MODULE':
-                openVneduModule(data.payload);
-                break;
-
 
             case 'COGIAO_CLOSE_SIDEBAR':
                 toggleSidebar();
@@ -510,19 +582,6 @@
         iframe?.contentWindow.postMessage({
             type: 'COGIAO_AUTO_SAVE_RESULT',
             payload: result
-        }, '*');
-    }
-
-    /**
-     * V.05: navigate Vnedu Start menu → mở module Sổ điểm hoặc NLPC.
-     * Async vì cần wait Ext.js animation giữa các click.
-     */
-    async function openVneduModule(payload) {
-        const result = await window.VneduAdapter.openVneduModule(payload.module);
-        const iframe = document.getElementById(SIDEBAR_ID);
-        iframe?.contentWindow.postMessage({
-            type: 'COGIAO_OPEN_VNEDU_MODULE_RESULT',
-            payload: { ...result, module: payload.module }
         }, '*');
     }
 

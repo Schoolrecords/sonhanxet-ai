@@ -255,10 +255,6 @@
         document.getElementById('btn-generate').onclick = generateAllNhanXet;
         document.getElementById('btn-apply').onclick = applyAllToVnedu;
 
-        // V.05: 2 nút launcher mở module Vnedu
-        document.getElementById('btn-launcher-mon').onclick = () => openVneduModule('so-diem');
-        document.getElementById('btn-launcher-nlpc').onclick = () => openVneduModule('nlpc');
-
         document.querySelectorAll('#setting-gvLa button').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('#setting-gvLa button').forEach(b => b.classList.remove('active'));
@@ -282,10 +278,8 @@
             };
         });
 
-        // Phase 2: Tab navigation
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.onclick = () => switchTab(btn.dataset.tab);
-        });
+        // V6.0.4: tab bar đã gỡ bỏ — chỉ còn view "nhanxet" mặc định.
+        // switchTab() vẫn giữ để legacy code (sg-btn-close, cm-* internal) không vỡ.
 
         // Cache Monitor controls
         document.getElementById('cm-btn-clear-all').onclick = handleClearAllCache;
@@ -587,26 +581,6 @@
         closeClassDetail();
     }
 
-    /**
-     * V.05 Launcher: gửi message yêu cầu content-script điều hướng Vnedu Start menu
-     * tới module tương ứng. module = 'so-diem' (Nhập sổ điểm) hoặc 'nlpc' (Phẩm chất - Năng lực).
-     */
-    function openVneduModule(module) {
-        const btnId = module === 'so-diem' ? 'btn-launcher-mon' : 'btn-launcher-nlpc';
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            btn.disabled = true;
-            const originalLabel = btn.querySelector('.btn-launcher-label').textContent;
-            btn.querySelector('.btn-launcher-label').textContent = 'Đang mở...';
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.querySelector('.btn-launcher-label').textContent = originalLabel;
-            }, 2500);
-        }
-        parent.postMessage({ type: 'COGIAO_OPEN_VNEDU_MODULE', payload: { module } }, '*');
-        showToast('Đang mở module Vnedu...');
-    }
-
     function showToast(msg) {
         let toast = document.getElementById('sidebar-toast');
         if (!toast) {
@@ -664,12 +638,20 @@
                 resolver(payload);
             }
         }
-        if (type === 'COGIAO_OPEN_VNEDU_MODULE_RESULT') {
-            if (!payload.success) {
-                showToast('Không mở được — vui lòng bấm Start menu Vnedu thủ công');
-                console.warn('[Sidebar] openVneduModule failed:', payload);
-            }
+        // V6.0.2: vendor Vnedu spam exception → hiện banner đề xuất F5
+        if (type === 'COGIAO_VNEDU_HEALTH_BAD') {
+            const banner = document.getElementById('vnedu-health-banner');
+            if (banner) banner.hidden = false;
         }
+    });
+
+    // V6.0.2: Banner Vnedu health — wire buttons F5 / dismiss
+    document.getElementById('vnedu-health-f5')?.addEventListener('click', () => {
+        parent.postMessage({ type: 'COGIAO_RELOAD_VNEDU' }, '*');
+    });
+    document.getElementById('vnedu-health-dismiss')?.addEventListener('click', () => {
+        const banner = document.getElementById('vnedu-health-banner');
+        if (banner) banner.hidden = true;
     });
 
     function requestContextFromContentScript() {
@@ -731,8 +713,7 @@
         }).join('');
 
         document.getElementById('ctx-box').innerHTML = `
-            <div class="context-label">Đã phát hiện:</div>
-            <div class="context-title">Sổ nhận xét môn — Lớp ${escapeHtml(ctx.lop || '?')}</div>
+            <div class="context-title">NHẬN XÉT MÔN/HĐGD — LỚP ${escapeHtml(ctx.lop || '?')}</div>
             <div class="context-pills">
                 ${monDisplay ? `<span class="pill">${escapeHtml(monDisplay)}</span>` : ''}
                 ${ctx.hocKy ? `<span class="pill">${escapeHtml(ctx.hocKy)}</span>` : ''}
@@ -1253,6 +1234,7 @@
         if (!className) {
             statusEl.textContent = '⚠ Chưa nhận được tên lớp từ Vnedu.';
             statusEl.className = 'nlpc-status warn';
+            statusEl.style.display = '';
             nlpcAutoSuggestions = NLPCMapper.scoresToGrades({});
             renderNLPCFields();
             return;
@@ -1263,17 +1245,22 @@
             nlpcAutoSuggestions = result.suggestions;
 
             if (!result.found) {
-                statusEl.innerHTML = `⚠ Chưa có cache điểm cho HS này. Hãy mở Sổ NX các môn (TV, Toán, ...) để tự động thu thập điểm.`;
-                statusEl.className = 'nlpc-status warn';
+                // V6.0.4: ẨN hoàn toàn dòng cảnh báo "chưa có cache" — gây nhiễu khi cache thực ra có
+                // mà lookup bị miss (name mismatch, class mismatch, ...). Sẽ build modal lỗi đẹp sau.
+                statusEl.innerHTML = '';
+                statusEl.className = 'nlpc-status';
+                statusEl.style.display = 'none';
             } else {
                 const subjectCount = Object.values(result.diem).filter(v => v !== null).length;
                 statusEl.innerHTML = `✓ Đã có điểm <strong>${subjectCount} môn</strong> trong cache (cập nhật ${formatRelativeTime(result.lastSynced)})`;
                 statusEl.className = 'nlpc-status ok';
+                statusEl.style.display = '';
             }
         } catch (e) {
             console.error('[Sidebar] loadNLPCForStudent lỗi:', e);
             statusEl.textContent = 'Lỗi đọc cache: ' + e.message;
             statusEl.className = 'nlpc-status warn';
+            statusEl.style.display = '';
         }
 
         renderNLPCFields();
