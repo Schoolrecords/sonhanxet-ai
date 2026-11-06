@@ -14,7 +14,7 @@
       "ghk2": "Vận dụng / linh hoạt / phối hợp — KHÔNG nội dung học cụ thể."
     },
     "style_note": "Phrases TRUNG TÍNH theo TT32/2018 yêu cầu cần đạt — KHÔNG nhắc tên phần mềm cụ thể (Paint, Word), nhân vật lịch sử cụ thể (Hùng Vương, Lý-Trần-Lê), nội dung SGK cụ thể (bảng cửu chương, ghép vần, đội hình đội ngũ, bật xa-ném bóng, bài thể dục phát triển chung). Áp dụng được cho mọi lớp 1-5 và mọi bộ SGK. Không mở đầu bằng cụm thời gian.",
-    "note_v610": "V6.1.0 (2026-05-23): rewrite ngân hàng câu theo TT27 chuẩn học bạ — dạng HỌC BẠ trực tiếp (KHÔNG xưng Em), band 90-110 ký tự, ƯU TIÊN MÔ TẢ BIỂU HIỆN (tiến bộ/năng khiếu/hứng thú ở T-H, kỹ năng chưa hoàn thành ở C), không chú trọng lời khuyên.",
+    "note_v610": "V6.1.0 (2026-05-23): rewrite ngân hàng câu theo TT27 chuẩn học bạ — dạng HỌC BẠ trực tiếp (KHÔNG xưng Em), band 90-110 ký tự, ƯU TIÊN MÔ TẢ BIỂU HIỆN (tiến bộ/năng khiếu/hứng thú ở T-H, kĩ năng chưa hoàn thành ở C), không chú trọng lời khuyên.",
     "note_v61x_tienganh": "V6.1.x (2026-05-23): rewrite Tiếng Anh ky-data theo CT GDPT 2018 — 3 kỳ × 4 tier = 60 phrase, dạng học bạ TT27 (không xưng Em), band 90-110 ký tự, ưu tiên mô tả biểu hiện.",
     "note_v61x_khoahoc": "V6.1.x (2026-05-23): rewrite Khoa học ky-data — 3 kỳ × 4 tier, dạng học bạ TT27, band 90-110.",
     "note_v61x_lichsudia": "V6.1.x (2026-05-23): rewrite Lịch sử & Địa lí ky-data — 3 kỳ × 4 tier, dạng học bạ TT27, band 90-110.",
@@ -31,10 +31,10 @@
     "tieng-viet": {
       "ghk1": {
         "tot_xs": [
-          "Có năng khiếu Tiếng Việt, đọc lưu loát rõ ràng, viết câu giàu hình ảnh và diễn đạt sáng tạo.",
+          "Hoàn thành tốt môn Tiếng Việt, đọc lưu loát rõ ràng, viết câu giàu hình ảnh và diễn đạt sinh động.",
           "Đọc trôi chảy có ngữ điệu, vốn từ phong phú, viết câu đúng ngữ pháp và diễn đạt rất mạch lạc.",
           "Tiến bộ rõ rệt về đọc viết, chữ viết đẹp đều nét, đặt câu có ý hay và dùng từ chính xác.",
-          "Hứng thú học Tiếng Việt, nghe hiểu nhanh, nói lưu loát mạch lạc, viết câu sáng tạo sinh động."
+          "Hứng thú học Tiếng Việt, nghe hiểu nhanh, nói lưu loát mạch lạc, viết câu sinh động, có ý riêng."
         ],
         "tot": [
           "Đọc rõ ràng, viết câu đúng ngữ pháp cơ bản, dùng dấu câu chính xác và trình bày bài rất sạch sẽ.",
@@ -60,9 +60,9 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững kĩ năng đọc viết, vốn từ rất phong phú, viết câu giàu hình ảnh và rất sáng tạo hay.",
+          "Nắm vững kĩ năng đọc viết, vốn từ rất phong phú, viết câu giàu hình ảnh và diễn đạt rất hay.",
           "Tiến bộ rõ rệt cả 4 kĩ năng, đọc lưu loát có cảm xúc, viết câu sinh động và dùng từ chính xác.",
-          "Có khả năng cảm thụ tốt, vốn từ rộng, viết câu rõ ý sáng tạo và trình bày bài rất đẹp đẽ hay.",
+          "Có khả năng cảm thụ tốt, vốn từ rộng, viết câu rõ ý, sinh động và trình bày bài rất sạch đẹp.",
           "Hứng thú học Tiếng Việt, nghe hiểu nhanh, nói lưu loát, viết bài rõ ý dùng dấu câu rất đúng."
         ],
         "tot": [
@@ -91,7 +91,7 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt 4 kĩ năng, đọc hiểu sâu, viết đoạn văn có ý mới lạ và lập luận rất chặt chẽ.",
-          "Có năng khiếu cảm thụ văn học, viết bài giàu cảm xúc, vốn từ phong phú và diễn đạt rất mạch lạc.",
+          "Có khả năng cảm thụ văn học tốt, viết bài giàu cảm xúc, vốn từ phong phú và diễn đạt rất mạch lạc.",
           "Tiến bộ vượt bậc về viết văn, biết phối hợp tốt nghe nói đọc viết và sử dụng từ rất chính xác.",
           "Hứng thú học Tiếng Việt, đọc diễn cảm có ngữ điệu, viết đoạn văn có bố cục rõ ràng mạch lạc."
         ],
@@ -125,7 +125,7 @@
         "tot_xs": [
           "Tính toán nhanh và chính xác, biết phân tích đề bài, vận dụng linh hoạt kiến thức đã học vào bài tập.",
           "Làm bài cẩn thận, trình bày bài khoa học, biết tự kiểm tra lại kết quả trước khi nộp bài.",
-          "Có năng khiếu môn Toán, nắm chắc kiến thức đã học và biết tìm cách giải phù hợp với từng bài.",
+          "Hoàn thành tốt môn Toán, nắm chắc kiến thức đã học và biết tìm cách giải phù hợp với từng bài.",
           "Phân tích đề bài kĩ, trình bày lời giải mạch lạc và làm đúng các dạng bài đã học trên lớp.",
           "Hứng thú học Toán, tích cực trong giờ học, vận dụng tốt kiến thức đã học vào các bài tập."
         ],
@@ -163,7 +163,7 @@
           "Em phân tích đề bài nhanh, lập luận chặt chẽ và trình bày khoa học.",
           "Em có khả năng tự tìm cách giải, làm bài cẩn thận và chính xác.",
           "Em tính nhẩm nhanh, giải toán nhiều dạng và đạt kết quả xuất sắc.",
-          "Em yêu thích Toán, vận dụng kiến thức vào giải bài tập rất tốt."
+          "Em hứng thú với môn Toán, vận dụng kiến thức vào giải bài tập rất tốt."
         ],
         "tot": [
           "Em thực hiện thành thạo các phép tính, giải bài có lời văn rõ ràng.",
@@ -194,10 +194,10 @@
       "ghk2": {
         "tot_xs": [
           "Em có tư duy Toán sắc bén, vận dụng linh hoạt vào các dạng bài khó.",
-          "Em làm tính chính xác cao, giải bài có lời văn mạch lạc và sáng tạo.",
+          "Em làm tính chính xác cao, giải bài có lời văn mạch lạc và linh hoạt.",
           "Em phân tích đề bài kĩ, lập luận chặt chẽ và trình bày rất khoa học.",
           "Em vận dụng kiến thức vào giải bài tập rất linh hoạt và đầy đủ.",
-          "Em yêu thích Toán, làm tính nhẩm nhanh và chính xác cao."
+          "Em hứng thú với môn Toán, làm tính nhẩm nhanh và chính xác cao."
         ],
         "tot": [
           "Em thực hiện thành thạo các phép tính, giải bài tập nhiều bước mạch lạc.",
@@ -232,7 +232,7 @@
           "Có hứng thú khám phá thế giới xung quanh, quan sát tinh và biết kể về gia đình trường lớp rất rõ ràng.",
           "Nắm vững nội dung về gia đình và trường học, nhận biết tốt cây cối con vật quen và trình bày rất mạch lạc.",
           "Tiến bộ rõ rệt trong quan sát và mô tả, tự giác giữ vệ sinh cá nhân và an toàn khi đến trường.",
-          "Có năng khiếu quan sát, nêu đúng đặc điểm cây cối con vật quen và biết liên hệ với cuộc sống hằng ngày."
+          "Quan sát tốt, nêu đúng đặc điểm cây cối con vật quen và biết liên hệ với cuộc sống hằng ngày."
         ],
         "tot": [
           "Quan sát và kể được về gia đình trường lớp, nhận biết cây cối con vật quen và trả lời câu hỏi khá rõ ý.",
@@ -288,7 +288,7 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt kiến thức vào sinh hoạt hằng ngày, quan sát tinh và biết bảo vệ sức khỏe rất tự giác.",
-          "Có năng khiếu quan sát thiên nhiên, biết phối hợp với bạn trong thực hành nhóm và kể về sự vật rất sinh động.",
+          "Quan sát thiên nhiên tốt, biết phối hợp với bạn trong thực hành nhóm và kể về sự vật rất sinh động.",
           "Tiến bộ vượt bậc về phân tích sự vật, biết vận dụng kiến thức vào yêu thương gia đình và bảo vệ môi trường.",
           "Hứng thú với môn học, nắm chắc kiến thức theo mạch nội dung và kể về cuộc sống hằng ngày rất rõ ràng mạch lạc."
         ],
@@ -323,7 +323,7 @@
           "Có hứng thú khám phá khoa học, quan sát tinh, biết đặt câu hỏi và giải thích hiện tượng rất chính xác.",
           "Nắm vững kiến thức về vật chất quanh ta, biết phân loại sự vật theo đặc điểm và trình bày rất rõ ràng.",
           "Tiến bộ rõ rệt cả quan sát và lí giải, vận dụng kiến thức vào thực tế và làm tốt thí nghiệm đơn giản.",
-          "Có năng khiếu khoa học, nêu đúng đặc điểm cơ bản của sự vật và biết giải thích hiện tượng quen thuộc."
+          "Hoàn thành tốt môn Khoa học, nêu đúng đặc điểm cơ bản của sự vật và biết giải thích hiện tượng quen thuộc."
         ],
         "tot": [
           "Quan sát và mô tả được đặc điểm của sự vật, nắm được kiến thức cơ bản và làm bài tập tương đối đầy đủ.",
@@ -350,7 +350,7 @@
         "tot_xs": [
           "Nắm vững kiến thức theo mạch nội dung, quan sát tinh, biết giải thích hiện tượng và vận dụng vào thực tế tốt.",
           "Tiến bộ rõ rệt trong tư duy khoa học, biết phân loại sự vật và lí giải hiện tượng rất rõ ràng mạch lạc.",
-          "Có khả năng quan sát và suy luận tốt, vốn kiến thức phong phú, đặt câu hỏi tìm hiểu rất sâu và sáng tạo.",
+          "Có khả năng quan sát và suy luận tốt, vốn kiến thức phong phú, đặt câu hỏi tìm hiểu rất sâu và hay.",
           "Hứng thú với môn Khoa học, nắm chắc kiến thức cơ bản, biết liên hệ thực tế và bảo vệ sức khỏe môi trường."
         ],
         "tot": [
@@ -379,9 +379,9 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt kiến thức khoa học vào thực tế, quan sát tinh, giải thích hiện tượng rất rõ ràng mạch lạc.",
-          "Có năng khiếu tư duy khoa học, biết phối hợp quan sát và lí giải, đặt câu hỏi sâu và sáng tạo trong giờ học.",
+          "Có tư duy khoa học tốt, biết phối hợp quan sát và lí giải, đặt câu hỏi sâu và hay trong giờ học.",
           "Tiến bộ vượt bậc về phân tích sự vật, biết vận dụng kiến thức vào bảo vệ sức khỏe và môi trường rất tốt.",
-          "Hứng thú với môn Khoa học, nắm chắc kiến thức theo mạch nội dung và lí giải hiện tượng quen thuộc tự tin."
+          "Hứng thú với môn Khoa học, nắm chắc kiến thức theo mạch nội dung và lí giải hiện tượng quen thuộc rõ ràng."
         ],
         "tot": [
           "Vận dụng tốt kiến thức vào quan sát và lí giải hiện tượng, làm bài thực hành đầy đủ và rất chính xác.",
@@ -414,7 +414,7 @@
           "Có hứng thú tìm hiểu lịch sử và địa lí, nắm vững kiến thức cơ bản và trình bày sự kiện rất mạch lạc.",
           "Đọc tốt lược đồ và bảng số liệu, mô tả vùng miền rõ ràng, kể lại sự kiện lịch sử theo trình tự rất chính xác.",
           "Tiến bộ rõ rệt trong quan sát cảnh quan, nắm chắc kiến thức và biết liên hệ với địa phương rất sinh động.",
-          "Có năng khiếu môn học, nhớ sự kiện chính xác, mô tả đặc điểm vùng đất và con người rõ ràng, mạch lạc."
+          "Hoàn thành tốt môn học, nhớ sự kiện chính xác, mô tả đặc điểm vùng đất và con người rõ ràng, mạch lạc."
         ],
         "tot": [
           "Nắm được nội dung cơ bản, đọc lược đồ tương đối thành thạo và trình bày sự kiện theo trình tự khá rõ ràng.",
@@ -441,7 +441,7 @@
         "tot_xs": [
           "Nắm vững kiến thức theo mạch nội dung, đọc lược đồ thành thạo và trình bày sự kiện rất rõ ràng mạch lạc.",
           "Tiến bộ rõ rệt cả lịch sử và địa lí, mô tả vùng miền sinh động và kể lại sự kiện rất chính xác theo trình tự.",
-          "Có khả năng quan sát và phân tích tốt, biết liên hệ kiến thức với địa phương và trình bày rất tự tin sáng tạo.",
+          "Có khả năng quan sát và phân tích tốt, biết liên hệ kiến thức với địa phương và trình bày rất mạnh dạn, rõ ý.",
           "Hứng thú với môn học, nắm chắc đặc điểm vùng miền, mô tả con người và hoạt động kinh tế rất rõ ràng cụ thể."
         ],
         "tot": [
@@ -470,7 +470,7 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt kiến thức vào liên hệ địa phương, đọc lược đồ thành thạo và trình bày sự kiện rất mạch lạc.",
-          "Có năng khiếu môn học, biết phối hợp đọc lược đồ và kể sự kiện, mô tả vùng miền rất sinh động và sáng tạo.",
+          "Hoàn thành tốt môn học, biết phối hợp đọc lược đồ và kể sự kiện, mô tả vùng miền rất sinh động và rõ ràng.",
           "Tiến bộ vượt bậc về phân tích vùng miền, biết vận dụng kiến thức vào yêu quý quê hương và bảo vệ môi trường.",
           "Hứng thú với môn học, nắm chắc kiến thức theo mạch nội dung và kể lại sự kiện rất chính xác theo trình tự."
         ],
@@ -536,7 +536,7 @@
           "Có thái độ tích cực, kính trọng người lớn và yêu thương bạn bè, tham gia hoạt động chung rất tự giác mạnh dạn."
         ],
         "tot": [
-          "Có ý thức tốt trong sinh hoạt, biết phân biệt đúng sai và bày tỏ ý kiến trước lớp khá tự tin và rõ ràng ý.",
+          "Có ý thức tốt trong sinh hoạt, biết phân biệt đúng sai và bày tỏ ý kiến trước lớp khá mạnh dạn, rõ ràng.",
           "Tự giác trung thực trong học tập, biết đoàn kết với bạn bè và tham gia hoạt động chung khá đầy đủ đều đặn.",
           "Có tiến bộ về hành vi đạo đức, biết giúp đỡ bạn bè và giữ gìn vệ sinh chung tương đối đầy đủ và đúng đắn.",
           "Chăm chỉ học tập, biết kính trọng người lớn, tham gia hoạt động lớp đều đặn và yêu thương bạn bè chân thành.",
@@ -561,7 +561,7 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt bài học đạo đức vào sinh hoạt hằng ngày, ý thức nề nếp rất tốt và biết hợp tác với bạn bè.",
-          "Có năng khiếu thuyết phục và bày tỏ ý kiến, biết phân biệt đúng sai và giải quyết tình huống rất mạch lạc.",
+          "Biết bày tỏ ý kiến có sức thuyết phục, phân biệt đúng sai và giải quyết tình huống rất mạch lạc.",
           "Tiến bộ vượt bậc về hành vi đạo đức, biết vận dụng bài học vào yêu thương gia đình và giúp đỡ bạn bè.",
           "Hứng thú với môn học, nắm chắc nội dung bài và biết hợp tác với bạn trong hoạt động trải nghiệm rất tự giác."
         ],
@@ -596,7 +596,7 @@
           "Có hứng thú với máy tính, thao tác chuột bàn phím rất thành thạo và biết tổ chức lưu trữ thông tin tốt.",
           "Nắm vững thao tác cơ bản, sử dụng phần mềm vẽ và soạn thảo nhanh, biết lưu trữ thông tin rất khoa học.",
           "Tiến bộ rõ rệt trong sử dụng máy tính, biết tìm kiếm thông tin an toàn và làm bài thực hành rất chính xác.",
-          "Có năng khiếu tin học, thao tác chuột bàn phím nhanh và biết hợp tác với bạn trong giờ thực hành rất tốt."
+          "Hoàn thành tốt môn Tin học, thao tác chuột bàn phím nhanh và biết hợp tác với bạn trong giờ thực hành rất tốt."
         ],
         "tot": [
           "Sử dụng được chuột bàn phím tương đối thành thạo, biết mở và lưu tài liệu theo hướng dẫn khá chính xác.",
@@ -651,8 +651,8 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt kiến thức tin học vào thực hành, thao tác máy tính thành thạo và rất tự tin hợp tác nhóm.",
-          "Có năng khiếu tin học, biết phối hợp soạn thảo trình chiếu và vẽ, làm bài thực hành rất chính xác và sáng tạo.",
+          "Vận dụng linh hoạt kiến thức tin học vào thực hành, thao tác máy tính thành thạo và hợp tác nhóm rất tốt.",
+          "Hoàn thành tốt môn Tin học, biết phối hợp soạn thảo trình chiếu và vẽ, làm bài thực hành rất chính xác và đẹp.",
           "Tiến bộ vượt bậc về kĩ năng máy tính, biết vận dụng kiến thức vào tìm kiếm thông tin an toàn và rất hiệu quả.",
           "Hứng thú với môn học, nắm chắc thao tác cơ bản và làm bài thực hành rất chính xác theo yêu cầu chương trình."
         ],
@@ -687,7 +687,7 @@
           "Có hứng thú với môn Công nghệ, nhận biết sản phẩm trong gia đình nhanh và biết sử dụng đồ dùng an toàn.",
           "Nắm vững công dụng đồ dùng học tập, biết bảo quản và sử dụng đúng cách, làm sản phẩm thủ công rất khéo léo.",
           "Tiến bộ rõ rệt cả lí thuyết và thực hành, biết phân loại đồ dùng theo loại và làm bài thực hành đúng.",
-          "Có năng khiếu thủ công, làm sản phẩm cắt gấp khéo và hợp tác tốt với bạn trong thực hành nhóm."
+          "Làm thủ công khéo léo, làm sản phẩm cắt gấp đẹp và hợp tác tốt với bạn trong thực hành nhóm."
         ],
         "tot": [
           "Nhận biết được sản phẩm công nghệ trong gia đình, biết sử dụng đồ dùng học tập an toàn và đúng công dụng.",
@@ -712,10 +712,10 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững công dụng sản phẩm công nghệ, biết sử dụng an toàn và làm sản phẩm thủ công rất khéo léo sáng tạo.",
+          "Nắm vững công dụng sản phẩm công nghệ, biết sử dụng an toàn và làm sản phẩm thủ công rất khéo léo, đẹp mắt.",
           "Tiến bộ rõ rệt cả nhận biết và thực hành, biết phân loại đồ dùng theo loại và bảo quản rất cẩn thận.",
           "Có khả năng thủ công tốt, làm sản phẩm cắt gấp dán đẹp và biết hợp tác với bạn trong thực hành nhóm tự giác.",
-          "Hứng thú với môn học, nắm chắc công dụng đồ dùng và làm sản phẩm thủ công rất chính xác theo hướng dẫn cô."
+          "Hứng thú với môn học, nắm chắc công dụng đồ dùng và làm sản phẩm thủ công rất chính xác theo hướng dẫn."
         ],
         "tot": [
           "Nhận biết được sản phẩm công nghệ quen, biết sử dụng đồ dùng an toàn và làm sản phẩm thủ công khá khéo léo.",
@@ -742,8 +742,8 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt kiến thức vào thực hành, làm sản phẩm thủ công khéo léo và rất tự tin hợp tác trong nhóm.",
-          "Có năng khiếu thủ công, biết phối hợp cắt gấp lắp ghép, làm sản phẩm rất sáng tạo và chính xác theo hướng dẫn.",
+          "Vận dụng linh hoạt kiến thức vào thực hành, làm sản phẩm thủ công khéo léo và hợp tác trong nhóm rất tốt.",
+          "Làm thủ công khéo léo, biết phối hợp cắt gấp lắp ghép, làm sản phẩm rất đẹp và chính xác theo hướng dẫn.",
           "Tiến bộ vượt bậc về kĩ năng thực hành, biết vận dụng kiến thức vào sử dụng đồ dùng an toàn rất hiệu quả.",
           "Hứng thú với môn học, nắm chắc công dụng sản phẩm và làm bài thực hành rất chính xác theo yêu cầu lớp học."
         ],
@@ -775,9 +775,9 @@
     "tienganh": {
       "ghk1": {
         "tot_xs": [
-          "Có năng khiếu Tiếng Anh, phát âm chuẩn tự nhiên, ghi nhớ từ vựng rất nhanh và mạnh dạn giao tiếp.",
+          "Hoàn thành tốt môn Tiếng Anh, phát âm chuẩn tự nhiên, ghi nhớ từ vựng rất nhanh và mạnh dạn giao tiếp.",
           "Nghe hiểu nhanh các câu lệnh lớp học, đọc to rõ từng từ và viết đúng các mẫu câu rất chuẩn xác.",
-          "Tiến bộ rõ rệt 4 kĩ năng, vốn từ phong phú so với chương trình, mạnh dạn trả lời câu hỏi rất tự tin.",
+          "Tiến bộ rõ rệt ở các kĩ năng, vốn từ phong phú so với chương trình, trả lời câu hỏi rất mạnh dạn.",
           "Hứng thú với môn học, phát âm rõ ràng có ngữ điệu, đọc viết các mẫu câu đã học một cách chính xác."
         ],
         "tot": [
@@ -803,7 +803,7 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững từ vựng theo chủ đề, phát âm chuẩn có ngữ điệu, viết câu đúng cấu trúc và rất tự tin giao tiếp.",
+          "Nắm vững từ vựng theo chủ đề, phát âm chuẩn có ngữ điệu, viết câu đúng cấu trúc và giao tiếp rất mạnh dạn.",
           "Tiến bộ rõ rệt cả 4 kĩ năng, đọc hiểu được đoạn ngắn, viết câu giới thiệu bản thân rất chính xác trôi chảy.",
           "Có khả năng cảm thụ ngôn ngữ tốt, vốn từ phong phú so với chương trình, đọc viết các mẫu câu rất chuẩn.",
           "Hứng thú học Tiếng Anh, nghe hiểu nhanh các câu lệnh, đọc to rõ và viết đúng các mẫu câu đã học."
@@ -833,8 +833,8 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt 4 kĩ năng, đọc hiểu đoạn ngắn nhanh, viết câu đúng cấu trúc và rất tự tin giao tiếp.",
-          "Có năng khiếu ngôn ngữ, phát âm chuẩn có ngữ điệu, phối hợp tốt nghe nói đọc viết và dùng từ rất chính xác.",
+          "Vận dụng linh hoạt các kĩ năng, đọc hiểu đoạn ngắn nhanh, viết câu đúng cấu trúc và giao tiếp rất mạnh dạn.",
+          "Hoàn thành tốt môn Tiếng Anh, phát âm chuẩn có ngữ điệu, phối hợp tốt nghe nói đọc viết và dùng từ rất chính xác.",
           "Tiến bộ vượt bậc cả 4 kĩ năng, đọc hiểu đoạn ngắn theo chủ đề, viết câu giới thiệu rất rõ ràng và mạch lạc.",
           "Hứng thú học Tiếng Anh, nghe hiểu nhanh, đọc to rõ có ngữ điệu, viết câu đúng cấu trúc và áp dụng linh hoạt."
         ],
@@ -866,7 +866,7 @@
     "gdtc": {
       "ghk1": {
         "tot_xs": [
-          "Có năng khiếu thể chất, vận động khéo léo và nhanh nhẹn, tham gia trò chơi vận động rất tích cực và mạnh dạn.",
+          "Có kĩ năng vận động tốt, khéo léo và nhanh nhẹn, tham gia trò chơi vận động rất tích cực và mạnh dạn.",
           "Nắm vững kĩ năng vận động cơ bản, phối hợp động tác đi chạy nhịp nhàng và biết giữ an toàn khi vận động.",
           "Tiến bộ rõ rệt cả sức bền và sự khéo léo, tham gia trò chơi vận động sôi nổi và hợp tác tốt với bạn.",
           "Hứng thú với môn học, vận động linh hoạt và biết phối hợp với bạn trong trò chơi vận động rất nhịp nhàng."
@@ -897,7 +897,7 @@
           "Nắm vững kĩ năng vận động cơ bản, phối hợp động tác nhịp nhàng và biết hợp tác với bạn trong trò chơi sôi nổi.",
           "Tiến bộ rõ rệt cả sức bền và sự khéo léo, tham gia trò chơi vận động tích cực và biết giữ an toàn rất tự giác.",
           "Có khả năng thể chất tốt, vận động linh hoạt và nhanh nhẹn, biểu diễn động tác có sự phối hợp rất nhịp nhàng.",
-          "Hứng thú với môn học, vận động khéo léo và biết phối hợp với bạn trong trò chơi rất nhịp nhàng tự tin."
+          "Hứng thú với môn học, vận động khéo léo và biết phối hợp với bạn trong trò chơi rất nhịp nhàng, hăng hái."
         ],
         "tot": [
           "Đã vận động được động tác cơ bản khá khéo léo, tham gia trò chơi vận động sôi nổi và hợp tác với bạn đầy đủ.",
@@ -924,8 +924,8 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt kĩ năng vận động vào trò chơi, vận động khéo léo và rất tự tin hợp tác với bạn trong nhóm.",
-          "Có năng khiếu thể chất, biết phối hợp các động tác đi chạy nhịp nhàng và tham gia trò chơi rất sôi nổi.",
+          "Vận dụng linh hoạt kĩ năng vận động vào trò chơi, vận động khéo léo và hợp tác với bạn trong nhóm rất tốt.",
+          "Có kĩ năng vận động tốt, biết phối hợp các động tác đi chạy nhịp nhàng và tham gia trò chơi rất sôi nổi.",
           "Tiến bộ vượt bậc về kĩ năng vận động, biết vận dụng kiến thức vào rèn sức khoẻ và khéo léo rất hiệu quả.",
           "Hứng thú với môn học, nắm chắc kĩ năng vận động cơ bản và tham gia trò chơi vận động rất nhịp nhàng theo nhóm."
         ],
@@ -957,10 +957,10 @@
     "amnhac": {
       "ghk1": {
         "tot_xs": [
-          "Có năng khiếu âm nhạc, hát đúng giai điệu rõ lời và biểu diễn rất tự tin, gõ đệm tiết tấu rất chính xác.",
+          "Hoàn thành tốt môn Âm nhạc, hát đúng giai điệu rõ lời và biểu diễn rất mạnh dạn, gõ đệm tiết tấu rất chính xác.",
           "Nắm vững kĩ năng hát, hát đúng cao độ và trường độ, biểu diễn bài hát có động tác phụ hoạ rất sinh động.",
           "Tiến bộ rõ rệt cả hát và đọc nhạc, cảm thụ âm nhạc nhanh, gõ đệm tiết tấu đúng và nhịp nhàng.",
-          "Hứng thú với môn Âm nhạc, hát rõ lời và biết phối hợp gõ đệm với hát trong sinh hoạt tập thể rất tự tin."
+          "Hứng thú với môn Âm nhạc, hát rõ lời và biết phối hợp gõ đệm với hát trong sinh hoạt tập thể rất mạnh dạn."
         ],
         "tot": [
           "Hát được giai điệu cơ bản đúng cao độ và lời ca, biết gõ đệm tiết tấu đơn giản theo hướng dẫn khá chính xác.",
@@ -985,15 +985,15 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững kĩ năng hát và gõ đệm, biết phối hợp hát với động tác phụ hoạ rất nhịp nhàng và biểu diễn rất tự tin.",
+          "Nắm vững kĩ năng hát và gõ đệm, biết phối hợp hát với động tác phụ hoạ rất nhịp nhàng và biểu diễn mạnh dạn.",
           "Tiến bộ rõ rệt cả hát đọc nhạc và nghe cảm thụ, biết phân biệt giai điệu nhanh và gõ đệm rất chính xác.",
-          "Có khả năng âm nhạc tốt, hát đúng cao độ và trường độ, biểu diễn bài hát có động tác rất sinh động tự tin.",
+          "Có khả năng âm nhạc tốt, hát đúng cao độ và trường độ, biểu diễn bài hát có động tác rất sinh động, mạnh dạn.",
           "Hứng thú với môn Âm nhạc, hát rõ lời và biết phối hợp gõ đệm tiết tấu với hát trong sinh hoạt tập thể."
         ],
         "tot": [
           "Hát đúng cao độ và lời ca, biểu diễn bài hát có động tác phụ hoạ và gõ đệm tiết tấu khá nhịp nhàng và đều đặn.",
           "Có vốn kĩ năng khá, biết hát đồng ca và gõ đệm tiết tấu cơ bản, tham gia sinh hoạt âm nhạc tương đối đầy đủ.",
-          "Có tiến bộ trong hát và đọc nhạc, biết nghe và phân biệt giai điệu cơ bản, biểu diễn bài hát khá tự tin.",
+          "Có tiến bộ trong hát và đọc nhạc, biết nghe và phân biệt giai điệu cơ bản, biểu diễn bài hát khá mạnh dạn.",
           "Chăm chỉ học tập, biết phối hợp hát với bạn trong đồng ca và gõ đệm tiết tấu theo hướng dẫn khá nhịp nhàng.",
           "Nắm vững giai điệu bài hát quen, biểu diễn có động tác phụ hoạ và tham gia sinh hoạt âm nhạc đều đặn đầy đủ."
         ],
@@ -1015,15 +1015,15 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt kĩ năng hát và gõ đệm, biểu diễn bài hát rất tự tin và biết hợp tác với bạn trong đồng ca.",
-          "Có năng khiếu âm nhạc, biết phối hợp hát đọc nhạc và gõ đệm, biểu diễn rất sinh động và sáng tạo trên lớp đều.",
+          "Vận dụng linh hoạt kĩ năng hát và gõ đệm, biểu diễn bài hát rất mạnh dạn và biết hợp tác với bạn trong đồng ca.",
+          "Hoàn thành tốt môn Âm nhạc, biết phối hợp hát đọc nhạc và gõ đệm, biểu diễn trên lớp rất sinh động và truyền cảm.",
           "Tiến bộ vượt bậc về kĩ năng âm nhạc, biết vận dụng kiến thức vào nghe cảm thụ và biểu diễn rất hiệu quả.",
           "Hứng thú với môn học, nắm chắc kĩ năng hát đồng ca và gõ đệm tiết tấu theo hướng dẫn rất nhịp nhàng."
         ],
         "tot": [
           "Vận dụng tốt kĩ năng hát vào biểu diễn, biết gõ đệm tiết tấu theo hướng dẫn khá đầy đủ và nhịp nhàng đều đặn.",
           "Hát đúng cao độ và lời ca, biết phối hợp với bạn trong đồng ca và làm bài thực hành tương đối đầy đủ rõ ý.",
-          "Có vốn kĩ năng khá phong phú, biết phối hợp hát và gõ đệm, biểu diễn bài hát theo hướng dẫn tương đối tự tin.",
+          "Có vốn kĩ năng khá phong phú, biết phối hợp hát và gõ đệm, biểu diễn bài hát theo hướng dẫn tương đối mạnh dạn.",
           "Có tiến bộ về vận dụng kĩ năng, biết hát có động tác phụ hoạ và gõ đệm tiết tấu khá nhịp nhàng và đều đặn.",
           "Chăm chỉ thực hành, biết hợp tác với bạn trong nhóm và làm bài thực hành theo hướng dẫn tương đối đầy đủ ý."
         ],
@@ -1048,9 +1048,9 @@
     "mithuat": {
       "ghk1": {
         "tot_xs": [
-          "Có năng khiếu mĩ thuật, vẽ tranh sinh động và phối màu rất đẹp, biết thể hiện cảm xúc qua đường nét.",
-          "Nắm vững kĩ năng vẽ và xé dán, sản phẩm có bố cục rõ ràng và phối màu rất hài hoà sáng tạo theo chủ đề.",
-          "Tiến bộ rõ rệt cả vẽ và xé dán, biết cảm thụ tác phẩm và thể hiện ý tưởng riêng qua sản phẩm rất sáng tạo.",
+          "Hoàn thành tốt môn Mĩ thuật, vẽ tranh sinh động và phối màu rất đẹp, biết thể hiện cảm xúc qua đường nét.",
+          "Nắm vững kĩ năng vẽ và xé dán, sản phẩm có bố cục rõ ràng và phối màu rất hài hoà, đúng chủ đề.",
+          "Tiến bộ rõ rệt cả vẽ và xé dán, biết cảm thụ tác phẩm và thể hiện ý tưởng riêng qua sản phẩm rất đẹp.",
           "Hứng thú với môn Mĩ thuật, vẽ tranh có bố cục và phối màu hài hoà, biết bày tỏ ý tưởng cá nhân rất mạnh dạn."
         ],
         "tot": [
@@ -1076,17 +1076,17 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững kĩ năng vẽ và phối màu, sản phẩm có bố cục rõ ràng và rất sáng tạo, biết cảm thụ tranh khá sâu sắc.",
+          "Nắm vững kĩ năng vẽ và phối màu, sản phẩm có bố cục rõ ràng và ý tưởng riêng, biết cảm thụ tranh khá sâu sắc.",
           "Tiến bộ rõ rệt cả vẽ tranh và xé dán, biết thể hiện ý tưởng riêng qua sản phẩm và phối màu rất hài hoà đẹp.",
-          "Có khả năng mĩ thuật tốt, vẽ tranh có bố cục đẹp và phối màu hài hoà, biểu diễn ý tưởng rất sáng tạo mạnh dạn.",
-          "Hứng thú với môn Mĩ thuật, làm sản phẩm xé dán đẹp và biết cảm thụ tác phẩm đơn giản rất sâu sắc và sáng tạo."
+          "Có khả năng mĩ thuật tốt, vẽ tranh có bố cục đẹp và phối màu hài hoà, thể hiện ý tưởng rất mạnh dạn.",
+          "Hứng thú với môn Mĩ thuật, làm sản phẩm xé dán đẹp và biết cảm thụ tác phẩm đơn giản rất tinh tế."
         ],
         "tot": [
           "Vẽ được tranh theo chủ đề có bố cục đẹp, biết phối màu hài hoà và hoàn thành sản phẩm khá đầy đủ và tự giác.",
           "Có vốn kĩ năng khá, sản phẩm xé dán có bố cục đẹp và phối màu hài hoà, làm bài thực hành tương đối đầy đủ ý.",
           "Có tiến bộ trong vẽ tranh và phối màu, biết cảm thụ tác phẩm đơn giản, làm bài thực hành đầy đủ theo hướng.",
           "Chăm chỉ thực hành, biết phối màu cẩn thận và hoàn thành sản phẩm theo hướng dẫn tương đối đầy đủ và đẹp.",
-          "Nắm vững kĩ năng vẽ cơ bản, sản phẩm có bố cục rõ ràng và biết thể hiện ý tưởng riêng tương đối sáng tạo."
+          "Nắm vững kĩ năng vẽ cơ bản, sản phẩm có bố cục rõ ràng và biết thể hiện ý tưởng riêng tương đối tốt."
         ],
         "ht": [
           "Đã vẽ được tranh theo chủ đề ở mức cơ bản, có ý thức học tập và làm bài thực hành đầy đủ theo yêu cầu của lớp.",
@@ -1106,16 +1106,16 @@
       },
       "ghk2": {
         "tot_xs": [
-          "Vận dụng linh hoạt kĩ năng mĩ thuật vào thực hành, vẽ tranh sáng tạo và rất tự tin thể hiện ý tưởng cá nhân.",
-          "Có năng khiếu mĩ thuật, biết phối hợp vẽ xé dán nặn, sản phẩm rất sáng tạo và phối màu hài hoà theo chủ đề.",
-          "Tiến bộ vượt bậc về kĩ năng thực hành, biết vận dụng kiến thức vào cảm thụ tranh và sáng tạo rất hiệu quả đẹp.",
-          "Hứng thú với môn học, nắm chắc kĩ năng vẽ và phối màu, làm bài thực hành rất sáng tạo theo yêu cầu lớp học."
+          "Vận dụng linh hoạt kĩ năng mĩ thuật vào thực hành, vẽ tranh sinh động và mạnh dạn thể hiện ý tưởng riêng.",
+          "Hoàn thành tốt môn Mĩ thuật, biết phối hợp vẽ xé dán nặn, sản phẩm có ý tưởng riêng và phối màu hài hoà theo chủ đề.",
+          "Tiến bộ rõ rệt về kĩ năng thực hành, biết vận dụng kiến thức vào cảm thụ tranh và làm sản phẩm rất đẹp.",
+          "Hứng thú với môn học, nắm chắc kĩ năng vẽ và phối màu, làm bài thực hành rất đẹp và đúng yêu cầu."
         ],
         "tot": [
-          "Vận dụng tốt kĩ năng vẽ vào thực hành, biết phối màu hài hoà và hoàn thành sản phẩm khá đầy đủ và sáng tạo.",
+          "Vận dụng tốt kĩ năng vẽ vào thực hành, biết phối màu hài hoà và hoàn thành sản phẩm khá đầy đủ, có ý riêng.",
           "Vẽ tranh có bố cục đẹp, biết phối hợp với bạn trong nhóm và làm bài thực hành tương đối đầy đủ và rõ ràng ý.",
           "Có vốn kĩ năng khá phong phú, biết phối hợp vẽ và xé dán, sản phẩm tương đối đầy đủ và phối màu hài hoà đẹp.",
-          "Có tiến bộ về vận dụng kĩ năng, biết vẽ tranh theo chủ đề và phối màu khá hài hoà, biểu diễn ý tưởng tự tin.",
+          "Có tiến bộ về vận dụng kĩ năng, biết vẽ tranh theo chủ đề và phối màu khá hài hoà, thể hiện ý tưởng mạnh dạn.",
           "Chăm chỉ thực hành, biết hợp tác với bạn trong nhóm và làm sản phẩm theo hướng dẫn tương đối đầy đủ và đẹp."
         ],
         "ht": [
@@ -1142,7 +1142,7 @@
           "Có ý thức tự phục vụ rất tốt, tham gia hoạt động trải nghiệm tích cực và biết hợp tác với bạn rất tự giác.",
           "Nắm vững kĩ năng tự chăm sóc bản thân, tham gia hoạt động chung sôi nổi và biết bày tỏ ý kiến rất mạnh dạn.",
           "Tiến bộ rõ rệt cả ý thức và hành vi, tự giác giữ gìn vệ sinh trường lớp và tham gia hoạt động cộng đồng.",
-          "Có thái độ học tập tích cực, biết hợp tác với bạn trong hoạt động trải nghiệm và bày tỏ ý kiến rất tự tin."
+          "Có thái độ học tập tích cực, biết hợp tác với bạn trong hoạt động trải nghiệm và bày tỏ ý kiến rất mạnh dạn."
         ],
         "tot": [
           "Có ý thức tự phục vụ tốt, tham gia hoạt động trải nghiệm đầy đủ và biết hợp tác với bạn.",
@@ -1167,13 +1167,13 @@
       },
       "chk1": {
         "tot_xs": [
-          "Nắm vững kĩ năng tự phục vụ, ý thức hợp tác rất tốt và biết bày tỏ ý kiến trong hoạt động trải nghiệm tự tin.",
+          "Nắm vững kĩ năng tự phục vụ, ý thức hợp tác rất tốt và mạnh dạn bày tỏ ý kiến trong hoạt động trải nghiệm.",
           "Tiến bộ rõ rệt cả nhận thức và hành vi, biết tự chăm sóc bản thân và hợp tác với bạn rất chân thành tự giác.",
           "Có khả năng tự đánh giá tốt, biết bày tỏ ý kiến rất mạch lạc và tham gia hoạt động trải nghiệm rất tích cực.",
           "Có thái độ tích cực, biết hợp tác với bạn trong hoạt động chung và tham gia trải nghiệm rất tự giác mạnh dạn."
         ],
         "tot": [
-          "Có ý thức tự phục vụ tốt, biết hợp tác với bạn trong hoạt động và bày tỏ ý kiến trước lớp khá tự tin rõ ràng.",
+          "Có ý thức tự phục vụ tốt, biết hợp tác với bạn trong hoạt động và bày tỏ ý kiến trước lớp khá mạnh dạn, rõ ràng.",
           "Tham gia hoạt động trải nghiệm đều đặn, biết tự chăm sóc bản thân và giữ gìn vệ sinh chung khá tự giác đầy.",
           "Có tiến bộ về hành vi hợp tác, biết bày tỏ ý kiến trong nhóm và tham gia hoạt động chung tương đối đầy đủ.",
           "Chăm chỉ học tập, biết kính trọng người lớn và yêu thương bạn bè, tham gia hoạt động trải nghiệm rất tự giác.",
@@ -1198,7 +1198,7 @@
       "ghk2": {
         "tot_xs": [
           "Vận dụng linh hoạt kĩ năng tự phục vụ vào sinh hoạt, ý thức hợp tác rất tốt và biết phối hợp với bạn nhóm.",
-          "Có năng khiếu thuyết phục và bày tỏ ý kiến, biết giải quyết tình huống trong hoạt động chung rất mạch lạc.",
+          "Biết bày tỏ ý kiến có sức thuyết phục, giải quyết tình huống trong hoạt động chung rất mạch lạc.",
           "Tiến bộ vượt bậc về hành vi và ý thức, biết vận dụng bài học vào yêu thương gia đình và giúp đỡ bạn bè.",
           "Hứng thú với hoạt động trải nghiệm, nắm chắc kĩ năng tự phục vụ và biết hợp tác với bạn rất tự giác hằng ngày."
         ],

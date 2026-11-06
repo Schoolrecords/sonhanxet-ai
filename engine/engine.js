@@ -1322,7 +1322,7 @@ NhanXetEngineV2.ENRICH_BANK_HOCBA = Object.freeze({
             'vận dụng linh hoạt kiến thức vào các tình huống thực tế',
             'trình bày bài giải khoa học và đặt phép tính rõ ràng',
             'biết phân tích đề bài và đề xuất nhiều cách giải',
-            'tính toán nhanh, chính xác và sáng tạo trong giải toán',
+            'tính toán nhanh, chính xác và linh hoạt trong giải toán',
             'có tư duy logic rõ ràng và làm chủ kiến thức môn học'
         ],
         tot: [
@@ -1337,7 +1337,7 @@ NhanXetEngineV2.ENRICH_BANK_HOCBA = Object.freeze({
             'cần luyện tính nhẩm, đặt phép tính cẩn thận hơn',
             'cần đọc kĩ đề bài và kiểm tra kết quả trước khi nộp',
             'nên làm thêm bài tập về nhà để củng cố kiến thức',
-            'cần phát huy thêm trong các tuần học tiếp theo'
+            'cần chú ý tính cẩn thận và trình bày bài rõ ràng hơn'
         ],
         cht: [
             'cần được hỗ trợ thêm và luyện tập tính toán hằng ngày',
@@ -1349,7 +1349,7 @@ NhanXetEngineV2.ENRICH_BANK_HOCBA = Object.freeze({
     'tieng-viet': {
         tot_xs: [
             'viết bài có bố cục rõ ràng, diễn đạt mạch lạc và giàu hình ảnh',
-            'biết kể chuyện sáng tạo và sử dụng từ ngữ chính xác',
+            'biết kể chuyện sinh động và sử dụng từ ngữ chính xác',
             'đọc hiểu sâu sắc văn bản và biết liên hệ thực tế',
             'có vốn từ phong phú và biết vận dụng vào bài viết',
             'trình bày ý kiến mạch lạc, lập luận chặt chẽ và thuyết phục'
@@ -1366,7 +1366,7 @@ NhanXetEngineV2.ENRICH_BANK_HOCBA = Object.freeze({
             'cần rèn thêm chính tả và cách diễn đạt trong bài viết',
             'cần chú ý hơn khi trả lời câu hỏi và trình bày bài',
             'nên đọc thêm sách truyện để mở rộng vốn từ',
-            'cần phát huy thêm trong các tuần học tiếp theo'
+            'cần mạnh dạn hơn khi đọc to và trả lời câu hỏi'
         ],
         cht: [
             'cần được hỗ trợ thêm và luyện đọc viết đều đặn hằng ngày',
