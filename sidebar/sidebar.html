@@ -290,21 +290,16 @@
 
             <!-- (B) V6 PENDING — đã đăng ký, polling tự kích hoạt -->
             <div id="lic-form-pending" class="lic-form" style="display:none">
-                <div class="lic-pending-info">
-                    <div class="lic-pending-row"><span>SĐT:</span> <strong id="lic-pending-sdt">—</strong></div>
-                    <div class="lic-pending-row"><span>Tên:</span> <strong id="lic-pending-name">—</strong></div>
-                    <div class="lic-pending-row"><span>Số tiền:</span> <strong id="lic-pending-tien">50.000đ</strong></div>
-                </div>
-
                 <div class="lic-qr-wrap">
                     <img id="lic-qr-img" src="" alt="QR thanh toán" class="lic-qr">
                     <div id="lic-qr-fallback" class="lic-qr-fallback" style="display:none">
                         ⚠ Chưa có ảnh QR. Quản trị đặt file ảnh vào
                         <code>license/qr.png</code> trong thư mục extension.
                     </div>
+                    <div class="lic-qr-note" id="lic-qr-note">Quét mã bằng app ngân hàng, đã có sẵn số tiền và nội dung.</div>
                 </div>
 
-                <div class="lic-ck-block">
+                <div class="lic-ck-block" id="lic-ck-block">
                     <div class="lic-ck-label">📝 Nội dung chuyển khoản:</div>
                     <div class="lic-ck-value-row">
                         <strong id="lic-pending-ma" class="lic-pending-ma">—</strong>

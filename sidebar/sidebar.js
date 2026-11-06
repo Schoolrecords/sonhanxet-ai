@@ -2132,8 +2132,6 @@
             box.className = 'lic-status lic-status-pending';
             box.innerHTML = '⏳ Đã đăng ký — vui lòng chuyển khoản để hoàn tất';
             formPending.style.display = 'block';
-            document.getElementById('lic-pending-sdt').textContent = state.sdt || '—';
-            document.getElementById('lic-pending-name').textContent = state.hoTen || '—';
             // V6: mã = SĐT cho user mới, hoặc mã 4 ký tự cho user cũ. Server đã trả `ma`.
             // 05/11/2026: nội dung CK "NX K7M3" — SePay tự nhận diện, tự mở khoá.
             const ck = (LicenseClient.thongTinChuyenKhoan
@@ -2143,6 +2141,12 @@
             const tienEl = document.getElementById('lic-pending-tien');
             if (tienEl) tienEl.textContent = Number(ck.soTien || 50000).toLocaleString('vi-VN') + 'đ';
 
+            // 06/11/2026: QR động đã có sẵn số tiền + nội dung → ẩn khối nội dung CK và nút Copy.
+            // Chỉ hiện lại khi không có QR động (ảnh qr.png tĩnh) — lúc đó phải gõ nội dung.
+            const ckBlock = document.getElementById('lic-ck-block');
+            if (ckBlock) ckBlock.style.display = ck.qrUrl ? 'none' : '';
+            const qrNote = document.getElementById('lic-qr-note');
+            if (qrNote) qrNote.style.display = ck.qrUrl ? '' : 'none';
             const hintEl = document.getElementById('lic-ck-hint');
             if (hintEl) {
                 hintEl.textContent = ck.qrUrl
