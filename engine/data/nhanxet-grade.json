@@ -20,29 +20,29 @@
           "ghk1": {
             "tot_xs": {
               "default": [
-                "Có năng khiếu môn Toán, đếm và đọc viết số trong 10 nhanh, làm phép cộng trừ không nhớ chính xác cao.",
+                "Có năng khiếu môn Toán, đếm và đọc viết số trong 10 nhanh, làm phép cộng trừ trong 10 chính xác.",
                 "Tiến bộ rõ rệt về nhận biết số, đếm xuôi đếm ngược lưu loát và nhận biết các hình đã học rất tốt.",
-                "Hứng thú học Toán, tính nhẩm cộng trừ trong 10 nhanh nhẹn và viết số rất rõ ràng, cẩn thận chính xác."
+                "Hứng thú học Toán, tính nhẩm cộng trừ trong 10 nhanh nhẹn và viết số rõ ràng, cẩn thận."
               ]
             },
             "tot": {
               "default": [
-                "Đếm và đọc viết số trong 10 đúng, làm phép cộng trừ không nhớ chính xác và viết số rõ ràng cẩn thận.",
-                "Nhận biết hình vuông, hình tròn, hình tam giác đúng, làm phép cộng trừ trong 10 chắc chắn cơ bản.",
-                "Có tiến bộ về tính nhẩm, làm phép cộng trừ không nhớ tương đối nhanh và trình bày bài sạch sẽ đầy đủ."
+                "Đếm và đọc viết số trong 10 đúng, làm phép cộng trừ trong 10 chính xác và viết số rõ ràng, cẩn thận.",
+                "Nhận biết hình vuông, hình tròn, hình tam giác đúng, làm phép cộng trừ trong 10 chắc chắn.",
+                "Có tiến bộ về tính nhẩm, làm phép cộng trừ trong 10 tương đối nhanh và trình bày bài sạch sẽ."
               ]
             },
             "ht": {
               "default": [
-                "Hoàn thành nội dung cơ bản, đếm được số trong 10, làm phép cộng trừ không nhớ ở mức cơ bản đầy đủ ý.",
-                "Đọc viết được số trong 10, làm phép cộng trừ không nhớ cơ bản và nhận biết được các hình đã học rõ.",
-                "Tham gia học tập đều đặn, đếm xuôi cơ bản và làm phép cộng trừ không nhớ tương đối đúng theo yêu cầu."
+                "Hoàn thành nội dung cơ bản, đếm được số trong 10, làm được phép cộng trừ trong phạm vi 10.",
+                "Đọc viết được số trong 10, làm được phép cộng trừ đơn giản và nhận biết được các hình đã học.",
+                "Tham gia học tập đều đặn, đếm được số theo thứ tự và làm phép cộng trừ trong 10 tương đối đúng."
               ]
             },
             "cht": {
               "default": [
                 "Đếm và đọc số trong 10 còn chậm, làm phép cộng trừ chưa đúng, cần luyện thêm hằng ngày tại nhà.",
-                "Chưa nắm vững số trong 10, viết số còn nhầm, làm phép cộng trừ còn nhiều lỗi sai ở mức cơ bản.",
+                "Chưa nắm vững số trong 10, viết số còn nhầm, làm phép cộng trừ còn nhiều lỗi sai.",
                 "Kĩ năng đếm và làm phép tính còn hạn chế, nhận biết hình chưa chắc, cần được hỗ trợ thường xuyên."
               ]
             }
@@ -112,30 +112,30 @@
           "ghk1": {
             "tot_xs": {
               "default": [
-                "Có năng khiếu Toán, làm phép cộng trừ có nhớ trong 100 thuần thục, đo độ dài rất nhanh chính xác.",
-                "Tiến bộ rõ rệt, làm phép cộng trừ có nhớ chính xác cao và nhận biết hình tứ giác rất tốt, đầy đủ.",
+                "Có năng khiếu Toán, làm phép cộng trừ có nhớ trong 100 thuần thục, đo độ dài nhanh, chính xác.",
+                "Tiến bộ rõ rệt, làm phép cộng trừ có nhớ chính xác và nhận biết tốt hình tứ giác.",
                 "Hứng thú học Toán, tính nhẩm cộng trừ có nhớ trong 100 nhanh và biết vận dụng vào tình huống thực tế."
               ]
             },
             "tot": {
               "default": [
-                "Làm phép cộng trừ có nhớ trong 100 đúng, biết đo độ dài bằng đơn vị quen thuộc và trình bày sạch.",
+                "Làm phép cộng trừ có nhớ trong 100 đúng, biết đo độ dài bằng đơn vị quen thuộc và trình bày bài sạch sẽ.",
                 "Có tiến bộ về tính nhẩm cộng trừ có nhớ, nhận biết hình tứ giác đúng và đọc viết số rất rõ ràng.",
                 "Chăm chỉ luyện tính, làm phép cộng trừ có nhớ trong 100 chính xác và trình bày bài rất sạch đẹp."
               ]
             },
             "ht": {
               "default": [
-                "Hoàn thành nội dung cơ bản, làm phép cộng trừ có nhớ trong 100 ở mức cơ bản, có nhiều cố gắng học.",
-                "Đọc viết số trong 1000 đúng, làm phép cộng trừ có nhớ ở mức cơ bản và nhận biết được hình cơ bản.",
+                "Hoàn thành nội dung cơ bản, làm phép cộng trừ có nhớ trong 100 ở mức cơ bản, có nhiều cố gắng.",
+                "Đọc viết số trong 100 đúng, làm phép cộng trừ có nhớ ở mức cơ bản và nhận biết được các hình đã học.",
                 "Tham gia học tập đều đặn, làm bài cộng trừ có nhớ cơ bản và đo được độ dài bằng đơn vị quen thuộc."
               ]
             },
             "cht": {
               "default": [
-                "Làm phép cộng trừ có nhớ còn sai nhiều, đọc viết số trong 1000 chưa chắc, cần luyện thêm hằng ngày.",
+                "Làm phép cộng trừ có nhớ còn sai nhiều, đọc viết số trong 100 chưa chắc, cần luyện thêm hằng ngày.",
                 "Kĩ năng tính cộng trừ có nhớ còn hạn chế, nhận biết hình tứ giác chưa chắc, cần hỗ trợ thường xuyên.",
-                "Chưa nắm vững phép cộng trừ có nhớ trong 100, viết số còn nhầm, cần luyện tính nhẩm và đọc số nhiều."
+                "Chưa nắm vững phép cộng trừ có nhớ trong 100, viết số còn nhầm, cần luyện thêm tính nhẩm và đọc số."
               ]
             }
           },
@@ -204,22 +204,22 @@
           "ghk1": {
             "tot_xs": {
               "default": [
-                "Có năng khiếu Toán, làm phép nhân chia trong bảng thuần thục, tính giá trị biểu thức rất nhanh chính xác.",
-                "Tiến bộ rõ rệt về tính nhân chia, làm bài cẩn thận và đạt kết quả chính xác cao trên các dạng quen thuộc.",
-                "Hứng thú học Toán, tính nhẩm nhân chia trong bảng nhanh, vận dụng vào bài toán có lời văn rất tốt cao."
+                "Có năng khiếu Toán, làm phép nhân chia trong bảng thuần thục, tính giá trị biểu thức nhanh, chính xác.",
+                "Tiến bộ rõ rệt về tính nhân chia, làm bài cẩn thận và làm đúng các dạng bài quen thuộc.",
+                "Hứng thú học Toán, tính nhẩm nhân chia trong bảng nhanh, vận dụng tốt vào bài toán có lời văn."
               ]
             },
             "tot": {
               "default": [
                 "Thuộc bảng nhân chia, làm phép nhân chia trong bảng đúng và biết tính giá trị biểu thức cơ bản chính xác.",
-                "Có tiến bộ về tính nhân chia, trình bày bài giải rõ ràng và biết kiểm tra kết quả khá cẩn thận đầy đủ.",
-                "Nắm khá vững nhân chia trong bảng, biết đo độ dài và thời gian cơ bản, trình bày bài rất sạch sẽ đầy đủ."
+                "Có tiến bộ về tính nhân chia, trình bày bài giải rõ ràng và biết kiểm tra kết quả khá cẩn thận.",
+                "Nắm khá vững nhân chia trong bảng, biết đo độ dài và thời gian cơ bản, trình bày bài sạch sẽ."
               ]
             },
             "ht": {
               "default": [
                 "Đã làm được phép nhân chia trong bảng ở mức cơ bản, biết đo thời gian và có ý thức học tập đều đặn.",
-                "Có tiến bộ trong tính nhân chia, trình bày bài giải tương đối rõ ràng và biết đo độ dài cơ bản đầy đủ.",
+                "Có tiến bộ trong tính nhân chia, trình bày bài giải tương đối rõ ràng và biết đo độ dài.",
                 "Tham gia học tập đều đặn, làm phép nhân chia trong bảng ở mức cơ bản và tính giá trị biểu thức đơn giản."
               ]
             },
@@ -296,23 +296,23 @@
           "ghk1": {
             "tot_xs": {
               "default": [
-                "Có năng khiếu Toán, làm 4 phép tính với số tự nhiên lớn thuần thục, tính giá trị biểu thức rất nhanh chính xác.",
-                "Tiến bộ rõ rệt cả tính toán và đo lường, làm bài cẩn thận và đạt kết quả chính xác cao trên nhiều dạng.",
-                "Hứng thú học Toán, làm 4 phép tính với số tự nhiên lớn nhanh, biết đổi đơn vị đo cơ bản rất tốt cao."
+                "Có năng khiếu Toán, làm 4 phép tính với số tự nhiên lớn thuần thục, tính giá trị biểu thức nhanh, chính xác.",
+                "Tiến bộ rõ rệt cả tính toán và đo lường, làm bài cẩn thận và làm đúng nhiều dạng bài.",
+                "Hứng thú học Toán, làm 4 phép tính với số tự nhiên lớn nhanh, biết đổi đơn vị đo chính xác."
               ]
             },
             "tot": {
               "default": [
-                "Làm 4 phép tính với số tự nhiên đúng, tính giá trị biểu thức cơ bản chính xác và trình bày bài rất rõ.",
+                "Làm 4 phép tính với số tự nhiên đúng, tính giá trị biểu thức cơ bản chính xác và trình bày bài rõ ràng.",
                 "Có tiến bộ về tính toán và đo lường, biết đổi đơn vị đo độ dài, khối lượng và trình bày bài khá sạch.",
-                "Nắm khá vững 4 phép tính số tự nhiên, biết đo và đổi đơn vị cơ bản, trình bày bài giải sạch sẽ đầy đủ."
+                "Nắm khá vững 4 phép tính số tự nhiên, biết đo và đổi đơn vị cơ bản, trình bày bài giải sạch sẽ."
               ]
             },
             "ht": {
               "default": [
-                "Đã làm được 4 phép tính số tự nhiên ở mức cơ bản, biết đổi đơn vị đo độ dài và có ý thức học tập đều.",
-                "Có tiến bộ trong tính số tự nhiên, làm phép cộng trừ nhân chia ở mức cơ bản và trình bày bài tương đối rõ.",
-                "Tham gia học tập đều đặn, làm 4 phép tính số tự nhiên cơ bản và đo lường ở mức cơ bản, có cố gắng."
+                "Đã làm được 4 phép tính số tự nhiên ở mức cơ bản, biết đổi đơn vị đo độ dài và có ý thức học tập đều đặn.",
+                "Có tiến bộ trong tính số tự nhiên, làm phép cộng trừ nhân chia ở mức cơ bản và trình bày bài tương đối rõ ràng.",
+                "Tham gia học tập đều đặn, làm được 4 phép tính số tự nhiên và đo lường ở mức cơ bản, có cố gắng."
               ]
             },
             "cht": {
@@ -388,29 +388,29 @@
           "ghk1": {
             "tot_xs": {
               "default": [
-                "Có năng khiếu Toán, làm phép tính với phân số và số thập phân thuần thục, tư duy toán rất nhanh chính xác.",
-                "Tiến bộ rõ rệt về phân số số thập phân, làm bài cẩn thận và đạt kết quả chính xác cao trên các dạng bài.",
-                "Hứng thú học Toán, tính nhẩm phân số số thập phân nhanh và biết vận dụng vào tình huống thực tế đầy đủ."
+                "Có năng khiếu Toán, làm phép tính với phân số và số thập phân thuần thục, tư duy toán nhanh, chính xác.",
+                "Tiến bộ rõ rệt về phân số, số thập phân, làm bài cẩn thận và làm đúng các dạng bài đã học.",
+                "Hứng thú học Toán, tính nhẩm phân số, số thập phân nhanh và biết vận dụng vào tình huống thực tế."
               ]
             },
             "tot": {
               "default": [
                 "Làm phép tính với phân số và số thập phân đúng, biết đổi đơn vị đo và trình bày bài giải rất rõ ràng.",
-                "Có tiến bộ về tính phân số số thập phân, biết tính diện tích các hình đã học và trình bày bài khá sạch.",
-                "Nắm khá vững phân số và số thập phân, biết tính chu vi diện tích cơ bản, trình bày bài giải sạch sẽ đầy đủ."
+                "Có tiến bộ về tính phân số, số thập phân, biết tính diện tích các hình đã học và trình bày bài khá sạch.",
+                "Nắm khá vững phân số và số thập phân, biết tính chu vi diện tích cơ bản, trình bày bài giải sạch sẽ."
               ]
             },
             "ht": {
               "default": [
-                "Đã làm được phép tính với phân số và số thập phân ở mức cơ bản, có ý thức học tập và làm bài đầy đủ ý.",
-                "Có tiến bộ trong tính phân số số thập phân, làm phép cộng trừ ở mức cơ bản và trình bày bài khá rõ ràng.",
-                "Tham gia học tập đều đặn, làm phép tính với phân số và số thập phân ở mức cơ bản, có nhiều cố gắng học."
+                "Đã làm được phép tính với phân số và số thập phân ở mức cơ bản, có ý thức học tập và làm bài đầy đủ.",
+                "Có tiến bộ trong tính phân số, số thập phân, làm phép cộng trừ ở mức cơ bản và trình bày bài khá rõ ràng.",
+                "Tham gia học tập đều đặn, làm phép tính với phân số và số thập phân ở mức cơ bản, có nhiều cố gắng."
               ]
             },
             "cht": {
               "default": [
                 "Làm phép tính với phân số và số thập phân còn nhiều lỗi sai, đổi đơn vị đo chưa chắc, cần luyện hằng ngày.",
-                "Kĩ năng tính phân số số thập phân còn hạn chế, biểu thức chưa làm đúng, cần được hỗ trợ luyện thường xuyên.",
+                "Kĩ năng tính phân số, số thập phân còn hạn chế, biểu thức chưa làm đúng, cần được hỗ trợ luyện thường xuyên.",
                 "Chưa nắm vững phân số và số thập phân, làm phép tính còn sai, gia đình phối hợp luyện thêm phép tính tại nhà."
               ]
             }

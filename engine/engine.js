@@ -306,6 +306,8 @@ class NhanXetEngineV2 {
         // Heuristic: bất kỳ 3 từ liên tiếp nào của vế enrich xuất hiện trong text gốc → trùng.
         const lowerText = text.toLowerCase();
         const overlap = (enrich) => {
+            // V6.1.0: câu đã nhắc gia đình thì không thêm vế nhắc gia đình lần nữa
+            if (lowerText.includes('gia đình') && enrich.toLowerCase().includes('gia đình')) return true;
             const tokens = enrich.toLowerCase().split(/\s+/);
             for (let i = 0; i <= tokens.length - 3; i++) {
                 if (lowerText.includes(tokens.slice(i, i+3).join(' '))) return true;
@@ -395,6 +397,44 @@ class NhanXetEngineV2 {
     loadData(data) {
         this.data = data;
         return this;
+    }
+
+    /**
+     * V6.1.0: Nạp ngân hàng năng lực, phẩm chất dành cho Giữa HK1 / Giữa HK2.
+     * Thiếu file thì NLPC vẫn chạy với ngân hàng chung.
+     */
+    loadNLPCGiuaKyData(data) {
+        this.nlpcGiuaKy = (data && data.nlpc) || null;
+        return this;
+    }
+
+    /**
+     * V6.1.0: Ghép từng nhận xét với đúng dòng học sinh trên vnEdu trước khi ghi.
+     * Khớp STT + họ tên; STT lệch thì tìm theo họ tên nếu tên đó là duy nhất.
+     * Không bao giờ ghi theo STT mà tên khác: thà báo lỗi còn hơn ghi nhầm người.
+     * Trả { matched: [{ row, item }], missing: [item] }.
+     */
+    static matchApplyRows(rows, items) {
+        const norm = (s) => String(s || '').normalize('NFC').replace(/\s+/g, ' ').trim().toLowerCase();
+        const countBy = (list, get) => {
+            const m = new Map();
+            for (const x of list) m.set(norm(get(x)), (m.get(norm(get(x))) || 0) + 1);
+            return m;
+        };
+        const rowNames = countBy(rows, r => r.hoVaTen);
+        const itemNames = countBy(items, i => i.hoVaTen);
+        const matched = [];
+        const missing = [];
+        for (const item of items) {
+            const name = norm(item.hoVaTen);
+            let row = name ? rows.find(r => r.stt === item.stt && norm(r.hoVaTen) === name) : null;
+            if (!row && name && rowNames.get(name) === 1 && itemNames.get(name) === 1) {
+                row = rows.find(r => norm(r.hoVaTen) === name);
+            }
+            if (row && row.textarea) matched.push({ row, item });
+            else missing.push(item);
+        }
+        return { matched, missing };
     }
 
     /**
@@ -657,6 +697,9 @@ class NhanXetEngineV2 {
             pushIfArr(subject[ky][tier]);
         }
 
+        // V6.1.0: số câu riêng của kỳ/lớp, phần sau là ngân hàng chung mọi kỳ.
+        const soCauRieng = merged.length;
+
         // 3. V2.3.9: 'all' / 'all_ky' (THDienLien — chung mọi lớp/kỳ)
         if (subject.grades && subject.grades['all'] && subject.grades['all']['all_ky']) {
             const allNode = subject.grades['all']['all_ky'];
@@ -676,6 +719,7 @@ class NhanXetEngineV2 {
             if (Array.isArray(subject.ht)) return subject.ht;
             return [];
         }
+        merged.soCauRieng = soCauRieng;
         return merged;
     }
 
@@ -1045,8 +1089,12 @@ class NhanXetEngineV2 {
             return v.ok ? withSuffix : null;
         };
 
+        // V6.1.0: Giữa HK1 ưu tiên câu riêng của kỳ/lớp đến khi dùng hết trong lớp.
+        // Các kỳ khác giữ nguyên cách chọn cũ vì ngân hàng chưa được rà lại.
+        const cauRieng = ky === 'ghk1' && pool.soCauRieng ? pool.slice(0, pool.soCauRieng) : null;
         for (let attempt = 0; attempt < 10; attempt++) {
-            const candidate = this.chonKhongTrungLap(pool, seed ? seed + '|' + attempt : null);
+            const dangChon = cauRieng && cauRieng.some(p => !this.usedPhrases.has(p)) ? cauRieng : pool;
+            const candidate = this.chonKhongTrungLap(dangChon, seed ? seed + '|' + attempt : null);
             if (!candidate) break;
             const result = tryValidate(candidate);
             if (result) { phrase = result; break; }
@@ -1160,8 +1208,12 @@ class NhanXetEngineV2 {
             return 'tot';
         };
 
-        const pickFrom = (branch, mucDo) => {
-            const pool = branch[mucDo] || branch.ht || [];
+        // V6.1.0: Giữa kỳ ưu tiên câu giữa kỳ; dùng hết trong lớp thì mới sang ngân hàng chung.
+        const laGiuaKy = (hsContext?.kyCode === 'ghk1' || hsContext?.kyCode === 'ghk2') && !!this.nlpcGiuaKy;
+        const pickFrom = (branch, mucDo, secKey, fieldKey) => {
+            const generalPool = branch[mucDo] || branch.ht || [];
+            const midPool = laGiuaKy ? this.nlpcGiuaKy[secKey]?.[fieldKey]?.[mucDo] : null;
+            const pool = (midPool && midPool.some(p => !this.usedPhrases.has(p))) ? midPool : generalPool;
             const phrase = this.chonKhongTrungLap(pool) || '';
             const enriched = this._enrichNLPCPhrase(phrase, mucDo);
             // V6.1: NLPC cũng áp văn phong học bạ (TT27 — không xưng "Em")
@@ -1174,14 +1226,14 @@ class NhanXetEngineV2 {
         const nlpc = this.data.nlpc;
 
         const mucNLC = tongHopMuc(danhGia.nang_luc_chung || {});
-        result.nang_luc_chung['Nhận xét chung'] = pickFrom(nlpc.nang_luc_chung.nhan_xet_chung, mucNLC);
+        result.nang_luc_chung['Nhận xét chung'] = pickFrom(nlpc.nang_luc_chung.nhan_xet_chung, mucNLC, 'nang_luc_chung', 'nhan_xet_chung');
         for (const key of ['tu_chu_tu_hoc', 'giao_tiep_hop_tac', 'giai_quyet_van_de']) {
             const mucDo = (danhGia.nang_luc_chung || {})[key] || 'ht';
-            result.nang_luc_chung[this._getNLCLabel(key)] = pickFrom(nlpc.nang_luc_chung[key], mucDo);
+            result.nang_luc_chung[this._getNLCLabel(key)] = pickFrom(nlpc.nang_luc_chung[key], mucDo, 'nang_luc_chung', key);
         }
 
         const mucNLDT = tongHopMuc(danhGia.nang_luc_dac_thu || {});
-        result.nang_luc_dac_thu['Nhận xét chung'] = pickFrom(nlpc.nang_luc_dac_thu.nhan_xet_chung, mucNLDT);
+        result.nang_luc_dac_thu['Nhận xét chung'] = pickFrom(nlpc.nang_luc_dac_thu.nhan_xet_chung, mucNLDT, 'nang_luc_dac_thu', 'nhan_xet_chung');
         // V1.5: Năng lực Khoa học chỉ áp dụng lớp 4-5 (CT GDPT 2018 — môn Khoa học bắt đầu từ
         // lớp 4; lớp 1-3 chỉ học TNXH). Lớp 3-5 thêm Công nghệ + Tin học (TT27 quy định).
         // Khi KHÔNG detect được gradeLevel → MẶC ĐỊNH thêm đủ (an toàn cho lớp 4-5).
@@ -1195,14 +1247,14 @@ class NhanXetEngineV2 {
         }
         for (const key of nldtKeys) {
             const mucDo = (danhGia.nang_luc_dac_thu || {})[key] || 'ht';
-            result.nang_luc_dac_thu[this._getNLDTLabel(key)] = pickFrom(nlpc.nang_luc_dac_thu[key], mucDo);
+            result.nang_luc_dac_thu[this._getNLDTLabel(key)] = pickFrom(nlpc.nang_luc_dac_thu[key], mucDo, 'nang_luc_dac_thu', key);
         }
 
         const mucPC = tongHopMuc(danhGia.pham_chat || {});
-        result.pham_chat['Nhận xét chung'] = pickFrom(nlpc.pham_chat.nhan_xet_chung, mucPC);
+        result.pham_chat['Nhận xét chung'] = pickFrom(nlpc.pham_chat.nhan_xet_chung, mucPC, 'pham_chat', 'nhan_xet_chung');
         for (const key of ['yeu_nuoc', 'nhan_ai', 'cham_chi', 'trung_thuc', 'trach_nhiem']) {
             const mucDo = (danhGia.pham_chat || {})[key] || 'ht';
-            result.pham_chat[this._getPCLabel(key)] = pickFrom(nlpc.pham_chat[key], mucDo);
+            result.pham_chat[this._getPCLabel(key)] = pickFrom(nlpc.pham_chat[key], mucDo, 'pham_chat', key);
         }
 
         return result;
@@ -1239,13 +1291,18 @@ class NhanXetEngineV2 {
     }
 
     /**
-     * v0.1.11 — Enrich NLPC phrase: nếu câu < minLen ký tự thì append 1 vế bổ sung
-     * cho đủ ý + dài đúng yêu cầu Vnedu (≥65 ký tự).
+     * v0.1.11 — Enrich NLPC phrase: nếu câu < minLen ký tự thì append 1 vế bổ sung.
+     *
+     * V6.0.5 (2026-05-30): minLen 65 → 36. Lý do: ngân hàng câu NL/PC đã được
+     * biên tập chủ động ~50% câu 1 dòng (40-48 ký tự) + ~50% câu 2 dòng (≥56 ký tự)
+     * để KHÔNG tràn ô khi trích Học bạ. Hạ minLen để câu ngắn được giữ nguyên 1 dòng
+     * (đồng thời diệt bug độn lặp locator kiểu "...hằng ngày hằng ngày"). Enrich giờ
+     * chỉ còn là lưới an toàn cho câu lỗi/quá ngắn (<36 ký tự).
      *
      * Vế bổ sung pick từ NhanXetEngineV2.NLPC_ENRICH_BANK theo tier (tot/ht/cht).
      * Cách insert: bỏ dấu chấm cuối, append " " + enrich + ".".
      */
-    _enrichNLPCPhrase(phrase, tier, minLen = 65) {
+    _enrichNLPCPhrase(phrase, tier, minLen = 36) {
         if (!phrase || phrase.length >= minLen) return phrase;
         const bank = NhanXetEngineV2.NLPC_ENRICH_BANK;
         const pool = bank[tier] || bank.ht;

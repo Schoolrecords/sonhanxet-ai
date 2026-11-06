@@ -29,6 +29,26 @@
     // null = dùng kyCode auto-detect từ Vnedu; nếu set → override.
     // Giá trị hợp lệ: 'ghk1' | 'chk1' | 'ghk2' | 'chk2' | null.
     let kyOverride = null;
+    let nlpcKyOverride = null;  // V6.1.0: 'giua' | 'cuoi' do GV chọn ở phần năng lực, phẩm chất
+
+    // V6.1.0: Kỳ cho phần năng lực, phẩm chất. Ưu tiên chữ Giữa/Cuối kỳ đọc được trên vnEdu;
+    // không đọc được thì đoán theo tháng (10-11, 3-4 là giữa kỳ). GV luôn đổi được.
+    function getNLPCKyLoai() {
+        if (nlpcKyOverride) return nlpcKyOverride;
+        const ky = (currentContext && currentContext.kyDanhGia) || '';
+        if (/giữa/i.test(ky)) return 'giua';
+        if (/cuối/i.test(ky)) return 'cuoi';
+        const thang = new Date().getMonth() + 1;
+        return [10, 11, 3, 4].includes(thang) ? 'giua' : 'cuoi';
+    }
+
+    function getNLPCKyCode() {
+        const hocKy = (currentContext && currentContext.hocKy) || '';
+        const thang = new Date().getMonth() + 1;
+        const hk2 = /2/.test(hocKy) || (!/1/.test(hocKy) && thang >= 1 && thang <= 6);
+        if (getNLPCKyLoai() === 'giua') return hk2 ? 'ghk2' : 'ghk1';
+        return hk2 ? 'chk2' : 'chk1';
+    }
 
     function getEffectiveKy() {
         if (kyOverride) return kyOverride;
@@ -164,6 +184,7 @@
         scheduleLicenseRecheck();
         showView('empty');
         requestContextFromContentScript();
+        maybeShowUpdateToast();
     }
 
     async function loadEngineWithData() {
@@ -192,6 +213,14 @@
             console.log('[Sidebar] V2.0 ky data loaded:', Object.keys(kyData.subjects).length, 'môn × 3 kỳ');
         } catch (e) {
             console.warn('[Sidebar] V2.0 ky data load fail (engine vẫn chạy chk2 default):', e);
+        }
+
+        // V6.1.0: câu năng lực, phẩm chất riêng cho giữa kỳ. Lỗi thì vẫn dùng ngân hàng chung.
+        try {
+            const mRes = await fetch(chrome.runtime.getURL('engine/data/nhanxet-nlpc-giuaky.json'));
+            engine.loadNLPCGiuaKyData(await mRes.json());
+        } catch (e) {
+            console.warn('[Sidebar] V6.1.0 không tải được câu NLPC giữa kỳ:', e);
         }
 
         // V2.2: load grade-specific phrases (Toán + TV × lớp 1-5 × chk2 × trend).
@@ -593,6 +622,55 @@
         toast.style.display = 'block';
         clearTimeout(toast._timer);
         toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    // V6.0.5: Toast "Đã cập nhật phiên bản" — hiện 1 lần cho mỗi version có
+    // thông báo (gate bằng chrome.storage.local 'updateNoticeSeen'). Chỉ những
+    // version được khai trong UPDATE_NOTICES mới pop → kiểm soát chủ động.
+    const UPDATE_NOTICES = {
+        '6.0.5': { title: 'Đã cập nhật phiên bản', sub: 'Dành cho Học bạ – Mẫu 02' },
+        '6.1.0': { title: 'Đã cập nhật phiên bản', sub: 'Dành cho nhận xét giữa kỳ' }
+    };
+
+    async function maybeShowUpdateToast() {
+        try {
+            const ver = chrome.runtime.getManifest().version;
+            const notice = UPDATE_NOTICES[ver];
+            if (!notice) return;
+            const { updateNoticeSeen } = await chrome.storage.local.get('updateNoticeSeen');
+            if (updateNoticeSeen === ver) return;            // đã xem ở phiên bản này
+            await chrome.storage.local.set({ updateNoticeSeen: ver });
+            showUpdateToast(notice.title, notice.sub, 'v' + ver);
+        } catch (e) {
+            console.warn('[Sidebar] update toast lỗi:', e);
+        }
+    }
+
+    function showUpdateToast(title, sub, verLabel) {
+        document.getElementById('snx-update-toast')?.remove();
+        const el = document.createElement('div');
+        el.id = 'snx-update-toast';
+        el.className = 'snx-update-toast';
+        el.setAttribute('role', 'status');
+        // Nội dung tĩnh (không có input người dùng) → innerHTML an toàn.
+        el.innerHTML =
+            '<div class="snx-update-ico">' +
+                '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+                    '<path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.4" ' +
+                    'stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</div>' +
+            '<div class="snx-update-body">' +
+                '<span class="snx-update-title">' + title +
+                    '<span class="snx-update-ver">' + verLabel + '</span></span>' +
+                '<span class="snx-update-sub">' + sub + '</span>' +
+            '</div>' +
+            '<div class="snx-update-bar"></div>';
+        document.body.appendChild(el);
+        // Tự tắt sau ~3s (thanh tiến trình chạy xong) rồi trượt ra.
+        setTimeout(() => {
+            el.classList.add('snx-hide');
+            setTimeout(() => el.remove(), 420);
+        }, 3450);
     }
 
     window.addEventListener('message', (e) => {
@@ -1040,7 +1118,7 @@
         for (const s of currentStudents) {
             const gen = generatedNhanXet.get(s.hoVaTen);
             if (gen) {
-                items.push({ stt: s.stt, nhanXet: gen.nhanXet });
+                items.push({ stt: s.stt, hoVaTen: s.hoVaTen, nhanXet: gen.nhanXet });
             }
         }
 
@@ -1050,7 +1128,7 @@
         }, '*');
     }
 
-    function handleApplyResult({ success, failed, total }) {
+    function handleApplyResult({ success, failed, total, failedNames }) {
         const modal = document.getElementById('result-modal');
         const titleEl = document.getElementById('modal-title');
         const msgEl = document.getElementById('modal-message');
@@ -1062,11 +1140,11 @@
         } else if (success > 0) {
             modal.querySelector('.modal').classList.remove('error');
             titleEl.textContent = 'Áp dụng một phần';
-            msgEl.textContent = `Thành công ${success}/${total}. ${failed} nhận xét không ghi được.`;
+            msgEl.textContent = `Thành công ${success}/${total}. Chưa ghi được: ${(failedNames || []).join(', ')}. Bảng vnEdu có thể đã thay đổi, thầy cô bấm cập nhật dữ liệu rồi tạo lại cho các em này.`;
         } else {
             modal.querySelector('.modal').classList.add('error');
             titleEl.textContent = 'Không thể áp dụng';
-            msgEl.textContent = `Tất cả ${total} nhận xét đều thất bại.`;
+            msgEl.textContent = `Chưa ghi được nhận xét nào trong ${total} nhận xét. Bảng vnEdu có thể đã thay đổi, thầy cô bấm cập nhật dữ liệu rồi tạo lại.`;
         }
 
         modal.style.display = 'flex';
@@ -1146,7 +1224,18 @@
         document.getElementById('nlpc-context-box').innerHTML = `
             <strong>Phẩm chất - Năng lực ghi học bạ</strong> · Lớp ${escapeHtml(ctx.lop || '?')}
             ${ctx.hocKy ? ' · ' + escapeHtml(ctx.hocKy) : ''}
+            <div class="context-ky-row">
+                <label class="context-ky-label" for="nlpc-ky-select">Kỳ nhận xét:</label>
+                <select id="nlpc-ky-select" class="context-ky-select">
+                    <option value="giua" ${getNLPCKyLoai() === 'giua' ? 'selected' : ''}>Giữa kỳ</option>
+                    <option value="cuoi" ${getNLPCKyLoai() === 'cuoi' ? 'selected' : ''}>Cuối kỳ</option>
+                </select>
+            </div>
         `;
+        document.getElementById('nlpc-ky-select').onchange = (e) => {
+            nlpcKyOverride = e.target.value;
+            showToast('Đã đổi kỳ. Bấm tạo lại để nhận xét theo kỳ mới.');
+        };
 
         // V.06: cập nhật label "Cả lớp (N HS · HK)" trong bulk section
         const bulkTitleEl = document.getElementById('nlpc-bulk-title');
@@ -1376,7 +1465,7 @@
         try {
             // engine.sinhNLPCDayDu trả 3 section, mỗi section có 'Nhận xét chung' + N trường con
             const result = engine.sinhNLPCDayDu(
-                { hoVaTen: hs.hoVaTen, gradeLevel },
+                { hoVaTen: hs.hoVaTen, gradeLevel, kyCode: getNLPCKyCode() },
                 danhGia
             );
             nlpcGenerated = convertGeneratedToPayload(result);
@@ -1664,7 +1753,7 @@
                 else withGradesCount++;
 
                 const result = engine.sinhNLPCDayDu(
-                    { hoVaTen: hs.hoVaTen, gradeLevel },
+                    { hoVaTen: hs.hoVaTen, gradeLevel, kyCode: getNLPCKyCode() },
                     danhGia
                 );
                 const payload = convertGeneratedToPayload(result);
@@ -2027,6 +2116,8 @@
 
             info.style.display = 'block';
             document.getElementById('lic-info-sdt').textContent = state.sdt || '—';
+            const maEl = document.getElementById('lic-info-ma');
+            if (maEl) maEl.textContent = state.ma || '(xem nội dung đã chuyển khoản)';
             document.getElementById('lic-info-name').textContent = state.gv_ho_ten || '(chưa cập nhật)';
             document.getElementById('lic-info-until').textContent = formatDateVi_(state.validUntil) || '—';
             document.getElementById('lic-info-remaining').textContent = formatRemaining_(state.validUntil);
@@ -2044,22 +2135,25 @@
             document.getElementById('lic-pending-sdt').textContent = state.sdt || '—';
             document.getElementById('lic-pending-name').textContent = state.hoTen || '—';
             // V6: mã = SĐT cho user mới, hoặc mã 4 ký tự cho user cũ. Server đã trả `ma`.
-            document.getElementById('lic-pending-ma').textContent = state.ma || '—';
+            // 05/11/2026: nội dung CK "NX K7M3" — SePay tự nhận diện, tự mở khoá.
+            const ck = (LicenseClient.thongTinChuyenKhoan
+                ? LicenseClient.thongTinChuyenKhoan(state.ma, state.soTien)
+                : { noiDung: state.ma, qrUrl: null });
+            document.getElementById('lic-pending-ma').textContent = ck.noiDung || '—';
+            const tienEl = document.getElementById('lic-pending-tien');
+            if (tienEl) tienEl.textContent = Number(ck.soTien || 50000).toLocaleString('vi-VN') + 'đ';
 
-            // V6.1.2: caption dynamic — admin/legacy có mã khác SĐT
             const hintEl = document.getElementById('lic-ck-hint');
             if (hintEl) {
-                const maEqualsSdt = state.ma && state.sdt &&
-                    String(state.ma).replace(/\s+/g,'') === String(state.sdt).replace(/\s+/g,'');
-                hintEl.textContent = maEqualsSdt
-                    ? '(Chính là số điện thoại của thầy/cô — gõ đúng để hệ thống nhận diện)'
-                    : '(Gõ đúng nội dung trên khi chuyển khoản — hệ thống sẽ tự nhận diện thanh toán)';
+                hintEl.textContent = ck.qrUrl
+                    ? '(Quét mã QR là đã có sẵn số tiền và nội dung. Chuyển xong hệ thống tự kích hoạt.)'
+                    : '(Gõ đúng nội dung trên khi chuyển khoản — hệ thống tự nhận diện và kích hoạt)';
             }
 
-            // Load ảnh QR từ thư mục extension
+            // QR có sẵn số tiền + nội dung (nếu đã cài tài khoản), không thì ảnh qr.png
             const qrImg = document.getElementById('lic-qr-img');
             try {
-                qrImg.src = chrome.runtime.getURL('license/qr.png');
+                qrImg.src = ck.qrUrl || chrome.runtime.getURL('license/qr.png');
                 qrImg.style.display = '';
                 document.getElementById('lic-qr-fallback').style.display = 'none';
             } catch (e) { /* extension context khác */ }
@@ -2301,8 +2395,8 @@
             'sdt_chua_dang_ky': 'SĐT chưa đăng ký. Bấm "Bắt đầu kích hoạt" trước.',
             'ma_khong_dung': 'Mã không khớp với SĐT. Kiểm tra lại.',
             'chua_thanh_toan': 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi CK. Nếu đã CK lâu, nhắn Zalo thầy Chung 0913031073.',
-            'da_dung_cho_may_khac': 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 30k/1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.',
-            'da_kich_hoat_o_may_khac': 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 30k/1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.',
+            'da_dung_cho_may_khac': 'SĐT này đã có bản quyền. Bấm "Đăng nhập trên máy khác" rồi nhập SĐT + mã đăng nhập 4 ký tự.',
+            'da_kich_hoat_o_may_khac': 'SĐT này đã có bản quyền. Bấm "Đăng nhập trên máy khác" rồi nhập SĐT + mã đăng nhập 4 ký tự (chính là nội dung đã chuyển khoản, vd NX K7M3 → k7m3).',
             'het_han': 'Đã hết hạn. Đăng ký gia hạn (thao tác lại từ đầu).',
             'sdt_da_bi_khoa': 'SĐT đã bị khóa. Nhắn Zalo thầy Chung 0913031073.',
             'thieu_device_fingerprint': 'Không lấy được mã định danh thiết bị.',

@@ -773,6 +773,20 @@ body {
     letter-spacing: 0.2px;
 }
 
+.footer-cheo {
+    font-size: 11px;
+    color: #6B6A64;
+    letter-spacing: 0;
+    margin-bottom: 2px;
+}
+
+.footer-cheo a {
+    color: #2B4F9E;
+    font-weight: 600;
+}
+
+.footer-cheo a:hover { text-decoration: underline; }
+
 .copyright.on-dark {
     color: #FFFFFF;
 }
@@ -2053,3 +2067,83 @@ body {
     line-height: 1.4;
     font-style: italic;
 }
+
+/* ============================================================
+   V6.0.5 — Toast cập nhật phiên bản
+   Hiện 1 lần/phiên bản, trượt xuống từ trên, tự tắt sau ~3s.
+   Khớp nhận diện: navy #2B4F9E/#0C447C + gold #FFC107/#D97706.
+   ============================================================ */
+.snx-update-toast {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 230px;
+    max-width: calc(100% - 24px);
+    padding: 11px 15px 13px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(15, 40, 90, 0.20), 0 2px 6px rgba(15, 40, 90, 0.08);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transform: translateX(-50%) translateY(-24px);
+    animation: snx-toast-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.snx-update-toast.snx-hide {
+    animation: snx-toast-out 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.snx-update-toast::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #2B4F9E 0%, #0C447C 100%);
+}
+.snx-update-ico {
+    flex: 0 0 auto;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2B4F9E 0%, #3E69BC 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(43, 79, 158, 0.35);
+}
+.snx-update-ico svg { width: 20px; height: 20px; display: block; }
+.snx-update-ico svg path {
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+    animation: snx-check-draw 0.5s 0.28s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.snx-update-body { display: flex; flex-direction: column; line-height: 1.3; }
+.snx-update-title {
+    font-size: 13px; font-weight: 700; color: #1F3A6E;
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+}
+.snx-update-ver {
+    font-size: 10px; font-weight: 700; color: #B45309;
+    background: #FFF7E6; border: 1px solid #FCE3B5;
+    padding: 1px 6px; border-radius: 999px; letter-spacing: 0.2px;
+}
+.snx-update-sub { font-size: 12px; color: #5F5E5A; margin-top: 1px; white-space: nowrap; }
+.snx-update-bar {
+    position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+    background: linear-gradient(90deg, #FFC107 0%, #D97706 100%);
+    transform-origin: left center;
+    animation: snx-bar-shrink 3s linear 0.45s forwards;
+}
+@keyframes snx-toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-24px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes snx-toast-out {
+    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+    to   { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+@keyframes snx-check-draw { to { stroke-dashoffset: 0; } }
+@keyframes snx-bar-shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }

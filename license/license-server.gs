@@ -57,7 +57,12 @@ const TT = {
   HET_HAN: 'het_han',
   KHOA: 'khoa'
 };
-const SO_TIEN_MAC_DINH = 30000;
+// 06/11/2026: giá mới 50.000đ/năm học. Bản tiện ích cũ (≤6.0.6, màn hình còn ghi 30.000đ,
+// không gửi phienBan) vẫn tính 30.000đ cho đến khi tự cập nhật. Số tiền cần trả lưu theo
+// từng dòng (cột so_tien) lúc đăng ký → SePay so với đúng dòng đó.
+const SO_TIEN_MAC_DINH = 50000;
+const GIA_BAN_CU = 30000;
+function giaTheoBan_(body) { return (body && body.phienBan) ? SO_TIEN_MAC_DINH : GIA_BAN_CU; }
 const HAN_DUNG_NGAY = 365;
 
 // V6: tolerant — mã có thể là SĐT 10 số (flow mới) HOẶC 4 ký tự (flow cũ GV v2).
@@ -100,6 +105,8 @@ function doGet(e) {
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents || '{}');
+    // 05/11/2026: SePay báo có (đi qua Worker cầu nối, URL kèm ?token=...)
+    if (laBaoCoSePay_(e, body)) return jsonOut_(nhanBaoCoSePay_(e, body));
     if (!rateLimitOK_(body)) return jsonOut_({ ok: false, error: 'rate_limit' });
     const action = body.action;
 
@@ -162,6 +169,7 @@ function dangKy_(body) {
 
   const row = findRowBySdt_(sheet, sdt);
   const isAdmin = isAdminSdt_(sdt);
+  const gia = giaTheoBan_(body);
 
   // ADMIN: luôn cho phép re-register, reset state về da_tra_tien để có thể bind ngay.
   // Mã dùng ADMIN_FIXED_MA → thầy luôn dùng cùng 1 mã, dễ nhớ.
@@ -199,7 +207,7 @@ function dangKy_(body) {
       return {
         ok: true, daDangKyTruoc: true,
         sdt: sdt, hoTen: v[COL.ho_ten - 1], ma: maCu,
-        soTien: SO_TIEN_MAC_DINH,
+        soTien: Number(v[COL.so_tien - 1]) || gia,
         message: 'SĐT này đã đăng ký trước. Vui lòng chuyển khoản với nội dung: ' + maCu
       };
     }
@@ -215,10 +223,11 @@ function dangKy_(body) {
     }
 
     if (trangThai === TT.DA_KICH_HOAT) {
-      // CHÍNH SÁCH 30k/1 MÁY: từ chối, yêu cầu Zalo thầy reset.
+      // 05/11/2026: dùng được mọi máy, nhưng máy mới phải nhập SĐT + MÃ (không lộ mã
+      // cho người chỉ biết SĐT). Giữ mã lỗi cũ để bản 6.0.6 trên Store vẫn hiểu.
       return {
         ok: false, error: 'da_kich_hoat_o_may_khac',
-        message: 'SĐT này đã kích hoạt ở máy khác. Theo chính sách 1 license cho 1 máy, vui lòng nhắn Zalo thầy Chung 0913031073 để được hỗ trợ.'
+        message: 'SĐT này đã có bản quyền. Trên máy mới, bấm "Đăng nhập" rồi nhập SĐT và mã đăng nhập (chính là nội dung thầy/cô đã chuyển khoản).'
       };
     }
 
@@ -250,7 +259,7 @@ function dangKy_(body) {
     sheet.getRange(row, COL.ma_bi_mat).setValue("'" + ma);
     sheet.getRange(row, COL.ho_ten).setValue(hoTen);
     sheet.getRange(row, COL.ngay_dang_ky).setValue(now);
-    sheet.getRange(row, COL.so_tien).setValue(SO_TIEN_MAC_DINH);
+    sheet.getRange(row, COL.so_tien).setValue(gia);
     sheet.getRange(row, COL.da_thanh_toan).setValue(false);
     sheet.getRange(row, COL.ngay_thanh_toan).setValue('');
     sheet.getRange(row, COL.ngay_kich_hoat).setValue('');
@@ -263,7 +272,7 @@ function dangKy_(body) {
     // không cắt số 0 đầu. Apostrophe không hiển thị trong cell.
     sheet.appendRow([
       "'" + sdt, hoTen, "'" + ma,
-      now, SO_TIEN_MAC_DINH, isAdmin, isAdmin ? now : '',
+      now, gia, isAdmin, isAdmin ? now : '',
       '', '',
       '', '', isAdmin ? TT.DA_TRA_TIEN : TT.CHO_THANH_TOAN,
       isAdmin ? 'ADMIN · auto-bypass' : ''
@@ -273,7 +282,7 @@ function dangKy_(body) {
   return {
     ok: true, daDangKyTruoc: false,
     sdt: sdt, hoTen: hoTen, ma: ma,
-    soTien: isAdmin ? 0 : SO_TIEN_MAC_DINH,
+    soTien: isAdmin ? 0 : gia,
     alreadyPaid: !!isAdmin,
     message: isAdmin
       ? '[ADMIN] Đăng ký thành công. Tự bind máy ngay.'
@@ -353,7 +362,7 @@ function dangNhap_(body) {
     if (!v[COL.ngay_thanh_toan - 1]) {
       sheet.getRange(row, COL.ngay_thanh_toan).setValue(ngayTraTien);
     }
-    ngayHetHan = new Date(ngayTraTien.getFullYear() + 1, ngayTraTien.getMonth(), ngayTraTien.getDate());
+    ngayHetHan = hetHanNamHoc_(ngayTraTien);
     sheet.getRange(row, COL.ngay_het_han).setValue(ngayHetHan);
   }
 
@@ -362,15 +371,12 @@ function dangNhap_(body) {
     return { ok: false, error: 'het_han' };
   }
 
-  // CHÍNH SÁCH 30k/1 MÁY: nếu đã bind máy khác, từ chối (trừ admin).
-  if (fpHienTai && fpHienTai !== deviceFp && !isAdminSdt_(sdt)) {
-    return { ok: false, error: 'da_dung_cho_may_khac',
-             message: 'Tài khoản đã kích hoạt ở máy khác. Theo chính sách 1 license cho 1 máy, vui lòng nhắn Zalo thầy Chung 0913031073.' };
-  }
-
-  // OK: bind máy này (admin: luôn ghi đè fp)
+  // 05/11/2026 — MỌI MÁY (như Bút Xanh): không chặn máy khác nữa. Đã đúng SĐT + mã
+  // thì cho dùng; mỗi máy ghi vào tab ThietBi, cột N đếm số máy 30 ngày (> 5 tô đỏ).
+  // Cột device_fp nay là "máy dùng gần nhất".
   const now = new Date();
-  if (!fpHienTai || isAdminSdt_(sdt)) sheet.getRange(row, COL.device_fp).setValue(deviceFp);
+  if (fpHienTai !== deviceFp) sheet.getRange(row, COL.device_fp).setValue(deviceFp);
+  ghiThietBi_(sheet, row, sdt, deviceFp, deviceInfo, true);
   if (!v[COL.ngay_kich_hoat - 1]) sheet.getRange(row, COL.ngay_kich_hoat).setValue(now);
   sheet.getRange(row, COL.last_check).setValue(now);
   sheet.getRange(row, COL.trang_thai).setValue(TT.DA_KICH_HOAT);
@@ -409,11 +415,14 @@ function checkLicense_(body) {
   let ngayHetHan = v[COL.ngay_het_han - 1];
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
-  if (fpHienTai && fpHienTai !== deviceFp) return { ok: false, error: 'sai_thiet_bi' };
   if (ngayHetHan && new Date(ngayHetHan).getTime() < Date.now()) {
     sheet.getRange(row, COL.trang_thai).setValue(TT.HET_HAN);
     return { ok: false, error: 'het_han', validUntil: toIso_(ngayHetHan) };
   }
+  // 05/11/2026: chỉ máy đã qua dangNhap (đúng mã) mới có bản quyền ở máy; ở đây
+  // không chặn máy khác nữa, chỉ ghi nhận để đếm số máy.
+  if (fpHienTai !== deviceFp) sheet.getRange(row, COL.device_fp).setValue(deviceFp);
+  ghiThietBi_(sheet, row, sdt, deviceFp, '', false);
 
   sheet.getRange(row, COL.last_check).setValue(new Date());
   return {
@@ -479,7 +488,7 @@ function autoUpgradePaid_(sheet, row, v) {
   }
   if (!v[COL.ngay_het_han - 1]) {
     const ngayTraTien = new Date(v[COL.ngay_thanh_toan - 1] || now);
-    const hetHan = new Date(ngayTraTien.getFullYear() + 1, ngayTraTien.getMonth(), ngayTraTien.getDate());
+    const hetHan = hetHanNamHoc_(ngayTraTien);
     sheet.getRange(row, COL.ngay_het_han).setValue(hetHan);
     v[COL.ngay_het_han - 1] = hetHan;
   }
@@ -671,6 +680,14 @@ function toIso_(d) {
 // =============== SETUP + ADMIN UI ===============
 
 function setupSheet() {
+  // 05/11/2026: hỏi lại trước khi xoá — bấm nhầm mục này là mất toàn bộ bản quyền.
+  const ui0 = SpreadsheetApp.getUi();
+  const sh0 = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (sh0 && sh0.getLastRow() > 1) {
+    const r0 = ui0.prompt('⚠ XOÁ SẠCH tab License (' + (sh0.getLastRow() - 1) + ' dòng)?',
+                          'Gõ chữ XOA để xác nhận, mọi bản quyền sẽ mất:', ui0.ButtonSet.OK_CANCEL);
+    if (r0.getSelectedButton() !== ui0.Button.OK || r0.getResponseText().trim() !== 'XOA') return;
+  }
   const ss = SpreadsheetApp.getActive();
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
@@ -701,6 +718,9 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('🔑 Sổ NX - AI')
     .addItem('💰 Tick thanh toán theo SĐT... (V6 — khuyên dùng)', 'tickThanhToanTheoSdt')
     .addItem('💰 Tick theo mã 4 ký tự... (GV v2 cũ)', 'tickDaThanhToan')
+    .addItem('🏦 Mở khoá tay một giao dịch SePay "CHỜ XỬ LÝ TAY"...', 'moKhoaTayGiaoDichUI')
+    .addItem('📊 Cập nhật cột số máy (30 ngày)', 'capNhatSoMayToanBo')
+    .addItem('🔗 Cài kết nối SePay (lần đầu)...', 'caiKetNoiSePay')
     .addSeparator()
     .addItem('🔧 Khôi phục mã ngắn V5 (HOTFIX — chạy 1 lần)', 'khoiPhucMaNgan_V5Compat')
     .addItem('⚡ Đồng bộ trạng thái các row tick tay cột F (FIX 21/5)', 'dongBoTrangThaiTickTay')
@@ -750,7 +770,7 @@ function tickThanhToanTheoSdt() {
   }
 
   const now = new Date();
-  const hetHan = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+  const hetHan = hetHanNamHoc_(now);
 
   sheet.getRange(row, COL.da_thanh_toan).setValue(true);
   sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
@@ -794,7 +814,7 @@ function tickDaThanhToan() {
   }
 
   const now = new Date();
-  const hetHan = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+  const hetHan = hetHanNamHoc_(now);
 
   sheet.getRange(row, COL.da_thanh_toan).setValue(true);
   sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
@@ -823,7 +843,8 @@ function resetThietBiUI() {
 
   sheet.getRange(row, COL.device_fp).setValue('');
   sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
-  ui.alert('✓ Đã reset thiết bị cho ' + sdt + '.\n\nCô có thể vào extension trên máy mới, nhập SĐT + tên → tự kích hoạt.');
+  ui.alert('✓ Đã reset thiết bị cho ' + sdt + '.\n\nCô có thể vào extension trên máy mới, nhập SĐT + tên → tự kích hoạt.\n' +
+           '(Từ 05/11/2026 dùng được mọi máy, thường không cần reset: máy mới chỉ cần Đăng nhập bằng SĐT + mã.)');
 }
 
 function khoaSdtUI() {
@@ -915,4 +936,304 @@ function donDepHangTrong() {
       'Các hàng trống ở dưới đã được dọn sạch.'
     );
   } catch (e) { /* không có UI */ }
+}
+
+// =====================================================================
+// 05/11/2026 — TỰ KÍCH HOẠT QUA SEPAY (như Bút Xanh) + DÙNG MỌI MÁY
+// ---------------------------------------------------------------------
+// Luồng: GV chuyển khoản, nội dung = mã đăng nhập (4 ký tự, vd "NX K7M3"
+// hoặc chỉ "K7M3") hoặc SĐT → ngân hàng báo có → SePay gọi Worker cầu nối
+// (cloudflare/worker-sepay-sonhanxet.js) → Worker chuyển tiếp vào đây kèm
+// ?token=... → tìm ĐÚNG MỘT GV đang "cho_thanh_toan" khớp nội dung → đánh dấu
+// đã trả tiền → tiện ích của GV (đang hỏi máy chủ 20-120 giây/lần) tự kích hoạt.
+// Bản 6.0.6 đang trên Store cũng tự kích hoạt được, không phải cập nhật.
+//
+// Nguyên tắc: không chắc thì KHÔNG mở. Không thấy mã, khớp nhiều người, thiếu
+// tiền → ghi "CHỜ XỬ LÝ TAY" ở tab GiaoDich để thầy xử lý bằng menu.
+// Script Properties cần có: SEPAY_TOKEN (menu "Cài kết nối SePay").
+// Tuỳ chọn: SEPAY_TAI_KHOAN = số tài khoản nhận tiền (bỏ qua giao dịch TK khác).
+// =====================================================================
+
+const TAB_GIAO_DICH = 'GiaoDich';
+const HEADERS_GD = ['thoi_diem', 'ma_giao_dich', 'so_tien', 'noi_dung', 'ket_qua', 'giao_vien', 'ghi_chu'];
+const TAB_THIET_BI = 'ThietBi';
+const HEADERS_TB = ['sdt', 'device_fp', 'thong_tin_may', 'lan_dau', 'lan_cuoi'];
+const COL_SO_MAY = 14;           // cột N tab License: số máy dùng trong 30 ngày
+const NGUONG_MAY_NGHI = 5;       // quá số này thì tô đỏ để thầy xem
+
+/** Hạn dùng = 23:59:59 ngày 31/8 cuối năm học (năm học tính từ tháng 6). */
+function hetHanNamHoc_(ngay) {
+  const d = ngay ? new Date(ngay) : new Date();
+  const y = Number(Utilities.formatDate(d, 'GMT+7', 'yyyy'));
+  const m = Number(Utilities.formatDate(d, 'GMT+7', 'M'));
+  const batDau = (m >= 6) ? y : y - 1;
+  return new Date(batDau + 1, 7, 31, 23, 59, 59);
+}
+
+function laBaoCoSePay_(e, body) {
+  const p = (e && e.parameter) || {};
+  if (p.token) return true;
+  return !body.action && (body.transferAmount !== undefined || body.transfer_amount !== undefined);
+}
+
+/** Bóc các ứng viên trong nội dung CK: mã 4 ký tự (đứng riêng, hoặc dính sau "NX") + SĐT. */
+function bocUngVien_(noiDung) {
+  const hoa = String(noiDung || '').toUpperCase();
+  const ma = {}, sdt = {};
+  const hopLe = new RegExp('^[' + MA_CHARSET.toUpperCase() + ']{4}$');
+  hoa.split(/[^A-Z0-9]+/).forEach(function (t) {
+    if (t.length === 4 && hopLe.test(t)) ma[t.toLowerCase()] = 1;
+    if (t.length === 6 && t.indexOf('NX') === 0 && hopLe.test(t.slice(2))) ma[t.slice(2).toLowerCase()] = 1;
+  });
+  let m;
+  const reNX = /NX([A-Z0-9]{4})(?![A-Z0-9])/g;   // dính liền chữ phía trước, vd "...SEVQRNXK7M3"
+  while ((m = reNX.exec(hoa)) !== null) if (hopLe.test(m[1])) ma[m[1].toLowerCase()] = 1;
+  const reSdt = /(?:^|\D)(0\d{9}|84\d{9})(?!\d)/g;
+  while ((m = reSdt.exec(hoa)) !== null) { const s = chuanHoaSdt_(m[1]); if (s) sdt[s] = 1; }
+  return { ma: Object.keys(ma), sdt: Object.keys(sdt) };
+}
+
+function nhanBaoCoSePay_(e, d) {
+  const batDau = Date.now();
+  const log = { maGD: '', soTien: 0, noiDung: '', ketQua: '', gv: '', ghiChu: '' };
+  const tokenDung = PropertiesService.getScriptProperties().getProperty('SEPAY_TOKEN') || '';
+  const tokenGui = String(((e && e.parameter) || {}).token || '');
+  if (!tokenDung || tokenGui !== tokenDung) return { success: false, message: 'Sai token' };
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    log.maGD = String(d.referenceCode || d.reference_code || d.id || '');
+    log.soTien = Number(d.transferAmount || d.transfer_amount || d.amount || 0);
+    log.noiDung = String(d.content || d.description || '');
+
+    const loai = String(d.transferType || d.transfer_type || '').toLowerCase();
+    if (loai && loai !== 'in') { log.ketQua = 'BỎ QUA'; log.ghiChu = 'Tiền ra'; return xong_(log, batDau); }
+
+    const tkDung = PropertiesService.getScriptProperties().getProperty('SEPAY_TAI_KHOAN') || '';
+    const tkGui = String(d.accountNumber || d.account_number || '');
+    if (tkDung && tkGui && tkGui !== tkDung) {
+      log.ketQua = 'BỎ QUA'; log.ghiChu = 'Tài khoản ' + tkGui + ' không phải TK Sổ nhận xét';
+      return xong_(log, batDau);
+    }
+
+    if (log.maGD && daXuLyGD_(log.maGD)) { log.ketQua = 'BỎ QUA'; log.ghiChu = 'SePay gửi lại, đã xử lý'; return xong_(log, batDau, true); }
+
+    const uv = bocUngVien_(log.noiDung);
+    log.ghiChu = 'mã: ' + (uv.ma.join(',') || '—') + ' · SĐT: ' + (uv.sdt.join(',') || '—');
+
+    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+    const last = sheet.getLastRow();
+    const data = last >= 2 ? sheet.getRange(2, 1, last - 1, HEADERS.length).getValues() : [];
+    const cho = [], daTra = [];
+    for (let i = 0; i < data.length; i++) {
+      const v = data[i];
+      const s = chuanHoaSdt_(v[COL.sdt - 1]);
+      const ma = chuanHoaMa_(v[COL.ma_bi_mat - 1]);
+      if (!s) continue;
+      const khop = (ma && uv.ma.indexOf(ma) >= 0) || uv.sdt.indexOf(s) >= 0;
+      if (!khop) continue;
+      const tt = v[COL.trang_thai - 1];
+      if (tt === TT.CHO_THANH_TOAN || tt === TT.HET_HAN) cho.push({ row: i + 2, v: v, sdt: s, ma: ma });
+      else daTra.push({ sdt: s, ten: v[COL.ho_ten - 1], tt: tt });
+    }
+
+    if (cho.length !== 1) {
+      log.ketQua = 'CHỜ XỬ LÝ TAY';
+      if (cho.length > 1) log.ghiChu += ' · khớp ' + cho.length + ' GV, không dám tự mở';
+      else if (daTra.length) log.ghiChu += ' · GV ' + daTra[0].ten + ' (' + daTra[0].sdt + ') đã ' + daTra[0].tt + ' từ trước — có thể chuyển 2 lần';
+      else log.ghiChu += ' · không tìm thấy GV đang chờ (sai nội dung, hoặc mã đã bị dọn sau 7 ngày)';
+      return xong_(log, batDau, true);
+    }
+
+    const gv = cho[0];
+    log.gv = String(gv.v[COL.ho_ten - 1] || '') + ' · ' + gv.sdt;
+    const canTra = Number(gv.v[COL.so_tien - 1]) || SO_TIEN_MAC_DINH;
+    if (log.soTien < canTra) {
+      log.ketQua = 'THIẾU TIỀN'; log.ghiChu += ' · cần ' + canTra;
+      return xong_(log, batDau, true);
+    }
+
+    const now = new Date();
+    const hetHan = hetHanNamHoc_(now);
+    sheet.getRange(gv.row, COL.so_tien).setValue(log.soTien);
+    sheet.getRange(gv.row, COL.da_thanh_toan).setValue(true);
+    sheet.getRange(gv.row, COL.ngay_thanh_toan).setValue(now);
+    sheet.getRange(gv.row, COL.ngay_het_han).setValue(hetHan);
+    sheet.getRange(gv.row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
+    const note = String(gv.v[COL.ghi_chu - 1] || '');
+    sheet.getRange(gv.row, COL.ghi_chu).setValue(((note ? note + ' | ' : '') + 'SePay ' + log.maGD).slice(0, 500));
+
+    log.ketQua = '✓ ĐÃ MỞ KHOÁ';
+    log.ghiChu += ' · mã ' + gv.ma + ' · hết hạn ' + Utilities.formatDate(hetHan, 'GMT+7', 'dd/MM/yyyy');
+    return xong_(log, batDau, true);
+  } catch (err) {
+    log.ketQua = 'LỖI'; log.ghiChu = String(err);
+    try { return xong_(log, batDau, false); } catch (e2) { return { success: false, message: String(err) }; }
+  } finally {
+    try { lock.releaseLock(); } catch (e3) {}
+  }
+}
+
+/** Ghi nhật ký tab GiaoDich, nhớ mã GD để chống xử lý lặp. Luôn trả success để SePay khỏi gửi lại. */
+function xong_(log, batDau, nhoGD) {
+  if (nhoGD && log.maGD) { try { CacheService.getScriptCache().put('gd_' + log.maGD, '1', 21600); } catch (e) {} }
+  const sh = tabCoTieuDe_(TAB_GIAO_DICH, HEADERS_GD);
+  const tg = Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/yyyy HH:mm:ss');
+  const r = sh.getLastRow() + 1;
+  sh.getRange(r, 1, 1, HEADERS_GD.length).setValues([[
+    tg, "'" + log.maGD, log.soTien, log.noiDung, log.ketQua, log.gv,
+    (log.ghiChu + ' · ' + (Date.now() - batDau) + 'ms').slice(0, 500)
+  ]]);
+  return { success: true, ketQua: log.ketQua };
+}
+
+function daXuLyGD_(maGD) {
+  try { if (CacheService.getScriptCache().get('gd_' + maGD)) return true; } catch (e) {}
+  const sh = SpreadsheetApp.getActive().getSheetByName(TAB_GIAO_DICH);
+  if (!sh || sh.getLastRow() < 2) return false;
+  const n = Math.min(300, sh.getLastRow() - 1);
+  const r0 = sh.getLastRow() - n + 1;
+  const rows = sh.getRange(r0, 2, n, 4).getValues();          // ma_giao_dich .. ket_qua
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (String(rows[i][0]) === maGD && String(rows[i][3]).indexOf('BỎ QUA') !== 0) return true;
+  }
+  return false;
+}
+
+function tabCoTieuDe_(ten, headers) {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(ten);
+  if (!sh) {
+    sh = ss.insertSheet(ten);
+    sh.getRange(1, 1, 1, headers.length).setValues([headers])
+      .setFontWeight('bold').setBackground('#1D3557').setFontColor('#fff');
+    sh.setFrozenRows(1);
+    sh.getRange('A2:B').setNumberFormat('@');
+  }
+  return sh;
+}
+
+// ---------------- THIẾT BỊ: ghi nhận, đếm số máy 30 ngày ----------------
+
+/**
+ * Ghi máy vào tab ThietBi (mỗi SĐT + máy một dòng). Gọi từ dangNhap_ (luôn ghi)
+ * và checkLicense_ (tối đa 6 giờ/lần/máy nhờ bộ nhớ đệm) rồi cập nhật cột N.
+ */
+function ghiThietBi_(sheetLic, rowLic, sdt, fp, info, batBuoc) {
+  try {
+    if (!sdt || !fp) return;
+    const cache = CacheService.getScriptCache();
+    const key = 'tb_' + sdt + '_' + String(fp).slice(0, 40);
+    if (!batBuoc && cache.get(key)) return;
+    const sh = tabCoTieuDe_(TAB_THIET_BI, HEADERS_TB);
+    const now = new Date();
+    const last = sh.getLastRow();
+    const data = last >= 2 ? sh.getRange(2, 1, last - 1, 5).getValues() : [];
+    let found = -1;
+    for (let i = 0; i < data.length; i++) {
+      if (chuanHoaSdt_(data[i][0]) === sdt && String(data[i][1]) === fp) { found = i; break; }
+    }
+    if (found >= 0) {
+      sh.getRange(found + 2, 5).setValue(now);
+      if (info) sh.getRange(found + 2, 3).setValue(String(info).slice(0, 200));
+      data[found][4] = now;
+    } else {
+      sh.getRange(last + 1, 1, 1, 5).setValues([["'" + sdt, "'" + fp, String(info || '').slice(0, 200), now, now]]);
+      data.push([sdt, fp, info, now, now]);
+    }
+    cache.put(key, '1', 21600);
+    ghiSoMay_(sheetLic, rowLic, demMay30Ngay_(data, sdt));
+  } catch (e) { /* đếm máy hỏng không được làm hỏng việc kích hoạt */ }
+}
+
+function demMay30Ngay_(data, sdt) {
+  const nguong = Date.now() - 30 * 86400000;
+  const fps = {};
+  data.forEach(function (r) {
+    if (chuanHoaSdt_(r[0]) === sdt && r[4] && new Date(r[4]).getTime() >= nguong) fps[String(r[1])] = 1;
+  });
+  return Object.keys(fps).length;
+}
+
+function ghiSoMay_(sheetLic, rowLic, n) {
+  if (!sheetLic.getRange(1, COL_SO_MAY).getValue()) {
+    sheetLic.getRange(1, COL_SO_MAY).setValue('so_may_30_ngay')
+      .setFontWeight('bold').setBackground('#1D3557').setFontColor('#fff');
+  }
+  const o = sheetLic.getRange(rowLic, COL_SO_MAY);
+  o.setValue(n);
+  o.setBackground(n > NGUONG_MAY_NGHI ? '#F4CCCC' : null);
+}
+
+/** Menu: tính lại cột N cho mọi GV (chạy tay hoặc đặt Trigger mỗi ngày). */
+function capNhatSoMayToanBo() {
+  const lic = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const tb = tabCoTieuDe_(TAB_THIET_BI, HEADERS_TB);
+  const data = tb.getLastRow() >= 2 ? tb.getRange(2, 1, tb.getLastRow() - 1, 5).getValues() : [];
+  const last = lic.getLastRow();
+  if (last < 2) return;
+  const sdts = lic.getRange(2, COL.sdt, last - 1, 1).getValues();
+  const canXem = [];
+  for (let i = 0; i < sdts.length; i++) {
+    const s = chuanHoaSdt_(sdts[i][0]);
+    if (!s) continue;
+    const n = demMay30Ngay_(data, s);
+    ghiSoMay_(lic, i + 2, n);
+    if (n > NGUONG_MAY_NGHI) canXem.push(s + ' (' + n + ' máy)');
+  }
+  try {
+    SpreadsheetApp.getUi().alert('Đã cập nhật cột N "so_may_30_ngay".\n' +
+      (canXem.length ? 'Cần xem (quá ' + NGUONG_MAY_NGHI + ' máy, tô đỏ):\n' + canXem.join('\n') : 'Không ai quá ' + NGUONG_MAY_NGHI + ' máy.'));
+  } catch (e) { /* chạy từ Trigger */ }
+}
+
+// ---------------- MENU QUẢN TRỊ SEPAY ----------------
+
+/** Lưu SEPAY_TOKEN (+ số tài khoản) và chỉ cách dán URL vào Worker. */
+function caiKetNoiSePay() {
+  const ui = SpreadsheetApp.getUi();
+  const props = PropertiesService.getScriptProperties();
+  let token = props.getProperty('SEPAY_TOKEN') || '';
+  if (!token) {
+    token = Utilities.getUuid().replace(/-/g, '');
+    props.setProperty('SEPAY_TOKEN', token);
+  }
+  const r = ui.prompt('Số tài khoản ngân hàng nhận tiền Sổ nhận xét',
+    'Để trống nếu SePay chỉ nối MỘT tài khoản này. Hiện tại: ' + (props.getProperty('SEPAY_TAI_KHOAN') || '(chưa đặt)'),
+    ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() === ui.Button.OK && r.getResponseText().trim()) {
+    props.setProperty('SEPAY_TAI_KHOAN', r.getResponseText().replace(/\D/g, ''));
+  }
+  tabCoTieuDe_(TAB_GIAO_DICH, HEADERS_GD);
+  tabCoTieuDe_(TAB_THIET_BI, HEADERS_TB);
+  ui.alert('✓ Đã lưu khoá kết nối.\n\nỞ Cloudflare, Worker cầu nối cần biến:\n' +
+    '  APPS_SCRIPT_URL = <địa chỉ /exec của dự án này>?token=' + token + '\n' +
+    '  WEBHOOK_TOKEN   = (một chuỗi khác, tuỳ đặt)\n\n' +
+    'Ở SePay ▸ Webhooks: URL = <địa chỉ Worker>?token=<WEBHOOK_TOKEN>\n\n' +
+    'Nhớ: Triển khai ▸ Quản lý triển khai ▸ ✏️ ▸ Phiên bản mới (KHÔNG tạo triển khai mới).');
+}
+
+/** Dòng GiaoDich "CHỜ XỬ LÝ TAY": thầy nhập SĐT GV → mở khoá như SePay tự làm. */
+function moKhoaTayGiaoDichUI() {
+  const ui = SpreadsheetApp.getUi();
+  const r = ui.prompt('Mở khoá tay', 'Nhập SĐT của giáo viên đã chuyển khoản:', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  const sdt = chuanHoaSdt_(r.getResponseText());
+  if (!sdt) { ui.alert('SĐT sai định dạng'); return; }
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const row = findRowBySdt_(sheet, sdt);
+  if (!row) { ui.alert('Không tìm thấy SĐT ' + sdt + '. Nhờ cô bấm "Bắt đầu kích hoạt" trong tiện ích trước.'); return; }
+  const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+  const now = new Date(), hetHan = hetHanNamHoc_(now);
+  sheet.getRange(row, COL.da_thanh_toan).setValue(true);
+  sheet.getRange(row, COL.ngay_thanh_toan).setValue(now);
+  sheet.getRange(row, COL.ngay_het_han).setValue(hetHan);
+  if (v[COL.trang_thai - 1] !== TT.DA_KICH_HOAT) sheet.getRange(row, COL.trang_thai).setValue(TT.DA_TRA_TIEN);
+  xong_({ maGD: '', soTien: 0, noiDung: '(thầy mở tay)', ketQua: '✓ MỞ TAY',
+          gv: String(v[COL.ho_ten - 1] || '') + ' · ' + sdt,
+          ghiChu: 'hết hạn ' + Utilities.formatDate(hetHan, 'GMT+7', 'dd/MM/yyyy') }, Date.now(), false);
+  ui.alert('✓ Đã mở khoá cho ' + v[COL.ho_ten - 1] + ' (' + sdt + '), hạn ' +
+           Utilities.formatDate(hetHan, 'GMT+7', 'dd/MM/yyyy') + '.\nTiện ích của cô tự kích hoạt trong 20-120 giây.\n' +
+           'Mã đăng nhập máy khác của cô: ' + chuanHoaMa_(v[COL.ma_bi_mat - 1]));
 }

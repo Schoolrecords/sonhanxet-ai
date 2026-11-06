@@ -2,6 +2,7 @@
  * Node QA runner cho v0.1.8 — verify CacheManager + NLPCMapper (3 mức T/Đ/C, 13 trường)
  */
 const fs = require('fs');
+const path = require('path');
 const { CacheManager, NLPCMapper, NhanXetEngineV2 } = require('../engine/engine.js');
 
 let pass = 0, fail = 0;
@@ -342,6 +343,114 @@ async function assertThrows(fn, name) {
     log('deriveKyCode HK2+Cuối → chk2', deriveKy('Học kỳ 2', 'Cuối kỳ') === 'chk2');
     log('deriveKyCode chỉ có HK1 → chk1 (default cuối)', deriveKy('Học kỳ 1', '') === 'chk1');
     log('deriveKyCode rỗng → null', deriveKy('', '') === null);
+
+    // ===== V6.1.0: chuẩn bị nhận xét giữa kỳ =====
+    {
+        const ky = JSON.parse(fs.readFileSync(path.join(__dirname, '../engine/data/nhanxet-ky.json'), 'utf8'));
+        const grade = JSON.parse(fs.readFileSync(path.join(__dirname, '../engine/data/nhanxet-grade.json'), 'utf8'));
+        const mid = JSON.parse(fs.readFileSync(path.join(__dirname, '../engine/data/nhanxet-nlpc-giuaky.json'), 'utf8'));
+        const v = new NhanXetEngineV2();
+        const cauMon = [];
+        for (const [mon, m] of Object.entries(ky.subjects)) {
+            for (const [tier, arr] of Object.entries(m.ghk1)) arr.forEach(c => cauMon.push({ mon, tier, c }));
+        }
+        for (const g of [1, 2, 3, 4, 5]) {
+            for (const [tier, node] of Object.entries(grade.subjects.toan.grades[g].ghk1)) {
+                node.default.forEach(c => cauMon.push({ mon: 'toan-lop' + g, tier, c, gradeLevel: g }));
+            }
+        }
+        const hong = cauMon.filter(x => !v.validateComment(x.c, { tier: x.tier, kyCode: 'ghk1', gradeLevel: x.gradeLevel }).ok);
+        log('V6.1.0 mọi câu Giữa HK1 qua bộ kiểm', hong.length === 0, hong.map(x => x.c + ' => ' + v.validateComment(x.c, { tier: x.tier, kyCode: 'ghk1', gradeLevel: x.gradeLevel }).reason));
+        const duoiChem = /(rất tốt cao|môn học học|theo hướng\.|hằng ngày hơn|cơ bản đều\.|thêm đều\.|cẩn thận đầy đủ\.|sạch sẽ đầy đủ\.|đầy đủ ý\.|chính xác cao|nhịp đơn\.)/;
+        const conDuoi = cauMon.filter(x => duoiChem.test(x.c));
+        log('V6.1.0 không còn đuôi chêm trong câu Giữa HK1', conDuoi.length === 0, conDuoi.map(x => x.c));
+        log('V6.1.0 Toán lớp 2 Giữa HK1 không nhắc số trong 1000', !cauMon.some(x => x.mon === 'toan-lop2' && x.c.includes('1000')));
+        log('V6.1.0 Toán chung Giữa HK1 không xưng Em', !Object.values(ky.subjects.toan.ghk1).flat().some(c => /^Em /.test(c)));
+
+        // Ngân hàng NLPC giữa kỳ: đủ mục, đủ mức, đủ dài, không có từ sai thời điểm
+        const base = JSON.parse(fs.readFileSync(path.join(__dirname, '../engine/data/nhanxet-ngan.json'), 'utf8'));
+        const thieu = [];
+        const cauNLPC = [];
+        for (const [sec, fields] of Object.entries(base.nlpc)) {
+            for (const f of Object.keys(fields)) {
+                for (const t of ['tot', 'ht', 'cht']) {
+                    const arr = mid.nlpc[sec]?.[f]?.[t];
+                    if (!arr || arr.length < 4) thieu.push(sec + '.' + f + '.' + t);
+                    else cauNLPC.push(...arr);
+                }
+            }
+        }
+        log('V6.1.0 NLPC giữa kỳ đủ mọi mục và mức', thieu.length === 0, thieu);
+        log('V6.1.0 NLPC giữa kỳ không có câu trùng', new Set(cauNLPC).size === cauNLPC.length);
+        // Chuẩn chống tràn ô Học bạ của V6.0.6: ô cụ thể 36-48 ký tự kể cả "Em"; ô chung nhiều vế.
+        const saiDo = [];
+        for (const [sec, fields] of Object.entries(mid.nlpc)) {
+            for (const [f, tiers] of Object.entries(fields)) {
+                if (f === 'nhan_xet_chung') {
+                    Object.values(tiers).flat().forEach(c => { if (!c.includes('; ')) saiDo.push(c); });
+                } else {
+                    Object.values(tiers).flat().forEach(c => { if (c.length < 36 || c.length > 48) saiDo.push(c.length + ': ' + c); });
+                }
+            }
+        }
+        log('V6.1.0 NLPC giữa kỳ không tràn ô Học bạ', saiDo.length === 0, saiDo);
+        log('V6.1.0 NLPC giữa kỳ không nói chuyện cuối kỳ', !cauNLPC.some(c => /cuối năm|cả năm|năm học|học kì|học kỳ/i.test(c)));
+
+        const eg = new NhanXetEngineV2();
+        eg.loadData(base);
+        eg.loadNLPCGiuaKyData(mid);
+        eg.options.vanPhong = 'hocba';
+        const dg = { nang_luc_chung: { tu_chu_tu_hoc: 'tot' }, nang_luc_dac_thu: {}, pham_chat: { cham_chi: 'cht' } };
+        const kqGiua = eg.sinhNLPCDayDu({ hoVaTen: 'A', gradeLevel: 3, kyCode: 'ghk1' }, dg);
+        const boEm = (c) => { const s = c.replace(/^Em /, ''); return s[0].toLocaleUpperCase('vi-VN') + s.slice(1); };
+        const giuaTot = mid.nlpc.nang_luc_chung.tu_chu_tu_hoc.tot.map(boEm);
+        log('V6.1.0 NLPC Giữa HK1 lấy câu giữa kỳ, không xưng Em', giuaTot.includes(kqGiua.nang_luc_chung['Tự chủ và tự học']), kqGiua.nang_luc_chung['Tự chủ và tự học']);
+        eg.resetUsedPhrases();
+        const kqCuoi = eg.sinhNLPCDayDu({ hoVaTen: 'A', gradeLevel: 3, kyCode: 'chk1' }, dg);
+        log('V6.1.0 NLPC Cuối HK1 không lấy câu giữa kỳ', !giuaTot.includes(kqCuoi.nang_luc_chung['Tự chủ và tự học']));
+        eg.resetUsedPhrases();
+        for (let i = 0; i < 6; i++) eg.sinhNLPCDayDu({ hoVaTen: 'HS' + i, gradeLevel: 3, kyCode: 'ghk1' }, dg);
+        const kqHet = eg.sinhNLPCDayDu({ hoVaTen: 'HS6', gradeLevel: 3, kyCode: 'ghk1' }, dg);
+        log('V6.1.0 NLPC hết câu giữa kỳ thì sang ngân hàng chung', !!kqHet.nang_luc_chung['Tự chủ và tự học']);
+
+        // Giữa HK1 ưu tiên câu riêng của kỳ/lớp
+        const em = new NhanXetEngineV2();
+        em.loadData(base); em.loadKyData(ky); em.loadGradeData(grade);
+        em.options.vanPhong = 'thanthien';
+        const rieng = new Set(ky.subjects.toan.ghk1.tot.concat(grade.subjects.toan.grades[3].ghk1.tot.default));
+        const dsTot = Array.from({ length: 5 }, (_, i) => ({ stt: i + 1, hoVaTen: 'HS' + i, diem: 8, mucDat: 'T' }));
+        const kqTot = em.sinhCaLop(dsTot, 'toan', 'ghk1', { gradeLevel: 3 });
+        const ngoai = kqTot.filter(x => !rieng.has(x.nhanXet) && ![...rieng].some(c => x.nhanXet.startsWith(c.replace(/\.$/, ''))));
+        log('V6.1.0 Giữa HK1 ưu tiên câu riêng của kỳ', ngoai.length === 0, ngoai.map(x => x.nhanXet));
+        const hsCan = Array.from({ length: 40 }, (_, i) => ({ stt: i + 1, hoVaTen: 'HS' + i, diem: 8, mucDat: 'T' }));
+        const kqDu = em.sinhCaLop(hsCan, 'toan', 'ghk1', { gradeLevel: 3 });
+        log('V6.1.0 Lớp đông vẫn đủ câu cho mọi em', kqDu.every(x => !!x.nhanXet));
+
+        // Ghép nhận xét với đúng học sinh
+        const ta = {};
+        const rows = [
+            { stt: 1, hoVaTen: 'Nguyễn Văn An', textarea: ta },
+            { stt: 2, hoVaTen: 'Trần Thị Bình', textarea: ta },
+            { stt: 3, hoVaTen: 'Lê Văn Cường', textarea: ta }
+        ];
+        const ghep = NhanXetEngineV2.matchApplyRows;
+        const r1 = ghep(rows, [{ stt: 1, hoVaTen: 'Nguyễn Văn An', nhanXet: 'x' }]);
+        log('V6.1.0 Ghi: đúng STT + tên thì khớp', r1.matched.length === 1 && r1.matched[0].row.stt === 1);
+        const r2 = ghep(rows, [{ stt: 2, hoVaTen: 'Nguyễn Văn An', nhanXet: 'x' }]);
+        log('V6.1.0 Ghi: STT lệch thì theo tên, không ghi nhầm người', r2.matched[0].row.hoVaTen === 'Nguyễn Văn An');
+        const r3 = ghep(rows, [{ stt: 1, hoVaTen: 'Phạm Thị Dung', nhanXet: 'x' }]);
+        log('V6.1.0 Ghi: HS không còn trong bảng thì báo, không ghi', r3.matched.length === 0 && r3.missing.length === 1);
+        const trung = [
+            { stt: 1, hoVaTen: 'Lê An', textarea: ta },
+            { stt: 2, hoVaTen: 'Lê An', textarea: ta }
+        ];
+        const r4 = ghep(trung, [{ stt: 3, hoVaTen: 'Lê An', nhanXet: 'x' }]);
+        log('V6.1.0 Ghi: trùng tên mà STT lệch thì không đoán', r4.matched.length === 0);
+        const r5 = ghep(trung, [{ stt: 1, hoVaTen: 'Lê An', nhanXet: 'a' }, { stt: 2, hoVaTen: 'Lê An', nhanXet: 'b' }]);
+        log('V6.1.0 Ghi: trùng tên đúng STT thì khớp từng em', r5.matched.length === 2 && r5.matched[1].row.stt === 2);
+        const r6 = ghep(rows, [{ stt: 1, nhanXet: 'x' }]);
+        log('V6.1.0 Ghi: thiếu tên thì không ghi theo STT', r6.matched.length === 0);
+    }
 
     // Tổng kết
     console.log(`\n=== ${pass} pass, ${fail} fail ===`);

@@ -278,13 +278,13 @@
                 <input id="lic-reg-sdt" type="tel" maxlength="13" class="lic-input"
                        placeholder="Số điện thoại (vd: 0912345678)">
                 <button class="btn-primary lic-btn" id="lic-btn-register">
-                    ▶ Bắt đầu kích hoạt (30.000đ/năm)
+                    ▶ Bắt đầu kích hoạt (50.000đ/năm)
                 </button>
 
                 <div id="lic-reg-error" class="lic-error" style="display:none"></div>
 
                 <a href="#" id="lic-link-to-login" class="lic-link-legacy">
-                    Tài khoản trước 19/05/2026? Đăng nhập bằng mã cũ
+                    Đã có bản quyền? Đăng nhập trên máy khác (SĐT + mã)
                 </a>
             </div>
 
@@ -293,7 +293,7 @@
                 <div class="lic-pending-info">
                     <div class="lic-pending-row"><span>SĐT:</span> <strong id="lic-pending-sdt">—</strong></div>
                     <div class="lic-pending-row"><span>Tên:</span> <strong id="lic-pending-name">—</strong></div>
-                    <div class="lic-pending-row"><span>Số tiền:</span> <strong>30.000đ</strong></div>
+                    <div class="lic-pending-row"><span>Số tiền:</span> <strong id="lic-pending-tien">50.000đ</strong></div>
                 </div>
 
                 <div class="lic-qr-wrap">
@@ -320,10 +320,10 @@
                 <div class="lic-waiting-block">
                     <div class="lic-spinner"></div>
                     <div class="lic-waiting-text">
-                        <strong>Đang chờ admin xác nhận...</strong><br>
+                        <strong>Đang chờ ngân hàng báo có...</strong><br>
                         <span class="lic-waiting-sub">
-                            Trung bình 1-10 phút. Hệ thống sẽ <strong>tự kích hoạt</strong>,
-                            <strong>KHÔNG cần thao tác gì thêm, vui lòng đợi</strong>.
+                            Thường dưới 1 phút sau khi chuyển. Hệ thống sẽ <strong>tự kích hoạt</strong>,
+                            <strong>không cần thao tác gì thêm</strong>.
                         </span>
                     </div>
                 </div>
@@ -343,7 +343,8 @@
             <!-- (C) LEGACY ĐĂNG NHẬP — chỉ cho GV v2 đã có mã 4 ký tự trước 19/05/2026 -->
             <div id="lic-form-login" class="lic-form" style="display:none">
                 <div class="lic-legacy-banner">
-                    Đăng nhập bằng mã cũ (4 ký tự) dành cho GV đã đăng ký trước 19/05/2026.
+                    Đăng nhập trên máy khác: nhập SĐT đã mua và mã đăng nhập 4 ký tự
+                    (chính là nội dung đã chuyển khoản, vd NX K7M3 → k7m3).
                 </div>
                 <input id="lic-login-sdt" type="tel" maxlength="13" class="lic-input"
                        placeholder="Số điện thoại đã đăng ký">
@@ -372,6 +373,7 @@
                 <div class="lic-info-card">
                     <div class="lic-info-row"><span>Họ tên</span><strong id="lic-info-name">—</strong></div>
                     <div class="lic-info-row"><span>Số điện thoại</span><strong id="lic-info-sdt">—</strong></div>
+                    <div class="lic-info-row"><span>Mã đăng nhập máy khác</span><strong id="lic-info-ma">—</strong></div>
                     <div class="lic-info-row"><span>Hạn sử dụng</span><strong id="lic-info-until">—</strong></div>
                     <div class="lic-info-row"><span>Còn lại</span><strong id="lic-info-remaining">—</strong></div>
                 </div>
@@ -382,7 +384,7 @@
 
             <div class="setting-note" id="lic-setting-note">
                 <strong>Bản dùng thử miễn phí:</strong> 1 môn học — để thầy/cô đánh giá chất lượng nhận xét.<br>
-                <strong>Mua bản quyền:</strong> 30.000đ / máy — sử dụng hết tất cả các tính năng của Sổ nhận xét - AI.<br>
+                <strong>Mua bản quyền:</strong> 50.000đ / năm học (đến 31/8), dùng trên mọi máy của thầy/cô — mở hết các tính năng của Sổ nhận xét - AI.<br>
                 <em>(mời tác giả 1 cốc cafe — thay vì ngồi mãi trên máy tính 😊)</em>
             </div>
         </div>
@@ -467,18 +469,21 @@
         <h3 class="modal-title" id="lock-title">Tính năng cần bản quyền</h3>
         <p class="modal-message" id="lock-message">Bản miễn phí chỉ dùng được 1 môn + 1 lớp.</p>
         <div class="modal-note">
-            Mở khóa <strong>tất cả môn + tất cả lớp + NL/PC</strong> với <strong>30.000đ / máy</strong>.
+            Mở khóa <strong>tất cả môn + tất cả lớp + NL/PC</strong> với <strong>50.000đ / năm học</strong>.
             Vào <strong>⚙️ Cài đặt → Bản quyền</strong> để đăng ký nhận mã + chuyển khoản.
         </div>
         <div class="modal-actions">
             <button class="btn-modal-secondary" id="lock-btn-cancel">Đóng</button>
-            <button class="btn-modal-primary" id="lock-btn-activate">Đăng ký bản quyền 30k</button>
+            <button class="btn-modal-primary" id="lock-btn-activate">Đăng ký bản quyền 50k</button>
         </div>
         <div class="copyright">© 2026 Bản quyền thuộc ChungTran · 0913031073</div>
     </div>
 </div>
 
-<footer class="footer">© 2026 - ChungTran - 0913031073</footer>
+<footer class="footer">
+    <div class="footer-cheo">Soạn giáo án, lên lịch báo giảng: <a href="https://butxanh.net" target="_blank" rel="noopener">Bút Xanh</a></div>
+    © 2026 - ChungTran - 0913031073
+</footer>
 
 <script src="../engine/engine.js"></script>
 <script src="../license/client.js"></script>

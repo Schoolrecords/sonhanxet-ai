@@ -1137,7 +1137,7 @@ window.VneduAdapter = {
      */
     getNLPCContext() {
         const ctx = this.getContext();  // reuse logic detect lớp từ select/textbar
-        return { lop: ctx.lop || '', hocKy: ctx.hocKy || '', khoi: ctx.khoi || '' };
+        return { lop: ctx.lop || '', hocKy: ctx.hocKy || '', khoi: ctx.khoi || '', kyDanhGia: ctx.kyDanhGia || '' };
     },
 
     /**

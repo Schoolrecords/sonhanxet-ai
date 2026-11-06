@@ -1,0 +1,374 @@
+{
+  "meta": {
+    "version": "6.1.0",
+    "note": "Câu năng lực, phẩm chất cho Giữa HK1 và Giữa HK2 (TT27/2020), mô tả biểu hiện đến giữa kỳ. Giữ chuẩn chống tràn ô Học bạ của V6.0.6: ô cụ thể 1 dòng, 36-48 ký tự kể cả 'Em'; 3 ô nhan_xet_chung dạng nhiều vế ngăn bằng '; '. Engine bỏ 'Em' ở văn phong học bạ."
+  },
+  "nlpc": {
+    "nang_luc_chung": {
+      "nhan_xet_chung": {
+        "tot": [
+          "Em tự giác trong học tập; Biết hợp tác với bạn; Chủ động giải quyết nhiệm vụ được giao.",
+          "Em có ý thức tự học tốt; Mạnh dạn trao đổi với bạn; Hoàn thành nhiệm vụ đúng yêu cầu.",
+          "Em tự chuẩn bị đồ dùng học tập; Giao tiếp rõ ràng; Tích cực tham gia công việc của nhóm.",
+          "Em chủ động trong giờ học; Phối hợp tốt với bạn; Biết nêu cách làm khi gặp bài khó."
+        ],
+        "ht": [
+          "Em đã biết tự làm nhiệm vụ học tập; Giao tiếp được với bạn; Tham gia công việc của nhóm.",
+          "Em có ý thức tự học; Biết trao đổi với bạn khi được gợi ý; Làm được nhiệm vụ theo hướng dẫn.",
+          "Em tự chuẩn bị được đồ dùng học tập; Biết lắng nghe bạn; Cần mạnh dạn nêu ý kiến hơn.",
+          "Em làm được nhiệm vụ theo hướng dẫn; Biết hợp tác với bạn; Cần chủ động hơn trong giờ học."
+        ],
+        "cht": [
+          "Em còn cần nhắc nhở khi tự làm nhiệm vụ học tập; Chưa mạnh dạn trao đổi với bạn.",
+          "Em cần được hướng dẫn thêm cách tự học; Cần rèn cách hợp tác với bạn trong giờ học.",
+          "Em còn lúng túng khi làm việc nhóm; Cần cố gắng hơn khi tự chuẩn bị bài và đồ dùng.",
+          "Em đã có cố gắng; Chưa tự giác làm nhiệm vụ học tập; Cần thầy cô và gia đình nhắc nhở thêm."
+        ]
+      },
+      "tu_chu_tu_hoc": {
+        "tot": [
+          "Em tự giác học bài, chuẩn bị đồ dùng đầy đủ.",
+          "Em chủ động trong giờ học, biết tự sửa lỗi.",
+          "Em tự làm bài và hoàn thành đúng thời gian.",
+          "Em biết tự sắp xếp sách vở, tự học khá tốt."
+        ],
+        "ht": [
+          "Em đã tự chuẩn bị được đồ dùng học tập.",
+          "Em tự làm được nhiệm vụ học tập đơn giản.",
+          "Em làm bài theo hướng dẫn, cần tự giác hơn.",
+          "Em đã biết sắp xếp sách vở, cần tự học thêm."
+        ],
+        "cht": [
+          "Em còn quên đồ dùng, cần nhắc nhở thêm.",
+          "Em chưa tự giác làm bài, cần được nhắc nhở.",
+          "Em cần rèn thói quen tự làm bài từng bước.",
+          "Em còn chậm khi tự làm bài, cần hướng dẫn."
+        ]
+      },
+      "giao_tiep_hop_tac": {
+        "tot": [
+          "Em mạnh dạn trao đổi, biết lắng nghe bạn.",
+          "Em hợp tác tốt khi làm việc nhóm với bạn.",
+          "Em tự tin nêu ý kiến, tôn trọng ý kiến bạn.",
+          "Em tích cực trong nhóm, biết chia sẻ cách làm."
+        ],
+        "ht": [
+          "Em biết trao đổi với bạn trong giờ học.",
+          "Em giao tiếp được, cần rèn cách nói rõ ý.",
+          "Em tham gia hoạt động nhóm theo phân công.",
+          "Em hòa đồng với bạn, cần chủ động trong nhóm."
+        ],
+        "cht": [
+          "Em còn ngại phát biểu, cần được động viên.",
+          "Em chưa mạnh dạn, cần hướng dẫn cách nêu ý.",
+          "Em còn lúng túng khi làm việc nhóm với bạn.",
+          "Em còn rụt rè, cần mạnh dạn trao đổi với bạn."
+        ]
+      },
+      "giai_quyet_van_de": {
+        "tot": [
+          "Em nhận ra vấn đề và chủ động tìm cách làm.",
+          "Em suy nghĩ nhanh, biết chọn cách làm phù hợp.",
+          "Em vận dụng được điều đã học vào bài mới.",
+          "Em tự giải quyết tốt tình huống quen thuộc."
+        ],
+        "ht": [
+          "Em giải quyết được nhiệm vụ đơn giản đã học.",
+          "Em làm được bài theo gợi ý của thầy cô.",
+          "Em biết hỏi thầy cô, bạn bè khi gặp khó khăn.",
+          "Em xử lí được tình huống học tập quen thuộc."
+        ],
+        "cht": [
+          "Em còn lúng túng khi gặp bài khó, cần hỗ trợ.",
+          "Em chưa tự tìm được cách làm, cần gợi ý thêm.",
+          "Em cần rèn thói quen tự suy nghĩ trước khi hỏi.",
+          "Em cần được hướng dẫn làm bài theo từng bước."
+        ]
+      }
+    },
+    "nang_luc_dac_thu": {
+      "nhan_xet_chung": {
+        "tot": [
+          "Em đọc, viết và nói rõ ràng; Tính toán chính xác; Tích cực trong các hoạt động học tập.",
+          "Em nắm được các kĩ năng đã học; Biết vận dụng vào bài tập và hoạt động thực hành.",
+          "Em có kĩ năng đọc viết, tính toán tốt; Tích cực trong hoạt động nghệ thuật và vận động.",
+          "Em học tốt các nội dung đã học; Biết liên hệ với thực tế; Thực hành đúng yêu cầu."
+        ],
+        "ht": [
+          "Em đọc, viết và tính toán được ở mức cơ bản; Tham gia đầy đủ các hoạt động học tập.",
+          "Em đã có các kĩ năng cơ bản; Làm được bài theo hướng dẫn; Cần luyện tập thêm.",
+          "Em làm được bài tập cơ bản; Tham gia hoạt động thực hành; Cần cẩn thận hơn khi làm bài.",
+          "Em nắm được nội dung cơ bản đã học; Cần rèn thêm kĩ năng đọc viết và tính toán."
+        ],
+        "cht": [
+          "Em còn chậm trong đọc viết và tính toán; Cần được hỗ trợ thêm để làm được bài cơ bản.",
+          "Em chưa nắm vững một số kĩ năng đã học; Cần luyện tập thêm ở lớp và ở nhà.",
+          "Em còn lúng túng khi làm bài và thực hành; Cần được hướng dẫn thêm từng bước.",
+          "Em đã có cố gắng; Kĩ năng đọc viết và tính toán còn hạn chế; Cần gia đình phối hợp kèm thêm."
+        ]
+      },
+      "ngon_ngu": {
+        "tot": [
+          "Em đọc to, rõ ràng, trả lời câu hỏi đúng ý.",
+          "Em nói mạch lạc, viết rõ ý, dùng từ phù hợp.",
+          "Em nghe, nói, đọc, viết tốt, tích cực phát biểu.",
+          "Em đọc trôi chảy, hiểu nội dung bài đã đọc."
+        ],
+        "ht": [
+          "Em đọc được bài, trả lời được câu hỏi ngắn.",
+          "Em viết được câu ngắn, cần rèn thêm chính tả.",
+          "Em nghe hiểu được yêu cầu, cần nói rõ ý hơn.",
+          "Em đọc viết ở mức cơ bản, cần mạnh dạn hơn."
+        ],
+        "cht": [
+          "Em đọc còn chậm, viết còn sai chính tả.",
+          "Em còn ngại nói trước lớp, cần động viên.",
+          "Em chưa đọc trơn bài ngắn, cần luyện đọc thêm.",
+          "Em cần được hỗ trợ thêm về đọc và viết câu."
+        ]
+      },
+      "tinh_toan": {
+        "tot": [
+          "Em tính toán nhanh, chính xác, làm bài cẩn thận.",
+          "Em nắm chắc kiến thức toán đã học đến nay.",
+          "Em biết kiểm tra kết quả sau khi làm tính.",
+          "Em biết dùng phép tính vào tình huống gần gũi."
+        ],
+        "ht": [
+          "Em làm được các phép tính đã học ở mức cơ bản.",
+          "Em giải được bài toán đơn giản theo hướng dẫn.",
+          "Em cần cẩn thận hơn khi đặt tính và làm tính.",
+          "Em nắm được kiến thức toán cơ bản đã học."
+        ],
+        "cht": [
+          "Em tính còn chậm và còn nhầm, cần luyện thêm.",
+          "Em chưa nắm vững phép tính đã học, cần hỗ trợ.",
+          "Em còn lúng túng khi đọc đề và làm tính.",
+          "Em cần gia đình phối hợp kèm thêm phép tính."
+        ]
+      },
+      "khoa_hoc": {
+        "tot": [
+          "Em quan sát tốt, nêu đúng đặc điểm sự vật.",
+          "Em ham tìm hiểu, biết đặt câu hỏi khám phá.",
+          "Em giải thích được hiện tượng đã học quen thuộc.",
+          "Em tích cực quan sát, trình bày kết quả rõ ràng."
+        ],
+        "ht": [
+          "Em nêu được đặc điểm cơ bản của sự vật đã học.",
+          "Em trả lời được câu hỏi đơn giản đã học.",
+          "Em quan sát theo hướng dẫn, cần mô tả rõ hơn.",
+          "Em nắm được kiến thức khoa học cơ bản đã học."
+        ],
+        "cht": [
+          "Em còn lúng túng khi quan sát và mô tả sự vật.",
+          "Em chưa nêu được đặc điểm cơ bản của sự vật.",
+          "Em cần xem lại bài, luyện thêm cách quan sát.",
+          "Em cần được gợi ý thêm khi tìm hiểu hiện tượng."
+        ]
+      },
+      "tham_mi": {
+        "tot": [
+          "Em hát rõ lời, vẽ có bố cục và phối màu đẹp.",
+          "Em thể hiện tốt ý tưởng qua bài hát, bức vẽ.",
+          "Em yêu thích nghệ thuật, làm sản phẩm cẩn thận.",
+          "Em hát đúng giai điệu, sản phẩm có ý tưởng."
+        ],
+        "ht": [
+          "Em hát được bài đã học, vẽ được tranh đơn giản.",
+          "Em tham gia đủ hoạt động nghệ thuật của lớp.",
+          "Em có hứng thú, cần rèn thêm cách phối màu.",
+          "Em làm được sản phẩm theo mẫu đã hướng dẫn."
+        ],
+        "cht": [
+          "Em còn ngại hát và biểu diễn, cần động viên.",
+          "Em vẽ còn lúng túng, cần hướng dẫn từng bước.",
+          "Em chưa hát đúng giai điệu, cần luyện thêm.",
+          "Em chưa hoàn thành sản phẩm, cần hỗ trợ thêm."
+        ]
+      },
+      "the_chat": {
+        "tot": [
+          "Em vận động nhanh nhẹn, tập đúng các động tác.",
+          "Em có ý thức rèn luyện thân thể đều đặn, tốt.",
+          "Em tập chính xác, giữ an toàn khi vận động.",
+          "Em tham gia sôi nổi hoạt động thể dục thể thao."
+        ],
+        "ht": [
+          "Em thực hiện được các động tác cơ bản đã học.",
+          "Em tham gia trò chơi vận động cùng các bạn.",
+          "Em có ý thức tập luyện, cần rèn thêm sức bền.",
+          "Em biết giữ an toàn khi vận động trong giờ học."
+        ],
+        "cht": [
+          "Em còn chậm khi tập động tác, cần luyện thêm.",
+          "Em còn ngại vận động, cần được động viên thêm.",
+          "Em chưa tập đúng động tác cơ bản đã học.",
+          "Em cần rèn thêm thói quen tập thể dục mỗi ngày."
+        ]
+      },
+      "cong_nghe": {
+        "tot": [
+          "Em dùng đồ dùng công nghệ an toàn và đúng cách.",
+          "Em thực hành khéo léo, làm đúng theo quy trình.",
+          "Em biết bảo quản đồ dùng, phối hợp tốt với bạn.",
+          "Em nêu đúng công dụng của đồ dùng đã học."
+        ],
+        "ht": [
+          "Em nhận biết được sản phẩm công nghệ đã học.",
+          "Em làm được sản phẩm đơn giản theo hướng dẫn.",
+          "Em biết giữ an toàn, cần cẩn thận khi thực hành.",
+          "Em nêu được công dụng cơ bản của đồ dùng."
+        ],
+        "cht": [
+          "Em còn lúng túng khi thực hành, cần hỗ trợ.",
+          "Em chưa nêu được công dụng của đồ dùng đã học.",
+          "Em thao tác còn chậm, cần luyện thực hành thêm.",
+          "Em chưa hoàn thành sản phẩm, cần hướng dẫn."
+        ]
+      },
+      "tin_hoc": {
+        "tot": [
+          "Em dùng chuột, bàn phím thành thạo khi học.",
+          "Em nắm chắc thao tác đã học, giữ gìn máy tính.",
+          "Em thao tác nhanh, biết lưu bài đúng cách.",
+          "Em dùng máy tính an toàn, làm tốt bài thực hành."
+        ],
+        "ht": [
+          "Em dùng được chuột và bàn phím theo hướng dẫn.",
+          "Em làm được bài thực hành cơ bản đã học.",
+          "Em biết mở và lưu bài theo hướng dẫn của lớp.",
+          "Em nắm được thao tác cơ bản, cần nhanh hơn."
+        ],
+        "cht": [
+          "Em dùng chuột, bàn phím còn chậm, cần luyện.",
+          "Em chưa thực hiện được một số thao tác đã học.",
+          "Em còn lúng túng khi mở và lưu bài trên máy.",
+          "Em cần được hỗ trợ thêm trong giờ thực hành."
+        ]
+      }
+    },
+    "pham_chat": {
+      "nhan_xet_chung": {
+        "tot": [
+          "Em ngoan, lễ phép với thầy cô; Thân thiện với bạn; Chăm học và thực hiện tốt nội quy lớp.",
+          "Em trung thực, biết giúp đỡ bạn; Có trách nhiệm với việc được giao; Đi học đều.",
+          "Em chăm chỉ, tự giác; Biết kính trọng người lớn; Tích cực tham gia hoạt động chung.",
+          "Em có ý thức tốt trong học tập và sinh hoạt; Đoàn kết với bạn; Giữ gìn tốt của công."
+        ],
+        "ht": [
+          "Em lễ phép với thầy cô; Hòa đồng với bạn; Đi học đều; Cần chăm chỉ hơn trong học tập.",
+          "Em thực hiện được nội quy lớp; Biết giúp đỡ bạn; Cần có trách nhiệm hơn với việc được giao.",
+          "Em ngoan, trung thực; Tham gia hoạt động chung của lớp; Cần tự giác hơn khi học bài.",
+          "Em biết yêu thương bạn bè; Làm được việc được giao; Cần rèn thêm ý thức giữ gìn đồ dùng."
+        ],
+        "cht": [
+          "Em chưa thực hiện đều nội quy của lớp; Cần được nhắc nhở thêm về nề nếp và học tập.",
+          "Em cần chăm chỉ hơn trong học tập; Cần có trách nhiệm hơn với việc được giao.",
+          "Em đã có cố gắng; Còn thiếu tập trung trong giờ học; Cần gia đình phối hợp nhắc nhở thêm.",
+          "Em cần rèn thêm ý thức tự giác; Biết nhận lỗi khi làm sai; Hòa đồng hơn với các bạn."
+        ]
+      },
+      "yeu_nuoc": {
+        "tot": [
+          "Em yêu quê hương, nghiêm túc khi chào cờ.",
+          "Em giữ gìn trường lớp, biết ơn thầy cô giáo.",
+          "Em biết chăm sóc cây xanh, giữ vệ sinh trường.",
+          "Em yêu trường lớp, kính trọng thầy cô giáo."
+        ],
+        "ht": [
+          "Em tham gia đủ hoạt động của trường, của lớp.",
+          "Em biết giữ vệ sinh trường lớp được phân công.",
+          "Em yêu quê hương, cần tích cực hoạt động chung.",
+          "Em kính trọng thầy cô, lễ phép với người lớn."
+        ],
+        "cht": [
+          "Em chưa nghiêm túc khi chào cờ, cần nhắc nhở.",
+          "Em chưa có ý thức giữ vệ sinh trường lớp.",
+          "Em còn ngại tham gia hoạt động chung của lớp.",
+          "Em cần rèn ý thức kính trọng và giữ của công."
+        ]
+      },
+      "nhan_ai": {
+        "tot": [
+          "Em yêu thương, giúp đỡ bạn bè trong lớp.",
+          "Em thân thiện, biết chia sẻ với bạn khó khăn.",
+          "Em hòa đồng, sẵn sàng giúp bạn trong học tập.",
+          "Em quan tâm đến thầy cô, bạn bè và người thân."
+        ],
+        "ht": [
+          "Em hòa đồng với bạn, lễ phép với thầy cô giáo.",
+          "Em biết chia sẻ với bạn khi được gợi ý.",
+          "Em biết nói lời cảm ơn, xin lỗi với mọi người.",
+          "Em biết giúp đỡ bạn trong những việc nhỏ."
+        ],
+        "cht": [
+          "Em chưa nhường nhịn bạn khi chơi, cần nhắc nhở.",
+          "Em cần học cách lắng nghe và giúp đỡ bạn bè.",
+          "Em còn ít chia sẻ với bạn, cần được động viên.",
+          "Em cần rèn thêm cách cư xử thân thiện với bạn."
+        ]
+      },
+      "cham_chi": {
+        "tot": [
+          "Em đi học đều, đúng giờ, chăm chỉ làm bài.",
+          "Em ham học, luôn hoàn thành nhiệm vụ đầy đủ.",
+          "Em siêng năng, tự giác làm bài khi ở nhà.",
+          "Em học bài đều đặn, chú ý nghe giảng trong lớp."
+        ],
+        "ht": [
+          "Em đi học đều, làm được các bài được giao.",
+          "Em có ý thức học tập, cần tập trung hơn.",
+          "Em tham gia công việc chung của lớp đầy đủ.",
+          "Em đã có thói quen chuẩn bị bài trước khi học."
+        ],
+        "cht": [
+          "Em đi học chưa đều, chưa làm đầy đủ bài.",
+          "Em còn thiếu tập trung trong giờ học trên lớp.",
+          "Em chưa chăm học bài ở nhà, cần nhắc nhở thêm.",
+          "Em còn chậm hoàn thành bài, cần kiên trì hơn."
+        ]
+      },
+      "trung_thuc": {
+        "tot": [
+          "Em thật thà, biết nhận lỗi và sửa lỗi đã mắc.",
+          "Em trung thực, tự làm bài của mình khi học.",
+          "Em ngay thẳng, biết trả lại đồ nhặt được.",
+          "Em giữ lời hứa với thầy cô và bạn bè trong lớp."
+        ],
+        "ht": [
+          "Em thật thà với thầy cô, bạn bè trong lớp.",
+          "Em tự làm bài theo hướng dẫn, nói đúng sự thật.",
+          "Em biết nhận lỗi khi được thầy cô nhắc nhở.",
+          "Em biết xin phép khi mượn đồ dùng của bạn."
+        ],
+        "cht": [
+          "Em còn ngại nhận lỗi khi làm sai, cần hướng dẫn.",
+          "Em chưa tự làm bài của mình, cần rèn trung thực.",
+          "Em chưa giữ được lời hứa, cần nhắc nhở thêm.",
+          "Em cần rèn thói quen xin phép khi mượn đồ."
+        ]
+      },
+      "trach_nhiem": {
+        "tot": [
+          "Em có trách nhiệm, làm đúng hạn việc được giao.",
+          "Em tự giác trực nhật, giữ vệ sinh lớp học tốt.",
+          "Em giữ gìn đồ dùng cẩn thận, làm việc đến cùng.",
+          "Em thực hiện tốt nội quy, biết nhắc nhở bạn."
+        ],
+        "ht": [
+          "Em làm được việc được giao khi có nhắc nhở.",
+          "Em thực hiện được trực nhật theo phân công.",
+          "Em thực hiện được nội quy, cần chủ động hơn.",
+          "Em biết giữ gìn sách vở và đồ dùng của mình."
+        ],
+        "cht": [
+          "Em còn quên việc được giao, cần nhắc nhở thêm.",
+          "Em chưa giữ gìn sách vở, đồ dùng cẩn thận.",
+          "Em chưa trực nhật đều, cần được nhắc nhở thêm.",
+          "Em cần có trách nhiệm hơn với việc được giao."
+        ]
+      }
+    }
+  }
+}

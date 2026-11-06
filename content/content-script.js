@@ -586,23 +586,25 @@
     }
 
     function applyNhanXetToVnedu(payload) {
+        // V6.1.0: đọc lại bảng ngay lúc ghi, khớp cả STT lẫn họ tên để không ghi nhầm người,
+        // ghi xong đọc lại ô để chắc chắn chữ đã vào. Ai không ghi được thì báo đích danh.
+        const items = payload.items || [];
         const rows = window.VneduAdapter.getStudentRows();
-        let success = 0, failed = 0;
+        const { matched, missing } = window.NhanXetEngineV2.matchApplyRows(rows, items);
+        const failedNames = missing.map(i => i.hoVaTen);
+        let success = 0;
 
-        for (const item of payload.items || []) {
-            const row = rows.find(r => r.stt === item.stt);
-            if (row && row.textarea) {
-                const ok = window.VneduAdapter.fillTextarea(row.textarea, item.nhanXet);
-                if (ok) success++; else failed++;
-            } else {
-                failed++;
-            }
+        for (const { row, item } of matched) {
+            const ok = window.VneduAdapter.fillTextarea(row.textarea, item.nhanXet)
+                && row.textarea.isConnected
+                && row.textarea.value === item.nhanXet;
+            if (ok) success++; else failedNames.push(item.hoVaTen);
         }
 
         const iframe = document.getElementById(SIDEBAR_ID);
         iframe?.contentWindow.postMessage({
             type: 'COGIAO_APPLY_RESULT',
-            payload: { success, failed, total: payload.items.length }
+            payload: { success, failed: failedNames.length, total: items.length, failedNames }
         }, '*');
     }
 
