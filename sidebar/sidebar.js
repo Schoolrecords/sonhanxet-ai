@@ -2347,13 +2347,14 @@
         // 'free' — V1.6: hiển thị cặp (môn, lớp) đã lock
         box.className = 'lic-status lic-status-free';
         const noticeMap = {
-            'ban_quyen_nam_cu': 'Bản quyền năm học trước đã hết hiệu lực. Năm học ' + (LicenseClient.NAM_HOC || '2026-2027') + ' thầy cô kích hoạt lại bằng quét QR (50.000đ).',
-            'sdt_chua_dang_ky': 'Bản quyền trên máy này không còn trên hệ thống (bản quyền năm học trước). Năm học ' + (LicenseClient.NAM_HOC || '2026-2027') + ' thầy cô kích hoạt lại bằng quét QR (50.000đ).',
+            'ban_quyen_nam_cu': 'Các thầy/cô kích hoạt Bản quyền năm học ' + (LicenseClient.NAM_HOC || '2026-2027').replace('-', '‑'),
+            'sdt_chua_dang_ky': 'Các thầy/cô kích hoạt Bản quyền năm học ' + (LicenseClient.NAM_HOC || '2026-2027').replace('-', '‑'),
             'sdt_da_bi_khoa': 'Bản quyền của số điện thoại này đã bị khoá. Liên hệ Zalo 0913 031 073.',
             'het_han': 'Bản quyền đã hết hạn. Kích hoạt lại bằng quét QR (50.000đ / năm học).'
         };
         if (licenseNotice && noticeMap[licenseNotice.error]) {
-            box.className = 'lic-status lic-status-error';
+            const laNamMoi = licenseNotice.error === 'ban_quyen_nam_cu' || licenseNotice.error === 'sdt_chua_dang_ky';
+            box.className = 'lic-status ' + (laNamMoi ? 'lic-status-info' : 'lic-status-error');
             box.innerHTML = escapeHtml(noticeMap[licenseNotice.error]);
             if (licUiMode === 'login') { formLogin.style.display = 'block'; prefillLoginSdt(); }
             else formReg.style.display = 'block';
@@ -2577,7 +2578,7 @@
             'ho_ten_sai': 'Họ tên cần ít nhất 3 ký tự.',
             'ma_sai_dinh_dang': 'Mã không hợp lệ. Vui lòng kiểm tra lại.',
             'sdt_chua_dang_ky': 'SĐT chưa đăng ký. Bấm "Bắt đầu kích hoạt" trước.',
-            'ban_quyen_nam_cu': 'Bản quyền này của năm học trước. Năm học mới thầy cô kích hoạt lại bằng quét QR (50.000đ).',
+            'ban_quyen_nam_cu': 'Bản quyền này của năm học trước. Các thầy/cô kích hoạt Bản quyền năm học ' + (LicenseClient.NAM_HOC || '2026-2027').replace('-', '‑') + '.',
             'ma_khong_dung': 'Mã không khớp với SĐT. Kiểm tra lại.',
             'chua_thanh_toan': 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi CK. Nếu đã CK lâu, nhắn Zalo thầy Chung 0913031073.',
             'da_dung_cho_may_khac': 'SĐT này đã có bản quyền. Bấm "Đăng nhập trên máy khác" rồi nhập SĐT + mã đăng nhập 4 ký tự.',
