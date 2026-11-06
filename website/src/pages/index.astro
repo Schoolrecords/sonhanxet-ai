@@ -1,151 +1,117 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// ====== INSTALL LINKS ======
-// Sổ nhận xét - AI đã được Chrome Web Store phê duyệt (v1.4 ngày 17/05/2026).
-// V1.5 (17/05/2026): bỏ Năng lực Khoa học cho lớp 1-3 (CT GDPT 2018).
+// 06/11/2026: viết lại cho khớp bản 6.1.3 — tự kích hoạt bằng QR (SePay), giá 50.000đ/năm học,
+// dùng thử 1 môn + 1 lớp. Không ghi số phiên bản trên trang (Store tự cập nhật).
 const cwsUrl = 'https://chromewebstore.google.com/detail/sổ-nhận-xét-ai/hhiipgifeplegcejhpdmdbnbabjikllh';
 const installGuideUrl = '/cai-dat';
+const supportPhone = '0913031073';
 
 // ====== VIDEO HƯỚNG DẪN ======
-// Để bật video, thay `youtubeId: null` bằng ID YouTube thật (vd "dQw4w9WgXcQ")
-// Lấy ID từ URL YouTube: https://youtu.be/<ID>  hoặc  https://www.youtube.com/watch?v=<ID>
 const featuredVideo = {
   title: "Bắt đầu trong 90 giây — từ cài đặt đến nhận xét đầu tiên",
-  description: "Video này dành cho thầy/cô lần đầu sử dụng. Xem 1 lần là làm được, không cần đọc tài liệu.",
   duration: "1:30",
-  tag: "Bắt đầu nhanh",
   youtubeId: "GXprh9sotv0",
 };
-
 const videos = [
-  {
-    title: "Tạo nhận xét cho HS cả lớp bằng 1 nút chạm",
-    duration: "2:15",
-    tag: "Nhận xét môn",
-    youtubeId: "sUTybnmawvM",
-  },
-  {
-    title: "Tạo nhận xét Năng lực và Phẩm chất",
-    duration: "3:00",
-    tag: "Nhận xét NL/PC",
-    youtubeId: "APakefrddc8",
-  },
+  { title: "Tạo nhận xét môn học cho cả lớp", duration: "2:15", tag: "Nhận xét môn", youtubeId: "sUTybnmawvM" },
+  { title: "Tạo nhận xét Năng lực và Phẩm chất", duration: "3:00", tag: "Nhận xét NL, PC", youtubeId: "APakefrddc8" },
 ];
 
-// ====== FEATURES ======
+// ====== BIỂU TƯỢNG NÉT ĐƠN (thay biểu tượng cảm xúc) ======
+const I = {
+  clock: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/>',
+  repeat: '<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 7h6"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  send: '<path d="M4 12h12"/><path d="M12 6l6 6-6 6"/><path d="M20 4v16"/>',
+  check: '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 21v-5h-5"/>',
+  laptop: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+  phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+};
+
+// ====== TÍNH NĂNG ======
 const features = [
-  {
-    icon: "📝",
-    title: "Sinh nhận xét môn học",
-    desc: "Hỗ trợ nhận xét theo từng môn/hoạt động: Tiếng Việt, Toán, Tự nhiên và Xã hội, Khoa học, Lịch sử và Địa lí, Đạo đức, Tin học, Tiếng Anh, GDTC, Âm nhạc, Mĩ thuật, Hoạt động trải nghiệm. Nội dung đa dạng, hạn chế trùng lặp.",
-    accent: "#2B4F9E",
-    accentBg: "#E6EBF5"
-  },
-  {
-    icon: "🎯",
-    title: "Gợi ý nhận xét NL-PC",
-    desc: "Tự động gợi ý nhận xét Năng lực, Phẩm chất dựa trên kết quả học tập và rèn luyện. Giáo viên có thể chọn, chỉnh sửa hoặc thay đổi mức nhận xét khi cần.",
-    accent: "#B8860B",
-    accentBg: "#FFF8DC"
-  },
-  {
-    icon: "⚡",
-    title: "Áp dụng nhanh vào Vnedu",
-    desc: "Xem trước toàn bộ nhận xét trong sidebar. Khi đồng ý, bấm “Áp dụng” để đưa nhận xét vào ô tương ứng trên Vnedu. Giáo viên kiểm tra lại và bấm Lưu.",
-    accent: "#EA580C",
-    accentBg: "#FFEDD5"
-  },
-  {
-    icon: "📐",
-    title: "Bám sát Thông tư 27",
-    desc: "Gợi ý nhận xét theo tinh thần TT27/2020/TT-BGDĐT: rõ mức độ đạt được, dùng từ phù hợp lứa tuổi, giáo viên có thể chỉnh sửa trước khi lưu.",
-    accent: "#7C3AED",
-    accentBg: "#EDE9FE"
-  },
-  {
-    icon: "🌐",
-    title: "Chạy trực tiếp trên trình duyệt",
-    desc: "Sau khi cài đặt, tiện ích hoạt động ngay trên Vnedu, không cần mở thêm phần mềm. Thao tác gọn, nhanh, phù hợp với công việc cuối kỳ.",
-    accent: "#0891B2",
-    accentBg: "#CFFAFE"
-  },
-  {
-    icon: "🔄",
-    title: "Cập nhật thường xuyên",
-    desc: "Khi Vnedu thay đổi giao diện hoặc có mẫu nhận xét mới, tiện ích được cập nhật qua Chrome Web Store. Giáo viên chỉ cần sử dụng phiên bản mới nhất.",
-    accent: "#059669",
-    accentBg: "#D1FAE5"
-  }
+  { icon: I.book, title: "Nhận xét môn học",
+    desc: "Đủ các môn và hoạt động: Tiếng Việt, Toán, Tự nhiên và Xã hội, Khoa học, Lịch sử và Địa lí, Đạo đức, Tin học, Tiếng Anh, Giáo dục thể chất, Âm nhạc, Mĩ thuật, Hoạt động trải nghiệm. Câu chữ đa dạng, hạn chế trùng lặp giữa các em." },
+  { icon: I.star, title: "Nhận xét Năng lực, Phẩm chất",
+    desc: "Tự gợi ý mức và lời nhận xét Năng lực, Phẩm chất dựa trên kết quả học tập. Thầy cô bấm vào mức để đổi khi cần." },
+  { icon: I.send, title: "Đưa thẳng vào vnEdu",
+    desc: "Xem trước toàn bộ nhận xét trong khung bên phải. Bấm “Áp dụng vào Vnedu” là chữ vào đúng ô của từng em, rồi thầy cô bấm Lưu của vnEdu." },
+  { icon: I.check, title: "Theo Thông tư 27",
+    desc: "Lời nhận xét nêu rõ mức độ đạt được, dùng từ phù hợp lứa tuổi tiểu học, đúng tinh thần Thông tư 27/2020/TT-BGDĐT." },
+  { icon: I.lock, title: "Dữ liệu học sinh ở lại trên máy",
+    desc: "Tên, điểm, nhận xét của học sinh không gửi đi đâu. Tiện ích chạy ngay trên trang vnEdu, không cần cài thêm phần mềm." },
+  { icon: I.refresh, title: "Tự cập nhật",
+    desc: "Khi vnEdu đổi giao diện, bản sửa được đưa lên Chrome Web Store và máy thầy cô tự cập nhật, không phải cài lại." },
 ];
 
-// ====== FAQ ======
+// ====== HỎI ĐÁP ======
 const faqs = [
   {
-    q: "Cài đặt có mất thời gian không? Tôi không rành công nghệ.",
-    a: "Rất đơn giản — chỉ 30 giây. Bấm nút “Cài cho Chrome”, trang Chrome Web Store sẽ mở ra, bấm tiếp “Thêm vào Chrome” → “Thêm tiện ích”. Xong! Mở Vnedu là dùng được ngay. Có thể gọi/Zalo 0913031073 nếu cần hỗ trợ trực tiếp."
+    q: "Dùng thử thế nào? Bao giờ mới phải trả tiền?",
+    a: "Cài xong là dùng thử được ngay, miễn phí, với 1 môn của 1 lớp (môn và lớp đầu tiên thầy cô dùng). Khi muốn dùng các môn khác, các lớp khác hoặc phần Năng lực, Phẩm chất thì mới cần đăng ký bản quyền 50.000đ/năm học.",
   },
   {
-    q: "Dữ liệu học sinh của tôi có bị gửi đi đâu không?",
-    a: "Không. Tuyệt đối không. Tên HS, điểm số, đánh giá — tất cả chỉ tồn tại trong trình duyệt của thầy/cô và biến mất khi đóng tab. Extension không có server, không có database lưu thông tin HS. Chỉ 3 thông tin của riêng GV (SĐT, mã kích hoạt, hash máy) rời máy — chỉ để xác thực thanh toán license."
+    q: "Thanh toán thế nào? Có phải gọi điện hay nhắn tin cho ai không?",
+    a: "Không cần. Trong tiện ích bấm biểu tượng bánh răng, nhập Họ tên và Số điện thoại rồi bấm “Bắt đầu kích hoạt”. Tiện ích hiện mã QR, thầy cô mở app ngân hàng quét mã — số tiền và nội dung đã có sẵn, không phải gõ gì — rồi xác nhận chuyển. Khoảng 1 phút sau tiện ích tự mở khoá.",
   },
   {
-    q: "Trường tôi dùng Vnedu phiên bản mới, có dùng được không?",
-    a: "Có. Extension đang hỗ trợ Vnedu v5 (phiên bản hiện hành tính đến 2026). Nếu Vnedu cập nhật giao diện làm extension không nhận diện được module, bấm nút “Quét lại” trong sidebar. Nếu vẫn không được, gửi screenshot Console cho tác giả qua Zalo — thường update trong 1-2 ngày."
+    q: "Đã chuyển khoản mà chưa thấy mở khoá?",
+    a: "Thường chỉ dưới 1 phút. Thầy cô cứ để nguyên khung đang chờ, tiện ích tự kiểm tra. Nếu sau 30 phút vẫn chưa mở khoá, nhắn Zalo 0913031073 kèm ảnh biên lai chuyển khoản để được mở tay.",
   },
   {
-    q: "Đổi máy / cài lại Windows thì sao? Có phải mua mã mới không?",
-    a: "Không. Nhắn Zalo cho admin, gửi SĐT đã đăng ký, admin sẽ reset thiết bị trong vài phút. Dùng lại mã cũ trên máy mới, không tốn thêm phí. Bản quyền có hiệu lực đến 31/8 cuối năm học."
+    q: "Bản quyền dùng đến bao giờ? Dùng được mấy máy?",
+    a: "Đến hết ngày 31/8 của năm học. Dùng được trên mọi máy của chính thầy cô (máy ở trường, máy ở nhà). Đồng nghiệp muốn dùng xin đăng ký bằng số điện thoại riêng; một số điện thoại dùng trên quá nhiều máy sẽ bị khoá.",
   },
   {
-    q: "Tôi có thể chia sẻ mã cho đồng nghiệp không?",
-    a: "Một bản quyền dùng được trên mọi máy của chính thầy/cô. Hệ thống theo dõi số máy; nếu phát hiện chia sẻ (cùng một tài khoản trên quá nhiều máy), tài khoản sẽ bị khoá. Đồng nghiệp muốn dùng vui lòng đăng ký mã riêng — chi phí rất hợp lý so với hàng chục giờ ngồi viết nhận xét bằng tay."
+    q: "Đổi máy hoặc cài lại Windows thì có phải trả lại tiền không?",
+    a: "Không. Trên máy mới, cài tiện ích, bấm biểu tượng bánh răng, chọn “Đã có bản quyền? Đăng nhập trên máy khác”, nhập Số điện thoại và mã đăng nhập. Mã đăng nhập xem ở mục Bản quyền trên máy cũ; quên mã thì nhắn Zalo 0913031073.",
   },
   {
-    q: "Giáo viên có sửa được lời nhận xét đã sinh không?",
-    a: "Hoàn toàn được — và đây là tinh thần thiết kế cốt lõi: AI lo phần lặp lại nặng nhọc, GV nắm quyền quyết định cuối cùng. Có 2 cách sửa: (1) Ngay trong sidebar trước khi áp dụng — click vào nhận xét bất kỳ để chỉnh từ ngữ, độ dài, hoặc thêm chi tiết riêng cho từng HS; (2) Sau khi đã áp dụng vào Vnedu — sửa trực tiếp trong textarea Vnedu như bình thường rồi bấm Lưu. Mọi chỉnh sửa của GV được ưu tiên tuyệt đối."
+    q: "Dữ liệu học sinh có bị gửi đi đâu không?",
+    a: "Không. Tên, điểm, nhận xét của học sinh chỉ nằm trên trình duyệt của thầy cô. Máy chủ bản quyền chỉ lưu Họ tên, Số điện thoại của thầy cô và trạng thái bản quyền.",
   },
   {
-    q: "Nếu Chrome update lớn làm extension không chạy thì sao?",
-    a: "Extension dùng Manifest V3 (chuẩn hiện hành của Chrome), tương thích lâu dài. Khi Chrome có thay đổi đột ngột, bản update mới sẽ được đẩy qua Chrome Web Store trong vòng vài ngày, GV không cần làm gì."
-  }
+    q: "Có sửa được lời nhận xét không?",
+    a: "Được. Có 2 chỗ sửa: (1) ngay trong khung xem trước của tiện ích, trước khi áp dụng; (2) sau khi đã áp dụng, sửa trực tiếp trong ô của vnEdu như bình thường rồi bấm Lưu. Tiện ích không bao giờ tự bấm Lưu thay thầy cô.",
+  },
+  {
+    q: "Không thấy khung Sổ nhận xét - AI trên vnEdu?",
+    a: "Kiểm tra 3 việc: (1) đang dùng Chrome trên máy tính, không phải điện thoại; (2) đang ở đúng trang Sổ nhận xét của vnEdu; (3) bấm F5 tải lại trang. Nếu đổi lớp, đổi môn mà khung chưa đổi theo, bấm nút “Cập nhật dữ liệu từ Vnedu” ở đầu khung.",
+  },
 ];
 ---
 
-<BaseLayout title="Sổ nhận xét - AI · Trợ lý sinh nhận xét cuối kỳ cho GV tiểu học">
+<BaseLayout title="Sổ nhận xét - AI · Trợ lý tạo nhận xét cho giáo viên tiểu học trên vnEdu">
 
   <!-- ============== HERO ============== -->
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <span class="eyebrow">Cho giáo viên tiểu học · Vnedu</span>
+        <span class="eyebrow">Cho giáo viên tiểu học dùng vnEdu</span>
         <h1 class="text-balance">
-          Nhận xét cuối kỳ cho <span class="highlight">cả lớp</span><br />
-          xong trong <span class="underline-gold">5 phút</span>
+          Nhận xét <span class="highlight">cả lớp</span>,<br />
+          mỗi môn chỉ <span class="underline-gold">vài phút</span>
         </h1>
         <p class="hero-sub text-pretty">
-          Sổ nhận xét - AI tự động đọc bảng điểm Vnedu (GKI, CKI, GKII và đặc biệt là cuối năm) để có nhận xét theo Thông tư 27/2020 cho cả lớp. Nội dung lời nhận xét được AI xây dựng bảo đảm văn phong chuẩn mực, phù hợp môi trường sư phạm tiểu học và đúng định hướng đánh giá theo Thông tư 27/2020/TT-BGD&amp;ĐT.
+          Tiện ích đọc kết quả học tập ngay trên vnEdu, viết sẵn lời nhận xét cho từng em theo Thông tư 27.
+          Thầy cô xem lại, sửa nếu cần, rồi bấm Lưu như mọi khi.
         </p>
         <div class="hero-cta">
-          <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            <span style="font-size: 18px;">⬇</span>
-            Cài đặt cho Chrome
-          </a>
-          <a href={installGuideUrl} class="btn btn-ghost btn-lg">
-            📖 Xem hướng dẫn
-          </a>
+          <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">Cài cho Chrome</a>
+          <a href="#bat-dau" class="btn btn-ghost btn-lg">Xem 4 bước bắt đầu</a>
         </div>
+        <p class="hero-price">
+          <strong>Dùng thử miễn phí</strong> 1 môn · Bản đầy đủ <strong>50.000đ/năm học</strong>, dùng trên mọi máy của thầy cô
+        </p>
       </div>
 
       <div class="hero-visual">
-        <div class="float-card float-card-1">
-          <div class="icon">✓</div>
-          <div>
-            <div class="label">Tất cả học sinh</div>
-            <div class="sub">đã được nhận xét trong 1 lần chạm!</div>
-          </div>
-        </div>
-
         <div class="hero-video-frame">
           <div class="hero-video-bar">
             <span class="mock-dot"></span>
@@ -157,164 +123,189 @@ const faqs = [
             </div>
           </div>
           <div class="video-player hero-video-player">
-            {featuredVideo.youtubeId ? (
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${featuredVideo.youtubeId}?rel=0&modestbranding=1`}
-                title={featuredVideo.title}
-                loading="lazy"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              />
-            ) : (
-              <div class="video-placeholder">
-                <div class="video-play-icon">▶</div>
-                <div class="video-placeholder-text">Video sẽ được đăng tại đây</div>
-              </div>
-            )}
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${featuredVideo.youtubeId}?rel=0&modestbranding=1`}
+              title={featuredVideo.title}
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            />
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ============== PILLARS (4 cards icon) ============== -->
-  <section class="stats-strip pillars-section">
+  <!-- ============== BẮT ĐẦU TRONG 4 BƯỚC ============== -->
+  <section id="bat-dau" class="section-canvas start-section">
     <div class="container">
-      <div class="pillar-grid">
-        <div class="pillar">
-          <div class="pillar-icon">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="16" cy="17" r="11" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M16 11v6l4 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M11 5l-3 2M21 5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="pillar-title">5 phút</div>
-          <div class="pillar-sub">hoàn thành nhận xét cả lớp</div>
-          <span class="pillar-divider"></span>
+      <div class="section-title">
+        <span class="eyebrow">Bắt đầu</span>
+        <h2 class="text-balance">Làm theo 4 bước là dùng được ngay</h2>
+        <p class="text-pretty">Lần đầu mất khoảng 5 phút. Từ lần sau, mở vnEdu là dùng.</p>
+      </div>
+
+      <div class="prep">
+        <div class="prep-title">Cần chuẩn bị</div>
+        <div class="prep-items">
+          <div class="prep-item"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.laptop} /><span><strong>Máy tính</strong> có trình duyệt Chrome</span></div>
+          <div class="prep-item"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.user} /><span><strong>Tài khoản vnEdu</strong> giáo viên</span></div>
+          <div class="prep-item"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.phone} /><span><strong>App ngân hàng</strong> trên điện thoại (khi mua bản quyền)</span></div>
         </div>
-        <div class="pillar">
-          <div class="pillar-icon">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect x="8" y="9" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M12 14h8M12 17h8M12 20h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M11 5v4M16 5v4M21 5v4M11 25v4M16 25v4M21 25v4M5 11h4M5 16h4M5 21h4M25 11h4M25 16h4M25 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
+      </div>
+
+      <ol class="start-steps">
+        <li class="start-step">
+          <div class="start-num">1</div>
+          <div class="start-body">
+            <h3>Cài tiện ích</h3>
+            <p>Bấm nút <strong>Cài cho Chrome</strong>. Trang Chrome Web Store mở ra, bấm <kbd>Thêm vào Chrome</kbd> rồi <kbd>Thêm tiện ích</kbd>.</p>
+            <a href={installGuideUrl} class="start-link">Xem ảnh từng bước cài →</a>
           </div>
-          <div class="pillar-title">AI tự động</div>
-          <div class="pillar-sub">phân tích kết quả học sinh</div>
-          <span class="pillar-divider"></span>
+          <div class="start-mock" aria-hidden="true">
+            <div class="mock-store">
+              <img src="/logo-app.png" alt="" width="36" height="36" />
+              <div class="mock-store-name">Sổ nhận xét - AI</div>
+              <span class="mock-btn mock-btn-store">Thêm vào Chrome</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="start-step">
+          <div class="start-num">2</div>
+          <div class="start-body">
+            <h3>Mở Sổ nhận xét trên vnEdu</h3>
+            <p>Đăng nhập vnEdu như mọi khi, vào <kbd>Sổ điểm</kbd> rồi <kbd>Sổ nhận xét</kbd>, chọn lớp, môn, học kỳ. Khung <strong>Sổ nhận xét - AI</strong> tự hiện ở bên phải.</p>
+          </div>
+          <div class="start-mock" aria-hidden="true">
+            <div class="mock-page">
+              <div class="mock-page-main">
+                <div class="mock-line w80"></div><div class="mock-line w60"></div><div class="mock-line w70"></div><div class="mock-line w50"></div>
+              </div>
+              <div class="mock-page-side">
+                <div class="mock-side-head">Sổ nhận xét - AI</div>
+                <div class="mock-line w80 light"></div><div class="mock-line w60 light"></div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="start-step">
+          <div class="start-num">3</div>
+          <div class="start-body">
+            <h3>Tạo nhận xét, xem lại, Lưu</h3>
+            <p>Bấm <strong>Tạo nhận xét</strong>. Đọc qua, sửa em nào cần sửa. Bấm <strong>Áp dụng vào Vnedu</strong>, rồi bấm nút <kbd>Lưu</kbd> của vnEdu.</p>
+            <p class="start-note">Tiện ích không tự bấm Lưu, thầy cô luôn là người quyết định.</p>
+          </div>
+          <div class="start-mock" aria-hidden="true">
+            <div class="mock-side">
+              <span class="mock-btn">Tạo nhận xét</span>
+              <div class="mock-cmt"><b>Nguyễn An</b> Đọc to, rõ ràng; viết đúng chính tả…</div>
+              <div class="mock-cmt"><b>Lê Bình</b> Thực hiện thành thạo các phép tính…</div>
+              <span class="mock-btn">Áp dụng vào Vnedu</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="start-step">
+          <div class="start-num">4</div>
+          <div class="start-body">
+            <h3>Mở khoá các môn: quét QR</h3>
+            <p>Dùng thử miễn phí 1 môn. Muốn dùng hết: bấm biểu tượng bánh răng, nhập <strong>Họ tên</strong> và <strong>Số điện thoại</strong>, bấm <strong>Bắt đầu kích hoạt</strong>. Mở app ngân hàng quét mã QR, xác nhận chuyển.</p>
+            <p class="start-note">Số tiền và nội dung đã có sẵn trong mã. Khoảng 1 phút sau tiện ích tự mở khoá, không cần gọi ai.</p>
+          </div>
+          <div class="start-mock" aria-hidden="true">
+            <div class="mock-side mock-qr-card">
+              <svg class="mock-qr" viewBox="0 0 21 21" shape-rendering="crispEdges">
+                <rect width="21" height="21" fill="#fff"/>
+                <path fill="#14244F" d="M0 0h7v7H0zM14 0h7v7h-7zM0 14h7v7H0z"/>
+                <path fill="#fff" d="M1 1h5v5H1zM15 1h5v5h-5zM1 15h5v5H1z"/>
+                <path fill="#14244F" d="M2 2h3v3H2zM16 2h3v3h-3zM2 16h3v3H2zM9 1h1v2H9zM11 2h2v1h-2zM8 4h2v2H8zM12 5h1v3h-1zM9 8h2v1H9zM1 9h3v1H1zM5 8h2v2H5zM14 9h2v1h-2zM17 8h3v1h-3zM8 10h1v3H8zM10 11h3v1h-3zM15 11h1v2h-1zM18 11h2v2h-2zM9 14h2v2H9zM12 13h2v1h-2zM14 15h3v1h-3zM18 15h2v1h-2zM10 17h1v3h-1zM12 18h3v1h-3zM16 18h1v2h-1zM19 18h1v3h-1zM8 19h1v1H8z"/>
+              </svg>
+              <div class="mock-wait"><span class="mock-spin"></span>Đang chờ ngân hàng báo có…</div>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="start-cta">
+        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">Cài cho Chrome</a>
+        <a href={installGuideUrl} class="btn btn-ghost btn-lg">Hướng dẫn chi tiết có ảnh</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== GIÁ ============== -->
+  <section id="gia">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Giá</span>
+        <h2 class="text-balance">Một mức giá, dùng cả năm học</h2>
+      </div>
+      <div class="price-wrap">
+        <div class="price-col price-free">
+          <h3>Dùng thử</h3>
+          <div class="price-big">0đ</div>
+          <ul>
+            <li>1 môn của 1 lớp</li>
+            <li>Đủ để xem chất lượng lời nhận xét</li>
+            <li>Không cần đăng ký</li>
+          </ul>
         </div>
-        <div class="pillar">
-          <div class="pillar-icon">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M16 4l10 4v8c0 6-4.5 10.5-10 12-5.5-1.5-10-6-10-12V8l10-4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M11 16l3.5 3.5L21 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="pillar-title">Theo TT27</div>
-          <div class="pillar-sub">phù hợp đánh giá tiểu học</div>
-          <span class="pillar-divider"></span>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="14" cy="11" r="4.5" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M5 27c0-4.5 4-8 9-8 2 0 3.8.55 5.3 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M19 24l6.5-6.5 2.5 2.5L21.5 26.5 18 27l1-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="pillar-title">Giáo viên toàn quyền</div>
-          <div class="pillar-sub">chỉnh sửa trước khi lưu</div>
-          <span class="pillar-divider"></span>
+        <div class="price-col price-full">
+          <h3>Bản đầy đủ</h3>
+          <div class="price-big">50.000đ<span>/năm học</span></div>
+          <ul>
+            <li>Tất cả các môn, tất cả các lớp</li>
+            <li>Nhận xét Năng lực, Phẩm chất</li>
+            <li>Dùng trên mọi máy của thầy cô</li>
+            <li>Hiệu lực đến hết 31/8</li>
+            <li>Quét QR, tự mở khoá sau khoảng 1 phút</li>
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============== PROBLEM ============== -->
+  <!-- ============== VẤN ĐỀ ============== -->
   <section class="section-canvas problem-section">
     <div class="container">
       <div class="section-title">
-        <span class="eyebrow">Vấn đề</span>
+        <span class="eyebrow">Vì sao cần</span>
         <h2 class="text-balance">Cuối học kỳ, thầy cô thường gặp 3 khó khăn</h2>
       </div>
       <div class="problem-grid">
         <div class="problem-card">
-          <div class="problem-icon-wrap">⏰</div>
+          <div class="problem-icon-wrap"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></div>
           <h3>Mất nhiều thời gian</h3>
-          <p>Một lớp đông học sinh, nhiều môn học và nội dung đánh giá khiến việc viết nhận xét thủ công trở nên khá vất vả.</p>
+          <p>Lớp đông học sinh, nhiều môn và nhiều nội dung đánh giá, viết tay từng lời nhận xét rất vất vả.</p>
         </div>
         <div class="problem-card">
-          <div class="problem-icon-wrap">🔁</div>
+          <div class="problem-icon-wrap"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={I.repeat} /></div>
           <h3>Dễ lặp ý, trùng câu</h3>
-          <p>Khi phải viết nhiều nhận xét trong cùng một thời điểm, giáo viên khó diễn đạt phong phú và sát với từng học sinh.</p>
+          <p>Viết nhiều nhận xét cùng lúc thì khó diễn đạt phong phú và sát với từng học sinh.</p>
         </div>
         <div class="problem-card">
-          <div class="problem-icon-wrap">📅</div>
+          <div class="problem-icon-wrap"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={I.calendar} /></div>
           <h3>Áp lực tiến độ cuối kỳ</h3>
-          <p>Cuối kỳ có nhiều việc phải hoàn thành: điểm số, hồ sơ, kiểm tra, họp phụ huynh… nên giáo viên rất cần một công cụ hỗ trợ nhẹ nhàng, hiệu quả.</p>
+          <p>Cuối kỳ dồn nhiều việc: điểm số, hồ sơ, kiểm tra, họp phụ huynh… nên rất cần một công cụ nhẹ nhàng, đỡ việc.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============== VIDEO HƯỚNG DẪN (V2.1: lên trước Features để GV thấy ngay) ============== -->
-  <section id="video" class="video-section">
-    <div class="container">
-      <div class="section-title">
-        <span class="eyebrow">Video hướng dẫn</span>
-        <h2 class="text-balance">Xem chi tiết từng tính năng</h2>
-        <p class="text-pretty">Mỗi video dưới 3 phút — vừa đủ để thầy cô tự làm theo mà không cần thành thạo CNTT.</p>
-      </div>
-
-      <!-- Video grid -->
-      <div class="video-grid">
-        {videos.map(v => (
-          <article class="video-card">
-            <div class="video-player">
-              {v.youtubeId ? (
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0&modestbranding=1`}
-                  title={v.title}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                />
-              ) : (
-                <div class="video-placeholder">
-                  <div class="video-play-icon">▶</div>
-                  <div class="video-placeholder-text">Coming soon</div>
-                </div>
-              )}
-              <div class="video-duration">{v.duration}</div>
-            </div>
-            <div class="video-meta">
-              <span class="video-tag">{v.tag}</span>
-              <h4>{v.title}</h4>
-              <div class="video-info">
-                <span>⏱ {v.duration}</span>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== FEATURES ============== -->
+  <!-- ============== TÍNH NĂNG ============== -->
   <section id="tinh-nang" class="section-dark features-section-dark">
     <div class="container">
       <div class="section-title">
-        <span class="eyebrow">Giải pháp</span>
-        <h2 class="text-balance">AI hỗ trợ tạo nhận xét — giáo viên vẫn là người quyết định cuối cùng</h2>
-        <p class="text-pretty">Extension đọc bảng điểm Vnedu, sinh nhận xét, GV xem trước rồi áp dụng. Không thay thế GV — chỉ tăng tốc 30 lần.</p>
+        <span class="eyebrow">Tính năng</span>
+        <h2 class="text-balance">Tiện ích viết sẵn, giáo viên quyết định</h2>
+        <p class="text-pretty">Tiện ích đọc kết quả trên vnEdu và viết sẵn lời nhận xét. Thầy cô xem, sửa, rồi mới lưu.</p>
       </div>
       <div class="features-grid">
         {features.map(f => (
-          <div class="feature" style={`--feat-accent: ${f.accent}; --feat-accent-bg: ${f.accentBg};`}>
-            <div class="feature-icon">{f.icon}</div>
+          <div class="feature">
+            <div class="feature-icon"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={f.icon} /></div>
             <h3>{f.title}</h3>
             <p>{f.desc}</p>
           </div>
@@ -323,106 +314,42 @@ const faqs = [
     </div>
   </section>
 
-  <!-- ============== INSTALL STEPS ============== -->
-  <section id="cai-dat" class="section-canvas">
+  <!-- ============== VIDEO ============== -->
+  <section id="video" class="video-section">
     <div class="container">
       <div class="section-title">
-        <span class="eyebrow">Cài đặt</span>
-        <h2 class="text-balance">3 bước · ~30 giây · không cần biết kỹ thuật</h2>
-        <p class="text-pretty">
-          Đã có mặt trên <strong>Chrome Web Store</strong> — cài 1 click, tự cập nhật khi có bản mới, không cần làm gì thêm.
-        </p>
+        <span class="eyebrow">Video hướng dẫn</span>
+        <h2 class="text-balance">Xem từng phần, mỗi video dưới 3 phút</h2>
       </div>
-
-      <div class="steps">
-        <div class="step">
-          <h3>Bấm "Cài cho Chrome"</h3>
-          <p>Nút bên dưới mở Chrome Web Store. Tại đó bấm <kbd>Thêm vào Chrome</kbd> → <kbd>Thêm tiện ích</kbd>. Xong, có icon trên thanh công cụ.</p>
-        </div>
-        <div class="step">
-          <h3>Mở Vnedu, vào Sổ nhận xét</h3>
-          <p>Đăng nhập Vnedu như bình thường. Vào <kbd>Sổ điểm → Sổ nhận xét</kbd>, chọn lớp, môn, học kỳ. <strong>Sidebar tự xuất hiện bên phải.</strong></p>
-        </div>
-        <div class="step">
-          <h3>Đăng ký mã & bắt đầu</h3>
-          <p>Lần đầu, sidebar hướng dẫn đăng ký mã & kích hoạt ngay trong app. Từ lần sau, mở Vnedu là dùng được ngay.</p>
-        </div>
-      </div>
-
-      <div style="text-align: center; margin-top: 56px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-          🌐 Cài đặt qua Chrome Web Store
-        </a>
-        <a href={installGuideUrl} class="btn btn-ghost btn-lg">
-          📖 Hướng dẫn chi tiết
-        </a>
+      <div class="video-grid">
+        {videos.map(v => (
+          <article class="video-card">
+            <div class="video-player">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0&modestbranding=1`}
+                title={v.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              />
+              <div class="video-duration">{v.duration}</div>
+            </div>
+            <div class="video-meta">
+              <span class="video-tag">{v.tag}</span>
+              <h4>{v.title}</h4>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- ============== JOIN COMMUNITY ============== -->
-  <section id="cong-dong">
-    <div class="container">
-      <div class="section-title">
-        <span class="eyebrow">💬 Cộng đồng</span>
-        <h2 class="text-balance">Tham gia nhóm <span class="highlight">Hỗ trợ Công nghệ số</span></h2>
-        <p class="text-pretty">
-          Cộng đồng giáo viên tiểu học đang dùng Sổ nhận xét - AI và các công cụ công nghệ giáo dục. Hỗ trợ trực tiếp về kỹ thuật và công nghệ · trao đổi kinh nghiệm · cập nhật phiên bản mới sớm nhất.
-        </p>
-      </div>
-
-      <div class="community-card">
-        <div class="community-info">
-          <div class="community-badge">
-            <svg class="community-zalo-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-              <path fill="currentColor" d="M12 2C6.477 2 2 5.94 2 10.8c0 2.78 1.46 5.25 3.74 6.87-.16.62-.5 1.5-1.1 2.34-.13.18-.04.43.18.45.05.01.1.01.16.01 1.34 0 3-.74 4.16-1.42.93.21 1.9.33 2.86.33 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/>
-            </svg>
-            <span>Nhóm Zalo · Mở để tham gia</span>
-          </div>
-          <h3>Nhóm Hỗ trợ Công nghệ số</h3>
-          <p class="community-tagline">
-            Cộng đồng giáo viên trao đổi về Sổ nhận xét - AI và các công cụ công nghệ giáo dục trong nhà trường tiểu học.
-          </p>
-          <ul class="community-perks">
-            <li><span class="community-check">✓</span> Hỗ trợ trực tiếp về kỹ thuật và công nghệ</li>
-            <li><span class="community-check">✓</span> Trao đổi kinh nghiệm sinh nhận xét theo TT27</li>
-            <li><span class="community-check">✓</span> Cập nhật phiên bản mới sớm nhất</li>
-            <li><span class="community-check">✓</span> Báo lỗi · đề xuất tính năng mới</li>
-          </ul>
-          <div class="community-actions">
-            <a href="https://zalo.me/g/flzq2x9rgampkvjp6mps" target="_blank" rel="noopener" class="btn btn-zalo btn-lg">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                <path fill="currentColor" d="M12 2C6.477 2 2 5.94 2 10.8c0 2.78 1.46 5.25 3.74 6.87-.16.62-.5 1.5-1.1 2.34-.13.18-.04.43.18.45.05.01.1.01.16.01 1.34 0 3-.74 4.16-1.42.93.21 1.9.33 2.86.33 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/>
-              </svg>
-              Vào nhóm Zalo ngay
-            </a>
-            <span class="community-or">— hoặc quét QR bên phải —</span>
-          </div>
-        </div>
-
-        <div class="community-qr-wrap">
-          <div class="community-qr-frame">
-            <img
-              src="/qr-zalo-nhom-ho-tro.png"
-              alt="QR Code Zalo — Nhóm Hỗ trợ Công nghệ số · zalo.me/g/flzq2x9rgampkvjp6mps"
-              loading="lazy"
-            />
-          </div>
-          <div class="community-qr-label">
-            Mở app Zalo → Quét QR<br/>
-            <span class="community-qr-url">zalo.me/g/flzq2x9rgampkvjp6mps</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== FAQ ============== -->
+  <!-- ============== HỎI ĐÁP ============== -->
   <section id="faq" class="section-canvas">
     <div class="container">
       <div class="section-title">
-        <span class="eyebrow">Câu hỏi thường gặp</span>
-        <h2 class="text-balance">Mọi thắc mắc, giải đáp ở đây</h2>
+        <span class="eyebrow">Hỏi đáp</span>
+        <h2 class="text-balance">Câu hỏi thường gặp</h2>
       </div>
       <div class="faq-list">
         {faqs.map(f => (
@@ -435,24 +362,172 @@ const faqs = [
     </div>
   </section>
 
-  <!-- ============== FINAL CTA ============== -->
-  <section class="section-dark">
-    <div class="container cta-final">
-      <h2 class="text-balance">Sẵn sàng giảm 95% thời gian viết nhận xét?</h2>
-      <p class="text-pretty">
-        Cài đặt trong 30 giây.<br/>
-        Hoàn thành nhận xét cho cả lớp chỉ trong vài phút.<br/>
-        Nhanh hơn, đồng bộ hơn và tiết kiệm hàng giờ làm việc.
-      </p>
-      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-          Cài đặt cho Chrome · Miễn phí
-        </a>
-        <a href={installGuideUrl} class="btn btn-outline-light btn-lg">
-          📖 Hướng dẫn chi tiết
-        </a>
+  <!-- ============== CỘNG ĐỒNG ============== -->
+  <section id="cong-dong">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Cộng đồng</span>
+        <h2 class="text-balance">Tham gia nhóm <span class="highlight">Hỗ trợ Công nghệ số</span></h2>
+        <p class="text-pretty">Giáo viên tiểu học trao đổi cách dùng, báo lỗi, đề xuất tính năng và nhận tin cập nhật sớm.</p>
+      </div>
+
+      <div class="community-card">
+        <div class="community-info">
+          <div class="community-badge">
+            <svg class="community-zalo-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path fill="currentColor" d="M12 2C6.477 2 2 5.94 2 10.8c0 2.78 1.46 5.25 3.74 6.87-.16.62-.5 1.5-1.1 2.34-.13.18-.04.43.18.45.05.01.1.01.16.01 1.34 0 3-.74 4.16-1.42.93.21 1.9.33 2.86.33 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/>
+            </svg>
+            <span>Nhóm Zalo · Mở để tham gia</span>
+          </div>
+          <h3>Nhóm Hỗ trợ Công nghệ số</h3>
+          <ul class="community-perks">
+            <li><span class="community-check">✓</span> Hỗ trợ trực tiếp khi gặp lỗi</li>
+            <li><span class="community-check">✓</span> Trao đổi kinh nghiệm nhận xét theo Thông tư 27</li>
+            <li><span class="community-check">✓</span> Nhận tin phiên bản mới sớm nhất</li>
+            <li><span class="community-check">✓</span> Đề xuất tính năng mới</li>
+          </ul>
+          <div class="community-actions">
+            <a href="https://zalo.me/g/flzq2x9rgampkvjp6mps" target="_blank" rel="noopener" class="btn btn-zalo btn-lg">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M12 2C6.477 2 2 5.94 2 10.8c0 2.78 1.46 5.25 3.74 6.87-.16.62-.5 1.5-1.1 2.34-.13.18-.04.43.18.45.05.01.1.01.16.01 1.34 0 3-.74 4.16-1.42.93.21 1.9.33 2.86.33 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/>
+              </svg>
+              Vào nhóm Zalo
+            </a>
+            <span class="community-or">hoặc quét mã bên cạnh bằng app Zalo</span>
+          </div>
+        </div>
+        <div class="community-qr-wrap">
+          <div class="community-qr-frame">
+            <img src="/qr-zalo-nhom-ho-tro.png" alt="Mã QR nhóm Zalo Hỗ trợ Công nghệ số" loading="lazy" />
+          </div>
+          <div class="community-qr-label">
+            Mở app Zalo, quét mã<br/>
+            <span class="community-qr-url">zalo.me/g/flzq2x9rgampkvjp6mps</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ============== KẾT ============== -->
+  <section class="section-dark">
+    <div class="container cta-final">
+      <h2 class="text-balance">Cài thử ngay, dùng thử miễn phí 1 môn</h2>
+      <p class="text-pretty">
+        Cài mất khoảng 30 giây. Thấy hợp thì mua bản đầy đủ 50.000đ/năm học bằng cách quét QR ngay trong tiện ích.
+      </p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">Cài cho Chrome</a>
+        <a href={installGuideUrl} class="btn btn-outline-light btn-lg">Hướng dẫn chi tiết</a>
+      </div>
+      <p class="cta-help">Cần hỗ trợ: gọi hoặc Zalo <a href={`https://zalo.me/${supportPhone}`} target="_blank" rel="noopener">0913 031 073</a></p>
+    </div>
+  </section>
+
 </BaseLayout>
+
+<style>
+  .hero-price { margin-top: 18px; font-size: 15px; color: var(--ink-500); }
+  .hero-price strong { color: var(--brand-700); }
+
+  /* Biểu tượng nét đơn */
+  .line-icon, .prep-item svg {
+    width: 28px; height: 28px;
+    fill: none; stroke: currentColor; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .problem-icon-wrap { color: #fff; }
+
+  /* Cần chuẩn bị */
+  .prep {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 18px 24px; margin-bottom: 40px;
+  }
+  .prep-title { font-weight: 700; color: var(--brand-700); white-space: nowrap; }
+  .prep-items { display: flex; gap: 12px 28px; flex-wrap: wrap; flex: 1; }
+  .prep-item { display: flex; align-items: center; gap: 10px; color: var(--ink-700); font-size: 15px; }
+  .prep-item svg { width: 22px; height: 22px; color: var(--brand-600); flex-shrink: 0; }
+
+  /* 4 bước */
+  .start-steps { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+  .start-step {
+    display: grid; grid-template-columns: 52px 1fr 300px; gap: 24px; align-items: start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 28px; box-shadow: var(--shadow-sm);
+  }
+  .start-num {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: var(--brand-700); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 22px;
+    align-self: start;
+  }
+  .start-body h3 { margin: 12px 0 8px; }
+  .start-body p { color: var(--ink-700); line-height: 1.65; }
+  .start-body kbd {
+    background: var(--canvas-2); border: 1px solid var(--border); padding: 1px 8px;
+    border-radius: 5px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--ink-700);
+    box-shadow: 0 1px 0 var(--border-strong); white-space: nowrap;
+  }
+  .start-note { margin-top: 8px; font-size: 14px; color: var(--ink-500) !important; }
+  .start-link { display: inline-block; margin-top: 10px; color: var(--brand-600); font-weight: 600; font-size: 15px; }
+  .start-link:hover { text-decoration: underline; }
+  .start-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+
+  /* Hình minh hoạ dựng bằng HTML (không phải ảnh chụp) */
+  .start-mock {
+    background: var(--brand-50); border: 1px solid var(--brand-100);
+    border-radius: var(--r-lg); padding: 16px; min-height: 150px; align-self: center;
+    display: grid; place-items: center;
+  }
+  .mock-btn {
+    display: inline-block; background: var(--brand-600); color: #fff;
+    font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 8px;
+  }
+  .mock-btn-store { background: #1A73E8; }
+  .mock-store { display: flex; flex-direction: column; align-items: center; gap: 8px; background: #fff; padding: 14px 18px; border-radius: 12px; box-shadow: var(--shadow-sm); }
+  .mock-store img { border-radius: 8px; }
+  .mock-store-name { font-weight: 700; color: var(--ink-700); font-size: 14px; }
+  .mock-page { display: grid; grid-template-columns: 1fr 96px; gap: 8px; width: 100%; height: 120px; background: #fff; border-radius: 10px; padding: 8px; box-shadow: var(--shadow-sm); }
+  .mock-page-main { display: flex; flex-direction: column; gap: 8px; padding: 6px; }
+  .mock-page-side { background: var(--brand-700); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+  .mock-side-head { color: #fff; font-size: 11px; font-weight: 700; line-height: 1.3; }
+  .mock-line { height: 8px; border-radius: 4px; background: var(--ink-100); }
+  .mock-line.light { background: rgba(255,255,255,0.3); }
+  .w50 { width: 50%; } .w60 { width: 60%; } .w70 { width: 70%; } .w80 { width: 80%; }
+  .mock-side { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; background: #fff; border-radius: 10px; padding: 12px; box-shadow: var(--shadow-sm); }
+  .mock-cmt { font-size: 12px; line-height: 1.45; color: var(--ink-500); border-left: 3px solid var(--gold-500); padding-left: 8px; }
+  .mock-cmt b { display: block; color: var(--ink-700); }
+  .mock-qr-card { align-items: center; }
+  .mock-qr { width: 96px; height: 96px; border: 4px solid #fff; outline: 1px solid var(--ink-100); border-radius: 4px; }
+  .mock-wait { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--brand-700); font-weight: 600; }
+  .mock-spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--brand-100); border-top-color: var(--brand-600); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .mock-spin { animation: none; } }
+
+  /* Giá */
+  .price-wrap { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; max-width: 820px; margin: 0 auto; }
+  .price-col { border-radius: var(--r-xl); padding: 32px; border: 1px solid var(--border); background: var(--surface); }
+  .price-col h3 { margin-bottom: 8px; }
+  .price-big { font-size: 2.5rem; font-weight: 800; color: var(--brand-700); line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; }
+  .price-big span { font-size: 1rem; font-weight: 600; color: var(--ink-400); margin-left: 4px; letter-spacing: 0; }
+  .price-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .price-col li { position: relative; padding-left: 26px; color: var(--ink-700); }
+  .price-col li::before {
+    content: ''; position: absolute; left: 2px; top: 7px; width: 12px; height: 7px;
+    border-left: 2px solid var(--success); border-bottom: 2px solid var(--success); transform: rotate(-45deg);
+  }
+  .price-full { border: 2px solid var(--brand-600); box-shadow: var(--shadow-md); }
+
+  .cta-help { margin-top: 24px; font-size: 15px; color: rgba(255,255,255,0.75); }
+  .cta-help a { color: var(--gold-400); font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .start-step { grid-template-columns: 44px 1fr; padding: 22px 18px; gap: 16px; }
+    .start-num { width: 44px; height: 44px; font-size: 19px; border-radius: 12px; }
+    .start-mock { grid-column: 1 / -1; }
+    .price-wrap { grid-template-columns: 1fr; }
+    .prep { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; }
+    .prep-items { flex-direction: column; gap: 10px; }
+  }
+</style>
