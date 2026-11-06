@@ -106,6 +106,10 @@ const faqs = [
           <a href={cwsUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">Cài cho Chrome</a>
           <a href="#bat-dau" class="btn btn-ghost btn-lg">Xem 4 bước bắt đầu</a>
         </div>
+        <p class="phone-note">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span>Tiện ích cài trên <strong>máy tính</strong>. Thầy cô đang xem bằng điện thoại thì bấm <strong>Gửi link sang máy tính</strong> (gửi qua Zalo cho chính mình), rồi mở link đó trên máy tính để cài.</span>
+        </p>
         <p class="hero-price">
           <strong>Dùng thử miễn phí</strong> 1 môn · Bản đầy đủ <strong>50.000đ/năm học</strong>, dùng trên mọi máy của thầy cô
         </p>
@@ -529,5 +533,15 @@ const faqs = [
     .price-wrap { grid-template-columns: 1fr; }
     .prep { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; }
     .prep-items { flex-direction: column; gap: 10px; }
+  }
+  @media (max-width: 600px) {
+    /* Số bước nằm cạnh tiêu đề, chữ dùng hết bề ngang */
+    .start-step { display: block; padding: 20px 16px; }
+    .start-num { float: left; width: 36px; height: 36px; font-size: 17px; border-radius: 10px; margin: 0 12px 4px 0; }
+    .start-body h3 { margin: 4px 0 12px; min-height: 36px; display: flex; align-items: center; font-size: 1.2rem; }
+    .start-mock { clear: both; margin-top: 16px; min-height: 0; }
+    .price-col { padding: 24px 20px; }
+    .price-big { font-size: 2.1rem; }
+    .hero-price { font-size: 14px; }
   }
 </style>

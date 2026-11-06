@@ -62,8 +62,22 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           <a href="/#video">Video</a>
           <a href="/#faq">Hỏi đáp</a>
           <a href="https://chromewebstore.google.com/detail/sổ-nhận-xét-ai/hhiipgifeplegcejhpdmdbnbabjikllh" target="_blank" rel="noopener" class="btn btn-primary nav-cta">Cài cho Chrome</a>
+          <button type="button" class="nav-menu-btn" aria-expanded="false" aria-controls="mobile-menu">
+            <svg class="ic-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <svg class="ic-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            <span>Menu</span>
+          </button>
         </nav>
       </div>
+      <nav class="mobile-menu" id="mobile-menu" hidden aria-label="Menu">
+        <div class="container">
+          <a href="/#bat-dau">Cách dùng (4 bước)</a>
+          <a href="/#gia">Giá</a>
+          <a href="/#video">Video hướng dẫn</a>
+          <a href="/#faq">Hỏi đáp</a>
+          <a href="/cai-dat">Hướng dẫn chi tiết có ảnh</a>
+        </div>
+      </nav>
     </header>
 
     <main>
@@ -88,6 +102,71 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         <span class="fab-zalo-line2">0913 031 073</span>
       </span>
     </a>
+
+    <!-- Thanh dưới cùng trên điện thoại -->
+    <div class="m-bar">
+      <a href="https://zalo.me/0913031073" target="_blank" rel="noopener" class="m-bar-zalo" aria-label="Hỏi qua Zalo 0913 031 073">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1 1 0 0 0-1.02.24l-2.2 2.2a15.07 15.07 0 0 1-6.58-6.58l2.2-2.2a1 1 0 0 0 .24-1.02A11.36 11.36 0 0 1 8.5 4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1c0 9.39 7.61 17 17 17a1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1z"/></svg>
+        Zalo
+      </a>
+      <a href="https://chromewebstore.google.com/detail/sổ-nhận-xét-ai/hhiipgifeplegcejhpdmdbnbabjikllh" target="_blank" rel="noopener" class="btn btn-primary m-bar-main">Cài cho Chrome</a>
+    </div>
+    <div class="send-toast" role="status" aria-live="polite"></div>
+
+    <script is:inline>
+      (function () {
+        var btn = document.querySelector('.nav-menu-btn');
+        var menu = document.getElementById('mobile-menu');
+        if (btn && menu) {
+          var setOpen = function (open) {
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menu.hidden = !open;
+          };
+          btn.addEventListener('click', function () { setOpen(menu.hidden); });
+          menu.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+        }
+
+        // Điện thoại, máy tính bảng không cài được tiện ích Chrome:
+        // đổi nút cài thành "Gửi link sang máy tính".
+        var ua = navigator.userAgent;
+        var isPhone = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+          (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+        if (!isPhone) return;
+        document.documentElement.classList.add('is-phone');
+        var toast = document.querySelector('.send-toast');
+        var timer;
+        var say = function (msg) {
+          if (!toast) return;
+          toast.textContent = msg;
+          toast.classList.add('show');
+          clearTimeout(timer);
+          timer = setTimeout(function () { toast.classList.remove('show'); }, 4500);
+        };
+        var url = location.origin + '/';
+        document.querySelectorAll('a.btn-primary[href*="chromewebstore"]').forEach(function (a) {
+          a.classList.add('js-send');
+          a.textContent = 'Gửi link sang máy tính';
+          a.removeAttribute('target');
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (navigator.share) {
+              navigator.share({
+                title: 'Sổ nhận xét - AI',
+                text: 'Mở link này trên máy tính để cài tiện ích Sổ nhận xét - AI',
+                url: url
+              }).catch(function () {});
+              return;
+            }
+            var done = function () { say('Đã chép link. Dán vào Zalo gửi cho chính mình, rồi mở trên máy tính để cài.'); };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(url).then(done, function () { say('Mở trang này trên máy tính: ' + url); });
+            } else {
+              say('Mở trang này trên máy tính: ' + url);
+            }
+          });
+        });
+      })();
+    </script>
 
     <footer class="site-footer">
       <div class="container">
