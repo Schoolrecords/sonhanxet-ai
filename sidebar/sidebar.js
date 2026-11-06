@@ -350,6 +350,20 @@
         bind('lic-btn-cancel-pending', handleCancelPending);
         bind('lic-btn-login', handleLoginClick);
         bind('lic-btn-remove', handleRemoveLicense);
+        bind('lic-btn-doi-tk', handleDoiTaiKhoan);                 // 6.2.0
+        bind('lic-btn-dung-khac', () => {                          // 6.2.0
+            licUiMode = 'login';
+            renderLicenseSection(licenseState);
+        });
+        bind('lic-btn-show-ma', () => {                            // 6.2.0: che mã đăng nhập
+            const el = document.getElementById('lic-info-ma');
+            const b = document.getElementById('lic-btn-show-ma');
+            if (!el || !b) return;
+            const an = el.dataset.hidden === '1';
+            el.dataset.hidden = an ? '0' : '1';
+            el.textContent = an ? (licenseState?.ma || '(nội dung đã chuyển khoản)') : '••••';
+            b.textContent = an ? 'Ẩn' : 'Hiện';
+        });
         bind('lic-link-to-login', (e) => {
             e.preventDefault();
             licUiMode = 'login';
@@ -680,6 +694,9 @@
         if (type === 'VNEDU_CONTEXT') {
             handleContextUpdate(payload);
         }
+        if (type === 'VNEDU_ACCOUNT') {
+            onVneduAccount(payload);   // 6.2.0
+        }
         if (type === 'COGIAO_APPLY_RESULT') {
             handleApplyResult(payload);
         }
@@ -736,7 +753,78 @@
         parent.postMessage({ type: 'COGIAO_REQUEST_CONTEXT' }, '*');
     }
 
-    function handleContextUpdate({ module, context, students }) {
+    // 6.2.0: tài khoản vnEdu đang mở → gắn bản quyền (lần đầu) và báo nếu là tài khoản khác
+    let _accKey = null;
+    let _lyDoTkCuoi = null;   // 'tk_quan_tri' | 'tk_khac' | null — kết quả gắn gần nhất
+    async function onVneduAccount(acc) {
+        if (!window.LicenseClient || !acc || !acc.userId) return;
+        const key = acc.siteId + ':' + acc.userId;
+        if (key === _accKey) return;
+        _accKey = key;
+        await LicenseClient.setTaiKhoanVnedu(acc);
+        _lyDoTkCuoi = null;
+        const st = await LicenseClient.getState();
+        if (st.status === 'active' && !st.tk) {
+            const r = await LicenseClient.ganTaiKhoan(false);
+            if (!r.ok && (r.error === 'tk_quan_tri' || r.error === 'tk_khac')) _lyDoTkCuoi = r.error;
+        }
+        await refreshLicenseUI();
+    }
+
+    function capNhatDaiBaoTk_(state) {
+        const el = document.getElementById('lic-main-warn');
+        if (!el) return;
+        let html = '';
+        if (state && state.status === 'active') {
+            if (state.khopTk === false) {
+                html = '<strong>Bản quyền trên máy này thuộc tài khoản vnEdu khác</strong>' +
+                    (state.tkTen ? ' (' + escapeHtml(state.tkTen) + ')' : '') +
+                    '. Tài khoản đang mở chỉ dùng thử 1 môn, 1 lớp. <a href="#" data-open-settings="1">Xem cách xử lý</a>';
+            } else if (_lyDoTkCuoi === 'tk_quan_tri') {
+                html = '<strong>Đang mở tài khoản quản trị trường.</strong> Bản quyền dùng cho tài khoản giáo viên; tài khoản quản trị chỉ dùng thử.';
+            }
+        }
+        el.innerHTML = html;
+        const dangOCaiDat = !document.getElementById('view-settings')?.classList.contains('view-hidden');
+        el.style.display = (html && !dangOCaiDat) ? '' : 'none';
+        const a = el.querySelector('[data-open-settings]');
+        if (a) a.onclick = (e) => { e.preventDefault(); document.getElementById('btn-settings')?.click(); };
+    }
+
+    async function handleDoiTaiKhoan() {
+        const errEl = document.getElementById('lic-tk-warn-error');
+        const maIn = document.getElementById('lic-doi-ma');
+        const btn = document.getElementById('lic-btn-doi-tk');
+        errEl.textContent = '';
+        const ma = (maIn && maIn.style.display !== 'none') ? maIn.value.trim() : '';
+        if (maIn && maIn.style.display !== 'none' && !ma) {
+            errEl.textContent = 'Nhập mã đăng nhập (nội dung thầy cô đã chuyển khoản, 4 ký tự).';
+            return;
+        }
+        if (!confirm('Chuyển bản quyền sang tài khoản vnEdu đang mở?\nMỗi năm học chỉ tự chuyển được 1 lần. Tài khoản cũ sẽ về bản dùng thử.')) return;
+        btn.disabled = true;
+        const r = await LicenseClient.ganTaiKhoan(true, ma);
+        btn.disabled = false;
+        if (r.ok) {
+            _lyDoTkCuoi = null;
+            showToast('Đã chuyển bản quyền sang tài khoản này');
+            await refreshLicenseUI();
+            return;
+        }
+        const thongBao = {
+            'het_luot_doi_tk': 'Năm học này đã tự chuyển 1 lần. Nhắn Zalo 0913 031 073 để được hỗ trợ.',
+            'can_ma_dang_nhap': 'Mã đăng nhập chưa đúng. Mã là nội dung thầy cô đã chuyển khoản (4 ký tự).',
+            'tk_quan_tri': 'Tài khoản đang mở là tài khoản quản trị trường, không nhận bản quyền. Đăng nhập vnEdu bằng tài khoản giáo viên.',
+            'chua_doc_duoc_tk': 'Chưa đọc được tài khoản vnEdu. Bấm F5 tải lại trang vnEdu rồi thử lại.',
+            'network': 'Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'
+        };
+        errEl.textContent = thongBao[r.error] || ('Chưa chuyển được (' + (r.error || 'lỗi') + ').');
+        if (r.error === 'can_ma_dang_nhap' && maIn) maIn.style.display = '';
+        await refreshLicenseUI();
+    }
+
+    function handleContextUpdate({ module, context, students, account }) {
+        if (account) onVneduAccount(account);   // 6.2.0
         // V2.0: reset ky override khi đổi lớp/môn/kỳ — để auto-detect lại theo Vnedu.
         const prev = currentContext || {};
         const next = context || {};
@@ -768,6 +856,9 @@
         document.querySelectorAll('.view').forEach(v => v.classList.add('view-hidden'));
         const el = document.getElementById('view-' + name);
         if (el) el.classList.remove('view-hidden');
+        // 6.2.0: đang ở Cài đặt thì mục Bản quyền đã nói rõ → ẩn dải báo trùng
+        const mw = document.getElementById('lic-main-warn');
+        if (mw) mw.style.display = (name !== 'settings' && mw.innerHTML) ? '' : 'none';
 
         const applyBar = document.getElementById('apply-bar');
         if (name === 'so-nhan-xet' && generatedNhanXet.size > 0) {
@@ -791,14 +882,14 @@
         }).join('');
 
         document.getElementById('ctx-box').innerHTML = `
-            <div class="context-title">NHẬN XÉT MÔN/HĐGD — LỚP ${escapeHtml(ctx.lop || '?')}</div>
+            <div class="context-title">Nhận xét môn học · Lớp ${escapeHtml(ctx.lop || '?')}</div>
             <div class="context-pills">
                 ${monDisplay ? `<span class="pill">${escapeHtml(monDisplay)}</span>` : ''}
                 ${ctx.hocKy ? `<span class="pill">${escapeHtml(ctx.hocKy)}</span>` : ''}
                 ${ctx.kyDanhGia ? `<span class="pill">${escapeHtml(ctx.kyDanhGia)}</span>` : ''}
             </div>
             <div class="context-ky-row">
-                <label class="context-ky-label" for="ctx-ky-select">📅 Kỳ nhận xét:</label>
+                <label class="context-ky-label" for="ctx-ky-select">Kỳ nhận xét:</label>
                 <select id="ctx-ky-select" class="context-ky-select">
                     ${kyOptions}
                 </select>
@@ -855,14 +946,39 @@
             btn.textContent = `Tạo nhận xét cho ${canSinh} HS`;
             btn.disabled = false;
         } else if (coDanhGia === 0) {
-            btn.textContent = 'Chưa có HS nào được đánh giá (điểm hoặc mức)';
+            btn.textContent = 'Tạo nhận xét';
             btn.disabled = true;
         } else {
             btn.textContent = 'Tất cả HS đã có nhận xét';
             btn.disabled = true;
         }
 
-        document.getElementById('student-list').innerHTML =
+        // 6.2.0: chưa tạo được thì nói rõ vì sao và làm gì, thay cho nút xám + ba ô số 0
+        const guide = document.getElementById('snx-guide');
+        const statsEl = document.getElementById('stats');
+        const actionsEl = document.querySelector('#view-so-nhan-xet .actions');
+        let guideHtml = '';
+        if (ctx.khongCoQuyenNhap) {
+            guideHtml = '<div class="guide-title guide-warn">vnEdu báo tài khoản này không có quyền nhập lớp, môn này</div>' +
+                '<p>Nhận xét áp dụng vào sẽ <strong>không lưu được</strong>. Thầy cô chọn đúng lớp, môn mình phụ trách ở thanh chọn phía trên của vnEdu.</p>';
+        }
+        if (total === 0) {
+            guideHtml += '<div class="guide-title">Chưa đọc được danh sách học sinh</div>' +
+                '<ol><li>Chọn đủ <strong>Khối, Lớp, Môn, Học kỳ</strong> trên vnEdu.</li>' +
+                '<li>Bấm <strong>Cập nhật dữ liệu từ Vnedu</strong> ở đầu khung này.</li></ol>';
+        } else if (coDanhGia === 0) {
+            guideHtml += '<div class="guide-title">Chưa có em nào có điểm hoặc mức</div>' +
+                '<p>Tiện ích viết nhận xét dựa trên điểm hoặc mức (T, H, C) của từng em.</p>' +
+                '<ol><li>Nhập điểm hoặc mức trên vnEdu.</li>' +
+                '<li>Bấm nút <strong>Lưu</strong> của vnEdu.</li>' +
+                '<li>Bấm <strong>Cập nhật dữ liệu từ Vnedu</strong> ở đầu khung này.</li></ol>';
+        }
+        const chuaTaoDuoc = total === 0 || coDanhGia === 0;
+        if (guide) { guide.innerHTML = guideHtml; guide.style.display = guideHtml ? '' : 'none'; }
+        if (statsEl) statsEl.style.display = chuaTaoDuoc ? 'none' : '';
+        if (actionsEl) actionsEl.style.display = chuaTaoDuoc ? 'none' : '';
+
+        document.getElementById('student-list').innerHTML = chuaTaoDuoc ? '' :
             '<div class="hint-empty">Bấm "Tạo nhận xét" để bắt đầu</div>';
     }
 
@@ -2084,8 +2200,11 @@
     async function refreshLicenseUI() {
         if (!window.LicenseClient) return;
         licenseState = await LicenseClient.getState();
+        licenseNotice = await LicenseClient.getNotice();
         renderLicenseSection(licenseState);
+        capNhatDaiBaoTk_(licenseState);
     }
+    let licenseNotice = null;
 
     async function renderLicenseSection(state) {
         const box = document.getElementById('lic-status-box');
@@ -2117,7 +2236,55 @@
             info.style.display = 'block';
             document.getElementById('lic-info-sdt').textContent = state.sdt || '—';
             const maEl = document.getElementById('lic-info-ma');
-            if (maEl) maEl.textContent = state.ma || '(xem nội dung đã chuyển khoản)';
+            if (maEl) {
+                maEl.dataset.hidden = '1';
+                maEl.textContent = '••••';
+                const sb = document.getElementById('lic-btn-show-ma');
+                if (sb) sb.textContent = 'Hiện';
+            }
+            // 6.2.0: tài khoản vnEdu đã gắn
+            const tkEl = document.getElementById('lic-info-tk');
+            if (tkEl) {
+                tkEl.textContent = state.tk
+                    ? ((state.tkTen || 'Đã gắn') + (state.khopTk === true ? ' (đang mở)' : ''))
+                    : 'Chưa gắn (tự gắn khi mở vnEdu)';
+            }
+            const sub = document.getElementById('lic-active-sub');
+            const warn = document.getElementById('lic-tk-warn');
+            const khac = state.khopTk === false;
+            const quanTri = !khac && _lyDoTkCuoi === 'tk_quan_tri';
+            if (sub) sub.textContent = 'Dùng được tất cả các môn, các lớp và Năng lực, Phẩm chất';
+            const banner = document.querySelector('#lic-info .lic-active-banner');
+            if (banner) banner.style.display = (khac || quanTri) ? 'none' : '';
+            if (warn) {
+                warn.style.display = (khac || quanTri) ? '' : 'none';
+                document.getElementById('lic-tk-warn-error').textContent = '';
+                const doiBtn = document.getElementById('lic-btn-doi-tk');
+                const maIn = document.getElementById('lic-doi-ma');
+                if (khac) {
+                    document.getElementById('lic-tk-warn-title').textContent = 'Bản quyền này của tài khoản vnEdu khác';
+                    document.getElementById('lic-tk-warn-text').innerHTML =
+                        'Bản quyền đã gắn với tài khoản <strong>' + escapeHtml(state.tkTen || 'khác') + '</strong>. ' +
+                        'Tài khoản đang mở' + (state.tenTkHienTai ? ' (<strong>' + escapeHtml(state.tenTkHienTai) + '</strong>)' : '') +
+                        ' chỉ dùng thử 1 môn, 1 lớp. Mỗi thầy cô cần bản quyền riêng.' +
+                        (state.conLuotDoi !== false
+                            ? '<br>Nếu đây là tài khoản mới của chính thầy cô (trường cấp lại), bấm chuyển bản quyền sang. Mỗi năm học tự chuyển được 1 lần.'
+                            : '<br>Năm học này đã tự chuyển 1 lần; cần chuyển tiếp thì nhắn Zalo 0913 031 073.');
+                    if (doiBtn) doiBtn.style.display = state.conLuotDoi !== false ? '' : 'none';
+                    if (maIn) maIn.style.display = state.ma ? 'none' : '';
+                } else {
+                    document.getElementById('lic-tk-warn-title').textContent = 'Đang mở tài khoản quản trị trường';
+                    document.getElementById('lic-tk-warn-text').innerHTML =
+                        'Bản quyền dùng cho <strong>tài khoản giáo viên</strong>. Tài khoản quản trị trường chỉ dùng thử. ' +
+                        'Thầy cô đăng nhập vnEdu bằng tài khoản giáo viên của mình để dùng bản quyền.';
+                    if (doiBtn) doiBtn.style.display = 'none';
+                    if (maIn) maIn.style.display = 'none';
+                }
+            }
+            if (licUiMode === 'login') {
+                formLogin.style.display = 'block';
+                prefillLoginSdt();
+            }
             document.getElementById('lic-info-name').textContent = state.gv_ho_ten || '(chưa cập nhật)';
             document.getElementById('lic-info-until').textContent = formatDateVi_(state.validUntil) || '—';
             document.getElementById('lic-info-remaining').textContent = formatRemaining_(state.validUntil);
@@ -2179,6 +2346,19 @@
 
         // 'free' — V1.6: hiển thị cặp (môn, lớp) đã lock
         box.className = 'lic-status lic-status-free';
+        const noticeMap = {
+            'ban_quyen_nam_cu': 'Bản quyền năm học trước đã hết hiệu lực. Năm học ' + (LicenseClient.NAM_HOC || '2026-2027') + ' thầy cô kích hoạt lại bằng quét QR (50.000đ).',
+            'sdt_chua_dang_ky': 'Bản quyền trên máy này không còn trên hệ thống (bản quyền năm học trước). Năm học ' + (LicenseClient.NAM_HOC || '2026-2027') + ' thầy cô kích hoạt lại bằng quét QR (50.000đ).',
+            'sdt_da_bi_khoa': 'Bản quyền của số điện thoại này đã bị khoá. Liên hệ Zalo 0913 031 073.',
+            'het_han': 'Bản quyền đã hết hạn. Kích hoạt lại bằng quét QR (50.000đ / năm học).'
+        };
+        if (licenseNotice && noticeMap[licenseNotice.error]) {
+            box.className = 'lic-status lic-status-error';
+            box.innerHTML = escapeHtml(noticeMap[licenseNotice.error]);
+            if (licUiMode === 'login') { formLogin.style.display = 'block'; prefillLoginSdt(); }
+            else formReg.style.display = 'block';
+            return;
+        }
         if (state.freeSubject && state.freeClass) {
             box.innerHTML = `Bản miễn phí — đã chọn môn <strong>${escapeHtml(subjectKeyToLabel(state.freeSubject))}</strong> · lớp <strong>${escapeHtml(state.freeClass)}</strong>`;
         } else if (state.freeSubject) {
@@ -2397,6 +2577,7 @@
             'ho_ten_sai': 'Họ tên cần ít nhất 3 ký tự.',
             'ma_sai_dinh_dang': 'Mã không hợp lệ. Vui lòng kiểm tra lại.',
             'sdt_chua_dang_ky': 'SĐT chưa đăng ký. Bấm "Bắt đầu kích hoạt" trước.',
+            'ban_quyen_nam_cu': 'Bản quyền này của năm học trước. Năm học mới thầy cô kích hoạt lại bằng quét QR (50.000đ).',
             'ma_khong_dung': 'Mã không khớp với SĐT. Kiểm tra lại.',
             'chua_thanh_toan': 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi CK. Nếu đã CK lâu, nhắn Zalo thầy Chung 0913031073.',
             'da_dung_cho_may_khac': 'SĐT này đã có bản quyền. Bấm "Đăng nhập trên máy khác" rồi nhập SĐT + mã đăng nhập 4 ký tự.',
@@ -2419,7 +2600,15 @@
         const msgEl = document.getElementById('lock-message');
         if (!titleEl || !msgEl) return;
 
-        if (reason === 'free_no_nlpc') {
+        if (reason === 'tk_khac') {
+            const st = licenseState || {};
+            titleEl.textContent = 'Bản quyền thuộc tài khoản vnEdu khác';
+            msgEl.innerHTML = 'Bản quyền trên máy này đã gắn với tài khoản <strong>' + escapeHtml(st.tkTen || 'khác') + '</strong>. ' +
+                'Tài khoản vnEdu đang mở chỉ dùng thử 1 môn, 1 lớp và đã dùng hết. Mỗi thầy cô cần bản quyền riêng.';
+        } else if (reason === 'tk_quan_tri') {
+            titleEl.textContent = 'Tài khoản quản trị trường chỉ dùng thử';
+            msgEl.innerHTML = 'Bản quyền dùng cho <strong>tài khoản giáo viên</strong>. Thầy cô đăng nhập vnEdu bằng tài khoản giáo viên của mình để dùng bản quyền.';
+        } else if (reason === 'free_no_nlpc') {
             titleEl.textContent = 'Năng lực · Phẩm chất cần bản quyền';
             msgEl.innerHTML = 'Bản miễn phí <strong>không hỗ trợ</strong> tạo nhận xét NL/PC. Mở khóa để dùng được tất cả 16 trường NL/PC.';
         } else if (reason === 'free_other_subject') {

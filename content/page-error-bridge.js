@@ -40,5 +40,41 @@
         postVendor('promise', msg);
     });
 
+    // 6.2.0: cho tiện ích biết TÀI KHOẢN vnEdu đang đăng nhập (để gắn bản quyền).
+    // CHỈ đọc 5 thông tin dưới đây. TUYỆT ĐỐI không đọc mật khẩu, mã xác thực, mã phiên
+    // (các khoá password, token2fa, session_id... cũng nằm trong phpviet_user).
+    function docTaiKhoan() {
+        try {
+            const userId = window.phpviet_user_id;
+            const u = window.phpviet_user;
+            const siteId = u && typeof u === 'object' ? u.site_id : null;
+            if (userId === undefined || userId === null || userId === '' || !siteId) return null;
+            return {
+                userId: String(userId),
+                siteId: String(siteId),
+                isAdmin: String(window.phpviet_user_is_admin) === '1',
+                gvId: Number(window.phpviet_gv_id) || 0,
+                ten: u && typeof u.full_name === 'string' ? u.full_name.slice(0, 60) : ''
+            };
+        } catch (e) { return null; }
+    }
+
+    function guiTaiKhoan() {
+        const acc = docTaiKhoan();
+        if (!acc) return false;
+        try { window.postMessage({ type: '__COGIAO_VNEDU_ACCOUNT__', account: acc }, '*'); } catch (e) { /* silent */ }
+        return true;
+    }
+
+    // vnEdu gán các biến này sau khi tải xong → thử lại vài lần
+    let soLanThu = 0;
+    (function thu() {
+        if (guiTaiKhoan() || ++soLanThu > 40) return;
+        setTimeout(thu, 750);
+    })();
+    window.addEventListener('message', (ev) => {
+        if (ev.source === window && ev.data && ev.data.type === '__COGIAO_ASK_ACCOUNT__') guiTaiKhoan();
+    });
+
     console.log('%c[Sổ nhận xét - AI] page-error-bridge ready', 'color:#1D9E75');
 })();

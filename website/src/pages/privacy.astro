@@ -10,7 +10,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h1>Chính sách Bảo mật</h1>
     <div class="meta">
       <strong>Hiệu lực từ:</strong> 15/05/2026 ·
-      <strong>Phiên bản:</strong> 1.0 ·
+      <strong>Phiên bản:</strong> 1.1 (cập nhật 06/11/2026) ·
       <strong>Áp dụng cho:</strong> Chrome Extension "Sổ nhận xét - AI" (mọi phiên bản)
     </div>
 
@@ -19,7 +19,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <ul style="margin: 12px 0 0 20px;">
         <li>Chúng tôi <strong>KHÔNG thu thập</strong> tên, điểm hay bất kỳ thông tin nào của học sinh.</li>
         <li>Dữ liệu học sinh <strong>KHÔNG rời máy</strong> của thầy/cô. Mọi nhận xét được sinh cục bộ trong trình duyệt.</li>
-        <li>Chỉ có <strong>3 thông tin</strong> rời máy GV: số điện thoại GV, mã kích hoạt, và device fingerprint — tất cả chỉ để xác thực license.</li>
+        <li>Chỉ có <strong>4 thông tin</strong> rời máy GV: số điện thoại GV, mã kích hoạt, mã nhận diện máy và mã băm của tài khoản vnEdu — tất cả chỉ để xác thực bản quyền.</li>
         <li>Extension là <strong>mã nguồn mở</strong> — bất kỳ ai cũng có thể kiểm tra code.</li>
       </ul>
     </div>
@@ -53,7 +53,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td>Họ tên GV (do GV tự nhập)</td><td>Hiển thị để xác minh đúng tên đăng nhập, phục vụ khôi phục khi máy thầy cô bị lỗi</td><td>Chỉ admin (tác giả)</td></tr>
         <tr><td>Số điện thoại GV</td><td>Định danh GV để đăng nhập + reset thiết bị khi cần</td><td>Chỉ admin</td></tr>
         <tr><td>Mã kích hoạt 4 ký tự (server sinh)</td><td>Để khớp với tài khoản của thầy cô sử dụng</td><td>Chỉ admin</td></tr>
-        <tr><td>Device fingerprint (hash SHA-256)</td><td>Chống chia sẻ mã giữa nhiều máy</td><td>Chỉ admin</td></tr>
+        <tr><td>Device fingerprint (hash SHA-256)</td><td>Ghi nhận máy đã kích hoạt, đếm số máy dùng</td><td>Chỉ admin</td></tr>
+        <tr><td>Mã băm tài khoản vnEdu (SHA-256 của mã trường + mã tài khoản) và họ tên hiển thị trên vnEdu</td><td>Mỗi bản quyền dùng cho một tài khoản giáo viên; ghi lượt dùng thử theo tài khoản</td><td>Chỉ admin</td></tr>
         <tr><td>Ngày đăng ký / thanh toán / kích hoạt / hết hạn</td><td>Quản lý vòng đời license</td><td>Chỉ admin</td></tr>
         <tr><td>Lần check cuối</td><td>Phát hiện bất thường (ví dụ nhiều máy cùng mã)</td><td>Chỉ admin</td></tr>
       </tbody>
@@ -102,7 +103,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h2>8. Bảo mật kỹ thuật</h2>
     <ul>
       <li>Toàn bộ giao tiếp với license server qua <strong>HTTPS</strong>.</li>
-      <li>Device fingerprint là <strong>hash 1 chiều</strong> (SHA-256) — không thể giải ngược ra thông tin nguyên gốc.</li>
+      <li>Device fingerprint và mã tài khoản vnEdu đều là <strong>hash 1 chiều</strong> (SHA-256) — không thể giải ngược ra thông tin nguyên gốc.</li>
+      <li>Tiện ích <strong>không bao giờ đọc hay gửi mật khẩu vnEdu</strong>, mã xác thực hay phiên đăng nhập.</li>
       <li>Mã nguồn extension <strong>mở</strong> — bất kỳ ai cũng có thể audit.</li>
     </ul>
 

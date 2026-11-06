@@ -73,6 +73,48 @@
     }
     injectPageErrorBridge();
 
+    let _vneduAccount = null;   // 6.2.0
+    function askVneduAccount() {
+        try { window.postMessage({ type: '__COGIAO_ASK_ACCOUNT__' }, '*'); } catch (e) { /* silent */ }
+    }
+
+    // 6.2.0: vnEdu có thanh tác vụ riêng ở đáy màn hình (z-index rất cao) che mất chân khung.
+    // Khung dừng ngay phía trên thanh đó để cả hai cùng hiện đủ.
+    let _lastTaskbarH = -1;
+    function fitSidebarAboveTaskbar() {
+        const iframe = document.getElementById(SIDEBAR_ID);
+        if (!iframe) return;
+        let h = 0;
+        try {
+            const bars = document.querySelectorAll('.ux-taskbar, .x-docked-bot.x-toolbar');
+            for (const b of bars) {
+                const r = b.getBoundingClientRect();
+                if (r.height > 0 && r.height < 120 && r.width > window.innerWidth * 0.5 &&
+                    Math.abs(r.bottom - window.innerHeight) < 4) { h = Math.max(h, Math.ceil(r.height)); }
+            }
+        } catch (e) { /* silent */ }
+        if (h === _lastTaskbarH) return;
+        _lastTaskbarH = h;
+        iframe.style.height = h ? ('calc(100vh - ' + h + 'px)') : '';
+    }
+    window.addEventListener('resize', fitSidebarAboveTaskbar);
+    setInterval(fitSidebarAboveTaskbar, 2500);
+
+    /** 6.2.0: vnEdu ghi "Quyền hạn: Bạn không có quyền nhập điểm" khi tài khoản không phụ trách lớp/môn. */
+    function vneduBaoKhongCoQuyen() {
+        try {
+            const snap = document.evaluate("//*[contains(text(),'không có quyền nhập')]", document, null,
+                XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            for (let i = 0; i < snap.snapshotLength; i++) {
+                const el = snap.snapshotItem(i);
+                if (el.closest && el.closest('#' + SIDEBAR_ID)) continue;
+                const r = el.getBoundingClientRect();
+                if (r.width > 0 && r.height > 0 && el.offsetParent !== null) return true;
+            }
+        } catch (e) { /* silent */ }
+        return false;
+    }
+
     function mountSidebar() {
         if (document.getElementById(SIDEBAR_ID)) return;
 
@@ -92,7 +134,9 @@
         document.body.appendChild(iframe);
 
         iframe.addEventListener('load', () => {
+            fitSidebarAboveTaskbar();
             setTimeout(() => {
+                askVneduAccount();
                 sendContextToSidebar();
                 setupModuleWatcher();  // v0.1.12: bắt SPA navigation
                 // V6.0.2: Nếu GV reload page khi đang ở module NX, watcher chưa
@@ -161,12 +205,12 @@
 
         const module = window.VneduAdapter.detectModule();
         _lastDetectedModule = module;  // track để MutationObserver compare
-        let payload = { module, context: {}, students: [] };
+        let payload = { module, context: {}, students: [], account: _vneduAccount };
 
         if (module === 'so-nhan-xet') {
             const context = window.VneduAdapter.getContext();
             const studentRows = window.VneduAdapter.getStudentRows();
-            payload.context = context;
+            payload.context = Object.assign({}, context, { khongCoQuyenNhap: vneduBaoKhongCoQuyen() });
             payload.students = studentRows.map(r => ({
                 stt: r.stt, hoVaTen: r.hoVaTen,
                 diem: r.diem,
@@ -418,12 +462,33 @@
         handleVendorError(d.filename || '', d.message || '');
     });
 
+    // 6.2.0: tài khoản vnEdu đang đăng nhập (từ page-error-bridge) → chuyển cho sidebar
+    window.addEventListener('message', (e) => {
+        if (e.source !== window) return;
+        const d = e.data;
+        if (!d || d.type !== '__COGIAO_VNEDU_ACCOUNT__' || !d.account) return;
+        const a = d.account;
+        const acc = {
+            userId: String(a.userId || '').slice(0, 20),
+            siteId: String(a.siteId || '').slice(0, 20),
+            isAdmin: a.isAdmin === true,
+            gvId: Number(a.gvId) || 0,
+            ten: String(a.ten || '').slice(0, 60)
+        };
+        const key = acc.siteId + ':' + acc.userId;
+        if (_vneduAccount && (_vneduAccount.siteId + ':' + _vneduAccount.userId) === key) return;
+        _vneduAccount = acc;
+        const iframe = document.getElementById(SIDEBAR_ID);
+        iframe?.contentWindow?.postMessage({ type: 'VNEDU_ACCOUNT', payload: acc }, '*');
+    });
+
     window.addEventListener('message', (e) => {
         const data = e.data;
         if (!data || !data.type || !data.type.startsWith('COGIAO_')) return;
 
         switch (data.type) {
             case 'COGIAO_REQUEST_CONTEXT':
+                if (!_vneduAccount) askVneduAccount();
                 sendContextToSidebar();
                 break;
 

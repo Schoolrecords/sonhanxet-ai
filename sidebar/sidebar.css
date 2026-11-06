@@ -2152,3 +2152,88 @@ body {
 }
 @keyframes snx-check-draw { to { stroke-dashoffset: 0; } }
 @keyframes snx-bar-shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ============== 6.2.0 (06/11/2026): làm gọn + bản quyền theo tài khoản vnEdu ============== */
+/* Bỏ chữ in hoa nhỏ đặt trên các mục */
+.section-title, .style-label, .cm-section-title, .nlpc-section-title, .nlpc-divider {
+    text-transform: none;
+    letter-spacing: 0;
+}
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2B4F9E;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.style-label { font-size: 13px; font-weight: 600; color: #444441; }
+.cm-section-title, .nlpc-section-title { font-size: 13px; font-weight: 700; }
+.cm-stat-label, .nlpc-preview-key, .context-label { text-transform: none; letter-spacing: 0; }
+.cm-stat-label, .nlpc-preview-key { font-size: 11.5px; }
+.sec-ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.context-title { font-size: 14px; letter-spacing: 0; }
+/* Không dùng nút bo tròn hết cỡ */
+.pill { border-radius: 6px; }
+
+/* Hướng dẫn khi chưa tạo được nhận xét */
+.guide-box {
+    margin: 12px 14px 0;
+    padding: 12px 14px;
+    background: #F4F7FD;
+    border: 1px solid #D5DFF2;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #2C2C2A;
+}
+.guide-box .guide-title { font-weight: 700; color: #2B4F9E; margin-bottom: 4px; }
+.guide-box .guide-title:not(:first-child) { margin-top: 12px; }
+.guide-box p { margin: 0 0 6px; }
+.guide-box ol { margin: 4px 0 0; padding-left: 20px; }
+.guide-box li { margin: 3px 0; }
+
+/* Dải báo trên màn chính: bản quyền của tài khoản khác / tài khoản quản trị */
+.lic-main-warn {
+    margin: 8px 12px 0;
+    padding: 10px 12px;
+    background: #FFF8E6;
+    border: 1px solid #F0D58A;
+    border-radius: 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #5C4300;
+}
+.lic-main-warn a { color: #2B4F9E; font-weight: 600; }
+
+/* Ô vàng trong mục Bản quyền */
+.lic-tk-warn {
+    margin: 12px 0;
+    padding: 12px 14px;
+    background: #FFF8E6;
+    border: 1px solid #F0D58A;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #5C4300;
+}
+.lic-tk-warn-title { font-weight: 700; margin-bottom: 4px; color: #7A5600; }
+.lic-tk-warn .lic-input { margin-top: 10px; }
+.lic-tk-warn-error { color: #A32D2D; font-size: 12.5px; margin-top: 6px; }
+.lic-tk-warn-error:empty { display: none; }
+.lic-tk-warn-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.lic-tk-warn-actions .lic-btn-mini { width: 100%; margin: 0; }
+
+/* Nút nhỏ dạng chữ: Hiện / Ẩn mã */
+.lic-link-btn {
+    border: 0;
+    background: none;
+    padding: 0 0 0 6px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2B4F9E;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.guide-box .guide-title.guide-warn { color: #A32D2D; }

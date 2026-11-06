@@ -49,6 +49,8 @@
     </button>
 </div>
 
+<div class="lic-main-warn" id="lic-main-warn" style="display:none" role="status"></div>
+
 <main class="content">
 
     <div id="view-empty" class="view">
@@ -67,6 +69,7 @@
 
     <div id="view-so-nhan-xet" class="view view-hidden">
         <div class="context-box" id="ctx-box"></div>
+        <div class="guide-box" id="snx-guide" style="display:none"></div>
         <div class="stats" id="stats"></div>
         <div class="actions">
             <div class="style-label">Phong cách câu nhận xét</div>
@@ -110,20 +113,20 @@
 
         <!-- 3 section: NL chung / NL đặc thù / PC -->
         <div class="nlpc-section" id="nlpc-section-nlc">
-            <div class="nlpc-section-title">🧠 Năng lực chung</div>
+            <div class="nlpc-section-title">Năng lực chung</div>
             <div class="nlpc-fields"></div>
         </div>
         <div class="nlpc-section" id="nlpc-section-nldt">
-            <div class="nlpc-section-title">🎯 Năng lực đặc thù</div>
+            <div class="nlpc-section-title">Năng lực đặc thù</div>
             <div class="nlpc-fields"></div>
         </div>
         <div class="nlpc-section" id="nlpc-section-pc">
-            <div class="nlpc-section-title">❤️ Phẩm chất</div>
+            <div class="nlpc-section-title">Phẩm chất</div>
             <div class="nlpc-fields"></div>
         </div>
 
         <div class="nlpc-preview" id="nlpc-preview" style="display:none">
-            <div class="nlpc-section-title">📝 Các mục nhận xét sẽ ghi vào Vnedu</div>
+            <div class="nlpc-section-title">Các mục nhận xét sẽ ghi vào Vnedu</div>
             <div class="nlpc-preview-list" id="nlpc-preview-list"></div>
         </div>
 
@@ -265,7 +268,7 @@
 
         <!-- ===== BẢN QUYỀN ===== -->
         <div class="settings-section">
-            <div class="section-title">🔓 Bản quyền</div>
+            <div class="section-title"><svg class="sec-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0"/></svg>Bản quyền</div>
 
             <div id="lic-status-box" class="lic-status lic-status-loading">
                 Đang kiểm tra trạng thái...
@@ -363,12 +366,23 @@
                         </svg>
                     </div>
                     <div class="lic-active-title">Tài khoản đã kích hoạt</div>
-                    <div class="lic-active-sub">Mở khóa hết môn + NL/PC trên máy này</div>
+                    <div class="lic-active-sub" id="lic-active-sub">Dùng được tất cả các môn, các lớp và Năng lực, Phẩm chất</div>
+                </div>
+                <div class="lic-tk-warn" id="lic-tk-warn" style="display:none">
+                    <div class="lic-tk-warn-title" id="lic-tk-warn-title"></div>
+                    <div class="lic-tk-warn-text" id="lic-tk-warn-text"></div>
+                    <input type="text" class="lic-input" id="lic-doi-ma" placeholder="Mã đăng nhập (nội dung đã chuyển khoản)" style="display:none" autocomplete="off">
+                    <div class="lic-tk-warn-error" id="lic-tk-warn-error"></div>
+                    <div class="lic-tk-warn-actions">
+                        <button class="btn-primary lic-btn-mini" id="lic-btn-doi-tk">Chuyển bản quyền sang tài khoản này</button>
+                        <button class="btn-secondary lic-btn-mini" id="lic-btn-dung-khac">Đăng nhập bản quyền khác</button>
+                    </div>
                 </div>
                 <div class="lic-info-card">
                     <div class="lic-info-row"><span>Họ tên</span><strong id="lic-info-name">—</strong></div>
                     <div class="lic-info-row"><span>Số điện thoại</span><strong id="lic-info-sdt">—</strong></div>
-                    <div class="lic-info-row"><span>Mã đăng nhập máy khác</span><strong id="lic-info-ma">—</strong></div>
+                    <div class="lic-info-row"><span>Tài khoản vnEdu</span><strong id="lic-info-tk">—</strong></div>
+                    <div class="lic-info-row"><span>Mã đăng nhập máy khác</span><strong><span id="lic-info-ma" data-hidden="1">••••</span> <button type="button" class="lic-link-btn" id="lic-btn-show-ma">Hiện</button></strong></div>
                     <div class="lic-info-row"><span>Hạn sử dụng</span><strong id="lic-info-until">—</strong></div>
                     <div class="lic-info-row"><span>Còn lại</span><strong id="lic-info-remaining">—</strong></div>
                 </div>
@@ -380,7 +394,7 @@
             <div class="setting-note" id="lic-setting-note">
                 <strong>Bản dùng thử miễn phí:</strong> 1 môn học — để thầy/cô đánh giá chất lượng nhận xét.<br>
                 <strong>Mua bản quyền:</strong> 50.000đ / năm học (đến 31/8), dùng trên mọi máy của thầy/cô — mở hết các tính năng của Sổ nhận xét - AI.<br>
-                <em>(mời tác giả 1 cốc cafe — thay vì ngồi mãi trên máy tính 😊)</em>
+                Mỗi bản quyền dùng cho <strong>một tài khoản vnEdu giáo viên</strong>; tài khoản quản trị trường chỉ dùng thử.
             </div>
         </div>
 
@@ -416,7 +430,7 @@
                 <strong>Dữ liệu học sinh không rời máy của thầy/cô.</strong>
                 Mọi nhận xét được sinh hoàn toàn cục bộ trong trình duyệt — không gửi tên HS, điểm hay nội dung nhận xét ra ngoài.
                 <br><br>
-                Riêng việc <strong>kích hoạt bản quyền</strong> (Mã định danh thiết bị + Số ĐT để xác nhận và ghi nhớ đăng nhập trên máy của thầy/cô, không lộ lọt thông tin ra ngoài).
+                Riêng việc <strong>kích hoạt bản quyền</strong> gửi về máy chủ: số điện thoại, mã nhận diện máy và <strong>mã băm của tài khoản vnEdu</strong> (để một bản quyền chỉ dùng cho một thầy cô). Mã băm không đọc ngược ra được tên đăng nhập; tiện ích không bao giờ đọc hay gửi mật khẩu vnEdu.
             </div>
         </div>
 
@@ -465,7 +479,7 @@
         <p class="modal-message" id="lock-message">Bản miễn phí chỉ dùng được 1 môn + 1 lớp.</p>
         <div class="modal-note">
             Mở khóa <strong>tất cả môn + tất cả lớp + NL/PC</strong> với <strong>50.000đ / năm học</strong>.
-            Vào <strong>⚙️ Cài đặt → Bản quyền</strong> để đăng ký nhận mã + chuyển khoản.
+            Bấm biểu tượng <strong>bánh răng</strong> ở đầu khung, mục <strong>Bản quyền</strong>, để kích hoạt bằng quét QR.
         </div>
         <div class="modal-actions">
             <button class="btn-modal-secondary" id="lock-btn-cancel">Đóng</button>

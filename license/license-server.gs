@@ -98,7 +98,7 @@ function isAdminSdt_(sdt) {
 function doGet(e) {
   return ContentService
     .createTextOutput('Sổ nhận xét - AI · License server v3 đang hoạt động.\n' +
-                      'Endpoint POST với action: dangKy | dangNhap | checkPaymentStatus | checkLicense | resetDevice')
+                      'Endpoint POST với action: dangKy | dangNhap | checkPaymentStatus | checkLicense | resetDevice | ganTaiKhoan | dungThu')
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -115,6 +115,8 @@ function doPost(e) {
     if (action === 'checkPaymentStatus')  return jsonOut_(checkPaymentStatus_(body));
     if (action === 'checkLicense')        return jsonOut_(checkLicense_(body));
     if (action === 'resetDevice')         return jsonOut_(resetDevice_(body));
+    if (action === 'ganTaiKhoan')         return jsonOut_(ganTaiKhoan_(body));   // 6.2.0
+    if (action === 'dungThu')             return jsonOut_(dungThu_(body));       // 6.2.0
 
     return jsonOut_({ ok: false, error: 'unknown_action' });
   } catch (err) {
@@ -140,10 +142,11 @@ function rateLimitOK_(body) {
     const cache = CacheService.getScriptCache();
     const rawSdt = String((body && body.sdt) || '').replace(/\D/g, '');
     const sdt = rawSdt.length >= 9 ? rawSdt.slice(-10) : '';
-    const key = sdt ? ('rl_sdt_' + sdt) : 'rl_anon';
+    const tk = String((body && body.tk) || '').replace(/[^0-9a-f]/gi, '').slice(0, 16);
+    const key = sdt ? ('rl_sdt_' + sdt) : (tk ? ('rl_tk_' + tk) : 'rl_anon');
     const count = parseInt(cache.get(key) || '0', 10) + 1;
     cache.put(key, String(count), 60);
-    const limit = sdt ? 60 : 120;
+    const limit = (sdt || tk) ? 60 : 120;
     return count <= limit;
   } catch (e) { return true; }
 }
@@ -267,6 +270,7 @@ function dangKy_(body) {
     sheet.getRange(row, COL.device_fp).setValue('');
     sheet.getRange(row, COL.last_check).setValue('');
     sheet.getRange(row, COL.trang_thai).setValue(TT.CHO_THANH_TOAN);
+    xoaGanTk_(sheet, row);  // 6.2.0: năm học mới gắn lại từ đầu
   } else {
     // QUAN TRỌNG: prefix "'" cho SĐT và mã để Google Sheets giữ dạng text,
     // không cắt số 0 đầu. Apostrophe không hiển thị trong cell.
@@ -351,6 +355,7 @@ function dangNhap_(body) {
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
 
   if (ma !== maTrenSheet) return { ok: false, error: 'ma_khong_dung' };
+  if (banQuyenNamCu_(v)) return { ok: false, error: 'ban_quyen_nam_cu' };
 
   if (!daTraTien) return { ok: false, error: 'chua_thanh_toan',
                            message: 'Hệ thống chưa ghi nhận thanh toán. Vui lòng đợi sau khi chuyển khoản. Nếu đã CK lâu, liên hệ Zalo thầy Chung.' };
@@ -387,12 +392,14 @@ function dangNhap_(body) {
     }
   }
 
+  const gan = docTk_(sheet, row);
   return {
     ok: true,
     sdt: sdt,
     gv_ho_ten: String(v[COL.ho_ten - 1] || ''),
     validUntil: toIso_(ngayHetHan),
-    activatedAt: toIso_(now)
+    activatedAt: toIso_(now),
+    tk: gan.tk, tkTen: gan.ten, conLuotDoi: gan.soLanDoi < SO_LAN_DOI_TK
   };
 }
 
@@ -415,6 +422,7 @@ function checkLicense_(body) {
   let ngayHetHan = v[COL.ngay_het_han - 1];
 
   if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
+  if (banQuyenNamCu_(v)) return { ok: false, error: 'ban_quyen_nam_cu' };
   if (ngayHetHan && new Date(ngayHetHan).getTime() < Date.now()) {
     sheet.getRange(row, COL.trang_thai).setValue(TT.HET_HAN);
     return { ok: false, error: 'het_han', validUntil: toIso_(ngayHetHan) };
@@ -425,10 +433,12 @@ function checkLicense_(body) {
   ghiThietBi_(sheet, row, sdt, deviceFp, '', false);
 
   sheet.getRange(row, COL.last_check).setValue(new Date());
+  const gan = docTk_(sheet, row);
   return {
     ok: true, sdt: sdt,
     validUntil: toIso_(ngayHetHan),
-    gv_ho_ten: String(v[COL.ho_ten - 1] || '')
+    gv_ho_ten: String(v[COL.ho_ten - 1] || ''),
+    tk: gan.tk, tkTen: gan.ten, conLuotDoi: gan.soLanDoi < SO_LAN_DOI_TK
   };
 }
 
@@ -728,6 +738,7 @@ function onOpen() {
     .addSeparator()
     .addItem('🔄 Reset thiết bị (theo SĐT)...', 'resetThietBiUI')
     .addItem('🔒 Khóa 1 SĐT (nghi share)...', 'khoaSdtUI')
+    .addItem('🔓 Gỡ gắn tài khoản vnEdu (theo SĐT)...', 'goGanTkUI')
     .addSeparator()
     .addItem('🧹 Dọn mã chưa thanh toán quá 7 ngày', 'donDepMaCho')
     .addItem('⚙️ Setup sheet lần đầu', 'setupSheet')
@@ -1236,4 +1247,175 @@ function moKhoaTayGiaoDichUI() {
   ui.alert('✓ Đã mở khoá cho ' + v[COL.ho_ten - 1] + ' (' + sdt + '), hạn ' +
            Utilities.formatDate(hetHan, 'GMT+7', 'dd/MM/yyyy') + '.\nTiện ích của cô tự kích hoạt trong 20-120 giây.\n' +
            'Mã đăng nhập máy khác của cô: ' + chuanHoaMa_(v[COL.ma_bi_mat - 1]));
+}
+
+// =============== 6.2.0 (06/11/2026): MỖI BẢN QUYỀN MỘT TÀI KHOẢN vnEDU ===============
+// Tiện ích đọc mã tài khoản vnEdu đang đăng nhập, băm SHA-256 ngay trên máy rồi mới gửi
+// (máy chủ KHÔNG nhận tên đăng nhập, mật khẩu). Lần đầu dùng sau khi kích hoạt → gắn.
+// Tài khoản khác mở trên cùng trình duyệt → chỉ dùng thử. Tài khoản quản trị trường
+// không gắn được (chống dùng 1 bản cho cả trường). Tự đổi tài khoản 1 lần mỗi năm học.
+// Cột mới ở tab License: O tk_vnedu · P ngay_gan_tk · Q so_lan_doi_tk · R ten_tk_vnedu.
+
+const COL_TK = 15;
+const SO_COT_TK = 4;
+const SO_LAN_DOI_TK = 1;
+const NGAY_BAT_DAU_NAM_HOC = new Date('2026-09-01T00:00:00+07:00');
+// SĐT được gắn bản quyền vào tài khoản quản trị (để thầy tự thử). Không công khai.
+const SDT_DUOC_GAN_TK_QUAN_TRI = ADMIN_SDTS;
+const TAB_DUNG_THU = 'DungThu';
+const HEADERS_DT = ['tk_vnedu', 'mon', 'lop', 'ngay'];
+
+function chuanHoaTk_(s) {
+  const t = String(s || '').toLowerCase().replace(/[^0-9a-f]/g, '');
+  return (t.length >= 16 && t.length <= 64) ? t : '';
+}
+
+function ngayCuaO_(x) {
+  if (!x) return null;
+  if (x instanceof Date) return isNaN(x.getTime()) ? null : x;
+  const m = String(x).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);   // dd/MM/yyyy (kiểu VN)
+  if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  const d = new Date(x);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/** Bản quyền kích hoạt (hoặc trả tiền) trước 01/09/2026 → năm học cũ, không công nhận. */
+function banQuyenNamCu_(v) {
+  const d = ngayCuaO_(v[COL.ngay_kich_hoat - 1]) || ngayCuaO_(v[COL.ngay_thanh_toan - 1]);
+  return !!d && d.getTime() < NGAY_BAT_DAU_NAM_HOC.getTime();
+}
+
+function ghiTieuDeTk_(sheet) {
+  if (!sheet.getRange(1, COL_TK).getValue()) {
+    sheet.getRange(1, COL_TK, 1, SO_COT_TK).setValues([['tk_vnedu', 'ngay_gan_tk', 'so_lan_doi_tk', 'ten_tk_vnedu']])
+      .setFontWeight('bold').setBackground('#1D3557').setFontColor('#fff');
+  }
+}
+
+function docTk_(sheet, row) {
+  const v = sheet.getRange(row, COL_TK, 1, SO_COT_TK).getValues()[0];
+  return { tk: chuanHoaTk_(v[0]), ngayGan: v[1], soLanDoi: Number(v[2]) || 0, ten: String(v[3] || '') };
+}
+
+function ghiTk_(sheet, row, tk, soLanDoi, ten) {
+  ghiTieuDeTk_(sheet);
+  sheet.getRange(row, COL_TK, 1, SO_COT_TK).setValues([["'" + tk, new Date(), soLanDoi, String(ten || '').slice(0, 60)]]);
+}
+
+function xoaGanTk_(sheet, row) {
+  try {
+    if (!sheet.getRange(1, COL_TK).getValue()) return;
+    sheet.getRange(row, COL_TK, 1, SO_COT_TK).setValues([['', '', 0, '']]);
+  } catch (e) { /* bảng chưa có cột mới */ }
+}
+
+/** Máy này đã từng kích hoạt (qua dangNhap đúng mã) cho SĐT này chưa — xem tab ThietBi. */
+function mayDaKichHoat_(sdt, fp) {
+  if (!sdt || !fp) return false;
+  const sh = SpreadsheetApp.getActive().getSheetByName(TAB_THIET_BI);
+  if (!sh || sh.getLastRow() < 2) return false;
+  const data = sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues();
+  for (let i = 0; i < data.length; i++) {
+    if (chuanHoaSdt_(data[i][0]) === sdt && String(data[i][1]) === fp) return true;
+  }
+  return false;
+}
+
+/**
+ * body: { sdt, tk, laQuanTri, ten, deviceFp, ma?, doi? }
+ *  - Chưa gắn → gắn vào tk (máy phải là máy đã kích hoạt SĐT này, hoặc kèm đúng mã).
+ *  - Đã gắn đúng tk → ok.
+ *  - Đã gắn tk khác → lỗi tk_khac (kèm conLuotDoi). doi:true + đúng mã → đổi (1 lần/năm học).
+ */
+function ganTaiKhoan_(body) {
+  const sdt = chuanHoaSdt_(body.sdt);
+  const tk = chuanHoaTk_(body.tk);
+  const fp = String(body.deviceFp || '').trim();
+  if (!sdt || !tk) return { ok: false, error: 'thieu_thong_tin' };
+
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  if (!sheet) return { ok: false, error: 'chua_setup_sheet' };
+  const row = findRowBySdt_(sheet, sdt);
+  if (!row) return { ok: false, error: 'sdt_chua_dang_ky' };
+
+  const v = sheet.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+  const trangThai = v[COL.trang_thai - 1];
+  if (trangThai === TT.KHOA) return { ok: false, error: 'sdt_da_bi_khoa' };
+  if (trangThai !== TT.DA_KICH_HOAT) return { ok: false, error: 'chua_kich_hoat' };
+  if (banQuyenNamCu_(v)) return { ok: false, error: 'ban_quyen_nam_cu' };
+  const hh = ngayCuaO_(v[COL.ngay_het_han - 1]);
+  if (hh && hh.getTime() < Date.now()) return { ok: false, error: 'het_han' };
+
+  const ma = chuanHoaMa_(body.ma);
+  const dungMa = !!ma && ma === chuanHoaMa_(v[COL.ma_bi_mat - 1]);
+  if (!dungMa && !mayDaKichHoat_(sdt, fp)) return { ok: false, error: 'can_ma_dang_nhap' };
+
+  if (body.laQuanTri === true && SDT_DUOC_GAN_TK_QUAN_TRI.indexOf(sdt) < 0) {
+    return { ok: false, error: 'tk_quan_tri' };
+  }
+
+  const ten = String(body.ten || '').slice(0, 60);
+  const cur = docTk_(sheet, row);
+  if (!cur.tk) {
+    ghiTk_(sheet, row, tk, cur.soLanDoi, ten);
+    return { ok: true, tk: tk, tkTen: ten, moiGan: true, conLuotDoi: cur.soLanDoi < SO_LAN_DOI_TK };
+  }
+  if (cur.tk === tk) {
+    if (ten && ten !== cur.ten) sheet.getRange(row, COL_TK + 3).setValue(ten);
+    return { ok: true, tk: tk, tkTen: ten || cur.ten, conLuotDoi: cur.soLanDoi < SO_LAN_DOI_TK };
+  }
+  const conLuot = cur.soLanDoi < SO_LAN_DOI_TK;
+  if (body.doi === true) {
+    if (!dungMa) return { ok: false, error: 'can_ma_dang_nhap' };
+    if (!conLuot) return { ok: false, error: 'het_luot_doi_tk' };
+    ghiTk_(sheet, row, tk, cur.soLanDoi + 1, ten);
+    return { ok: true, tk: tk, tkTen: ten, daDoi: true, conLuotDoi: (cur.soLanDoi + 1) < SO_LAN_DOI_TK };
+  }
+  return { ok: false, error: 'tk_khac', tkTen: cur.ten, conLuotDoi: conLuot };
+}
+
+/**
+ * Dùng thử ghi theo tài khoản vnEdu (gỡ cài lại tiện ích không được thử thêm).
+ * body: { tk, ghi?, mon?, lop? } → { ok, mon, lop } (môn, lớp đã dùng thử; rỗng = chưa).
+ */
+function dungThu_(body) {
+  const tk = chuanHoaTk_(body.tk);
+  if (!tk) return { ok: false, error: 'thieu_thong_tin' };
+  const tab = tabCoTieuDe_(TAB_DUNG_THU, HEADERS_DT);
+  const last = tab.getLastRow();
+  let row = 0, mon = '', lop = '';
+  if (last >= 2) {
+    const data = tab.getRange(2, 1, last - 1, 3).getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (chuanHoaTk_(data[i][0]) === tk) { row = i + 2; mon = String(data[i][1] || ''); lop = String(data[i][2] || ''); break; }
+    }
+  }
+  if (body.ghi === true) {
+    const monMoi = String(body.mon || '').slice(0, 40);
+    const lopMoi = String(body.lop || '').slice(0, 20);
+    if (!row) {
+      tab.getRange(last + 1, 1, 1, 4).setValues([["'" + tk, monMoi, lopMoi, new Date()]]);
+      mon = monMoi; lop = lopMoi;
+    } else {
+      if (!mon && monMoi) { tab.getRange(row, 2).setValue(monMoi); mon = monMoi; }
+      if (!lop && lopMoi) { tab.getRange(row, 3).setValue(lopMoi); lop = lopMoi; }
+    }
+  }
+  return { ok: true, mon: mon, lop: lop };
+}
+
+/** Menu: gỡ gắn tài khoản vnEdu cho 1 SĐT (GV đổi tài khoản lần 2 trở đi, nhắn thầy). */
+function goGanTkUI() {
+  const ui = SpreadsheetApp.getUi();
+  const res = ui.prompt('Gỡ gắn tài khoản vnEdu cho SĐT nào?',
+                        'Lần mở tiện ích tới, bản quyền tự gắn vào tài khoản vnEdu thầy cô đang dùng.\nVD: 0912345678',
+                        ui.ButtonSet.OK_CANCEL);
+  if (res.getSelectedButton() !== ui.Button.OK) return;
+  const sdt = chuanHoaSdt_(res.getResponseText());
+  if (!sdt) { ui.alert('SĐT sai định dạng'); return; }
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const row = findRowBySdt_(sheet, sdt);
+  if (!row) { ui.alert('Không tìm thấy SĐT ' + sdt); return; }
+  xoaGanTk_(sheet, row);
+  ui.alert('✓ Đã gỡ gắn tài khoản vnEdu cho ' + sdt + '.');
 }
