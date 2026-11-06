@@ -36,7 +36,7 @@ function taoMayChu() {
     console, Date, Math, JSON, String, Number, Object, RegExp, Set,
     SpreadsheetApp: { getActive: () => ss, getUi: () => { throw new Error('no ui'); } },
     CacheService: { getScriptCache: () => ({ get: k => cache[k] || null, put: (k, v) => { cache[k] = v; } }) },
-    PropertiesService: { getScriptProperties: () => ({ getProperty: k => (k === 'SEPAY_TOKEN' ? 'tok' : null), setProperty() {} }) },
+    PropertiesService: { getScriptProperties: () => ({ getProperty: k => ({ SEPAY_TOKEN: 'tok', ADMIN_SDTS: '0900000001' }[k] || null), setProperty() {} }) },
     LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
     Utilities: { formatDate: d => new Date(d).toISOString(), getUuid: () => 'u' },
     ContentService: { createTextOutput: t => ({ setMimeType() { return { t }; } }), MimeType: { JSON: 1, TEXT: 2 } },
@@ -191,7 +191,7 @@ async function muaBanQuyen(mc, ti, sdt, ten) {
   {
     // SĐT thử của thầy được gắn vào tài khoản quản trị
     const mc = taoMayChu(), ti = taoTienIch(mc);
-    await muaBanQuyen(mc, ti, '0913311301', 'Quản trị thử');
+    await muaBanQuyen(mc, ti, '0900000001', 'Quản trị thử');
     await ti.L.setTaiKhoanVnedu(QT);
     kt('SĐT quản trị thử: dùng được trên tài khoản quản trị', (await ti.L.canUseFeature('nlpc')).allowed === true);
   }
@@ -272,6 +272,15 @@ async function muaBanQuyen(mc, ti, sdt, ten) {
     mc.lic.getRange(row, mc.api.COL.trang_thai).setValue(mc.api.TT.DA_TRA_TIEN);
     await ti.L.setTaiKhoanVnedu(GV1);
     kt('reset thiết bị: vẫn dùng được, không xoá bản quyền', (await ti.L.canUseFeature('nlpc')).allowed === true && (await ti.L.getState()).status === 'active');
+  }
+
+  {
+    // Số quản trị cũ (từng lộ trên GitHub) không còn tự kích hoạt miễn phí
+    const mc = taoMayChu();
+    const dk = mc.post({ action: 'dangKy', sdt: '0913311301', hoTen: 'Ai đó', phienBan: '6.2.0' });
+    kt('0913311301 không còn là số quản trị', dk.ok === true && dk.alreadyPaid === false && dk.soTien === 50000, dk);
+    const dk2 = mc.post({ action: 'dangKy', sdt: '0900000001', hoTen: 'Quản trị', phienBan: '6.2.0' });
+    kt('số trong Script Properties vẫn là số quản trị', dk2.ok === true && dk2.alreadyPaid === true, dk2);
   }
 
   // ---------- 6. Bản cũ (6.1.3) trên Store vẫn chạy với máy chủ mới ----------

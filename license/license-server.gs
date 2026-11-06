@@ -80,17 +80,27 @@ const MA_GEN_MODE = 'v5';
 // Bộ ký tự cho mã LEGACY: chữ thường + số, BỎ ký tự dễ nhầm (0, o, 1, l, i)
 const MA_CHARSET = 'abcdefghjkmnpqrstuvwxyz23456789';
 
-// SĐT admin/test — tự động bypass payment + cho phép re-register/re-bind
-// để admin test flow nhanh không cần tick checkbox + reset device thủ công.
-// LƯU Ý BẢO MẬT: SĐT này KHÔNG được công khai ở bất kỳ đâu (website, docs,
-// README, error messages…) vì ai biết SĐT này nhập vào form sẽ được kích hoạt
-// MIỄN PHÍ. Số liên hệ hỗ trợ public dùng SĐT KHÁC.
-const ADMIN_SDTS = ['0913311301'];
-// Mã cố định cho admin (4 ký tự, lowercase + số, theo MA_CHARSET). Thầy luôn dùng
-// mã này thay vì mã random → dễ nhớ, không cần tra cứu mỗi lần test.
-const ADMIN_FIXED_MA = 'admn';
+// SĐT quản trị/thử — tự kích hoạt không cần trả tiền, được gắn bản quyền vào tài khoản
+// quản trị vnEdu. 06/11/2026: KHÔNG ghi số trong mã (kho GitHub công khai). Đặt ở
+// Cài đặt dự án → Thuộc tính tập lệnh (Script Properties):
+//   ADMIN_SDTS = 09xxxxxxxx[,09yyyyyyyy]   (bỏ trống = không có số quản trị)
+//   ADMIN_MA   = mã 4 ký tự cố định cho số quản trị (bỏ trống = 'admn')
+// Số đã từng xuất hiện trong mã công khai thì KHÔNG dùng lại.
+function adminSdts_() {
+  try {
+    const v = PropertiesService.getScriptProperties().getProperty('ADMIN_SDTS') || '';
+    return v.split(/[,;\s]+/).map(chuanHoaSdt_).filter(Boolean);
+  } catch (e) { return []; }
+}
+function adminMa_() {
+  try {
+    const m = chuanHoaMa_(PropertiesService.getScriptProperties().getProperty('ADMIN_MA') || '');
+    return m.length === MA_LEN_LEGACY ? m : 'admn';
+  } catch (e) { return 'admn'; }
+}
 function isAdminSdt_(sdt) {
-  return ADMIN_SDTS.indexOf(String(sdt || '')) >= 0;
+  const s = chuanHoaSdt_(sdt);
+  return !!s && adminSdts_().indexOf(s) >= 0;
 }
 
 // =============== ENTRY POINT ===============
@@ -177,7 +187,7 @@ function dangKy_(body) {
   // ADMIN: luôn cho phép re-register, reset state về da_tra_tien để có thể bind ngay.
   // Mã dùng ADMIN_FIXED_MA → thầy luôn dùng cùng 1 mã, dễ nhớ.
   if (row && isAdmin) {
-    const ma = ADMIN_FIXED_MA;
+    const ma = adminMa_();
     const now = new Date();
     sheet.getRange(row, COL.ma_bi_mat).setValue("'" + ma);
     sheet.getRange(row, COL.ho_ten).setValue(hoTen);
@@ -252,7 +262,7 @@ function dangKy_(body) {
   //       'v5' (HOTFIX hiện tại): mã 4 ký tự random — V5.0 CWS gõ được.
   //       'v6': mã = SĐT — flow "Một-chạm" gốc, đổi khi V6 được duyệt.
   const ma = isAdmin
-    ? ADMIN_FIXED_MA
+    ? adminMa_()
     : (MA_GEN_MODE === 'v5' ? sinhMaLegacyKhongTrung_(sheet) : sdt);
   const now = new Date();
 
@@ -1260,8 +1270,6 @@ const COL_TK = 15;
 const SO_COT_TK = 4;
 const SO_LAN_DOI_TK = 1;
 const NGAY_BAT_DAU_NAM_HOC = new Date('2026-09-01T00:00:00+07:00');
-// SĐT được gắn bản quyền vào tài khoản quản trị (để thầy tự thử). Không công khai.
-const SDT_DUOC_GAN_TK_QUAN_TRI = ADMIN_SDTS;
 const TAB_DUNG_THU = 'DungThu';
 const HEADERS_DT = ['tk_vnedu', 'mon', 'lop', 'ngay'];
 
@@ -1350,7 +1358,7 @@ function ganTaiKhoan_(body) {
   const dungMa = !!ma && ma === chuanHoaMa_(v[COL.ma_bi_mat - 1]);
   if (!dungMa && !mayDaKichHoat_(sdt, fp)) return { ok: false, error: 'can_ma_dang_nhap' };
 
-  if (body.laQuanTri === true && SDT_DUOC_GAN_TK_QUAN_TRI.indexOf(sdt) < 0) {
+  if (body.laQuanTri === true && !isAdminSdt_(sdt)) {
     return { ok: false, error: 'tk_quan_tri' };
   }
 
