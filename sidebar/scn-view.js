@@ -124,6 +124,7 @@
         const list = $('scn-list');
         const fields = info.fields || [];
         const coNhap = fields.some(f => drafts[f.key]);
+        if ($('scn-btn-xoa-nhap')) $('scn-btn-xoa-nhap').style.display = coNhap ? '' : 'none';
         if (!coNhap) {
             list.innerHTML = '<div class="scn-empty">Mục này có ' + fields.length + ' ô. Bấm nút trên để em viết nháp; thầy cô sửa lại trước khi điền.</div>';
             $('scn-bar').style.display = 'none';
@@ -138,7 +139,10 @@
             return '<div class="scn-card' + (d.on ? '' : ' off') + '" data-key="' + esc(f.key) + '">' +
                 '<div class="scn-card-head">' +
                 '<label class="scn-card-pick"><input type="checkbox" data-pick="' + esc(f.key) + '"' + (d.on ? ' checked' : '') + '> ' + esc(f.label) + '</label>' +
+                '<span class="scn-card-btns">' +
                 '<button class="scn-redo" data-redo="' + esc(f.key) + '" title="Viết lại bản khác">Viết lại</button>' +
+                '<button class="scn-redo scn-xoa" data-xoa="' + esc(f.key) + '" title="Xóa chữ trong khung nháp này để tự gõ">Xóa</button>' +
+                '</span>' +
                 '</div>' + (badges.length ? '<div class="scn-badges">' + badges.join('') + '</div>' : '') +
                 '<textarea class="scn-text" data-edit="' + esc(f.key) + '" spellcheck="false">' + esc(d.text) + '</textarea>' +
                 '</div>';
@@ -227,6 +231,63 @@
         saveDrafts();
     }
 
+    function xoaNhap(key) {
+        if (!drafts[key]) return;
+        drafts[key].text = '';
+        renderList();
+        saveDrafts();
+        const ta = document.querySelector('textarea[data-edit="' + key + '"]');
+        if (ta) ta.focus();
+    }
+
+    let xoaNhapArmed = 0;
+    function xoaToanBoNhap() {
+        const btn = $('scn-btn-xoa-nhap');
+        if (!xoaNhapArmed || Date.now() > xoaNhapArmed) {
+            xoaNhapArmed = Date.now() + 5000;
+            btn.textContent = 'Bấm lần nữa để xóa toàn bộ bản nháp';
+            setTimeout(() => { if (Date.now() > xoaNhapArmed) btn.textContent = 'Xóa toàn bộ bản nháp'; }, 5200);
+            return;
+        }
+        xoaNhapArmed = 0;
+        btn.textContent = 'Xóa toàn bộ bản nháp';
+        drafts = {};
+        showResult('');
+        renderList();
+        saveDrafts();
+    }
+
+    let xoaVnArmed = 0;
+    function xoaTrenVnedu() {
+        const keys = info.fields.filter(f => drafts[f.key] && drafts[f.key].on).map(f => f.key);
+        const btn = $('scn-btn-xoa-vn');
+        if (!keys.length) { showResult('Đánh dấu ô cần xóa (ô vuông đầu mỗi khung) rồi bấm lại.', 'warn'); return; }
+        if (!xoaVnArmed || Date.now() > xoaVnArmed) {
+            xoaVnArmed = Date.now() + 6000;
+            btn.textContent = 'Bấm lần nữa để xóa chữ ' + keys.length + ' ô trên vnEdu';
+            btn.classList.add('armed');
+            setTimeout(() => { if (Date.now() > xoaVnArmed) { btn.textContent = 'Xóa chữ trên vnEdu ở ô đã đánh dấu'; btn.classList.remove('armed'); } }, 6200);
+            return;
+        }
+        xoaVnArmed = 0;
+        btn.textContent = 'Xóa chữ trên vnEdu ở ô đã đánh dấu';
+        btn.classList.remove('armed');
+        const items = keys.map(k => {
+            const f = info.fields.find(x => x.key === k);
+            return { key: k, text: '', html: f && f.kind === 'ck' ? '' : undefined };
+        });
+        showResult('Đang xóa…');
+        parent.postMessage({
+            type: 'COGIAO_SCN_FILL',
+            payload: {
+                reqId: newReq('fill'),
+                expect: { mau: state.mau, section: state.section, lop: state.lop, thang: state.thang || '' },
+                items, overwrite: true
+            }
+        }, '*');
+        lastFilled = { keys, coChoTrong: false, xoa: true };
+    }
+
     function newReq(kind) {
         pending = { reqId: kind + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), kind };
         return pending.reqId;
@@ -273,16 +334,20 @@
             return;
         }
         const ten = k => (info.fields.find(f => f.key === k) || {}).label || k;
+        const laXoaTruoc = lastFilled && lastFilled.xoa;
         // ô vừa điền: bỏ chọn để không lỡ điền lần hai
-        (r.filled || []).forEach(k => { if (drafts[k]) drafts[k].on = false; });
+        (r.filled || []).forEach(k => { if (drafts[k]) drafts[k].on = !!laXoaTruoc; });
         renderList();
         saveDrafts();
-        let html = '<div><strong>Đã điền ' + r.filled.length + ' ô.</strong></div>';
+        const laXoa = lastFilled && lastFilled.xoa;
+        let html = '<div><strong>' + (laXoa ? 'Đã xóa chữ ' : 'Đã điền ') + r.filled.length + ' ô trên vnEdu.</strong></div>';
         if (r.skipped.length) html += '<div>Bỏ qua ' + r.skipped.length + ' ô đã có chữ: ' + r.skipped.map(k => esc(ten(k))).join('; ') + '.</div>';
         if (r.failed.length) html += '<div class="bad">Chưa điền được: ' + r.failed.map(k => esc(ten(k))).join('; ') + '.</div>';
         if (r.filled.length) {
             const choTrong = lastFilled && lastFilled.coChoTrong;
-            html += choTrong
+            html += laXoa
+                ? '<div>Ô đã trống. Thầy cô bấm <strong>Viết lại</strong> rồi điền, hoặc tự gõ; xong bấm Lưu. Muốn giữ ô trống thì bấm Lưu ngay.</div>'
+                : choTrong
                 ? '<div>Có ô còn dấu <strong>…</strong>: thầy cô sửa ngay trên vnEdu cho đúng thực tế lớp rồi mới Lưu.</div>'
                 : '<div>Thầy cô đọc lại trên vnEdu rồi Lưu.</div>';
             html += '<button class="btn-secondary scn-save" id="scn-save">' + (choTrong ? 'Đã sửa xong, Lưu vào vnEdu' : 'Lưu vào vnEdu') + '</button>';
@@ -326,6 +391,8 @@
         $('scn-btn-gen').addEventListener('click', generateAll);
         $('scn-btn-fill').addEventListener('click', fill);
         if ($('scn-btn-sync')) $('scn-btn-sync').addEventListener('click', sync);
+        if ($('scn-btn-xoa-nhap')) $('scn-btn-xoa-nhap').addEventListener('click', xoaToanBoNhap);
+        if ($('scn-btn-xoa-vn')) $('scn-btn-xoa-vn').addEventListener('click', xoaTrenVnedu);
         $('scn-overwrite').addEventListener('change', updateFillBtn);
         $('scn-chips').addEventListener('change', e => {
             const id = e.target && e.target.dataset.trait;
@@ -355,6 +422,8 @@
         $('scn-list').addEventListener('click', e => {
             const k = e.target && e.target.dataset.redo;
             if (k) redo(k);
+            const x = e.target && e.target.dataset.xoa;
+            if (x) xoaNhap(x);
         });
         window.addEventListener('message', e => {
             const { type, payload } = e.data || {};

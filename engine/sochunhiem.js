@@ -481,46 +481,66 @@
     // ---------- soạn từng ô ----------
     function tenThang(m) { return 'tháng ' + m; }
 
+    /** 6.3.1: giữ ĐỦ mọi ý; mỗi ý có thể có vài cách diễn đạt (mảng) — "Viết lại" chỉ đổi cách nói. */
+    function du(r, arr) {
+        return arr.filter(Boolean).map(x => Array.isArray(x) ? pick(r, x) : x);
+    }
+
     function thuanLoi(c, r) {
-        const k = c.khoi, t = c.traits;
+        const k = c.khoi, t = c.traits, so = c.so;
         const out = [];
-        out.push(pick(r, ['Lớp luôn được Ban giám hiệu nhà trường quan tâm, chỉ đạo sát sao; được tổ chuyên môn hỗ trợ trong công tác chủ nhiệm.',
-            'Lớp được nhà trường quan tâm, tạo điều kiện; giáo viên chủ nhiệm nhận được sự hỗ trợ của tổ chuyên môn và giáo viên bộ môn.']));
+        out.push(pick(r, ['Lớp luôn được Ban giám hiệu nhà trường quan tâm, chỉ đạo sát sao; được tổ chuyên môn, giáo viên bộ môn và Tổng phụ trách Đội hỗ trợ trong công tác chủ nhiệm.',
+            'Lớp được nhà trường quan tâm, tạo điều kiện thuận lợi; giáo viên chủ nhiệm nhận được sự hỗ trợ thường xuyên của tổ chuyên môn, giáo viên bộ môn và Tổng phụ trách Đội.']));
+        out.push(pick(r, ['Giáo viên chủ nhiệm nhiệt tình, yêu nghề, nắm vững chương trình lớp ' + (k || '…') + '; luôn gần gũi, quan tâm đến từng học sinh.',
+            'Giáo viên chủ nhiệm có tinh thần trách nhiệm, tâm huyết với nghề; nắm chắc đặc điểm tâm lí lứa tuổi và hoàn cảnh của từng học sinh.']));
         out.push(t.has('csvc_tot')
-            ? 'Phòng học rộng rãi, đủ ánh sáng, đủ bàn ghế đúng quy cách; có ti vi (máy chiếu) phục vụ dạy học.'
-            : 'Phòng học đủ ánh sáng, đủ bàn ghế cho học sinh ngồi học.');
+            ? 'Phòng học rộng rãi, thoáng mát, đủ ánh sáng; bàn ghế đúng quy cách; có ti vi (máy chiếu) và đồ dùng dạy học phục vụ tốt cho việc dạy và học.'
+            : 'Phòng học đủ ánh sáng, thoáng mát; đủ bàn ghế cho học sinh ngồi học; đồ dùng dạy học cơ bản đáp ứng yêu cầu.');
         out.push('Học sinh có đủ sách giáo khoa, vở và đồ dùng học tập ngay từ đầu năm học.');
-        if (k === 1) out.push('Phần lớn học sinh đã qua lớp mẫu giáo 5 tuổi, mạnh dạn, hồn nhiên, có nề nếp ban đầu.');
-        else out.push(pick(r, ['Học sinh đã quen nề nếp học tập; nhiều em ngoan, lễ phép, có ý thức học tập tốt.',
-            'Đa số học sinh ngoan, đoàn kết, có ý thức học tập; ban cán sự lớp hoạt động có nề nếp.']));
-        if (t.has('ph_quan_tam')) out.push('Đa số phụ huynh quan tâm đến việc học của con, phối hợp chặt chẽ với giáo viên chủ nhiệm qua sổ liên lạc điện tử và các buổi họp lớp.');
+        if (k === 1) out.push('Phần lớn học sinh đã qua lớp mẫu giáo 5 tuổi nên mạnh dạn, hồn nhiên, có nề nếp ban đầu; nhiều em đã biết cầm bút, tô, vẽ.');
+        else out.push(pick(r, ['Học sinh đã quen nề nếp học tập ở các lớp dưới; đa số các em ngoan, lễ phép, đoàn kết, có ý thức học tập tốt.',
+            'Đa số học sinh ngoan, lễ phép, đoàn kết, biết giúp đỡ bạn; ban cán sự lớp, hội đồng tự quản hoạt động có nề nếp.']));
+        if (k >= 2) out.push('Nhiều em có năng khiếu, ham học hỏi, tích cực tham gia các hoạt động của trường, lớp.');
+        out.push(t.has('ph_quan_tam')
+            ? 'Đa số phụ huynh quan tâm đến việc học của con; phối hợp chặt chẽ với giáo viên chủ nhiệm qua sổ liên lạc điện tử, điện thoại và các buổi họp phụ huynh.'
+            : 'Phần lớn phụ huynh quan tâm đến việc học tập, rèn luyện của con và giữ liên lạc với giáo viên chủ nhiệm qua sổ liên lạc điện tử.');
         if (t.has('hai_buoi')) out.push('Lớp học 2 buổi/ngày nên có thêm thời gian củng cố kiến thức, rèn kĩ năng và tổ chức các hoạt động giáo dục cho học sinh.');
         if (t.has('ban_tru')) out.push('Học sinh ăn bán trú tại trường được chăm sóc chu đáo, có thời gian nghỉ trưa hợp lí, đảm bảo sức khỏe cho buổi học chiều.');
+        if (so.tongSo !== null && so.tongSo !== undefined && !(so.hoNgheo || so.hoCanNgheo || so.khoKhan)) out.push('Lớp không có học sinh thuộc hộ nghèo; điều kiện học tập của các em tương đối đầy đủ.');
         return lines(out);
     }
 
     function khoKhan(c, r) {
         const k = c.khoi, t = c.traits, so = c.so;
         const out = [];
-        if ((so.hoNgheo || 0) + (so.hoCanNgheo || 0) > 0) {
+        const ngheoCa = (so.hoNgheo || 0) + (so.hoCanNgheo || 0);
+        if (so.tongSo && ngheoCa >= so.tongSo) {
+            // Số liệu vnEdu ghi cả lớp là hộ nghèo/cận nghèo — dễ là nhập nhầm, để thầy cô kiểm tra
+            out.push('Lớp có … em thuộc hộ nghèo, … em thuộc hộ cận nghèo (thầy cô kiểm tra lại số liệu); điều kiện học tập ở nhà của các em còn thiếu thốn, cần được quan tâm, hỗ trợ.');
+        } else if (ngheoCa > 0) {
             const a = [];
             if (so.hoNgheo) a.push(so.hoNgheo + ' em thuộc hộ nghèo');
             if (so.hoCanNgheo) a.push(so.hoCanNgheo + ' em thuộc hộ cận nghèo');
-            out.push('Lớp có ' + a.join(', ') + '; điều kiện học tập ở nhà của các em còn thiếu thốn.');
+            out.push('Lớp có ' + a.join(', ') + '; điều kiện học tập ở nhà của các em còn thiếu thốn, cần được quan tâm, hỗ trợ.');
         } else if (so.khoKhan) {
             out.push('Lớp có ' + so.khoKhan + ' em có hoàn cảnh khó khăn, cần được quan tâm, động viên kịp thời.');
         }
-        if (t.has('hoa_nhap')) out.push(so.khuyetTat
-            ? 'Lớp có ' + so.khuyetTat + ' em khuyết tật học hòa nhập, cần kế hoạch giáo dục cá nhân và sự hỗ trợ riêng.'
-            : 'Lớp có học sinh khuyết tật học hòa nhập, cần kế hoạch giáo dục cá nhân và sự hỗ trợ riêng.');
+        if (t.has('hoa_nhap') || so.khuyetTat) out.push(so.khuyetTat
+            ? 'Lớp có ' + so.khuyetTat + ' em khuyết tật học hòa nhập, cần có kế hoạch giáo dục cá nhân và sự hỗ trợ riêng.'
+            : 'Lớp có học sinh khuyết tật học hòa nhập, cần có kế hoạch giáo dục cá nhân và sự hỗ trợ riêng.');
         if (t.has('dan_toc')) out.push('Một số em là người dân tộc thiểu số, vốn tiếng Việt còn hạn chế, cần được hỗ trợ thêm về nghe, nói, đọc, viết.');
         if (t.has('di_lam_xa')) out.push('Một số phụ huynh đi làm ăn xa, học sinh ở với ông bà nên việc kèm cặp, nhắc nhở học bài ở nhà còn hạn chế.');
-        if (t.has('nong_nghiep')) out.push('Phần lớn gia đình làm nông nghiệp, lao động tự do, thời gian dành cho việc học của con còn ít.');
-        if (k === 1) out.push('Học sinh mới chuyển từ mầm non lên tiểu học, chưa quen nề nếp học tập; nhiều em còn rụt rè, khả năng tập trung chưa lâu.');
+        out.push(t.has('nong_nghiep')
+            ? 'Phần lớn gia đình làm nông nghiệp, lao động tự do, thời gian dành cho việc kèm cặp con học tập còn ít.'
+            : pick(r, ['Một số phụ huynh bận công việc, chưa có nhiều thời gian kèm cặp, nhắc nhở con học bài ở nhà.',
+                'Một số gia đình còn trông chờ vào nhà trường, chưa dành nhiều thời gian theo dõi việc học của con.']));
+        if (k === 1) out.push('Học sinh mới chuyển từ mầm non lên tiểu học, chưa quen nề nếp học tập; nhiều em còn rụt rè, khả năng tập trung chưa lâu, cầm bút và ngồi viết chưa đúng tư thế.');
         else if (k <= 3) out.push(pick(r, ['Khả năng tiếp thu của học sinh chưa đồng đều; một số em đọc còn chậm, chữ viết chưa đúng mẫu, tính toán còn nhầm lẫn.',
             'Chất lượng học tập chưa đồng đều; một số em chưa tự giác học bài, kĩ năng đọc, viết, tính toán còn hạn chế.']));
         else out.push(pick(r, ['Kiến thức các môn ngày càng nhiều và khó; một số em kĩ năng tính toán, viết đoạn văn, bài văn còn hạn chế, chưa tự giác học bài.',
-            'Một số em chưa có phương pháp tự học, còn ham chơi; kĩ năng trình bày, diễn đạt và giải toán có lời văn còn hạn chế.']));
+            'Một số em chưa có phương pháp tự học; kĩ năng trình bày, diễn đạt và giải toán có lời văn còn hạn chế.']));
+        out.push(pick(r, ['Một số em còn ham chơi, mải xem điện thoại, ti vi; ý thức tự giác giữ gìn sách vở, đồ dùng chưa cao.',
+            'Một số em còn nói chuyện riêng, chưa tập trung trong giờ học; việc giữ gìn sách vở, đồ dùng học tập chưa cẩn thận.']));
         if (so.tongSo && so.tongSo >= 35) out.push('Sĩ số lớp đông (' + so.tongSo + ' em) nên việc quan tâm, kèm cặp đến từng học sinh còn gặp khó khăn.');
         return lines(out);
     }
@@ -529,84 +549,107 @@
         const n = c.so.tongSo;
         return lines([
             n ? 'Duy trì sĩ số: ' + n + '/' + n + ' em, đạt 100%.' : 'Duy trì sĩ số đạt 100%.',
-            'Không có học sinh bỏ học; tỉ lệ đi học chuyên cần đạt từ 98% trở lên.'
+            'Không có học sinh bỏ học; tỉ lệ đi học chuyên cần đạt từ 98% trở lên.',
+            'Học sinh nghỉ học đều có lí do, có giấy phép hoặc được phụ huynh báo kịp thời.'
         ]);
     }
 
     function siSoGiaiPhap(c, r) {
-        const out = ['Theo dõi chuyên cần hằng ngày; học sinh nghỉ học phải liên hệ ngay với phụ huynh để nắm rõ lí do.',
-            'Xây dựng lớp học thân thiện, mỗi ngày đến trường là một ngày vui để học sinh thích đến lớp.',
-            'Quan tâm, động viên học sinh có hoàn cảnh khó khăn; phối hợp nhà trường, Ban đại diện cha mẹ học sinh hỗ trợ kịp thời.',
-            'Thăm hỏi học sinh ốm đau; giúp các em học bù bài khi nghỉ học.'];
-        if (c.traits.has('di_lam_xa')) out.push('Giữ liên lạc thường xuyên với ông bà, người trực tiếp chăm sóc học sinh có bố mẹ đi làm xa.');
-        return lines(pickN(r, out, 4));
+        return lines(du(r, [
+            ['Theo dõi chuyên cần hằng ngày; học sinh nghỉ học phải liên hệ ngay với phụ huynh để nắm rõ lí do.',
+                'Điểm danh, theo dõi chuyên cần hằng ngày; khi học sinh nghỉ học, liên hệ ngay với gia đình để biết lí do.'],
+            ['Xây dựng lớp học thân thiện, mỗi ngày đến trường là một ngày vui để học sinh thích đến lớp.',
+                'Tạo không khí lớp học vui vẻ, thân thiện, tổ chức nhiều hoạt động hấp dẫn để học sinh thích đến trường.'],
+            'Quan tâm, động viên học sinh có hoàn cảnh khó khăn; phối hợp với nhà trường, Ban đại diện cha mẹ học sinh hỗ trợ kịp thời.',
+            'Thăm hỏi học sinh ốm đau; giúp các em học bù bài khi nghỉ học.',
+            c.traits.has('di_lam_xa') ? 'Giữ liên lạc thường xuyên với ông bà, người trực tiếp chăm sóc học sinh có bố mẹ đi làm xa.' : null
+        ]));
     }
 
     function giaiPhapPcNl(c, r) {
-        const out = ['Giáo dục phẩm chất, năng lực cho học sinh qua từng môn học, hoạt động trải nghiệm, sinh hoạt dưới cờ và sinh hoạt lớp.',
-            'Xây dựng nội quy lớp học cùng học sinh; duy trì hội đồng tự quản, phân công nhiệm vụ cụ thể để học sinh rèn tính tự chủ, trách nhiệm.',
-            'Tổ chức học nhóm, đôi bạn cùng tiến để học sinh rèn kĩ năng giao tiếp, hợp tác.',
-            'Quan sát, nhận xét thường xuyên; động viên, khen ngợi kịp thời từng tiến bộ của học sinh.',
+        return lines(du(r, [
+            ['Giáo dục phẩm chất, năng lực cho học sinh qua từng môn học, hoạt động trải nghiệm, sinh hoạt dưới cờ và sinh hoạt lớp.',
+                'Lồng ghép giáo dục phẩm chất, năng lực vào các môn học, hoạt động trải nghiệm, sinh hoạt dưới cờ và sinh hoạt lớp.'],
+            c.khoi === 1
+                ? 'Hướng dẫn học sinh từng bước làm quen nề nếp: chào hỏi, xếp hàng, giữ trật tự, tự sắp xếp đồ dùng học tập.'
+                : ['Xây dựng nội quy lớp học cùng học sinh; duy trì hội đồng tự quản, phân công nhiệm vụ cụ thể để học sinh rèn tính tự chủ, trách nhiệm.',
+                    'Cùng học sinh xây dựng nội quy lớp; phát huy vai trò hội đồng tự quản, giao việc cụ thể để các em rèn tính tự chủ, trách nhiệm.'],
+            ['Tổ chức học nhóm, đôi bạn cùng tiến để học sinh rèn kĩ năng giao tiếp, hợp tác.',
+                'Tăng cường hoạt động nhóm, đôi bạn cùng tiến giúp học sinh rèn kĩ năng giao tiếp, hợp tác, giải quyết vấn đề.'],
+            ['Quan sát, nhận xét thường xuyên; động viên, khen ngợi kịp thời từng tiến bộ của học sinh.',
+                'Thường xuyên quan sát, nhận xét bằng lời; khen ngợi kịp thời để học sinh tự tin, cố gắng hơn.'],
             'Giáo viên luôn gương mẫu trong lời nói, việc làm để học sinh noi theo.',
-            'Phối hợp với phụ huynh rèn cho học sinh thói quen tự phục vụ, giúp đỡ gia đình những việc vừa sức.'];
-        if (c.khoi === 1) out.splice(1, 1, 'Hướng dẫn học sinh từng bước làm quen nề nếp: chào hỏi, xếp hàng, giữ trật tự, tự sắp xếp đồ dùng học tập.');
-        return lines(pickN(r, out, 5));
+            'Phối hợp với phụ huynh rèn cho học sinh thói quen tự phục vụ, giúp đỡ gia đình những việc vừa sức.'
+        ]));
     }
 
     function giaiPhapHocTap(c, r) {
         const ht = HOC_TAP[c.khoi];
-        const out = ['Nắm chắc năng lực của từng học sinh để dạy học phù hợp; quan tâm đặc biệt học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.',
-            'Đổi mới phương pháp dạy học, tăng cường đồ dùng trực quan và hoạt động thực hành để học sinh hứng thú.',
+        const out = du(r, [
+            ['Nắm chắc năng lực của từng học sinh để dạy học phù hợp; quan tâm đặc biệt học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.',
+                'Khảo sát, nắm chắc năng lực từng học sinh ngay từ đầu năm để có biện pháp dạy học phù hợp; phụ đạo học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.'],
+            ['Đổi mới phương pháp dạy học, tăng cường đồ dùng trực quan và hoạt động thực hành để học sinh hứng thú.',
+                'Vận dụng phương pháp dạy học tích cực, sử dụng đồ dùng trực quan, tăng cường thực hành để học sinh hứng thú học tập.'],
             'Kiểm tra, nhận xét vở và bài làm thường xuyên; chỉ rõ chỗ đúng, chỗ cần sửa để học sinh tiến bộ.',
             'Duy trì nề nếp truy bài đầu giờ, đôi bạn cùng tiến; ban cán sự lớp hỗ trợ kiểm tra bài.',
             'Phối hợp với giáo viên bộ môn và phụ huynh theo dõi, giúp đỡ học sinh học tập.',
-            'Đánh giá học sinh theo đúng quy định hiện hành; thông tin kết quả học tập tới phụ huynh qua sổ liên lạc điện tử.'];
-        const chon = pickN(r, out, 5);
-        chon.push('Trọng tâm học kì I - ' + ht.hk1.join('; ') + '.');
-        return lines(chon);
+            'Đánh giá học sinh theo đúng quy định hiện hành; thông tin kết quả học tập tới phụ huynh qua sổ liên lạc điện tử.'
+        ]);
+        out.push('Trọng tâm học kì I: ' + ht.hk1.join('; ') + '.');
+        return lines(out);
     }
 
     function vsChiTieu(c) {
         const tl = c.khoi === 1 ? 60 : 70;
         return lines(['100% học sinh có đủ vở theo quy định, giữ vở sạch sẽ, có nhãn vở, bìa bọc.',
-            '100% học sinh viết đúng mẫu chữ, đúng tư thế; phấn đấu từ ' + tl + '% học sinh trở lên đạt vở sạch, chữ đẹp.']);
+            '100% học sinh viết đúng mẫu chữ, đúng tư thế; phấn đấu từ ' + tl + '% học sinh trở lên đạt vở sạch, chữ đẹp.',
+            'Lớp tham gia đầy đủ phong trào, hội thi viết chữ đẹp do nhà trường tổ chức.']);
     }
 
     function vsGiaiPhap(c, r) {
-        const out = ['Hướng dẫn học sinh tư thế ngồi viết, cách cầm bút, cách đặt vở đúng quy định.',
-            'Giáo viên viết mẫu chuẩn trên bảng; uốn nắn kịp thời từng nét chữ cho học sinh.',
+        return lines(du(r, [
+            'Hướng dẫn học sinh tư thế ngồi viết, cách cầm bút, cách đặt vở đúng quy định.',
+            ['Giáo viên viết mẫu chuẩn trên bảng; uốn nắn kịp thời từng nét chữ cho học sinh.',
+                'Giáo viên luôn viết mẫu đúng, đẹp trên bảng và trong vở học sinh; sửa kịp thời từng nét chữ chưa đúng.'],
             'Kiểm tra vở hằng ngày, nhắc nhở học sinh giữ vở sạch, không tẩy xóa, không quăn góc.',
-            'Tổ chức thi đua vở sạch chữ đẹp hằng tháng; trưng bày, tuyên dương vở đẹp trước lớp.',
-            'Đề nghị phụ huynh nhắc nhở, kiểm tra việc luyện viết của con ở nhà.'];
-        return lines(pickN(r, out, 4));
+            ['Tổ chức thi đua vở sạch chữ đẹp hằng tháng; trưng bày, tuyên dương vở đẹp trước lớp.',
+                'Hằng tháng chấm, trưng bày vở sạch chữ đẹp; tuyên dương học sinh có tiến bộ trong giờ sinh hoạt lớp.'],
+            'Đề nghị phụ huynh nhắc nhở, kiểm tra việc luyện viết của con ở nhà.'
+        ]));
     }
 
     function ngllChiTieu(c) {
         const ds = c.khoi <= 3 ? 'Sao nhi đồng' : 'Liên đội';
         return lines(['100% học sinh tham gia đầy đủ các hoạt động trải nghiệm, ngoại khóa, sinh hoạt tập thể do nhà trường và ' + ds + ' tổ chức.',
-            'Lớp tham gia đầy đủ các hội thi, phong trào thi đua theo chủ điểm hằng tháng.']);
+            'Lớp tham gia đầy đủ các hội thi, phong trào thi đua theo chủ điểm hằng tháng.',
+            'Học sinh được giáo dục kĩ năng sống, an toàn giao thông, phòng tránh tai nạn thương tích, đuối nước.']);
     }
 
     function ngllGiaiPhap(c, r) {
-        const out = ['Thực hiện tốt các chủ điểm hằng tháng gắn với các ngày lễ lớn trong năm.',
+        return lines(du(r, [
+            ['Thực hiện tốt các chủ điểm hằng tháng gắn với các ngày lễ lớn trong năm.',
+                'Tổ chức hoạt động theo chủ điểm hằng tháng, gắn với các ngày lễ lớn trong năm học.'],
             'Tổ chức múa hát sân trường, trò chơi dân gian, đọc sách thư viện vào các tiết hoạt động.',
             c.khoi <= 3 ? 'Hướng dẫn phụ trách Sao sinh hoạt Sao đúng nội dung, nề nếp.' : 'Phối hợp với Tổng phụ trách Đội tổ chức sinh hoạt chi đội đúng nội dung, nề nếp.',
-            'Phân công học sinh có năng khiếu tham gia văn nghệ, thể thao của trường.',
-            'Giáo dục kĩ năng sống, an toàn giao thông, phòng tránh tai nạn thương tích qua các hoạt động trải nghiệm.'];
-        return lines(pickN(r, out, 4));
+            'Phát hiện, phân công học sinh có năng khiếu tham gia văn nghệ, thể thao của trường.',
+            'Giáo dục kĩ năng sống, an toàn giao thông, phòng tránh tai nạn thương tích qua các hoạt động trải nghiệm.'
+        ]));
     }
 
     function csvcChiTieu() {
         return lines(['Lớp học được trang trí đúng quy định, sạch đẹp, thân thiện.',
-            '100% học sinh có ý thức giữ gìn, bảo quản bàn ghế, đồ dùng của lớp; không để hư hỏng do học sinh gây ra.']);
+            '100% học sinh có ý thức giữ gìn, bảo quản bàn ghế, đồ dùng của lớp; không để hư hỏng do học sinh gây ra.',
+            'Sách giáo khoa, đồ dùng học tập của học sinh được giữ gìn cẩn thận, dùng được lâu.']);
     }
 
     function csvcGiaiPhap(c, r) {
-        const out = ['Trang trí lớp học theo hướng dẫn của nhà trường: ảnh Bác Hồ, Năm điều Bác Hồ dạy, góc học tập, góc thư viện của lớp.',
-            'Phân công tổ trực nhật, kiểm tra vệ sinh và bàn ghế hằng ngày.',
+        return lines(du(r, [
+            'Trang trí lớp học theo hướng dẫn của nhà trường: ảnh Bác Hồ, Năm điều Bác Hồ dạy, góc học tập, góc thư viện của lớp.',
+            ['Phân công tổ trực nhật, kiểm tra vệ sinh và bàn ghế hằng ngày.',
+                'Phân công học sinh trực nhật theo tổ; hằng ngày kiểm tra vệ sinh, sắp xếp bàn ghế ngay ngắn.'],
             'Giáo dục học sinh không viết, vẽ bậy lên bàn ghế, tường lớp; tắt điện, quạt khi ra về.',
-            'Kịp thời báo cáo nhà trường khi cơ sở vật chất của lớp hư hỏng.'];
-        return lines(pickN(r, out, 4));
+            'Kịp thời báo cáo nhà trường khi cơ sở vật chất của lớp hư hỏng.'
+        ]));
     }
 
     function laoDongChiTieu() {
@@ -615,11 +658,13 @@
     }
 
     function laoDongGiaiPhap(c, r) {
-        const out = ['Phân công trực nhật theo tổ, theo ngày; ban cán sự lớp kiểm tra, nhắc nhở.',
+        return lines(du(r, [
+            ['Phân công trực nhật theo tổ, theo ngày; ban cán sự lớp kiểm tra, nhắc nhở.',
+                'Lập lịch trực nhật theo tổ, theo ngày; ban cán sự lớp kiểm tra, nhắc nhở các bạn thực hiện.'],
             'Tổ chức lao động vệ sinh lớp học, chăm sóc cây xanh vào cuối tuần.',
             'Giáo dục học sinh bỏ rác đúng nơi quy định, tiết kiệm điện, nước.',
-            'Phân công công việc vừa sức, đảm bảo an toàn cho học sinh khi lao động.'];
-        return lines(pickN(r, out, 3));
+            'Phân công công việc vừa sức, đảm bảo an toàn cho học sinh khi lao động.'
+        ]));
     }
 
     function xhhChiTieu() {
@@ -628,11 +673,13 @@
     }
 
     function xhhGiaiPhap(c, r) {
-        const out = ['Họp phụ huynh đầu năm để thống nhất kế hoạch phối hợp giáo dục học sinh.',
-            'Vận động phụ huynh, các nhà hảo tâm hỗ trợ học sinh có hoàn cảnh khó khăn.',
+        return lines(du(r, [
+            'Họp phụ huynh đầu năm để thống nhất kế hoạch phối hợp giáo dục học sinh.',
+            ['Vận động phụ huynh, các nhà hảo tâm hỗ trợ học sinh có hoàn cảnh khó khăn.',
+                'Phối hợp Ban đại diện cha mẹ học sinh vận động hỗ trợ sách vở, đồ dùng cho học sinh có hoàn cảnh khó khăn.'],
             'Công khai, minh bạch các khoản thu, chi của lớp (nếu có) theo đúng quy định.',
-            'Thường xuyên trao đổi với phụ huynh qua sổ liên lạc điện tử để cùng giáo dục học sinh.'];
-        return lines(pickN(r, out, 3));
+            'Thường xuyên trao đổi với phụ huynh qua sổ liên lạc điện tử để cùng giáo dục học sinh.'
+        ]));
     }
 
     function danhHieuLop() { return 'Tập thể lớp Tiên tiến.'; }
@@ -648,33 +695,37 @@
     }
 
     function tieuChuanKhac(c, r) {
-        const out = ['100% học sinh được khám sức khỏe định kì, theo dõi cân nặng, chiều cao theo kế hoạch của nhà trường.',
+        return lines(du(r, [
+            '100% học sinh được khám sức khỏe định kì, theo dõi cân nặng, chiều cao theo kế hoạch của nhà trường.',
             '100% học sinh giữ gìn vệ sinh cá nhân, ăn mặc gọn gàng, sạch sẽ khi đến lớp.',
             'Học sinh tập thể dục giữa giờ, tham gia các trò chơi vận động đều đặn.',
             'Không có học sinh bị tai nạn thương tích, đuối nước do thiếu sự quan tâm, nhắc nhở.',
-            'Học sinh biết phòng tránh các bệnh thường gặp theo mùa.'];
-        if (c.traits.has('ban_tru')) out.push('Học sinh ăn bán trú ăn uống đủ chất, ngủ trưa đúng giờ, đảm bảo vệ sinh an toàn thực phẩm.');
-        return lines(pickN(r, out, 4));
+            'Học sinh biết phòng tránh các bệnh thường gặp theo mùa.',
+            c.traits.has('ban_tru') ? 'Học sinh ăn bán trú ăn uống đủ chất, ngủ trưa đúng giờ, đảm bảo vệ sinh an toàn thực phẩm.' : null
+        ]));
     }
 
     function bienPhapNam(c, r) {
         const out = [];
-        out.push('* Về dạy và học:');
-        out.push(...pickN(r, ['Nắm chắc năng lực từng học sinh để dạy học phù hợp; phụ đạo học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.',
+        const nhom = (ten, arr) => { out.push('* ' + ten + ':'); out.push(...du(r, arr).map(s => '- ' + cham(s))); };
+        nhom('Về dạy và học', [
+            ['Nắm chắc năng lực từng học sinh để dạy học phù hợp; phụ đạo học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.',
+                'Khảo sát chất lượng đầu năm, nắm chắc từng đối tượng học sinh; phụ đạo học sinh còn chậm, bồi dưỡng học sinh có năng khiếu.'],
             'Đổi mới phương pháp, tăng cường hoạt động thực hành, đồ dùng trực quan.',
             'Duy trì truy bài đầu giờ, đôi bạn cùng tiến; kiểm tra, nhận xét vở thường xuyên.',
-            'Đánh giá học sinh theo đúng quy định hiện hành; thông tin kịp thời tới phụ huynh.'], 3).map(s => '- ' + s));
-        out.push('* Về giáo dục đạo đức:');
-        out.push(...pickN(r, ['Giáo dục học sinh thực hiện tốt Năm điều Bác Hồ dạy, nội quy nhà trường.',
+            'Đánh giá học sinh theo đúng quy định hiện hành; thông tin kịp thời tới phụ huynh.']);
+        nhom('Về giáo dục đạo đức', [
+            'Giáo dục học sinh thực hiện tốt Năm điều Bác Hồ dạy, nội quy nhà trường.',
             'Giáo dục qua các chủ điểm hằng tháng, sinh hoạt dưới cờ, sinh hoạt lớp.',
-            'Khen ngợi kịp thời việc tốt; nhắc nhở nhẹ nhàng, gần gũi khi học sinh mắc lỗi.'], 2).map(s => '- ' + s));
-        out.push('* Về hoạt động ngoài trời:');
-        out.push(...pickN(r, ['Tổ chức múa hát sân trường, trò chơi dân gian, thể dục giữa giờ.',
-            'Tham gia đầy đủ hoạt động trải nghiệm, ngoại khóa do nhà trường tổ chức; đảm bảo an toàn cho học sinh.'], 2).map(s => '- ' + s));
-        out.push('* Về xây dựng nề nếp:');
-        out.push(...pickN(r, ['Xây dựng nội quy lớp, bầu ban cán sự lớp, hội đồng tự quản hoạt động hiệu quả.',
+            ['Khen ngợi kịp thời việc tốt; nhắc nhở nhẹ nhàng, gần gũi khi học sinh mắc lỗi.',
+                'Tuyên dương kịp thời việc làm tốt; uốn nắn nhẹ nhàng, kiên trì khi học sinh mắc lỗi.']]);
+        nhom('Về hoạt động ngoài giờ lên lớp', [
+            'Tổ chức múa hát sân trường, trò chơi dân gian, thể dục giữa giờ.',
+            'Tham gia đầy đủ hoạt động trải nghiệm, ngoại khóa do nhà trường tổ chức; đảm bảo an toàn cho học sinh.']);
+        nhom('Về xây dựng nề nếp', [
+            'Xây dựng nội quy lớp, bầu ban cán sự lớp, hội đồng tự quản hoạt động hiệu quả.',
             'Duy trì nề nếp ra vào lớp, giữ trật tự, giữ vệ sinh chung.',
-            'Phối hợp chặt chẽ với phụ huynh trong giáo dục học sinh.'], 2).map(s => '- ' + s));
+            'Phối hợp chặt chẽ với phụ huynh trong giáo dục học sinh.']);
         return out.join('\n');
     }
 
@@ -724,7 +775,7 @@
         const out = ['* Chủ điểm: “' + T.chuDiem + '”.'];
         out.push(...T.trongTam.map(s => '- ' + s + '.'));
         out.push('* Giáo dục đạo đức:');
-        out.push(...pickN(r, T.daoDuc, 2).map(s => '- ' + s + '.'));
+        out.push(...T.daoDuc.map(s => '- ' + s + '.'));
         out.push('* Học tập:');
         out.push(...hocTapThang(c, T).map(s => '- ' + s + '.'));
         out.push('* Hoạt động khác:');
@@ -740,7 +791,7 @@
             'Nhận xét, động viên kịp thời từng tiến bộ của học sinh; tuyên dương trong giờ sinh hoạt lớp.',
             'Phối hợp với giáo viên bộ môn, Tổng phụ trách Đội và phụ huynh trong giáo dục học sinh.',
             'Lồng ghép giáo dục theo chủ điểm “' + T.chuDiem + '” vào các môn học, hoạt động trải nghiệm.'];
-        return lines(pickN(r, out, 5));
+        return lines(out);
     }
 
     function siSoDong(c) {

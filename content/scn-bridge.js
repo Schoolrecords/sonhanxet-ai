@@ -352,9 +352,9 @@
             const el = fieldElement(win, f);
             if (!el) { failed.push(it.key); continue; }
             if (f.kind === 'ck') {
-                await setCk(el, it.html || it.text);
+                await setCk(el, it.html || it.text || '');
                 const back = htmlToText(el.getData());
-                const want = htmlToText(it.html || it.text);
+                const want = htmlToText(it.html || it.text || '');
                 if (back.replace(/\s+/g, ' ') === want.replace(/\s+/g, ' ')) filled.push(it.key); else failed.push(it.key);
             } else {
                 let v = String(it.text || '');

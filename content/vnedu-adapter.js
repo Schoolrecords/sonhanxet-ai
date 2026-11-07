@@ -1042,7 +1042,7 @@ window.VneduAdapter = {
             const monRaw = ctx.mon;
 
             if (!className || !monRaw) {
-                console.warn('[VneduAdapter] extractSoNXData: thiếu className hoặc môn', ctx);
+                console.log('[VneduAdapter] extractSoNXData: chưa có lớp/môn (màn khác Sổ NX) — bỏ qua');
                 return null;
             }
 
