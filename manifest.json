@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
-  "version": "6.2.1",
-  "description": "Tạo nhận xét, đánh giá môn học và NL/PC tự động cho GV tiểu học trên Vnedu theo Thông tư 27/2020",
+  "version": "6.3.1",
+  "description": "Tạo nhận xét môn học, NL/PC theo Thông tư 27/2020 và viết nháp Sổ chủ nhiệm cho GV tiểu học trên Vnedu",
   "author": "Phát triển bởi giáo viên cho giáo viên",
 
   "permissions": [
@@ -39,11 +39,14 @@
         "sidebar/sidebar.html",
         "sidebar/sidebar.css",
         "sidebar/sidebar.js",
+        "sidebar/scn-view.js",
         "engine/engine.js",
         "engine/data/*.json",
         "license/client.js",
         "license/qr.png",
-        "content/page-error-bridge.js"
+        "content/page-error-bridge.js",
+        "content/scn-bridge.js",
+        "engine/sochunhiem.js"
       ],
       "matches": ["*://*.vnedu.vn/*"]
     }

@@ -1244,7 +1244,42 @@ window.VneduAdapter = {
         return common || null;
     },
 
+    /**
+     * V6.3.1: vnEdu đặt mã cố định cho khung từng ô (div.x-field#<mã> chứa textarea),
+     * đã đọc trên vnEdu thật 07/11/2026. Tìm theo mã thì không phụ thuộc bố cục màn hình
+     * (màn hẹp, thanh bên che, thu phóng). Thiếu mã nào thì mới dò theo vị trí như cũ.
+     */
+    _NLPC_FIELD_IDS: {
+        nang_luc_chung: { chung: 'nlchung', tu_chu_tu_hoc: 'tu_chu', giao_tiep_hop_tac: 'giao_tiep_hop_tac', giai_quyet_van_de: 'gqvd' },
+        nang_luc_dac_thu: { chung: 'dac_thu', ngon_ngu: 'ngon_ngu', tinh_toan: 'tinh_toan', khoa_hoc: 'khoa_hoc',
+            cong_nghe: 'cong_nghe', tin_hoc: 'tin_hoc', tham_mi: 'tham_mi', the_chat: 'the_chat' },
+        pham_chat: { chung: 'pcchung', yeu_nuoc: 'yeu_nuoc', nhan_ai: 'nhan_ai', cham_chi: 'cham_chi',
+            trung_thuc: 'trung_thuc', trach_nhiem: 'trach_nhiem' }
+    },
+
+    _findNLPCFieldsById_() {
+        const result = { nang_luc_chung: { fields: {} }, nang_luc_dac_thu: { fields: {} }, pham_chat: { fields: {} } };
+        let n = 0;
+        for (const [sec, map] of Object.entries(this._NLPC_FIELD_IDS)) {
+            for (const [key, id] of Object.entries(map)) {
+                // Có thể có nhiều phần tử trùng id (cửa sổ cũ bị ẩn) → lấy cái đang hiển thị
+                const tas = Array.from(document.querySelectorAll(`[id="${id}"] textarea`))
+                    .filter(ta => !ta.closest('#cogiao-ai-sidebar') && this._isInActivePanel(ta));
+                if (tas.length) { result[sec].fields[key] = tas[0]; n++; }
+            }
+        }
+        return { result, n };
+    },
+
     findNLPCFields() {
+        const byId = this._findNLPCFieldsById_();
+        // Đủ các ô chính (NL chung 4 + PC 6 + ít nhất 1 ô NL đặc thù) → dùng luôn
+        if (byId.n >= 11 && byId.result.nang_luc_chung.fields.tu_chu_tu_hoc && byId.result.pham_chat.fields.yeu_nuoc) {
+            console.log(`[VneduAdapter] findNLPCFields: theo mã ô vnEdu — ${byId.n} ô`);
+            return byId.result;
+        }
+        console.warn(`[VneduAdapter] findNLPCFields: mã ô chỉ thấy ${byId.n} → dò theo vị trí`);
+
         const result = {
             nang_luc_chung: { fields: {} },
             nang_luc_dac_thu: { fields: {} },
@@ -1293,7 +1328,10 @@ window.VneduAdapter = {
             const text = textNode.textContent.trim();
             if (!text || text.length > 60) continue;
 
-            const clean = text.replace(/^[*:\s]+|[*:\s]+$/g, '').toLowerCase();
+            // V6.3.1: nhãn có thể kèm mức ngay sau, vd "Tự chủ và tự học: T" (cùng 1 text node)
+            // → bỏ phần ": T/Đ/C" ở cuối trước khi tra bảng nhãn.
+            const clean = text.replace(/:\s*[TĐC]\s*$/, '')
+                .replace(/^[*:\s]+|[*:\s]+$/g, '').replace(/\s+/g, ' ').toLowerCase();
             const fieldKey = this._NLPC_LABEL_MAP[clean];
             if (!fieldKey) continue;
 
@@ -1532,7 +1570,9 @@ window.VneduAdapter = {
             const secPayload = payload[sec] || {};
             const secFields = fields[sec].fields;
             for (const [key, text] of Object.entries(secPayload)) {
-                if (!text) continue;
+                // 6.3.1: _xoa=true -> chuoi rong nghia la XOA o do (xoa nhan xet / xoa o chua co muc)
+                if (typeof text !== 'string') continue;
+                if (!text && !payload._xoa) continue;
                 const ta = secFields[key];
                 if (!ta) {
                     failed++;
@@ -1552,8 +1592,27 @@ window.VneduAdapter = {
             }
         }
 
+        // V6.3.1: đọc lại từng ô — vnEdu có thể nạp dữ liệu HS đè lên ô vừa điền.
+        const filledTas = [];
+        for (const sec of ['nang_luc_chung', 'nang_luc_dac_thu', 'pham_chat']) {
+            for (const [key, text] of Object.entries(payload[sec] || {})) {
+                const ta = fields[sec].fields[key];
+                if (typeof text === 'string' && (text || payload._xoa) && ta) filledTas.push({ sec, key, ta, text });
+            }
+        }
+
+        // V6.3.1: ô nào của vnEdu cũng gắn gợi ý "Danh mục nhận xét" (jQuery UI autocomplete);
+        // sự kiện gõ phím giả làm danh sách gợi ý bật lên che màn hình → đóng lại.
+        // (Đã thử trên vnEdu thật: danh sách gợi ý KHÔNG đổi chữ trong ô.)
+        setTimeout(() => {
+            document.querySelectorAll('ul.ui-autocomplete').forEach(m => { m.style.display = 'none'; });
+        }, 400);
+
         console.log(`[NLPC-DBG] fillNLPCFields EXIT — success=${success} failed=${failed}`, detail);
-        return { success, failed, detail };
+        const out = { success, failed, detail };
+        // Không đếm được (non-enumerable) để postMessage không phải sao chép phần tử DOM.
+        Object.defineProperty(out, 'filledTas', { value: filledTas, enumerable: false });
+        return out;
     },
 
     /* ====================================================================
@@ -1719,9 +1778,26 @@ window.VneduAdapter = {
         if (!waitRes.success) {
             return { success: false, reason: 'wait_active_timeout', stt, expectedHS, lastSeen: waitRes.lastSeen };
         }
-        // Đợi DOM render textarea (Vnedu lazy render form sau khi switch HS)
-        await this._sleep_(180);
-        const grades = this.readNLPCGradesFromActiveForm();
+        // 6.3.1: vnEdu hiện chữ mức T/Đ/C DẦN DẦN sau khi đổi HS (đã thấy trên vnEdu thật 07/11:
+        // đọc sau 180 ms chỉ được 2/15 ô). Đọc lặp đến khi kết quả đứng yên 2 lần liên tiếp
+        // (tối đa ~3 s); hết mask "Đang xử lý..." rồi mới bắt đầu.
+        await this._waitMaskGone_(5000);
+        const chuKy = (g) => JSON.stringify(g);
+        await this._sleep_(250);
+        let grades = this.readNLPCGradesFromActiveForm();
+        let lanGiong = 0;
+        const batDau = Date.now();
+        while (Date.now() - batDau < 3000) {
+            await this._sleep_(250);
+            const g2 = this.readNLPCGradesFromActiveForm();
+            if (chuKy(g2) === chuKy(grades)) {
+                lanGiong++;
+                if (lanGiong >= 2) break;
+            } else {
+                lanGiong = 0;
+                grades = g2;
+            }
+        }
 
         const totalFound = Object.values(grades).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
         return { success: true, stt, expectedHS, grades, totalFound };
@@ -1756,30 +1832,93 @@ window.VneduAdapter = {
      * Chờ Vnedu hiện toast/popup "Đã lưu" hoặc "thành công" sau khi click Lưu.
      * Best-effort: nếu timeout vẫn coi như success (Vnedu không luôn có popup).
      */
-    async _waitForLuuConfirmation(timeoutMs = 3000) {
+    async _waitForLuuConfirmation(timeoutMs = 20000) {
+        // V6.3.1: bản cũ quét textContent của MỌI div/span/td/li mỗi 150 ms (rất nặng trên
+        // trang Ext.js nhiều nghìn phần tử) và luôn chờ đủ 3 s → đẩy cả lớp rất lâu.
+        // Nay: chờ hộp thông báo của vnEdu ("Bạn đã lưu dữ liệu thành công" — đã thấy trên
+        // vnEdu thật 07/11), bấm OK để đóng (hộp này modal, để mở sẽ chắn HS sau).
+        // Không thấy hộp: mask đã tắt quá 2,5 s thì coi như xong.
         const start = Date.now();
-        const seenInitially = new WeakSet();
-        document.querySelectorAll('div, span, td, li').forEach(el => {
-            const txt = (el.textContent || '').trim().toLowerCase();
-            if (txt.includes('đã lưu') || txt.includes('thành công') || txt.includes('cập nhật thành công')) {
-                seenInitially.add(el);
-            }
-        });
-
+        let maskGoneAt = null;
         while (Date.now() - start < timeoutMs) {
-            const allEls = document.querySelectorAll('div, span, td, li');
-            for (const el of allEls) {
-                if (seenInitially.has(el)) continue;
-                if (el.offsetWidth === 0 || el.offsetHeight === 0) continue;
-                const txt = (el.textContent || '').trim().toLowerCase();
-                if (txt && txt.length < 80 && (txt.includes('đã lưu') || txt.includes('cập nhật thành công'))) {
-                    await this._sleep_(200);
-                    return { success: true, detected: true, message: el.textContent.trim() };
+            const box = this._findMessageBox_();
+            if (box) {
+                const msg = (box.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+                await this._closeAllMessageBoxes_();
+                if (/lỗi|không thể|thất bại|error|chưa/i.test(msg) && !/thành công/i.test(msg)) {
+                    return { success: false, reason: 'vnedu_error: ' + msg };
                 }
+                return { success: true, detected: true, message: msg, ms: Date.now() - start };
             }
-            await this._sleep_(150);
+            if (this._isSavingMask_()) {
+                maskGoneAt = null;
+            } else {
+                if (!maskGoneAt) maskGoneAt = Date.now();
+                if (Date.now() - maskGoneAt > 2500) break;
+            }
+            await this._sleep_(80);
         }
-        return { success: true, detected: false, timeout: true };
+        if (this._isSavingMask_()) {
+            // vnEdu vẫn "Đang xử lý..." quá lâu (mạng chậm). Hộp báo đã lưu có thể vừa hiện → xét lần cuối.
+            const late = this._findMessageBox_();
+            if (late && /thành công|đã lưu/i.test(late.innerText || '')) {
+                await this._closeAllMessageBoxes_();
+                return { success: true, detected: true, late: true };
+            }
+            return { success: false, reason: 'vnedu_busy_timeout' };
+        }
+        return { success: true, detected: false, ms: Date.now() - start };
+    },
+
+    _findMessageBox_() {
+        return Array.from(document.querySelectorAll('.x-message-box'))
+            .find(b => !b.closest('#cogiao-ai-sidebar') && this._isOnScreen_(b)) || null;
+    },
+
+    /** Ext.js giấu cửa sổ/hộp bằng cách đẩy ra (-10000,-10000) chứ không ẩn hẳn. */
+    _isOnScreen_(el) {
+        if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return false;
+        const r = el.getBoundingClientRect();
+        if (r.right <= 0 || r.bottom <= 0 || r.left < -1000 || r.top < -1000) return false;
+        const s = window.getComputedStyle(el);
+        return s.display !== 'none' && s.visibility !== 'hidden';
+    },
+
+    _closeMessageBox_(box) {
+        const btn = Array.from(box.querySelectorAll('button'))
+            .find(b => b.offsetWidth > 0 && /^(OK|Đồng ý|Đóng)$/i.test((b.innerText || '').trim()));
+        if (btn) this._dispatchClickSequence_(btn, false);
+    },
+
+    /** 6.3.1: đóng mọi hộp thông báo vnEdu đang mở (thử lại tối đa 3 lần). */
+    async _closeAllMessageBoxes_() {
+        for (let i = 0; i < 3; i++) {
+            const box = this._findMessageBox_();
+            if (!box) return true;
+            this._closeMessageBox_(box);
+            await this._sleep_(250);
+        }
+        return !this._findMessageBox_();
+    },
+
+    /** Chờ hộp "Đang xử lý..." tắt (tối đa timeoutMs). */
+    async _waitMaskGone_(timeoutMs) {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+            if (!this._isSavingMask_()) return true;
+            await this._sleep_(100);
+        }
+        return false;
+    },
+
+    /** Mask đang lưu/nạp của Ext.js (kể cả hộp nhỏ "Đang xử lý..."), ngoài thanh bên. */
+    _isSavingMask_() {
+        const masks = document.querySelectorAll('.x-mask-msg');
+        for (const m of masks) {
+            if (m.closest('#cogiao-ai-sidebar')) continue;
+            if (this._isOnScreen_(m)) return true;
+        }
+        return false;
     },
 
     /**
@@ -1790,6 +1929,10 @@ window.VneduAdapter = {
      */
     async selectAndFillNLPC({ stt, expectedHS, payload, autoSave = true }) {
         console.log(`[NLPC-BULK] STT#${stt} (${expectedHS}) — START`);
+        const t0 = Date.now();
+
+        // V6.3.1: chờ vnEdu xong việc trước (lần Lưu HS trước còn "Đang xử lý...")
+        await this._waitMaskGone_(8000);
 
         // Step 1: select HS
         const selected = this.selectNLPCStudent(stt);
@@ -1798,16 +1941,20 @@ window.VneduAdapter = {
         }
 
         // Step 2: wait for active
-        const waitRes = await this._waitForHSActive(expectedHS, 2500);
+        const waitRes = await this._waitForHSActive(expectedHS, 4000);
         if (!waitRes.success) {
             return {
                 success: false, stage: 'wait_active', reason: 'timeout', stt, expectedHS,
                 lastSeen: waitRes.lastSeen
             };
         }
+        // V6.3.1: vnEdu nạp dữ liệu HS vừa chọn bằng AJAX; điền trước khi nạp xong
+        // thì dữ liệu cũ (trống) đè lên ô vừa điền → mất chữ. Chờ hết mask rồi mới điền.
+        await this._sleep_(150);
+        await this._waitMaskGone_(6000);
 
         // Step 3: fill (with _expectedHS guard — BUG-005)
-        const fillRes = this.fillNLPCFields({ ...payload, _expectedHS: expectedHS });
+        let fillRes = this.fillNLPCFields({ ...payload, _expectedHS: expectedHS });
         if (fillRes.error) {
             return {
                 success: false, stage: 'fill', reason: fillRes.error, stt, expectedHS,
@@ -1818,20 +1965,44 @@ window.VneduAdapter = {
             return { success: false, stage: 'fill', reason: 'no_fields_filled', stt, expectedHS };
         }
 
+        // Step 3b: đọc lại ô sau một nhịp; ô nào bị đè thì điền lại 1 lần.
+        await this._sleep_(250);
+        const lost = (fillRes.filledTas || []).filter(f => (f.ta.value || '').trim() !== f.text.trim());
+        if (lost.length) {
+            console.warn(`[NLPC-BULK] STT#${stt}: ${lost.length} ô bị đè sau khi điền → điền lại`, lost.map(f => f.key));
+            await this._waitMaskGone_(4000);
+            fillRes = this.fillNLPCFields({ ...payload, _expectedHS: expectedHS });
+            if (fillRes.error) {
+                return { success: false, stage: 'fill', reason: fillRes.error, stt, expectedHS, actual: fillRes.actual };
+            }
+            await this._sleep_(200);
+        }
+        const stillLost = (fillRes.filledTas || [])
+            .filter(f => (f.ta.value || '').trim() !== f.text.trim()).map(f => f.key);
+        const missing = fillRes.detail.filter(d => d.status !== 'ok').map(d => d.key).concat(stillLost);
+
         // Step 4: optional save
         if (autoSave) {
+            // 6.3.1: hộp "đã lưu" của HS trước còn mở thì đóng trước, để không đọc nhầm hộp cũ
+            await this._closeAllMessageBoxes_();
             const luuRes = this.clickLuuButton();
             if (!luuRes.success) {
                 return { success: false, stage: 'save', reason: luuRes.reason || 'click_failed', stt, expectedHS };
             }
-            const confirmRes = await this._waitForLuuConfirmation(3000);
+            const confirmRes = await this._waitForLuuConfirmation(20000);
             if (!confirmRes.success) {
-                return { success: false, stage: 'save_confirm', reason: 'timeout', stt, expectedHS };
+                return { success: false, stage: 'save_confirm', reason: confirmRes.reason || 'timeout', stt, expectedHS };
             }
-            await this._sleep_(250);
         }
 
-        console.log(`[NLPC-BULK] STT#${stt} — DONE (filled=${fillRes.success}, saved=${autoSave})`);
+        console.log(`[NLPC-BULK] STT#${stt} — DONE (filled=${fillRes.success}, missing=${missing.length}, saved=${autoSave}, ${Date.now() - t0}ms)`);
+        if (missing.length) {
+            // Đã lưu phần điền được; báo các ô thiếu để GV biết (không dừng cả lớp).
+            return {
+                success: false, stage: 'fill_partial', reason: 'missing_fields',
+                missing, stt, expectedHS, filled: fillRes.success
+            };
+        }
         return { success: true, stage: 'done', stt, expectedHS, filled: fillRes.success };
     },
 

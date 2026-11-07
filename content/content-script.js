@@ -73,6 +73,46 @@
     }
     injectPageErrorBridge();
 
+    // 6.3.0: cầu nối Sổ chủ nhiệm (CKEditor, ExtJS chỉ đọc/ghi được ở main world)
+    let _scnState = { active: false };
+    function injectScnBridge() {
+        try {
+            const s = document.createElement('script');
+            s.src = chrome.runtime.getURL('content/scn-bridge.js');
+            s.onload = () => s.remove();
+            (document.head || document.documentElement).appendChild(s);
+        } catch (e) {
+            console.warn('[Sổ nhận xét - AI] Không inject được scn-bridge:', e);
+        }
+    }
+    injectScnBridge();
+
+    /** Module đang mở: 2 màn cũ (adapter) hoặc Sổ chủ nhiệm (cầu nối báo). */
+    function detectCurrentModule() {
+        const m = window.VneduAdapter.detectModule();
+        if (m) return m;
+        return _scnState && _scnState.active ? 'so-chu-nhiem' : null;
+    }
+    const AI_MODULES = ['so-nhan-xet', 'nlpc', 'so-chu-nhiem'];
+
+    window.addEventListener('message', (e) => {
+        if (e.source !== window || !e.data) return;
+        const d = e.data;
+        if (d.type === '__COGIAO_SCN_STATE__' && d.state && typeof d.state === 'object') {
+            _scnState = d.state;
+            return;
+        }
+        if (d.type === '__COGIAO_SCN_FILL_RESULT__' || d.type === '__COGIAO_SCN_SAVE_RESULT__' || d.type === '__COGIAO_SCN_SYNC_RESULT__') {
+            const iframe = document.getElementById(SIDEBAR_ID);
+            iframe?.contentWindow?.postMessage({
+                type: d.type === '__COGIAO_SCN_FILL_RESULT__' ? 'COGIAO_SCN_FILL_RESULT'
+                    : d.type === '__COGIAO_SCN_SYNC_RESULT__' ? 'COGIAO_SCN_SYNC_RESULT' : 'COGIAO_SCN_SAVE_RESULT',
+                payload: { reqId: d.reqId, result: d.result }
+            }, '*');
+            if (d.type === '__COGIAO_SCN_SAVE_RESULT__') _suppressUpdatesUntil = Date.now() + 2500;
+        }
+    });
+
     let _vneduAccount = null;   // 6.2.0
     function askVneduAccount() {
         try { window.postMessage({ type: '__COGIAO_ASK_ACCOUNT__' }, '*'); } catch (e) { /* silent */ }
@@ -142,8 +182,8 @@
                 // V6.0.2: Nếu GV reload page khi đang ở module NX, watcher chưa
                 // fire kịp → check current ngay sau mount để auto-show không trễ.
                 try {
-                    const current = window.VneduAdapter.detectModule();
-                    if (current === 'so-nhan-xet' || current === 'nlpc') {
+                    const current = detectCurrentModule();
+                    if (AI_MODULES.includes(current)) {
                         iframe.classList.remove('cogiao-ai-hidden');
                         _aiPaused = false;
                         console.log(`[Sổ nhận xét - AI] Mount xong, đang ở module "${current}" → auto-show`);
@@ -195,6 +235,7 @@
                 const sel = list.find(s => s.isSelected);
                 return 'nlpc:' + list.length + ':' + (sel ? sel.stt + '-' + sel.hoVaTen : 'none');
             }
+            if (module === 'so-chu-nhiem') return 'scn:' + (_scnState.sig || '');
         } catch (e) { /* im lặng — chữ ký rỗng coi như chưa có dữ liệu */ }
         return '';
     }
@@ -203,7 +244,7 @@
         const iframe = document.getElementById(SIDEBAR_ID);
         if (!iframe || !iframe.contentWindow) return;
 
-        const module = window.VneduAdapter.detectModule();
+        const module = detectCurrentModule();
         _lastDetectedModule = module;  // track để MutationObserver compare
         let payload = { module, context: {}, students: [], account: _vneduAccount };
 
@@ -217,6 +258,8 @@
                 mucDat: r.mucDat,  // v0.1.19: mức chữ T/H/C cho môn không có điểm
                 daCoNhanXet: r.daCoNhanXet
             }));
+        } else if (module === 'so-chu-nhiem') {
+            payload.context = _scnState;
         } else if (module === 'nlpc') {
             const context = window.VneduAdapter.getNLPCContext();
             const list = window.VneduAdapter.getNLPCStudentList();
@@ -330,7 +373,7 @@
         if (now - _lastCheckRunTime < _MIN_CHECK_INTERVAL_MS) return;
         _lastCheckRunTime = now;
 
-        const current = window.VneduAdapter.detectModule();
+        const current = detectCurrentModule();
 
         // V.05/V.06: Phân biệt popup/mask thoáng vs navigation thật.
         // - Null 1-2 lần liên tiếp (~2s) → có thể là popup/mask Vnedu sau save → giữ state cũ
@@ -357,6 +400,8 @@
         } else if (current === 'nlpc') {
             const ctx = window.VneduAdapter.getNLPCContext();
             contextKey += '|' + (ctx.lop || '');
+        } else if (current === 'so-chu-nhiem') {
+            contextKey += '|' + [_scnState.mau, _scnState.section, _scnState.lop, _scnState.thang].join('|');
         }
 
         // Chữ ký dữ liệu — đổi khi GV nhập điểm / xếp loại mà KHÔNG đổi lớp/môn
@@ -375,8 +420,8 @@
             //   - Vào NX → hiện (sidebar "thức dậy" khi đến nhiệm vụ của nó)
             // KHÔNG persist vào chrome.storage — auto là ephemeral. Manual toggle vẫn persist.
             if (moduleOrCtxChanged) {
-                const wasNX = _lastDetectedModule === 'so-nhan-xet' || _lastDetectedModule === 'nlpc';
-                const isNX = current === 'so-nhan-xet' || current === 'nlpc';
+                const wasNX = AI_MODULES.includes(_lastDetectedModule);
+                const isNX = AI_MODULES.includes(current);
                 const iframe = document.getElementById(SIDEBAR_ID);
 
                 if (wasNX && !isNX && iframe && !iframe.classList.contains('cogiao-ai-hidden')) {
@@ -475,8 +520,9 @@
             gvId: Number(a.gvId) || 0,
             ten: String(a.ten || '').slice(0, 60)
         };
-        const key = acc.siteId + ':' + acc.userId;
-        if (_vneduAccount && (_vneduAccount.siteId + ':' + _vneduAccount.userId) === key) return;
+        // 6.3.1: khoá gồm cả cờ quản trị + mã GV → cờ đổi thì báo lại cho sidebar
+        const keyOf = (x) => x.siteId + ':' + x.userId + ':' + (x.isAdmin ? 1 : 0) + ':' + x.gvId;
+        if (_vneduAccount && keyOf(_vneduAccount) === keyOf(acc)) return;
         _vneduAccount = acc;
         const iframe = document.getElementById(SIDEBAR_ID);
         iframe?.contentWindow?.postMessage({ type: 'VNEDU_ACCOUNT', payload: acc }, '*');
@@ -508,6 +554,20 @@
 
             case 'COGIAO_AUTO_SAVE':
                 autoSaveVnedu();
+                break;
+
+            // 6.3.0 Sổ chủ nhiệm: chuyển lệnh sang cầu nối ở main world
+            case 'COGIAO_SCN_FILL':
+                _suppressUpdatesUntil = Date.now() + 2500;
+                window.postMessage({ type: '__COGIAO_SCN_FILL__', reqId: data.payload && data.payload.reqId, payload: data.payload }, '*');
+                break;
+
+            case 'COGIAO_SCN_SYNC':
+                window.postMessage({ type: '__COGIAO_SCN_SYNC__', reqId: data.payload && data.payload.reqId, expect: data.payload && data.payload.expect }, '*');
+                break;
+
+            case 'COGIAO_SCN_SAVE':
+                window.postMessage({ type: '__COGIAO_SCN_SAVE__', reqId: data.payload && data.payload.reqId, expect: data.payload && data.payload.expect }, '*');
                 break;
 
             case 'COGIAO_CLOSE_SIDEBAR':
@@ -571,7 +631,7 @@
      */
     async function handleNLPCBulkRead(payload) {
         const { requestId, stt, expectedHS } = payload || {};
-        _suppressUpdatesUntil = Date.now() + 4000;
+        _suppressUpdatesUntil = Date.now() + 15000; // 6.3.1: đọc mức chờ chữ T/Đ/C hiện đủ
         const iframe = document.getElementById(SIDEBAR_ID);
         try {
             const result = await window.VneduAdapter.readGradesForStudent(stt, expectedHS);
@@ -590,7 +650,7 @@
 
     async function handleNLPCBulkStep(payload) {
         const { requestId, stt, expectedHS, fillPayload, autoSave } = payload || {};
-        _suppressUpdatesUntil = Date.now() + 6000; // mỗi step ~3-4s, đệm 6s
+        _suppressUpdatesUntil = Date.now() + 45000; // V6.3.1: bước có thể chờ vnEdu nạp/lưu tới ~40 s
         const iframe = document.getElementById(SIDEBAR_ID);
         try {
             const result = await window.VneduAdapter.selectAndFillNLPC({
@@ -600,6 +660,7 @@
                 type: 'COGIAO_NLPC_BULK_STEP_RESULT',
                 payload: { requestId, ...result }
             }, '*');
+            _suppressUpdatesUntil = Date.now() + 1500;
         } catch (e) {
             console.error('[Sổ nhận xét - AI] handleNLPCBulkStep lỗi:', e);
             iframe?.contentWindow?.postMessage({

@@ -61,6 +61,7 @@
                 <ul style="text-align:left; margin-top:8px;">
                     <li>Sổ điểm → Sổ nhận xét</li>
                     <li>Hoặc: Học bạ → Phẩm chất, Năng lực</li>
+                    <li>Hoặc: Sổ chủ nhiệm tiểu học (Mẫu 1, Mẫu 2)</li>
                 </ul>
                 <p style="margin-top: 12px; color: #888780;">Sau khi đổi lớp/môn, bấm nút <strong>"Cập nhật dữ liệu từ Vnedu"</strong> ở trên.</p>
             </div>
@@ -147,17 +148,20 @@
         </div>
 
         <div class="bulk-summary" id="bulk-summary"></div>
+        <label class="bulk-opt" title="Ô chưa đánh giá mức T/Đ/C mà còn câu cũ (từ lần đẩy trước) sẽ được xóa trống, để sổ đúng chuẩn. Bỏ dấu nếu thầy cô tự gõ câu ở những ô đó.">
+            <input type="checkbox" id="bulk-opt-xoa-thieu" checked>
+            <span>Khi đẩy, xóa câu cũ ở ô chưa có mức</span>
+        </label>
 
         <div class="bulk-table-wrap">
             <table class="bulk-table" id="bulk-table">
                 <thead>
                     <tr>
+                        <th class="bulk-th-chon"><input type="checkbox" id="bulk-chon-tat-ca" title="Chọn / bỏ chọn cả lớp"></th>
                         <th class="bulk-th-stt">STT</th>
                         <th class="bulk-th-name">Họ tên</th>
-                        <th class="bulk-th-stat">NL.C</th>
-                        <th class="bulk-th-stat">NL.ĐT</th>
-                        <th class="bulk-th-stat">PC</th>
-                        <th class="bulk-th-act">Thao tác</th>
+                        <th class="bulk-th-tt">Trạng thái</th>
+                        <th class="bulk-th-act"></th>
                     </tr>
                 </thead>
                 <tbody id="bulk-table-body"></tbody>
@@ -165,6 +169,7 @@
         </div>
 
         <div class="bulk-actions">
+            <button class="btn-secondary bulk-btn-xoa" id="bulk-btn-xoa" disabled>Chọn em ở cột ô vuông để xóa nhận xét</button>
             <button class="btn-primary bulk-btn-apply" id="bulk-btn-apply">
                 <span>📤</span>
                 <span id="bulk-btn-apply-label">Đẩy sang Vnedu</span>
@@ -196,6 +201,34 @@
                     <button class="btn-secondary" id="bulk-result-close">Đóng</button>
                     <button class="btn-primary" id="bulk-result-resume" style="display:none">Tiếp tục từ HS dở</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6.3.0: Sổ chủ nhiệm -->
+    <div id="view-so-chu-nhiem" class="view view-hidden">
+        <div class="scn-ctx" id="scn-ctx"></div>
+        <div class="scn-note" id="scn-note" style="display:none"></div>
+        <div class="scn-sync" id="scn-sync" style="display:none">
+            <div class="scn-sync-title">Bước 1 — Đồng bộ số liệu lớp (nên làm trước)</div>
+            <div class="scn-sync-hint">Bấm nút <strong>Đồng bộ thông tin lớp học</strong> của vnEdu để vnEdu tự điền sĩ số, nam, nữ… vnEdu sẽ hỏi Có/Không, thầy cô tự chọn. Trang sẽ <strong>tải lại</strong>: chữ chưa Lưu sẽ mất, nên làm bước này <strong>trước</strong> khi viết nháp.</div>
+            <button class="btn-secondary" id="scn-btn-sync">Đồng bộ số liệu từ vnEdu</button>
+            <div class="scn-sync-msg" id="scn-sync-msg" style="display:none"></div>
+        </div>
+        <div id="scn-work">
+            <details class="scn-traits" id="scn-traits">
+                <summary>Đặc điểm của lớp <span id="scn-traits-sum"></span></summary>
+                <div class="scn-traits-hint">Chọn đúng với lớp để bản nháp sát thực tế. Lưu riêng cho từng lớp.</div>
+                <div class="scn-chips" id="scn-chips"></div>
+            </details>
+            <div class="scn-actions">
+                <button class="btn-primary" id="scn-btn-gen">Viết nháp các ô của mục này</button>
+            </div>
+            <div class="scn-list" id="scn-list"></div>
+            <div class="scn-bar" id="scn-bar" style="display:none">
+                <label class="scn-ow"><input type="checkbox" id="scn-overwrite"> Ghi đè cả ô đã có chữ trên vnEdu</label>
+                <button class="btn-primary" id="scn-btn-fill">Điền vào vnEdu</button>
+                <div class="scn-result" id="scn-result" style="display:none"></div>
             </div>
         </div>
     </div>
@@ -500,6 +533,8 @@
 
 <script src="../engine/engine.js"></script>
 <script src="../license/client.js"></script>
+<script src="../engine/sochunhiem.js"></script>
 <script src="sidebar.js"></script>
+<script src="scn-view.js"></script>
 </body>
 </html>

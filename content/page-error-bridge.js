@@ -49,6 +49,11 @@
             const u = window.phpviet_user;
             const siteId = u && typeof u === 'object' ? u.site_id : null;
             if (userId === undefined || userId === null || userId === '' || !siteId) return null;
+            // 6.3.1: vnEdu gán cờ quản trị / mã GV SAU mã tài khoản. Đọc sớm → gvId=0 → tiện ích
+            // tưởng là tài khoản quản trị (lỗi thật 07/11, tài khoản GV). Chưa có đủ thì chờ.
+            const rawAdmin = window.phpviet_user_is_admin, rawGv = window.phpviet_gv_id;
+            if (rawAdmin === undefined || rawAdmin === null || rawAdmin === '' ||
+                rawGv === undefined || rawGv === null || rawGv === '') return null;
             return {
                 userId: String(userId),
                 siteId: String(siteId),
@@ -69,9 +74,12 @@
     // vnEdu gán các biến này sau khi tải xong → thử lại vài lần
     let soLanThu = 0;
     (function thu() {
-        if (guiTaiKhoan() || ++soLanThu > 40) return;
+        if (guiTaiKhoan() || ++soLanThu > 80) return;
         setTimeout(thu, 750);
     })();
+    // Gửi lại sau khi vnEdu khởi động xong hẳn (phòng cờ đổi giá trị sau lần đọc đầu)
+    setTimeout(guiTaiKhoan, 8000);
+    setTimeout(guiTaiKhoan, 20000);
     window.addEventListener('message', (ev) => {
         if (ev.source === window && ev.data && ev.data.type === '__COGIAO_ASK_ACCOUNT__') guiTaiKhoan();
     });
