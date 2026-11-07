@@ -742,30 +742,40 @@
 
     function trongTam(c, r) {
         const T = thangData(c); if (!T) return '';
-        return lines(['Chủ điểm: “' + T.chuDiem + '”.'].concat(T.trongTam));
+        const out = ['Chủ điểm: “' + T.chuDiem + '”.'].concat(T.trongTam);
+        out.push(pick(r, ['Phối hợp chặt chẽ với phụ huynh, giáo viên bộ môn trong giáo dục học sinh',
+            'Tăng cường trao đổi với phụ huynh qua sổ liên lạc điện tử về học tập, rèn luyện của học sinh']));
+        out.push('Đảm bảo an toàn tuyệt đối cho học sinh trong các hoạt động của lớp, của trường');
+        return lines(out);
     }
 
     function gdDaoDuc(c, r) {
         const T = thangData(c); if (!T) return '';
         const out = T.daoDuc.slice();
-        out.push(pick(r, ['Nhắc nhở học sinh thực hiện tốt nội quy lớp, nói lời hay, làm việc tốt.',
-            'Tuyên dương kịp thời học sinh có việc làm tốt trong giờ sinh hoạt lớp.']));
+        out.push(pick(r, ['Nhắc nhở học sinh thực hiện tốt nội quy lớp, nói lời hay, làm việc tốt; tuyên dương kịp thời học sinh có việc làm tốt trong giờ sinh hoạt lớp',
+            'Duy trì phong trào “Nói lời hay, làm việc tốt”; tuyên dương kịp thời học sinh có việc làm tốt trong giờ sinh hoạt lớp']));
+        out.push(pick(r, ['Quan tâm, uốn nắn kịp thời học sinh còn vi phạm nội quy; trao đổi với gia đình để cùng giáo dục',
+            'Gần gũi, nhắc nhở nhẹ nhàng học sinh còn mắc lỗi; phối hợp với gia đình để giúp các em tiến bộ']));
         return lines(out);
     }
 
     function gdHocTap(c, r) {
         const T = thangData(c); if (!T) return '';
         const out = hocTapThang(c, T);
-        out.push(pick(r, ['Duy trì truy bài đầu giờ; ban cán sự lớp kiểm tra bài, vở của các bạn.',
-            'Duy trì đôi bạn cùng tiến; kiểm tra, nhận xét vở hằng ngày.']));
-        if (c.traits.has('hai_buoi')) out.push('Buổi chiều tập trung củng cố kiến thức, rèn kĩ năng còn yếu cho từng nhóm học sinh.');
+        out.push(pick(r, ['Duy trì truy bài đầu giờ; ban cán sự lớp kiểm tra bài, vở của các bạn',
+            'Duy trì truy bài đầu giờ, đôi bạn cùng tiến; nhóm trưởng kiểm tra việc chuẩn bị bài của các bạn']));
+        out.push('Kiểm tra, nhận xét vở và bài làm hằng ngày; khen ngợi, động viên kịp thời từng tiến bộ của học sinh');
+        out.push('Rèn chữ viết, giữ vở sạch; nhắc nhở học sinh chuẩn bị đầy đủ sách vở, đồ dùng trước khi đến lớp');
+        if (c.traits.has('hai_buoi')) out.push('Buổi chiều tập trung củng cố kiến thức, rèn kĩ năng còn yếu cho từng nhóm học sinh');
         return lines(out);
     }
 
     function hoatDongThang(c, r) {
         const T = thangData(c); if (!T) return '';
         const out = T.hoatDong.slice();
-        out.push(c.khoi <= 3 ? 'Duy trì sinh hoạt Sao nhi đồng theo chủ điểm tháng.' : 'Duy trì sinh hoạt chi đội theo chủ điểm tháng.');
+        out.push(c.khoi <= 3 ? 'Duy trì sinh hoạt Sao nhi đồng theo chủ điểm tháng' : 'Duy trì sinh hoạt chi đội theo chủ điểm tháng');
+        out.push('Thực hiện tốt thể dục giữa giờ, múa hát sân trường; trực nhật, giữ vệ sinh lớp học sạch sẽ');
+        out.push('Sinh hoạt lớp cuối tuần: nhận xét thi đua, tuyên dương học sinh tiến bộ, phổ biến kế hoạch tuần sau');
         return lines(out);
     }
 
@@ -778,20 +788,28 @@
         out.push(...T.daoDuc.map(s => '- ' + s + '.'));
         out.push('* Học tập:');
         out.push(...hocTapThang(c, T).map(s => '- ' + s + '.'));
+        out.push('- Kiểm tra, nhận xét vở hằng ngày; rèn chữ viết, giữ vở sạch.');
         out.push('* Hoạt động khác:');
         out.push(...T.hoatDong.map(s => '- ' + s + '.'));
+        out.push('- ' + (c.khoi <= 3 ? 'Duy trì sinh hoạt Sao nhi đồng' : 'Duy trì sinh hoạt chi đội') + '; thể dục giữa giờ, trực nhật vệ sinh lớp học.');
+        out.push('* Phối hợp với phụ huynh:');
+        out.push('- Trao đổi thường xuyên qua sổ liên lạc điện tử về học tập, rèn luyện, sức khỏe của học sinh.');
         return out.join('\n');
     }
 
     function bienPhapThang(c, r) {
         const T = thangData(c); if (!T) return '';
-        const out = ['Phổ biến kế hoạch tháng tới toàn lớp trong tiết sinh hoạt đầu tháng; phân công cụ thể cho ban cán sự lớp, các tổ.',
+        return lines(du(r, [
+            ['Phổ biến kế hoạch tháng tới toàn lớp trong tiết sinh hoạt đầu tháng; phân công cụ thể cho ban cán sự lớp, các tổ.',
+                'Đầu tháng phổ biến kế hoạch tới học sinh; giao nhiệm vụ cụ thể cho ban cán sự lớp, hội đồng tự quản và các tổ.'],
             'Theo dõi chuyên cần, nề nếp hằng ngày; liên hệ phụ huynh ngay khi học sinh nghỉ học.',
-            'Dạy học phù hợp với từng đối tượng; dành thời gian kèm cặp học sinh còn chậm vào cuối buổi học.',
+            ['Dạy học phù hợp với từng đối tượng; dành thời gian kèm cặp học sinh còn chậm vào cuối buổi học.',
+                'Dạy học sát đối tượng; kèm cặp học sinh còn chậm trong giờ học và cuối buổi; giao thêm bài cho học sinh có năng khiếu.'],
             'Nhận xét, động viên kịp thời từng tiến bộ của học sinh; tuyên dương trong giờ sinh hoạt lớp.',
             'Phối hợp với giáo viên bộ môn, Tổng phụ trách Đội và phụ huynh trong giáo dục học sinh.',
-            'Lồng ghép giáo dục theo chủ điểm “' + T.chuDiem + '” vào các môn học, hoạt động trải nghiệm.'];
-        return lines(out);
+            'Lồng ghép giáo dục theo chủ điểm “' + T.chuDiem + '” vào các môn học, hoạt động trải nghiệm.',
+            'Cuối tháng sơ kết thi đua, đánh giá việc thực hiện kế hoạch, rút kinh nghiệm cho tháng sau.'
+        ]));
     }
 
     function siSoDong(c) {
@@ -803,11 +821,14 @@
     function ketQuaThang(c, r) {
         const T = thangData(c); if (!T) return '';
         return [
-            '- ' + siSoDong(c) + ' Chuyên cần: …',
-            '- Nề nếp: lớp thực hiện tốt nội quy, chủ điểm “' + T.chuDiem + '”.',
-            '- Học tập: đa số học sinh hoàn thành nội dung học tập trong tháng.',
-            '- Học sinh cần giúp đỡ thêm (theo nội dung đánh giá của Thông tư 27): …',
-            '- Học sinh tiến bộ, được tuyên dương: …'
+            '- ' + siSoDong(c) + ' Chuyên cần: số lượt nghỉ học … (có phép …, không phép …).',
+            '- Nề nếp: lớp thực hiện tốt nội quy, nề nếp ra vào lớp, truy bài đầu giờ; thực hiện tốt chủ điểm “' + T.chuDiem + '”.',
+            '- Học tập: đa số học sinh hoàn thành nội dung học tập trong tháng; chữ viết, vở sạch có tiến bộ.',
+            '- Phẩm chất, năng lực: học sinh ngoan, lễ phép, đoàn kết; tích cực tham gia hoạt động nhóm.',
+            '- Hoạt động, phong trào: tham gia đầy đủ các hoạt động do nhà trường tổ chức; vệ sinh lớp học sạch sẽ.',
+            '- Học sinh tiến bộ, được tuyên dương: …',
+            '- Học sinh cần giúp đỡ thêm (học tập, nề nếp): …',
+            '- Tồn tại và hướng khắc phục: …'
         ].join('\n');
     }
 
@@ -818,16 +839,22 @@
         const mt = thangTruoc(c.thang);
         const T = THANG[mt];
         if (!T) return '';
+        const hd = T.hoatDong.map(x => x.charAt(0).toLowerCase() + x.slice(1)).join('; ');
         return [
             '* Những việc đã làm được:',
             '- ' + siSoDong(c),
-            '- Thực hiện chủ điểm tháng ' + mt + ' “' + T.chuDiem + '”: ' + T.hoatDong[0].charAt(0).toLowerCase() + T.hoatDong[0].slice(1) + '.',
-            '- Học sinh thực hiện tốt nề nếp lớp học; tham gia đầy đủ các hoạt động của nhà trường.',
+            '- Thực hiện chủ điểm tháng ' + mt + ' “' + T.chuDiem + '”: ' + hd + '.',
+            '- Học sinh thực hiện tốt nề nếp lớp học, truy bài đầu giờ; trực nhật, vệ sinh lớp học sạch sẽ.',
+            '- Học tập: đa số học sinh hoàn thành nội dung học tập của tháng; đôi bạn cùng tiến duy trì đều đặn.',
+            '- Phối hợp tốt với phụ huynh trong theo dõi, giáo dục học sinh.',
             '- Học sinh tiến bộ, được tuyên dương: …',
             '* Những việc chưa làm được:',
-            '- …',
+            '- Một số em còn chưa tập trung, chưa tự giác học bài: …',
+            '- Chữ viết, vở sạch của một số em chưa tiến bộ: …',
             '* Nguyên nhân:',
-            '- …'
+            '- …',
+            '* Biện pháp khắc phục trong tháng ' + c.thang + ':',
+            '- Tiếp tục kèm cặp, nhắc nhở học sinh còn hạn chế; trao đổi với phụ huynh để cùng giúp đỡ các em.'
         ].join('\n');
     }
 
@@ -836,7 +863,10 @@
         const T = thangData(c); if (!T) return '';
         const i = idxOf(key);
         const viec = T.tuan[i] || ['Ôn tập, củng cố kiến thức trong tháng', 'Sơ kết thi đua tháng, chuẩn bị kế hoạch tháng sau'];
-        return lines(['Thực hiện chương trình theo kế hoạch dạy học của tuần.'].concat(viec.map(s => s + '.')));
+        return lines(['Thực hiện chương trình theo kế hoạch dạy học của tuần.']
+            .concat(viec.map(s => s + '.'))
+            .concat(['Duy trì nề nếp, chuyên cần; kèm cặp học sinh còn chậm.',
+                'Sinh hoạt lớp cuối tuần: nhận xét, tuyên dương; phổ biến kế hoạch tuần sau.']));
     }
 
     // ----- Sơ kết HKI / Tổng kết năm -----
@@ -929,7 +959,9 @@
             'Lớp học được trang trí sạch đẹp, đúng quy định; học sinh giữ gìn tốt bàn ghế, đồ dùng của lớp.',
             'Thực hiện tốt trực nhật, lao động vệ sinh lớp học, chăm sóc cây xanh.',
             c.khoi <= 3 ? 'Sao nhi đồng sinh hoạt đều đặn theo chủ điểm.' : 'Chi đội sinh hoạt đều đặn, đúng nội dung theo hướng dẫn của Liên đội.',
-            'Phối hợp tốt với Ban đại diện cha mẹ học sinh trong chăm lo, giáo dục học sinh.']);
+            'Phối hợp tốt với Ban đại diện cha mẹ học sinh trong chăm lo, giáo dục học sinh.',
+            'Học sinh được giáo dục an toàn giao thông, phòng tránh tai nạn thương tích; không có học sinh bị tai nạn.',
+            'Hạn chế: một số hoạt động phong trào lớp tham gia chưa đều; cần phát huy hơn vai trò hội đồng tự quản trong học kì II.']);
     }
 
     function hoatDongNam(c) {
@@ -937,7 +969,9 @@
             'Lớp học luôn sạch đẹp; học sinh giữ gìn tốt bàn ghế, đồ dùng của lớp.',
             'Thực hiện tốt trực nhật, lao động vệ sinh, chăm sóc cây xanh.',
             c.khoi <= 2 ? 'Sao nhi đồng sinh hoạt đều đặn, có nề nếp.' : c.khoi === 3 ? 'Sao nhi đồng sinh hoạt đều đặn; học sinh đủ điều kiện được kết nạp vào Đội: … em.' : 'Chi đội sinh hoạt đều đặn, đúng nội dung theo hướng dẫn của Liên đội.',
-            'Phối hợp tốt với Ban đại diện cha mẹ học sinh trong chăm lo, giáo dục học sinh.']);
+            'Phối hợp tốt với Ban đại diện cha mẹ học sinh trong chăm lo, giáo dục học sinh.',
+            'Học sinh được giáo dục an toàn giao thông, phòng chống đuối nước, tai nạn thương tích; không có học sinh bị tai nạn.',
+            'Lớp được nhà trường xếp loại thi đua: … ; học sinh được khen thưởng: … em.']);
     }
 
     function nangKhieu() {
@@ -956,6 +990,8 @@
         if (c.khoi === 5) out.push('Phấn đấu 100% học sinh hoàn thành chương trình tiểu học.');
         else out.push('Phấn đấu 100% học sinh hoàn thành chương trình lớp học.');
         if (c.khoi === 3) out.push('Chuẩn bị tốt để học sinh đủ điều kiện được kết nạp vào Đội Thiếu niên Tiền phong Hồ Chí Minh.');
+        out.push('Tiếp tục rèn chữ viết, giữ vở sạch; duy trì đôi bạn cùng tiến, truy bài đầu giờ.');
+        out.push('Giáo dục an toàn giao thông, phòng chống đuối nước, tai nạn thương tích; giữ gìn sức khỏe khi thời tiết thay đổi.');
         out.push('Tăng cường phối hợp với phụ huynh, nhất là gia đình học sinh còn chậm, học sinh có hoàn cảnh khó khăn.');
         out.push('Phấn đấu lớp đạt danh hiệu Tập thể lớp Tiên tiến.');
         return lines(out);
@@ -970,20 +1006,26 @@
                 'Thống nhất cách liên lạc giữa gia đình và nhà trường qua sổ liên lạc điện tử; giờ đưa đón học sinh.',
                 'Nhắc nhở phụ huynh chuẩn bị đủ sách vở, đồ dùng; tạo góc học tập cho con ở nhà.',
                 'Phối hợp đảm bảo an toàn giao thông, phòng tránh tai nạn thương tích, đuối nước cho học sinh.',
+                'Phổ biến về bảo hiểm y tế học sinh và các khoản thu (nếu có) theo đúng quy định, trên tinh thần tự nguyện.',
                 'Bầu Ban đại diện cha mẹ học sinh của lớp.',
-                'Phụ huynh phát biểu ý kiến; giáo viên chủ nhiệm giải đáp.'];
+                'Phụ huynh phát biểu ý kiến; giáo viên chủ nhiệm giải đáp.',
+                'Thống nhất các nội dung phối hợp; thông qua biên bản cuộc họp.'];
         } else if (n === 2) {
             ds = ['Giáo viên chủ nhiệm thông báo kết quả học tập, rèn luyện học kì I của lớp và của từng học sinh.',
                 'Biểu dương học sinh có nhiều tiến bộ; trao đổi riêng với gia đình học sinh còn chậm.',
                 'Thống nhất biện pháp phối hợp giúp đỡ học sinh trong học kì II.',
                 'Nhắc nhở phụ huynh quản lí con đón Tết an toàn, tiết kiệm; không đốt pháo, không chơi các vật gây cháy nổ.',
-                'Phụ huynh phát biểu ý kiến; giáo viên chủ nhiệm giải đáp.'];
+                'Ban đại diện cha mẹ học sinh báo cáo hoạt động học kì I.',
+                'Phụ huynh phát biểu ý kiến; giáo viên chủ nhiệm giải đáp.',
+                'Thống nhất các nội dung phối hợp; thông qua biên bản cuộc họp.'];
         } else if (n === 3) {
             ds = ['Giáo viên chủ nhiệm thông báo kết quả học tập, rèn luyện cả năm học của lớp và của từng học sinh.',
                 'Thông báo danh sách học sinh được khen thưởng, học sinh hoàn thành chương trình lớp học.',
                 'Hướng dẫn phụ huynh kế hoạch ôn luyện, sinh hoạt hè cho con; phòng chống đuối nước, tai nạn thương tích.',
+                'Nhắc nhở phụ huynh quản lí con trong dịp hè; khuyến khích con đọc sách, tham gia hoạt động hè tại địa phương.',
                 'Chuẩn bị cho năm học mới.',
-                'Phụ huynh phát biểu ý kiến; Ban đại diện cha mẹ học sinh tổng kết hoạt động năm học.'];
+                'Phụ huynh phát biểu ý kiến; Ban đại diện cha mẹ học sinh tổng kết hoạt động năm học.',
+                'Thống nhất các nội dung phối hợp; thông qua biên bản cuộc họp.'];
         } else {
             ds = ['Giáo viên chủ nhiệm thông báo tình hình học tập, rèn luyện của lớp thời gian qua.',
                 'Trao đổi biện pháp phối hợp giữa gia đình và nhà trường.',
