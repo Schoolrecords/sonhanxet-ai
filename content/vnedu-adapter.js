@@ -1191,12 +1191,18 @@ window.VneduAdapter = {
             });
         }
 
-        this._nlpcSoBangCu = bangCu.size;
+        // Bảng cũ bị giấu + bảng trùng đang hiện (vd. mở NL-PC 2 lần → 2 cửa sổ chồng nhau)
+        this._nlpcSoBangCu = bangCu.size + Math.max(0, groups.size - 1);
 
-        // Chọn MỘT bảng
+        // Chọn MỘT bảng: ưu tiên bảng trong cửa sổ đang ở TRÊN CÙNG (cùng cửa sổ với nút Lưu
+        // mà findLuuButton dùng), rồi bảng có HS đang chọn, rồi bảng nhiều HS nhất.
         let best = [];
         if (groups.size > 1) {
-            const list = [...groups.values()];
+            let win = null;
+            try { win = this._findActiveModuleWindow_(); } catch (e) { /* bỏ qua */ }
+            const entries = [...groups.entries()];
+            const trongCuaSo = win ? entries.filter(([c]) => win.contains(c)).map(([, g]) => g) : [];
+            const list = trongCuaSo.length ? trongCuaSo : entries.map(([, g]) => g);
             best = list.find(g => g.some(s => s.isSelected)) ||
                    list.reduce((a, b) => (b.length > a.length ? b : a), []);
             console.log('[VneduAdapter] getNLPCStudentList: thấy', groups.size,

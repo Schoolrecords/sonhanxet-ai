@@ -762,7 +762,7 @@
             if (banner) {
                 const bangCu = payload && payload.lyDo === 'bang_cu';
                 const t = banner.querySelector('.vhb-title'), s = banner.querySelector('.vhb-sub');
-                if (t) t.textContent = bangCu ? 'vnEdu đang giữ bảng học sinh cũ' : 'Vnedu đang lỗi nội bộ';
+                if (t) t.textContent = bangCu ? 'vnEdu đang có bảng học sinh cũ hoặc mở trùng' : 'Vnedu đang lỗi nội bộ';
                 if (s) s.textContent = bangCu
                     ? 'Dễ bị đơ khi chọn học sinh hoặc làm cả lớp. Bấm Làm mới trang trước khi làm tiếp (dữ liệu đã lưu không mất).'
                     : 'Form có thể "đơ" khi chọn HS. Bấm Làm mới trang để khôi phục.';
