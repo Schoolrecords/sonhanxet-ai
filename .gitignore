@@ -59,3 +59,8 @@ license/DIA-CHI-WEBHOOK-SEPAY.txt
 
 # Bao cao noi bo (co so dien thoai)
 bao-cao/
+
+# Video thanh pham (nang, co anh vnEdu) - khong dua len kho cong khai
+videos/*.mp4
+videos/*.mp3
+videos/*.txt

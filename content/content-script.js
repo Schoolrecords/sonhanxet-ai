@@ -354,6 +354,22 @@
         return false;
     }
 
+    // 6.3.2: vnEdu giữ bảng HS cũ (đổi lớp/kỳ/màn nhiều lần không dọn) → hay sinh lỗi nội bộ,
+    // form đứng, phải F5. Thấy dấu hiệu này ở màn NL-PC thì nhắc GV làm mới trang TRƯỚC khi làm.
+    let _bangCuDaBao = '';
+    function baoBangCuNeuCo(module, contextKey) {
+        try {
+            if (module !== 'nlpc') return;
+            const n = window.VneduAdapter._nlpcSoBangCu || 0;
+            if (!n || _bangCuDaBao === contextKey) return;
+            _bangCuDaBao = contextKey;
+            console.log(`[Sổ nhận xét - AI] vnEdu đang giữ ${n} bảng HS cũ → nhắc làm mới trang`);
+            document.getElementById(SIDEBAR_ID)?.contentWindow?.postMessage({
+                type: 'COGIAO_VNEDU_HEALTH_BAD', payload: { lyDo: 'bang_cu', soBang: n }
+            }, '*');
+        } catch (e) { /* silent */ }
+    }
+
     function checkModuleChange() {
         if (!window.VneduAdapter) return;
         // V.06: BỎ early return khi _aiPaused — detect cần chạy CẢ KHI sidebar ẩn,
@@ -442,6 +458,7 @@
             _lastContextKey = contextKey;
             _lastDataSignature = dataSig;
             sendContextToSidebar();
+            baoBangCuNeuCo(current, contextKey);
         }
     }
 

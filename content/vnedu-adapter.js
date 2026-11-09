@@ -1145,43 +1145,74 @@ window.VneduAdapter = {
      * Vnedu render bảng [STT | Họ tên] bên trái cho phép GV click chọn HS.
      */
     getNLPCStudentList() {
-        const students = [];
-        const seen = new Set();
+        // 6.3.2: sửa lỗi sĩ số nhân đôi (lớp 32 HS hiện 64). Nguyên nhân: vnEdu (Ext.js) giữ lại
+        // bảng HS cũ bị giấu (đổi lớp/kỳ/màn) và hàng có bảng lồng → trước đây quét MỌI <tr>
+        // của trang nên đếm cả bảng ẩn. Nay: chỉ lấy hàng đang hiện, chỉ ô trực tiếp của hàng,
+        // gom theo từng bảng rồi chọn MỘT bảng (bảng có HS đang chọn, không thì bảng nhiều HS nhất),
+        // và mỗi STT chỉ giữ một em.
+        const groups = new Map();   // container -> [students]
+        const containerOk = new Map();  // container -> bảng đang hiện? (kiểm MỘT lần mỗi bảng cho nhẹ)
+        const bangCu = new Set();       // bảng HS cũ vnEdu giấu mà không dọn (dấu hiệu sắp đơ)
 
-        // Tìm tất cả tr có cấu trúc STT + Tên (tương tự getStudentRows nhưng KHÔNG cần textarea trong row)
         const trs = document.querySelectorAll('tr');
         for (const tr of trs) {
-            // Skip nếu tr nằm trong sidebar của extension
-            if (tr.closest('#cogiao-ai-sidebar')) continue;
-
-            const cells = tr.querySelectorAll('td');
-            if (cells.length < 2) continue;
+            const cells = tr.cells;                               // chỉ ô trực tiếp, không lấy ô bảng lồng
+            if (!cells || cells.length < 2) continue;
 
             const sttText = cells[0]?.textContent?.trim() || '';
+            if (!/^\d{1,3}$/.test(sttText)) continue;
             const stt = parseInt(sttText);
-            if (isNaN(stt) || stt < 1 || stt > 100) continue;
+            if (stt < 1 || stt > 100) continue;
 
-            const nameText = cells[1]?.textContent?.trim() || '';
+            const nameText = (cells[1]?.textContent || '').replace(/\s+/g, ' ').trim();
             if (!nameText || nameText.length < 3 || nameText.length > 60) continue;
-            // Phải bắt đầu chữ hoa Việt
             if (!/^[A-ZĐĂÂÊÔƠƯ]/.test(nameText)) continue;
-            // Không có ngày
             if (/\d{2}\/\d{2}\/\d{4}/.test(nameText)) continue;
 
-            const key = `${stt}|${nameText}`;
-            if (seen.has(key)) continue;
-            seen.add(key);
-
-            students.push({
+            const container = tr.closest('.x-grid-view, .x-grid-body, .x-grid, .x-panel-body') ||
+                              tr.closest('tbody, table') || document.body;
+            let ok = containerOk.get(container);
+            if (ok === undefined) {
+                ok = !container.closest('#cogiao-ai-sidebar') &&
+                     this._isInActivePanel(container) && this._isInActiveCard(container);
+                containerOk.set(container, ok);
+            }
+            if (!ok) { bangCu.add(container); continue; }         // bảng cũ bị giấu
+            if (tr.offsetParent === null) continue;               // hàng bị ẩn riêng
+            if (!groups.has(container)) groups.set(container, []);
+            groups.get(container).push({
                 stt,
-                hoVaTen: nameText.replace(/\s+/g, ' ').trim(),
+                hoVaTen: nameText,
                 tr,  // ref để click chọn
                 isSelected: tr.classList.contains('x-grid-row-selected') ||
+                            !!tr.closest('.x-grid-item-selected') ||
                             tr.classList.contains('selected') ||
                             tr.style.background?.includes('rgb(')
             });
         }
 
+        this._nlpcSoBangCu = bangCu.size;
+
+        // Chọn MỘT bảng
+        let best = [];
+        if (groups.size > 1) {
+            const list = [...groups.values()];
+            best = list.find(g => g.some(s => s.isSelected)) ||
+                   list.reduce((a, b) => (b.length > a.length ? b : a), []);
+            console.log('[VneduAdapter] getNLPCStudentList: thấy', groups.size,
+                'bảng HS, lấy bảng', best.length, 'em; các bảng:', list.map(g => g.length));
+        } else if (groups.size === 1) {
+            best = [...groups.values()][0];
+        }
+
+        // Mỗi STT một em
+        const seenStt = new Set();
+        const students = [];
+        for (const s of best) {
+            if (seenStt.has(s.stt)) continue;
+            seenStt.add(s.stt);
+            students.push(s);
+        }
         students.sort((a, b) => a.stt - b.stt);
         return students;
     },
