@@ -2275,7 +2275,23 @@ body {
 .scn-ctx { padding: 12px 14px; background: #2B4F9E; color: #fff; }
 .scn-ctx-top { font-size: 12px; color: rgba(255,255,255,0.85); }
 .scn-ctx-title { font-size: 15px; font-weight: 700; margin-top: 2px; }
-.scn-note { margin: 10px 14px 0; padding: 10px 12px; background: #FFF8E6; border: 1px solid #F0D9A0; border-radius: 8px; font-size: 12.5px; line-height: 1.5; color: #5C4A12; }
+.scn-note { margin: 10px 14px 0; padding: 10px 12px; background: #F5F7FA; border: 1px solid #D5DFF2; border-radius: 8px; font-size: 12.5px; line-height: 1.5; color: #2F3B4C; }
+/* 6.3.4: mục lục Sổ chủ nhiệm - bấm để mở mục trên vnEdu */
+.scn-menu { margin: 10px 14px 0; border: 1px solid #D5DFF2; border-radius: 8px; background: #fff; }
+.scn-menu > summary, .scn-menu-head { padding: 9px 12px; font-size: 13px; font-weight: 600; color: #2B4F9E; }
+.scn-menu > summary { cursor: pointer; }
+.scn-menu-head span, .scn-menu > summary span { font-weight: 400; color: #5F6B7A; }
+.scn-menu-list { display: flex; flex-direction: column; gap: 4px; padding: 0 8px 8px; }
+.scn-mi { display: block; width: 100%; text-align: left; padding: 8px 10px; border: 1px solid #E1E6EF; border-radius: 6px; background: #F8FAFD; cursor: pointer; font: inherit; color: #1F2A37; }
+.scn-mi:hover { border-color: #2B4F9E; background: #EAF0FB; }
+.scn-mi:disabled { cursor: progress; opacity: .7; }
+.scn-mi-name { display: block; font-size: 13px; font-weight: 600; }
+.scn-mi-hint { display: block; font-size: 12px; color: #5F6B7A; margin-top: 1px; }
+.scn-mi.cur { border-color: #2B4F9E; background: #EAF0FB; }
+.scn-mi.cur .scn-mi-name::after { content: " - đang mở"; font-weight: 400; color: #2B4F9E; }
+.scn-menu-msg { margin: 0 12px 8px; font-size: 12px; color: #8A4B00; }
+.scn-steps { margin: 10px 14px 0; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: #5F6B7A; }
+.scn-steps b { color: #2B4F9E; }
 .scn-note div + div { margin-top: 6px; }
 .scn-traits { margin: 10px 14px 0; border: 1px solid #D5DFF2; border-radius: 8px; background: #F4F7FD; }
 .scn-traits summary { cursor: pointer; padding: 9px 12px; font-size: 13px; font-weight: 600; color: #2B4F9E; }
@@ -2352,3 +2368,22 @@ body {
 .scn-btn-xoa-nhap { width: 100%; margin-top: 6px; font-size: 12px; color: #5B6472; }
 .scn-btn-xoa-vn { width: 100%; margin-top: 6px; font-size: 12px; color: #B42318; border-color: #F1B8B2; background: #fff; }
 .scn-btn-xoa-vn.armed { background: #B42318; color: #fff; border-color: #B42318; }
+
+/* 6.3.4: Sơ đồ lớp */
+.scn-sodo { margin: 10px 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.scn-sodo-sum { font-size: 12.5px; line-height: 1.5; color: #2F3B4C; padding: 10px 12px; background: #F5F7FA; border: 1px solid #D5DFF2; border-radius: 8px; }
+.scn-sodo-opts { display: flex; flex-direction: column; gap: 5px; font-size: 13px; padding: 10px 12px; border: 1px solid #D5DFF2; border-radius: 8px; }
+.scn-sodo-opts label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.scn-sodo-label { font-weight: 600; color: #2B4F9E; }
+.scn-sodo-gap { margin-top: 4px; }
+.scn-sodo-gt { font-size: 12px; color: #5F6B7A; padding-left: 22px; line-height: 1.5; }
+.scn-sodo-gt button { margin-top: 4px; font-size: 12px; padding: 4px 10px; }
+.scn-sodo-grid:empty { display: none; }
+.scn-sodo-gv { text-align: center; font-size: 11.5px; color: #5F6B7A; border: 1px dashed #B8C4D6; border-radius: 6px; padding: 3px; margin-bottom: 6px; }
+.scn-sodo-tbl { width: 100%; border-collapse: separate; border-spacing: 4px; table-layout: fixed; }
+.scn-sodo-tbl td { vertical-align: top; background: #F8FAFD; border: 1px solid #E1E6EF; border-radius: 6px; padding: 4px 5px; font-size: 11.5px; line-height: 1.35; }
+.scn-sodo-tbl td.giu { background: #EEF2F7; color: #5F6B7A; }
+.scn-sodo-tbl th { font-size: 11px; font-weight: 600; color: #5F6B7A; }
+.scn-sodo-tbl .hang { width: 30px; font-size: 11px; color: #5F6B7A; background: none; border: 0; text-align: center; vertical-align: middle; }
+.scn-sodo-tbl .nu { color: #9B2C5A; }
+.scn-sodo-tbl .trong { color: #A0AABA; }

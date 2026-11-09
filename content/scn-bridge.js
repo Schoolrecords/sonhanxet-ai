@@ -268,7 +268,9 @@
         const thoiGian = rawOf(win, 'thoi_gian');
         const text = (win.el.dom.innerText || '');
         const mSiSo = text.match(/Kỳ I:\s*(\d+)\s*học sinh/i);
-        const fields = listFields(win).map(f => ({
+        const laSoDo = /^sơ đồ lớp$/i.test(section);
+        if (/^danh sách học sinh$/i.test(section)) { try { luuGioiTinh(win, lop); } catch (e) { /* silent */ } }
+        const fields = laSoDo ? [] : listFields(win).map(f => ({
             key: f.key, kind: f.kind, name: f.name, label: f.label, rowLabel: f.rowLabel,
             hasValue: !!String(f.value || '').trim(), len: String(f.value || '').length,
             readOnly: f.readOnly, maxLength: f.maxLength
@@ -286,15 +288,113 @@
             tables: readResultTables(win),
             fields,
             busy,
-            dongBo: !!findSyncBtn(win)
+            dongBo: !!findSyncBtn(win),
+            sodo: laSoDo ? tomTatSoDo(win) : null
         };
+    }
+
+    // ---------- 6.3.4: Sơ đồ lớp (Mẫu 2) ----------
+    const GT_KEY = 'cogiao_scn_gt_';
+    function seatEls(win) {
+        return [...win.el.dom.querySelectorAll('.sodo .get-student')].filter(visible);
+    }
+    function readSeats(win) {
+        return seatEls(win).map(td => {
+            const ta = td.querySelector('textarea, input');
+            return {
+                c: parseInt(td.getAttribute('c'), 10) || 0, r: parseInt(td.getAttribute('r'), 10) || 0,
+                stt: parseInt(td.getAttribute('stt'), 10) || 0,
+                id: td.getAttribute('data-id') || '', name: ta ? String(ta.value || '').trim() : ''
+            };
+        });
+    }
+    function tomTatSoDo(win) {
+        const s = readSeats(win);
+        return { soCho: s.length, soDaXep: s.filter(x => x.id).length, hocKy: rawOf(win, 'hoc_ky') };
+    }
+    /** Đọc cột Nữ ở mục Danh sách học sinh, nhớ theo lớp (trong phiên trình duyệt). */
+    function luuGioiTinh(win, lop) {
+        const tb = [...win.el.dom.querySelectorAll('table')].filter(t => visible(t) && /Họ và tên học sinh/.test(t.innerText) && /Nữ/.test(t.innerText)).pop();
+        if (!tb || !lop) return 0;
+        const head = [...tb.rows].find(tr => /Họ và tên học sinh/.test(tr.innerText));
+        const iNu = head ? [...head.cells].findIndex(c => /^\s*Nữ\s*$/.test(c.innerText)) : -1;
+        if (iNu < 0) return 0;
+        const map = {};
+        [...tb.querySelectorAll('tr[data-id]')].forEach(tr => {
+            const c = tr.cells[iNu];
+            if (c) map[tr.getAttribute('data-id')] = /x/i.test(c.innerText);
+        });
+        const n = Object.keys(map).length;
+        if (n) { try { sessionStorage.setItem(GT_KEY + lop, JSON.stringify(map)); } catch (e) { /* silent */ } }
+        return n;
+    }
+    function docGioiTinh(lop) {
+        try { return JSON.parse(sessionStorage.getItem(GT_KEY + lop) || 'null'); } catch (e) { return null; }
+    }
+    function layDanhSach(win) {
+        const ta = win.el.dom.querySelector('.sodo .get-student textarea');
+        const $ = window.jQuery;
+        if (!ta || !$) return Promise.resolve(null);
+        const ac = $(ta).data('ui-autocomplete') || $(ta).data('autocomplete');
+        const url = ac && typeof ac.options.source === 'string' ? ac.options.source : '';
+        if (!/getListStudentByLopSD/.test(url)) return Promise.resolve(null);
+        return new Promise(res => $.ajax({
+            url, data: { term: '' }, dataType: 'json', timeout: 15000,
+            success: d => res(Array.isArray(d) ? d : (d && (d.aRoot || d.list || d.data)) || []),
+            error: () => res(null)
+        }));
+    }
+    async function soDo(d) {
+        const win = activeWin();
+        if (!win || !/^sơ đồ lớp$/i.test(tenMuc(win))) return { ok: false, error: 'wrong_page' };
+        const lop = rawOf(win, 'class'), hocKy = rawOf(win, 'hoc_ky');
+        if (d.action === 'read') {
+            const ds = await layDanhSach(win);
+            if (!ds) return { ok: false, error: 'no_list' };
+            const gt = docGioiTinh(lop);
+            const hs = ds.map(x => {
+                const id = String(x.id || x.hoc_sinh_id);
+                return { id, name: String(x.full_name || x.value || x.label || '').trim(), nu: gt && (id in gt) ? !!gt[id] : null };
+            });
+            return { ok: true, lop, hocKy, seats: readSeats(win), hs, coGioiTinh: !!gt };
+        }
+        if (d.action === 'gioiTinh') {
+            const mo = await openSection('Danh sách học sinh');
+            if (!mo.ok) return { ok: false, error: 'open_list_failed' };
+            let n = 0;
+            for (let i = 0; i < 20 && !n; i++) {
+                await new Promise(r => setTimeout(r, 300));
+                const w = activeWin();
+                n = w ? luuGioiTinh(w, rawOf(w, 'class')) : 0;
+            }
+            const ve = await openSection('Sơ đồ lớp');
+            return { ok: n > 0 && ve.ok, soEm: n, error: n ? (ve.ok ? '' : 'back_failed') : 'no_gender' };
+        }
+        if (d.action === 'fill') {
+            const ex = d.expect || {};
+            if (ex.lop !== lop || (ex.hocKy || '') !== (hocKy || '')) return { ok: false, error: 'context_changed' };
+            const byKey = new Map((d.plan || []).map(p => [p.c + ':' + p.r + ':' + p.stt, p]));
+            let dat = 0, xoa = 0;
+            seatEls(win).forEach(td => {
+                const p = byKey.get(td.getAttribute('c') + ':' + td.getAttribute('r') + ':' + td.getAttribute('stt'));
+                if (!p || p.giu) return;
+                const ta = td.querySelector('textarea, input');
+                if (p.id) { td.setAttribute('data-id', p.id); if (ta) ta.value = p.name; dat++; }
+                else if (td.getAttribute('data-id') || (ta && ta.value)) { td.removeAttribute('data-id'); if (ta) ta.value = ''; xoa++; }
+            });
+            const sau = readSeats(win);
+            const sai = (d.plan || []).filter(p => !p.giu && p.id && !sau.some(x => x.c === p.c && x.r === p.r && x.stt === p.stt && x.id === p.id)).length;
+            lastSig = null; push(true);
+            return { ok: sai === 0, dat, xoa, sai, error: sai ? 'verify_failed' : '' };
+        }
+        return { ok: false, error: 'bad_action' };
     }
 
     function signature(s) {
         if (!s.active) return 'off';
         return [s.mau, s.section, s.lop, s.thang, s.thoiGian, s.busy ? 1 : 0,
             s.fields.map(f => f.key + ':' + (f.hasValue ? 1 : 0)).join(','), s.dongBo ? 1 : 0,
-            JSON.stringify(s.nums).length, JSON.stringify(s.tables).length].join('|');
+            JSON.stringify(s.nums).length, JSON.stringify(s.tables).length, JSON.stringify(s.sodo || '')].join('|');
     }
 
     let lastSig = null;
@@ -399,10 +499,56 @@
         return { ok: true };
     }
 
+    /** 6.3.4: tìm dòng mục trên cây bên trái cửa sổ sổ chủ nhiệm theo tên mục. */
+    function chuanTen(s) { return cleanLabel(s).toLowerCase(); }
+    function findTreeRow(win, name) {
+        const want = chuanTen(name);
+        const nodes = [...win.el.dom.querySelectorAll('.x-tree-node-text, .x-tree-panel .x-grid-cell-inner')]
+            .filter(visible);
+        const hit = nodes.find(n => chuanTen(n.textContent) === want);
+        if (!hit) return null;
+        return hit.closest('.x-grid-row, tr, .x-grid-item') || hit;
+    }
+
+    function mouseClick(el) {
+        const r = el.getBoundingClientRect();
+        const o = { bubbles: true, cancelable: true, view: window, clientX: r.left + Math.min(40, r.width / 2), clientY: r.top + r.height / 2, button: 0 };
+        ['mouseover', 'mousedown', 'mouseup', 'click'].forEach(t => el.dispatchEvent(new MouseEvent(t, o)));
+    }
+
+    function tenMuc(w) { return w ? cleanLabel(String(w.title || '').split(':').slice(1).join(':')) : ''; }
+
+    async function openSection(name) {
+        const win = activeWin();
+        if (!win) return { ok: false, error: 'no_window' };
+        if (chuanTen(tenMuc(win)) === chuanTen(name)) return { ok: true, already: true };
+        const row = findTreeRow(win, name);
+        if (!row) return { ok: false, error: 'not_found' };
+        try { row.scrollIntoView({ block: 'nearest' }); } catch (e) { /* silent */ }
+        mouseClick(row);
+        for (let i = 0; i < 20; i++) {
+            await new Promise(r => setTimeout(r, 250));
+            if (chuanTen(tenMuc(activeWin())) === chuanTen(name)) { lastSig = null; push(true); return { ok: true }; }
+        }
+        return { ok: false, error: 'not_opened' };
+    }
+
     window.addEventListener('message', async (ev) => {
         if (ev.source !== window || !ev.data || typeof ev.data.type !== 'string') return;
         const d = ev.data;
         if (d.type === '__COGIAO_SCN_ASK__') { lastSig = null; push(true); return; }
+        if (d.type === '__COGIAO_SCN_SODO__') {
+            let result;
+            try { result = await soDo(d.payload || {}); } catch (e) { result = { ok: false, error: 'exception', message: String(e && e.message || e) }; }
+            window.postMessage({ type: '__COGIAO_SCN_SODO_RESULT__', reqId: d.reqId, result }, '*');
+            return;
+        }
+        if (d.type === '__COGIAO_SCN_OPEN__') {
+            let result;
+            try { result = await openSection(String(d.section || '')); } catch (e) { result = { ok: false, error: 'exception' }; }
+            window.postMessage({ type: '__COGIAO_SCN_OPEN_RESULT__', reqId: d.reqId, result }, '*');
+            return;
+        }
         if (d.type === '__COGIAO_SCN_FILL__') {
             let result;
             try { result = await fill(d.payload || {}); } catch (e) { result = { ok: false, error: 'exception', message: String(e && e.message || e) }; }

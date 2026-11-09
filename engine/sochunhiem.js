@@ -410,7 +410,7 @@
 
     const DANH_SACH_MUC = {
         1: ['Kế hoạch năm', 'Kế hoạch tháng'],
-        2: ['Đặc điểm tình hình', 'Nội dung kế hoạch', 'Nội dung hoạt động tháng', 'Sơ kết học kỳ I',
+        2: ['Sơ đồ lớp', 'Đặc điểm tình hình', 'Nội dung kế hoạch', 'Nội dung hoạt động tháng', 'Sơ kết học kỳ I',
             'Phương hướng HKII', 'Tổng kết năm học', 'Nội dung họp']
     };
 
@@ -1087,6 +1087,59 @@
         return CAM.filter(c => c.re.test(text)).map(c => c.ly);
     }
 
+    // ---------- 6.3.4: Sơ đồ lớp (Mẫu 2) ----------
+    /**
+     * Xếp học sinh vào chỗ ngồi. Không bịa gì: chỉ đặt đúng các em có trong danh sách lớp.
+     * seats: [{c, r, stt, id, name}]  (c = dãy, r = hàng tính từ bàn giáo viên, stt = chỗ trong bàn)
+     * hs:    [{id, name, nu}]         (nu: true/false/null, theo thứ tự danh sách lớp)
+     * opt:   {thuTu: 'danh_sach' | 'ten', namNu: bool, giuCho: bool}
+     */
+    function tachTen(s) {
+        const w = String(s || '').trim().split(/\s+/);
+        return [w[w.length - 1] || '', w.slice(0, -1).join(' ')];
+    }
+    function xepSoDo(seats, hs, opt) {
+        opt = opt || {};
+        const order = (seats || []).slice().sort((a, b) => a.r - b.r || a.c - b.c || a.stt - b.stt);
+        const hsById = new Map((hs || []).map(h => [String(h.id), h]));
+        const daCo = new Set();
+        const plan = order.map(s => {
+            const giu = !!opt.giuCho && s.id && hsById.has(String(s.id)) && !daCo.has(String(s.id));
+            if (giu) daCo.add(String(s.id));
+            return giu ? { c: s.c, r: s.r, stt: s.stt, id: String(s.id), name: hsById.get(String(s.id)).name, giu: true }
+                : { c: s.c, r: s.r, stt: s.stt, id: '', name: '', giu: false };
+        });
+        let list = (hs || []).filter(h => !daCo.has(String(h.id)));
+        if (opt.thuTu === 'ten') {
+            list = list.slice().sort((a, b) => {
+                const A = tachTen(a.name), B = tachTen(b.name);
+                return A[0].localeCompare(B[0], 'vi') || A[1].localeCompare(B[1], 'vi');
+            });
+        }
+        const trong = plan.filter(p => !p.giu);
+        if (opt.namNu) {
+            const nam = list.filter(h => h.nu === false), nu = list.filter(h => h.nu === true), khac = list.filter(h => h.nu !== true && h.nu !== false);
+            // theo từng bàn (cùng hàng, cùng dãy): bắt đầu bằng giới đang còn nhiều hơn, rồi xen kẽ
+            const ban = new Map();
+            trong.forEach(p => { const k = p.r + ':' + p.c; if (!ban.has(k)) ban.set(k, []); ban.get(k).push(p); });
+            for (const [k, cho] of ban.entries()) {
+                const giuO = plan.find(p => p.giu && (p.r + ':' + p.c) === k);
+                const gGiu = giuO ? (hsById.get(giuO.id) || {}).nu : null;
+                let luot = gGiu === true ? 'nam' : gGiu === false ? 'nu' : (nam.length >= nu.length ? 'nam' : 'nu');
+                for (const p of cho) {
+                    const q = luot === 'nam' ? (nam.length ? nam : nu.length ? nu : khac) : (nu.length ? nu : nam.length ? nam : khac);
+                    const h = q.shift();
+                    if (h) { p.id = String(h.id); p.name = h.name; }
+                    luot = luot === 'nam' ? 'nu' : 'nam';
+                }
+            }
+            list = nam.concat(nu, khac);
+        } else {
+            trong.forEach(p => { const h = list.shift(); if (h) { p.id = String(h.id); p.name = h.name; } });
+        }
+        return { plan, conThua: list, soCho: plan.length, soHS: (hs || []).length, soGiu: daCo.size };
+    }
+
     /** Cho bảng bên: tình trạng mục đang mở. */
     function describe(state) {
         const id = sectionId(state);
@@ -1103,7 +1156,7 @@
         };
     }
 
-    const api = { TRAITS, THANG, HOC_TAP, sectionId, fieldsFor, generate, describe, validate, toHtml, buildCtx, DANH_SACH_MUC };
+    const api = { TRAITS, THANG, HOC_TAP, sectionId, fieldsFor, generate, describe, validate, toHtml, buildCtx, DANH_SACH_MUC, xepSoDo };
     root.SoChuNhiemEngine = api;
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

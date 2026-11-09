@@ -102,11 +102,13 @@
             _scnState = d.state;
             return;
         }
-        if (d.type === '__COGIAO_SCN_FILL_RESULT__' || d.type === '__COGIAO_SCN_SAVE_RESULT__' || d.type === '__COGIAO_SCN_SYNC_RESULT__') {
+        if (d.type === '__COGIAO_SCN_FILL_RESULT__' || d.type === '__COGIAO_SCN_SAVE_RESULT__' || d.type === '__COGIAO_SCN_SYNC_RESULT__' || d.type === '__COGIAO_SCN_OPEN_RESULT__' || d.type === '__COGIAO_SCN_SODO_RESULT__') {
             const iframe = document.getElementById(SIDEBAR_ID);
             iframe?.contentWindow?.postMessage({
                 type: d.type === '__COGIAO_SCN_FILL_RESULT__' ? 'COGIAO_SCN_FILL_RESULT'
-                    : d.type === '__COGIAO_SCN_SYNC_RESULT__' ? 'COGIAO_SCN_SYNC_RESULT' : 'COGIAO_SCN_SAVE_RESULT',
+                    : d.type === '__COGIAO_SCN_SYNC_RESULT__' ? 'COGIAO_SCN_SYNC_RESULT'
+                    : d.type === '__COGIAO_SCN_OPEN_RESULT__' ? 'COGIAO_SCN_OPEN_RESULT'
+                    : d.type === '__COGIAO_SCN_SODO_RESULT__' ? 'COGIAO_SCN_SODO_RESULT' : 'COGIAO_SCN_SAVE_RESULT',
                 payload: { reqId: d.reqId, result: d.result }
             }, '*');
             if (d.type === '__COGIAO_SCN_SAVE_RESULT__') _suppressUpdatesUntil = Date.now() + 2500;
@@ -581,6 +583,15 @@
 
             case 'COGIAO_SCN_SYNC':
                 window.postMessage({ type: '__COGIAO_SCN_SYNC__', reqId: data.payload && data.payload.reqId, expect: data.payload && data.payload.expect }, '*');
+                break;
+
+            case 'COGIAO_SCN_SODO':
+                if (data.payload && data.payload.action === 'fill') _suppressUpdatesUntil = Date.now() + 2500;
+                window.postMessage({ type: '__COGIAO_SCN_SODO__', reqId: data.payload && data.payload.reqId, payload: data.payload }, '*');
+                break;
+
+            case 'COGIAO_SCN_OPEN':
+                window.postMessage({ type: '__COGIAO_SCN_OPEN__', reqId: data.payload && data.payload.reqId, section: data.payload && data.payload.section }, '*');
                 break;
 
             case 'COGIAO_SCN_SAVE':

@@ -51,12 +51,199 @@
             '<div class="scn-ctx-title">' + esc(s.section || '') + '</div>';
     }
 
+    // 6.3.4: mục lục - giáo viên biết ngay app viết được mục nào, bấm là vnEdu mở mục đó
+    const GOI_Y_MUC = {
+        'Kế hoạch năm': 'Mục tiêu, nhiệm vụ, biện pháp cả năm',
+        'Kế hoạch tháng': 'Công việc, biện pháp, kết quả từng tháng',
+        'Đặc điểm tình hình': 'Thuận lợi, khó khăn của lớp',
+        'Nội dung kế hoạch': 'Chỉ tiêu, nhiệm vụ, giải pháp cả năm',
+        'Nội dung hoạt động tháng': 'Trọng tâm, hoạt động, đánh giá từng tháng',
+        'Sơ kết học kỳ I': 'Kết quả, tồn tại cuối học kỳ I',
+        'Phương hướng HKII': 'Việc cần làm ở học kỳ II',
+        'Tổng kết năm học': 'Kết quả cả năm, bài học kinh nghiệm',
+        'Nội dung họp': 'Nội dung các lần họp phụ huynh',
+        'Sơ đồ lớp': 'Tự xếp chỗ ngồi, thầy cô xem rồi Lưu'
+    };
+    let openReq = null;
+    let menuMsg = '';
+
+    function renderMenu() {
+        const el = $('scn-menu');
+        const ds = (info && info.danhSachMuc) || [];
+        if (!state || state.active === false || !ds.length) { el.style.display = 'none'; return; }
+        const items = ds.map(m => {
+            const cur = m === state.section;
+            return '<button class="scn-mi' + (cur ? ' cur' : '') + '" data-open="' + esc(m) + '"' + (openReq ? ' disabled' : '') + '>' +
+                '<span class="scn-mi-name">' + esc(m) + '</span>' +
+                '<span class="scn-mi-hint">' + esc(GOI_Y_MUC[m] || '') + '</span></button>';
+        }).join('');
+        const msg = menuMsg ? '<div class="scn-menu-msg">' + menuMsg + '</div>' : '';
+        if (!info.supported && !laSoDo()) {
+            el.innerHTML = '<div class="scn-menu-head">Chọn mục cần viết <span>(' + ds.length + ' mục, bấm là vnEdu tự mở)</span></div>' +
+                msg + '<div class="scn-menu-list">' + items + '</div>';
+        } else {
+            const d = el.querySelector('details');
+            const mo = d && d.open;
+            el.innerHTML = '<details class="scn-menu-sub"' + (mo || menuMsg ? ' open' : '') + '><summary>Chuyển sang mục khác <span>(' + ds.length + ' mục)</span></summary>' +
+                msg + '<div class="scn-menu-list">' + items + '</div></details>' +
+                (laSoDo() ? '<div class="scn-steps"><span><b>1</b> Xếp thử</span><span><b>2</b> Xem sơ đồ</span><span><b>3</b> Điền vào vnEdu</span><span><b>4</b> Lưu</span></div>'
+                    : '<div class="scn-steps"><span><b>1</b> Viết nháp</span><span><b>2</b> Sửa cho đúng lớp</span><span><b>3</b> Điền vào vnEdu</span><span><b>4</b> Lưu</span></div>');
+        }
+        el.style.display = '';
+    }
+
+    function openMuc(name) {
+        if (!name || name === state.section || openReq) return;
+        const req = 'open-' + Date.now();
+        openReq = req;
+        menuMsg = 'Đang mở mục ' + esc(name) + ' trên vnEdu…';
+        renderMenu();
+        parent.postMessage({ type: 'COGIAO_SCN_OPEN', payload: { reqId: req, section: name } }, '*');
+        setTimeout(() => { if (openReq === req) onOpenResult({ reqId: req, result: { ok: false, error: 'timeout' } }); }, 8000);
+    }
+
+    function onOpenResult(p) {
+        if (!openReq || p.reqId !== openReq) return;
+        openReq = null;
+        const r = p.result || {};
+        menuMsg = r.ok ? '' : 'Chưa mở được tự động. Thầy cô bấm tên mục ở cây bên trái cửa sổ vnEdu.';
+        if (state) renderMenu();
+    }
+
+    function laSoDo() { return !!state && state.mau === 2 && /^sơ đồ lớp$/i.test(state.section || ''); }
+
+    // ---------- 6.3.4: Sơ đồ lớp ----------
+    let sodo = null;      // {lop, hocKy, seats, hs, coGioiTinh}
+    let sodoPlan = null;  // kết quả E.xepSoDo
+    let sodoReq = null;
+    function sodoMsg(html, kind) {
+        const el = $('scn-sodo-msg');
+        el.className = 'scn-result ' + (kind || '');
+        el.innerHTML = html || '';
+        el.style.display = html ? '' : 'none';
+    }
+    function sodoGui(action, extra) {
+        const reqId = 'sodo-' + action + '-' + Date.now();
+        sodoReq = { reqId, action };
+        parent.postMessage({ type: 'COGIAO_SCN_SODO', payload: Object.assign({ reqId, action }, extra || {}) }, '*');
+        setTimeout(() => { if (sodoReq && sodoReq.reqId === reqId) onSodoResult({ reqId, result: { ok: false, error: 'timeout' } }); }, action === 'gioiTinh' ? 15000 : 12000);
+    }
+    function sodoDoc() { sodoPlan = null; renderSodoGrid(); $('scn-sodo-fill').style.display = 'none'; sodoGui('read'); }
+    function renderSodoSum() {
+        const el = $('scn-sodo-sum');
+        if (!sodo) { el.textContent = 'Đang đọc sơ đồ và danh sách lớp…'; return; }
+        const daXep = sodo.seats.filter(x => x.id).length;
+        let t = 'Lớp <strong>' + esc(sodo.lop) + '</strong> có <strong>' + sodo.hs.length + ' em</strong>. Sơ đồ ' + esc(sodo.hocKy || '') +
+            ' có <strong>' + sodo.seats.length + ' chỗ</strong>' + (daXep ? ', đã xếp ' + daXep + ' em' : ', chưa xếp em nào') + '.';
+        if (sodo.seats.length < sodo.hs.length) {
+            t += '<div class="scn-sodo-thieu">Thiếu ' + (sodo.hs.length - sodo.seats.length) + ' chỗ. Thầy cô bấm <strong>Cấu hình</strong> trên vnEdu để thêm hàng bàn (tối đa 15 hàng), rồi bấm Xếp thử.</div>';
+        }
+        el.innerHTML = t;
+    }
+    function renderSodoGt() {
+        const el = $('scn-sodo-gt');
+        if (!$('scn-sodo-namnu').checked || !sodo || sodo.coGioiTinh) { el.style.display = 'none'; return; }
+        el.innerHTML = 'Cần biết em nào là nữ. Em sẽ mở mục Danh sách học sinh để đọc cột Nữ (chỉ đọc), rồi quay lại đây.' +
+            '<br><button class="btn-secondary" id="scn-sodo-laygt">Đọc giới tính từ Danh sách học sinh</button>';
+        el.style.display = '';
+    }
+    function tenNgan(n) { const w = String(n || '').trim().split(/\s+/); return w.length > 2 ? w.slice(-2).join(' ') : w.join(' '); }
+    function renderSodoGrid() {
+        const el = $('scn-sodo-grid');
+        if (!sodoPlan) { el.innerHTML = ''; return; }
+        const plan = sodoPlan.plan;
+        const maxR = Math.max(0, ...plan.map(p => p.r)), maxC = Math.max(0, ...plan.map(p => p.c));
+        const nu = new Map(sodo.hs.map(h => [h.id, h.nu]));
+        let h = '<div class="scn-sodo-gv">Bàn giáo viên</div><table class="scn-sodo-tbl"><tr><th class="hang"></th>';
+        for (let c = 1; c <= maxC; c++) h += '<th>Dãy ' + c + '</th>';
+        h += '</tr>';
+        for (let r = 1; r <= maxR; r++) {
+            h += '<tr><td class="hang">Bàn ' + r + '</td>';
+            for (let c = 1; c <= maxC; c++) {
+                const cho = plan.filter(p => p.r === r && p.c === c).sort((a, b) => a.stt - b.stt);
+                const giu = cho.length && cho.every(p => p.giu);
+                h += '<td' + (giu ? ' class="giu"' : '') + '>' + (cho.length ? cho.map(p => p.id
+                    ? '<div' + (nu.get(p.id) === true ? ' class="nu"' : '') + '>' + esc(tenNgan(p.name)) + '</div>'
+                    : '<div class="trong">trống</div>').join('') : '') + '</td>';
+            }
+            h += '</tr>';
+        }
+        el.innerHTML = h + '</table>';
+    }
+    function sodoXep() {
+        if (!sodo) { sodoDoc(); return; }
+        const namNu = $('scn-sodo-namnu').checked;
+        if (namNu && !sodo.coGioiTinh) { renderSodoGt(); sodoMsg('Bấm nút đọc giới tính trước, hoặc bỏ chọn Nam nữ xen kẽ.', 'warn'); return; }
+        const thuTu = (document.querySelector('input[name="scn-sodo-thutu"]:checked') || {}).value || 'danh_sach';
+        sodoPlan = E.xepSoDo(sodo.seats, sodo.hs, { thuTu, namNu, giuCho: $('scn-sodo-giu').checked });
+        renderSodoGrid();
+        let t = 'Đã xếp thử ' + sodoPlan.plan.filter(p => p.id && !p.giu).length + ' em' + (sodoPlan.soGiu ? ', giữ nguyên ' + sodoPlan.soGiu + ' em' : '') + '. Tên màu hồng là học sinh nữ. Chưa có gì ghi vào vnEdu.';
+        if (sodoPlan.conThua.length) t += '<div class="bad">Còn ' + sodoPlan.conThua.length + ' em chưa có chỗ: ' + sodoPlan.conThua.map(x => esc(x.name)).join(', ') + '. Thêm hàng bàn ở Cấu hình trên vnEdu.</div>';
+        sodoMsg(t, sodoPlan.conThua.length ? 'warn' : '');
+        $('scn-sodo-fill').style.display = '';
+    }
+    async function sodoDien() {
+        if (!sodoPlan) return;
+        const gate = await hoiBanQuyen();
+        if (!gate.allowed) {
+            const lyDo = gate.reason === 'free_other_class' ? 'scn_other_class' : gate.reason;
+            if (window.__snxShowLock) window.__snxShowLock(lyDo, gate);
+            return;
+        }
+        $('scn-sodo-fill').disabled = true;
+        sodoMsg('Đang điền…');
+        sodoGui('fill', { expect: { lop: sodo.lop, hocKy: sodo.hocKy || '' }, plan: sodoPlan.plan });
+        if (gate.dungThu && window.LicenseClient && window.LicenseClient.commitFreeSubject) {
+            window.LicenseClient.commitFreeSubject('', state.lop || '').catch(() => { /* silent */ });
+        }
+    }
+    function onSodoResult(p) {
+        if (!sodoReq || p.reqId !== sodoReq.reqId) return;
+        const action = sodoReq.action;
+        sodoReq = null;
+        const r = p.result || {};
+        if (action === 'read') {
+            if (!r.ok) {
+                $('scn-sodo-sum').innerHTML = r.error === 'wrong_page' ? 'Thầy cô mở mục Sơ đồ lớp trên vnEdu.'
+                    : 'Chưa đọc được danh sách lớp (' + esc(r.error || 'lỗi') + '). Thầy cô bấm Refresh trên vnEdu rồi mở lại mục này.';
+                return;
+            }
+            sodo = r;
+            renderSodoSum(); renderSodoGt();
+            return;
+        }
+        if (action === 'gioiTinh') {
+            if (!r.ok) { sodoMsg('Chưa đọc được giới tính (' + esc(r.error || 'lỗi') + '). Thầy cô mở mục Danh sách học sinh một lần, chờ bảng hiện, rồi quay lại Sơ đồ lớp.', 'warn'); return; }
+            sodoMsg('Đã đọc giới tính ' + r.soEm + ' em.', 'ok');
+            sodoDoc();
+            return;
+        }
+        if (action === 'fill') {
+            $('scn-sodo-fill').disabled = false;
+            if (!r.ok) {
+                sodoMsg(r.error === 'context_changed' ? 'Trên vnEdu đã đổi lớp hoặc học kỳ. Em chưa điền gì. Thầy cô bấm Xếp thử lại.'
+                    : 'Chưa điền đủ (' + esc(r.error || 'lỗi') + '). Thầy cô bấm Refresh trên vnEdu rồi thử lại.', 'warn');
+                return;
+            }
+            sodoMsg('<div><strong>Đã điền ' + r.dat + ' chỗ ngồi trên vnEdu' + (r.xoa ? ', xóa ' + r.xoa + ' chỗ cũ' : '') + '.</strong></div>' +
+                '<div>Thầy cô xem lại sơ đồ trên vnEdu. Muốn đổi chỗ thì gõ tên em vào ô rồi chọn trong danh sách. Xong bấm <strong>Lưu</strong> và chọn <strong>Có</strong>.</div>', 'ok');
+            $('scn-sodo-fill').style.display = 'none';
+        }
+    }
+
+    function renderSodo() {
+        const on = laSoDo();
+        $('scn-sodo').style.display = on ? '' : 'none';
+        if (on) $('scn-work').style.display = 'none';
+    }
+
     function renderNote() {
         const el = $('scn-note');
         const msgs = [];
-        if (!info.supported) {
-            msgs.push('Mục <strong>' + esc(state.section) + '</strong> chưa cần viết nháp (bảng số liệu hoặc danh sách). Các mục em viết được ở Mẫu ' +
-                esc(state.mau) + ': ' + info.danhSachMuc.map(esc).join(', ') + '.');
+        if (laSoDo()) {
+            /* Sơ đồ lớp có khung riêng */
+        } else if (!info.supported) {
+            msgs.push('Mục <strong>' + esc(state.section) + '</strong> là bảng số liệu, danh sách: vnEdu tự có hoặc thầy cô nhập trực tiếp, không cần viết.');
         } else if (!info.fields.length) {
             msgs.push('Chưa thấy ô nào để viết. Thầy cô chọn lớp' + (/tháng|họp/i.test(state.section) ? ', chọn tháng (lần họp)' : '') + ' trên vnEdu rồi chờ trang tải xong.');
         }
@@ -375,6 +562,9 @@
         info = E.describe(state);
         if (doiMuc) {
             ctxKey = k;
+            menuMsg = '';
+            sodo = null; sodoPlan = null; sodoMsg('');
+            if (laSoDo()) setTimeout(sodoDoc, 0);
             const all = (await store(true, DRAFTS_KEY)) || {};
             drafts = (all[k] && all[k].d) || {};
             showResult('');
@@ -382,6 +572,9 @@
         }
         renderCtx();
         renderNote();
+        renderMenu();
+        renderSodo();
+        if (laSoDo() && !doiMuc && sodo && s.sodo && s.sodo.soCho !== sodo.seats.length && !sodoReq) sodoDoc();
         renderSync();
         renderTraits();
         renderList();
@@ -419,6 +612,14 @@
             updateFillBtn();
             saveDrafts();
         });
+        $('scn-sodo-xep').addEventListener('click', sodoXep);
+        $('scn-sodo-fill').addEventListener('click', sodoDien);
+        $('scn-sodo-namnu').addEventListener('change', renderSodoGt);
+        $('scn-sodo').addEventListener('click', e => { if (e.target && e.target.id === 'scn-sodo-laygt') { sodoMsg('Đang đọc giới tính…'); sodoGui('gioiTinh'); } });
+        $('scn-menu').addEventListener('click', e => {
+            const b = e.target && e.target.closest && e.target.closest('[data-open]');
+            if (b) openMuc(b.dataset.open);
+        });
         $('scn-list').addEventListener('click', e => {
             const k = e.target && e.target.dataset.redo;
             if (k) redo(k);
@@ -430,6 +631,8 @@
             if (type === 'COGIAO_SCN_FILL_RESULT') onFillResult(payload || {});
             if (type === 'COGIAO_SCN_SAVE_RESULT') onSaveResult(payload || {});
             if (type === 'COGIAO_SCN_SYNC_RESULT') onSyncResult(payload || {});
+            if (type === 'COGIAO_SCN_OPEN_RESULT') onOpenResult(payload || {});
+            if (type === 'COGIAO_SCN_SODO_RESULT') onSodoResult(payload || {});
         });
     }
 

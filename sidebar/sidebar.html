@@ -209,11 +209,27 @@
     <div id="view-so-chu-nhiem" class="view view-hidden">
         <div class="scn-ctx" id="scn-ctx"></div>
         <div class="scn-note" id="scn-note" style="display:none"></div>
+        <div class="scn-menu" id="scn-menu" style="display:none"></div>
         <div class="scn-sync" id="scn-sync" style="display:none">
             <div class="scn-sync-title">Bước 1 — Đồng bộ số liệu lớp (nên làm trước)</div>
             <div class="scn-sync-hint">Bấm nút <strong>Đồng bộ thông tin lớp học</strong> của vnEdu để vnEdu tự điền sĩ số, nam, nữ… vnEdu sẽ hỏi Có/Không, thầy cô tự chọn. Trang sẽ <strong>tải lại</strong>: chữ chưa Lưu sẽ mất, nên làm bước này <strong>trước</strong> khi viết nháp.</div>
             <button class="btn-secondary" id="scn-btn-sync">Đồng bộ số liệu từ vnEdu</button>
             <div class="scn-sync-msg" id="scn-sync-msg" style="display:none"></div>
+        </div>
+        <div class="scn-sodo" id="scn-sodo" style="display:none">
+            <div class="scn-sodo-sum" id="scn-sodo-sum">Đang đọc sơ đồ và danh sách lớp…</div>
+            <div class="scn-sodo-opts">
+                <div class="scn-sodo-label">Thứ tự xếp</div>
+                <label><input type="radio" name="scn-sodo-thutu" value="danh_sach" checked> Theo danh sách lớp</label>
+                <label><input type="radio" name="scn-sodo-thutu" value="ten"> Theo tên A-Z</label>
+                <label class="scn-sodo-gap"><input type="checkbox" id="scn-sodo-namnu"> Nam nữ ngồi xen kẽ trong mỗi bàn</label>
+                <div class="scn-sodo-gt" id="scn-sodo-gt" style="display:none"></div>
+                <label><input type="checkbox" id="scn-sodo-giu" checked> Giữ nguyên em đã có chỗ</label>
+            </div>
+            <button class="btn-primary" id="scn-sodo-xep">Xếp thử</button>
+            <div class="scn-sodo-grid" id="scn-sodo-grid"></div>
+            <div class="scn-result" id="scn-sodo-msg" style="display:none"></div>
+            <button class="btn-primary" id="scn-sodo-fill" style="display:none">Điền vào sơ đồ trên vnEdu</button>
         </div>
         <div id="scn-work">
             <details class="scn-traits" id="scn-traits">
