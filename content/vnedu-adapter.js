@@ -485,7 +485,8 @@ window.VneduAdapter = {
         const result = { lop: '', khoi: '', hocKy: '', mon: '' };
 
         const patterns = {
-            lop: /^[1-5][A-ZĐĂÂÊÔƠƯa-zđăâêôơư][0-9]?$/,
+            // V6.3.5: chấp nhận đuôi điểm trường "4A - ĐQ", "4A1-ĐQ", "4A (ĐQ)" (vnEdu Lào Cai)
+            lop: /^[1-5][A-ZĐĂÂÊÔƠƯa-zđăâêôơư][0-9]?(?:\s*[-–(]\s*[0-9A-Za-zÀ-ỹĐđ]{1,8}\)?)?$/,
             khoi: /^Kh[ốo]i\s+[1-5]$/i,
             hocKy: /^H[ọo]c\s+k[ỳy]\s+[12]$/i
         };
@@ -668,7 +669,7 @@ window.VneduAdapter = {
     _parseLopKhoiHocKyFromText_(text) {
         const result = { lop: '', khoi: '', hocKy: '', mon: '' };
         if (!text) return result;
-        const lopMatch = text.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?)/);
+        const lopMatch = text.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?[0-9]?(?:\s*[-–]\s*[A-ZĐ]{1,4}(?![A-Za-zÀ-ỹ]))?)/);
         if (lopMatch) result.lop = lopMatch[1];
         const khoiMatch = text.match(/Kh[ốo]i:?\s*(Kh[ốo]i\s*[0-9]+|[0-9]+)/i);
         if (khoiMatch) result.khoi = khoiMatch[1].trim();
@@ -698,7 +699,7 @@ window.VneduAdapter = {
 
         const result = { lop: '', mon: '', hocKy: '' };
 
-        const lopMatch = allText.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?)/);
+        const lopMatch = allText.match(/L[ớo]p:\s*([0-9]+[A-Za-zÀ-ỹ]?[0-9]?(?:\s*[-–]\s*[A-ZĐ]{1,4}(?![A-Za-zÀ-ỹ]))?)/);
         if (lopMatch) result.lop = lopMatch[1];
 
         // BUG-003 + BUG-004 fix: parse môn theo từng line riêng để tránh lazy regex
