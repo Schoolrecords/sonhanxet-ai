@@ -2100,10 +2100,14 @@ window.VneduAdapter = {
      *      ("Quản lý nhà trường", "Quản lý học tập"), sau mỗi click re-check leaf
      *   4) Khi leaf xuất hiện → click leaf
      *
-     * @param {string} module - 'so-diem' hoặc 'nlpc'
+     * @param {string} module - 'so-diem' | 'so-nhan-xet' | 'nlpc' | 'scn1' | 'scn2'
+     *   (6.3.6: thêm Sổ chủ nhiệm Mẫu 1/Mẫu 2 — mở bằng biểu tượng ở màn hình chính vnEdu)
      */
     async openVneduModule(module) {
-        const moduleLabel = module === 'nlpc' ? 'Phẩm chất - Năng lực' : 'Sổ nhận xét môn';
+        const moduleLabel = module === 'nlpc' ? 'Phẩm chất - Năng lực'
+            : module === 'scn1' ? 'Sổ chủ nhiệm Mẫu 1'
+            : module === 'scn2' ? 'Sổ chủ nhiệm Mẫu 2'
+            : 'Sổ nhận xét môn';
         const overlay = this._showLoadingOverlay_(`Đang mở ${moduleLabel}...`);
 
         try {
@@ -2129,8 +2133,9 @@ window.VneduAdapter = {
             }
 
             // Step 2: Navigate — leaf-first; click intermediates nếu cần
-            const LEAF_TEXT = module === 'nlpc'
-                ? 'Phẩm chất - Năng lực ghi học bạ'
+            const LEAF_TEXT = module === 'nlpc' ? 'Phẩm chất - Năng lực ghi học bạ'
+                : module === 'scn1' ? 'Sổ chủ nhiệm tiểu học - Mẫu 1'
+                : module === 'scn2' ? 'Sổ chủ nhiệm tiểu học - Mẫu 2'
                 : 'Nhập số điểm';
             const INTERMEDIATES = ['Quản lý nhà trường', 'Quản lý học tập'];
 
@@ -2319,6 +2324,8 @@ window.VneduAdapter = {
         // "Học bạ số - Học bạ điện tử" → mở sai module.
         const targets = module === 'nlpc'
             ? []  // chuyển thẳng qua Start menu nav
+            : module === 'scn1' ? ['Sổ chủ nhiệm tiểu học - Mẫu 1']
+            : module === 'scn2' ? ['Sổ chủ nhiệm tiểu học - Mẫu 2']
             : ['Sổ nhận xét'];  // Sổ NX môn: icon trên desktop
 
         // Search ALL leaf elements với text khớp, scope desktop area (top of body)
@@ -2328,7 +2335,8 @@ window.VneduAdapter = {
             const text = (el.textContent || '').trim();
             if (text.length > 50 || text.length < 3) continue;
             // Match exact hoặc startsWith với target
-            const matches = targets.some(t => text === t || text.startsWith(t));
+            // 6.3.6: Sổ chủ nhiệm phải khớp đúng tên (Mẫu 1 / Mẫu 2 cùng phần đầu)
+            const matches = targets.some(t => text === t || (!/^Sổ chủ nhiệm/.test(t) && text.startsWith(t)));
             if (!matches) continue;
             const r = el.getBoundingClientRect();
             if (r.width <= 0 || r.height <= 0) continue;

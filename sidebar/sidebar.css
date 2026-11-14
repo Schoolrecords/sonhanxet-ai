@@ -2387,3 +2387,60 @@ body {
 .scn-sodo-tbl .hang { width: 30px; font-size: 11px; color: #5F6B7A; background: none; border: 0; text-align: center; vertical-align: middle; }
 .scn-sodo-tbl .nu { color: #9B2C5A; }
 .scn-sodo-tbl .trong { color: #A0AABA; }
+
+/* ===== 6.3.6: Màn "Bắt đầu" (thay "Chưa phát hiện trang nhập điểm") ===== */
+.start { padding: 14px 14px 18px; color: #1F2937; }
+.start-title { font-size: 16px; font-weight: 700; color: #0C447C; margin: 2px 0 4px; }
+.start-sub { font-size: 12.5px; color: #4B5563; margin: 0 0 12px; line-height: 1.45; }
+.start-done {
+    background: #E8F5EE; border: 1px solid #A7D7BE; color: #14532D;
+    border-radius: 8px; padding: 9px 11px; font-size: 12.5px; line-height: 1.45; margin-bottom: 12px;
+}
+.start-card {
+    border: 1px solid #D6DEEB; border-left: 4px solid #2B4F9E; border-radius: 8px;
+    background: #FFFFFF; padding: 11px 12px 12px; margin-bottom: 10px;
+}
+.start-card-title { font-size: 14px; font-weight: 700; color: #1F2937; }
+.start-card-desc { font-size: 12.5px; color: #4B5563; margin-top: 2px; line-height: 1.4; }
+.start-path {
+    font-size: 12px; color: #374151; background: #F5F7FA; border-radius: 6px;
+    padding: 6px 8px; margin: 8px 0 9px; line-height: 1.45;
+}
+.start-path b { color: #0C447C; font-weight: 600; }
+.start-btn-row { display: flex; gap: 8px; }
+.start-btn-row .start-btn { flex: 1 1 0; }
+.start-msg {
+    font-size: 12.5px; line-height: 1.45; border-radius: 8px; padding: 9px 11px; margin: 2px 0 10px;
+    background: #F5F7FA; border: 1px solid #D6DEEB; color: #1F2937;
+}
+.start-msg-ok { background: #E8F5EE; border-color: #A7D7BE; color: #14532D; }
+.start-msg-warn { background: #FEF3E2; border-color: #F3C98B; color: #7A3E00; }
+.start-msg-info { background: #EEF3FB; border-color: #C3D2EC; color: #0C447C; }
+.start-note { font-size: 12px; color: #6B7280; line-height: 1.5; margin-top: 4px; }
+.start-lic {
+    margin-top: 10px; padding-top: 9px; border-top: 1px solid #E5E7EB;
+    font-size: 12.5px; color: #374151;
+}
+.start-lic a { color: #2B4F9E; font-weight: 600; }
+
+/* 6.3.6: nút "Việc khác" cạnh nút Cập nhật — về màn chọn việc */
+.rescan-bar { display: flex; gap: 6px; align-items: stretch; }
+.rescan-bar .btn-rescan { flex: 1; width: auto; }
+.btn-viec-khac {
+    flex: none;
+    background: #FFFFFF;
+    color: #2B4F9E;
+    border: 1px solid #2B4F9E;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-viec-khac:hover { background: #2B4F9E; color: #FFFFFF; }
+.btn-viec-khac[hidden] { display: none; }
+.nlpc-chua-lop {
+    margin-top: 8px; padding: 8px 10px; border-radius: 6px;
+    background: #FFF7E6; border: 1px solid #F2B705; color: #5C4300;
+    font-size: 12.5px; line-height: 1.5; font-weight: 400;
+}

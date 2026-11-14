@@ -280,8 +280,16 @@
         document.getElementById('btn-back').onclick = () => {
             if (currentModule === 'so-nhan-xet') showView('so-nhan-xet');
             else if (currentModule === 'nlpc') showView('nlpc');
+            else if (currentModule === 'so-chu-nhiem') showView('so-chu-nhiem');
             else showView('empty');
         };
+
+        // 6.3.6: màn Bắt đầu — nút "Mở giúp tôi"
+        const btnViecKhac = document.getElementById('btn-viec-khac');
+        if (btnViecKhac) btnViecKhac.onclick = veManChonViec;
+        document.querySelectorAll('#view-empty [data-open]').forEach(btn => {
+            btn.onclick = () => moManVnedu(btn.dataset.open, btn);
+        });
 
         document.getElementById('btn-generate').onclick = generateAllNhanXet;
         document.getElementById('btn-apply').onclick = applyAllToVnedu;
@@ -469,7 +477,7 @@
         const classes = Object.entries(cacheStats.byClass || {});
 
         if (classes.length === 0) {
-            list.innerHTML = '<div class="cm-empty">Chưa có lớp nào trong cache. Hãy mở Sổ NX môn trên Vnedu — điểm sẽ tự lưu.</div>';
+            list.innerHTML = '<div class="cm-empty">Chưa có lớp nào trong cache. Mở Sổ nhận xét (màn hình chính vnEdu ▸ biểu tượng Sổ nhận xét ▸ chọn lớp, môn) — điểm sẽ tự lưu.</div>';
             return;
         }
 
@@ -605,7 +613,7 @@
         const ctxEl = document.getElementById('sg-context');
         if (!found) {
             ctxEl.innerHTML = `<strong>Lớp ${escapeHtml(className)} · ${escapeHtml(studentId)}</strong><br>
-                Chưa có dữ liệu trong cache. Hãy mở Sổ NX môn trên Vnedu trước.`;
+                Chưa có dữ liệu trong cache. Mở Sổ nhận xét trước (màn hình chính vnEdu ▸ biểu tượng Sổ nhận xét ▸ chọn lớp, môn).`;
         } else {
             const subjectCount = Object.values(diem).filter(v => v !== null).length;
             ctxEl.innerHTML = `<strong>Lớp ${escapeHtml(className)} · ${escapeHtml(studentId)}</strong><br>
@@ -716,6 +724,9 @@
 
         if (type === 'VNEDU_CONTEXT') {
             handleContextUpdate(payload);
+        }
+        if (type === 'COGIAO_OPEN_MODULE_RESULT') {
+            handleOpenModuleResult(payload);   // 6.3.6
         }
         if (type === 'VNEDU_ACCOUNT') {
             onVneduAccount(payload);   // 6.2.0
@@ -863,15 +874,30 @@
             kyOverride = null;
         }
 
+        const moduleTruoc = currentModule;
         currentModule = module;
         currentContext = context;
         currentStudents = students || [];
         generatedNhanXet.clear();
 
         if (!module) {
+            if (_giuBatDau) baoBatDau_('');   // dòng "Đang mở sẵn…" hết đúng
+            _giuBatDau = false;
             showView('empty');
             return;
         }
+        // 6.3.6: GV vừa bấm "Việc khác" → giữ màn chọn việc, không tự nhảy về việc cũ
+        if (_giuBatDau && module === moduleTruoc) return;
+        _giuBatDau = false;
+        baoBatDau_('');   // vào việc rồi → bỏ dòng "Đã mở…" để lần sau về màn chọn việc không còn
+        hienViecDangMo_(prev, next);
+    }
+
+    /** Hiện màn làm việc của màn vnEdu đang mở (currentModule). */
+    function hienViecDangMo_(prev, next) {
+        const module = currentModule;
+        const context = currentContext;
+        prev = prev || {}; next = next || context || {};
 
         if (module === 'so-chu-nhiem') {
             // 6.3.0: màn Sổ chủ nhiệm do scn-view.js lo
@@ -899,6 +925,117 @@
         }
     }
 
+    // ================= 6.3.6: màn Bắt đầu =================
+    const DUONG_BAM = {
+        'so-nhan-xet': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ nhận xét", rồi chọn lớp, môn, kỳ.',
+        'nlpc': 'Bấm Start (góc dưới bên trái) ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ Phẩm chất - Năng lực ghi học bạ.',
+        'scn1': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ chủ nhiệm tiểu học - Mẫu 1".',
+        'scn2': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ chủ nhiệm tiểu học - Mẫu 2".'
+    };
+    const TEN_VIEC = {
+        'so-nhan-xet': 'Sổ nhận xét môn', 'nlpc': 'Năng lực - Phẩm chất',
+        'scn1': 'Sổ chủ nhiệm Mẫu 1', 'scn2': 'Sổ chủ nhiệm Mẫu 2'
+    };
+    let _moManTimer = null;
+    let _giuBatDau = false;   // GV bấm "Việc khác" khi vnEdu vẫn mở việc cũ
+    const TEN_MAN_DANG_MO = { 'so-nhan-xet': 'Sổ nhận xét môn', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm' };
+
+    /** Nút "Việc khác": về màn chọn việc, kèm lối quay lại việc đang mở trên vnEdu. */
+    function veManChonViec() {
+        _giuBatDau = true;
+        showView('empty');
+        const ten = TEN_MAN_DANG_MO[currentModule];
+        if (ten) {
+            baoBatDau_('vnEdu đang mở <b>' + ten + '</b>. <a href="#" id="start-quay-lai">Quay lại việc này</a>, hoặc chọn việc khác bên dưới.', 'info');
+            const a = document.getElementById('start-quay-lai');
+            if (a) a.onclick = (e) => { e.preventDefault(); _giuBatDau = false; baoBatDau_(''); hienViecDangMo_(); };
+        }
+    }
+
+    function baoBatDau_(html, loai) {
+        const el = document.getElementById('start-msg');
+        if (!el) return;
+        el.className = 'start-msg' + (loai ? ' start-msg-' + loai : '');
+        el.innerHTML = html;
+        el.hidden = !html;
+        if (html) { try { el.scrollIntoView({ block: 'nearest' }); } catch (e) { /* silent */ } }
+    }
+
+    function datNutBatDau_(dangMo, btnDangBam) {
+        document.querySelectorAll('#view-empty [data-open]').forEach(b => {
+            b.disabled = dangMo;
+            if (!b.dataset.nhan) b.dataset.nhan = b.textContent;
+            b.textContent = (dangMo && b === btnDangBam) ? 'Đang mở…' : b.dataset.nhan;
+        });
+    }
+
+    function moManVnedu(target, btn) {
+        if (!DUONG_BAM[target]) return;
+        datNutBatDau_(true, btn);
+        baoBatDau_('Đang mở <b>' + TEN_VIEC[target] + '</b> trên vnEdu…', 'info');
+        parent.postMessage({ type: 'COGIAO_OPEN_MODULE', payload: { target } }, '*');
+        clearTimeout(_moManTimer);
+        // Phòng khi không nhận được trả lời (trang vnEdu bận) → mở lại nút sau 20 giây
+        _moManTimer = setTimeout(() => {
+            datNutBatDau_(false);
+            baoBatDau_('Chưa thấy vnEdu trả lời. Thầy/cô mở tay: <b>' + escapeHtml(DUONG_BAM[target]) + '</b>', 'warn');
+        }, 20000);
+    }
+
+    function handleOpenModuleResult(p) {
+        clearTimeout(_moManTimer);
+        datNutBatDau_(false);
+        const target = p && p.target;
+        const r = (p && p.result) || {};
+        const manCuaViec = (target === 'scn1' || target === 'scn2') ? 'so-chu-nhiem' : target;
+        if (r.success && _giuBatDau && currentModule === manCuaViec) {
+            // Việc này vnEdu đang mở sẵn → vào thẳng màn làm việc
+            _giuBatDau = false; baoBatDau_(''); hienViecDangMo_();
+            return;
+        }
+        if (r.success) {
+            baoBatDau_('Đã mở <b>' + escapeHtml(TEN_VIEC[target] || '') + '</b>. Chọn lớp (môn, kỳ nếu có) trên vnEdu, bảng bên sẽ tự hiện nội dung để làm.', 'ok');
+            return;
+        }
+        const duong = DUONG_BAM[target] || '';
+        const lyDo = r.reason === 'busy' ? 'Tiện ích đang mở một màn khác, chờ vài giây rồi bấm lại.'
+            : r.reason === 'no_start_btn' ? 'Không thấy nút Start của vnEdu (trang chưa tải xong hoặc chưa đăng nhập).'
+            : 'Chưa mở tự động được trên vnEdu của trường này.';
+        baoBatDau_(escapeHtml(lyDo) + '<br>Thầy/cô mở tay: <b>' + escapeHtml(duong) + '</b>', 'warn');
+    }
+
+    /** Dòng bản quyền cuối màn Bắt đầu: chưa kích hoạt thì chỉ chỗ kích hoạt. */
+    function capNhatDongBanQuyenBatDau_(state) {
+        const el = document.getElementById('start-lic');
+        if (!el) return;
+        if (state && state.status === 'active') { el.hidden = true; el.innerHTML = ''; return; }
+        const dangCho = state && state.status === 'pending';
+        el.innerHTML = (dangCho
+            ? 'Đang chờ xác nhận chuyển khoản. '
+            : 'Đang dùng thử (1 môn, 1 lớp). ') +
+            '<a href="#" id="start-lic-link">' + (dangCho ? 'Xem trạng thái kích hoạt' : 'Kích hoạt bản quyền') + '</a>';
+        el.hidden = false;
+        const a = document.getElementById('start-lic-link');
+        if (a) a.onclick = (e) => { e.preventDefault(); document.getElementById('btn-settings')?.click(); };
+    }
+
+    /** Kích hoạt xong: rời mục Cài đặt, về đúng việc đang làm hoặc màn Bắt đầu, nói rõ bước tiếp. */
+    function sauKichHoat(ten) {
+        const done = document.getElementById('start-done');
+        if (done) {
+            done.innerHTML = '<b>Đã kích hoạt bản quyền' + (ten ? ' cho ' + escapeHtml(ten) : '') + '.</b> ' +
+                'Thầy/cô chọn việc cần làm bên dưới. Lần sau mở vnEdu, bấm thẻ xanh <b>Nhận xét AI</b> ở mép phải màn hình để mở lại bảng này.';
+            done.hidden = false;
+        }
+        const tenMan = { 'so-nhan-xet': 'Sổ nhận xét', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm' };
+        if (tenMan[currentModule]) {
+            showView(currentModule);
+            showToast('Đã kích hoạt. Tiếp tục làm ' + tenMan[currentModule] + '.');
+        } else {
+            showView('empty');
+        }
+    }
+
     function showView(name) {
         document.querySelectorAll('.view').forEach(v => v.classList.add('view-hidden'));
         const el = document.getElementById('view-' + name);
@@ -906,6 +1043,9 @@
         // 6.2.0: đang ở Cài đặt thì mục Bản quyền đã nói rõ → ẩn dải báo trùng
         const mw = document.getElementById('lic-main-warn');
         if (mw) mw.style.display = (name !== 'settings' && mw.innerHTML) ? '' : 'none';
+        // 6.3.6: nút "Việc khác" chỉ hiện ở 3 màn làm việc
+        const vk = document.getElementById('btn-viec-khac');
+        if (vk) vk.hidden = !['so-nhan-xet', 'nlpc', 'so-chu-nhiem'].includes(name);
 
         const applyBar = document.getElementById('apply-bar');
         if (name === 'so-nhan-xet' && generatedNhanXet.size > 0) {
@@ -1330,7 +1470,9 @@
 
         parent.postMessage({ type: 'COGIAO_AUTO_SAVE' }, '*');
 
-        setTimeout(() => {
+        // 6.3.6: giữ mã hẹn giờ để hủy khi đã có kết quả (trước đây 5 giây sau nút "Đóng" bị đổi lại thành "Lưu vào Vnedu")
+        clearTimeout(_autoSaveTimer);
+        _autoSaveTimer = setTimeout(() => {
             btn.disabled = false;
             btn.innerHTML = `
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: -2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -1339,7 +1481,9 @@
         }, 5000);
     }
 
+    let _autoSaveTimer = null;
     function handleAutoSaveResult(payload) {
+        clearTimeout(_autoSaveTimer);
         const btn = document.getElementById('modal-confirm');
         const msgEl = document.getElementById('modal-message');
 
@@ -1385,8 +1529,9 @@
         });
 
         document.getElementById('nlpc-context-box').innerHTML = `
-            <strong>Phẩm chất - Năng lực ghi học bạ</strong> · Lớp ${escapeHtml(ctx.lop || '?')}
+            <strong>Phẩm chất - Năng lực ghi học bạ</strong> · ${ctx.lop ? 'Lớp ' + escapeHtml(ctx.lop) : 'chưa chọn lớp'}
             ${ctx.hocKy ? ' · ' + escapeHtml(ctx.hocKy) : ''}
+            ${ctx.lop ? '' : '<div class="nlpc-chua-lop"><b>Chưa chọn lớp.</b> Thầy/cô chọn <b>Khối</b> và <b>Lớp</b> ở thanh trên cùng của vnEdu, danh sách học sinh sẽ hiện ở đây.</div>'}
             <div class="context-ky-row">
                 <label class="context-ky-label" for="nlpc-ky-select">Kỳ nhận xét:</label>
                 <select id="nlpc-ky-select" class="context-ky-select">
@@ -1551,8 +1696,8 @@
 
         // Hint: nếu override, ghi rõ "GV chỉnh"; nếu không, dùng hint từ NLPCMapper
         const hint = isOverridden
-            ? `GV đã chỉnh: ${badge} (gốc: ${sg?.hint || 'chưa cache'})`
-            : (sg?.hint || '(chưa có cache → mặc định Đ)');
+            ? `GV đã chỉnh: ${badge} (gốc: ${sg?.hint || 'chưa có điểm'})`
+            : (sg?.hint || '(chưa có điểm đã lưu, tạm lấy mức Đ)');
 
         return `
             <div class="nlpc-field ${isOverridden ? 'overridden' : 'auto'}">
@@ -1817,7 +1962,7 @@
             return;
         }
         if (!nlpcStudents || nlpcStudents.length === 0) {
-            alert('Chưa có danh sách HS. Hãy mở form NL-PC trong Vnedu trước.');
+            showToast('Chưa có danh sách học sinh. Mở: Start ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ Phẩm chất - Năng lực ghi học bạ, chọn lớp.');
             return;
         }
 
@@ -2320,6 +2465,20 @@
         } else {
             iconEl.textContent = '⚠️';
             titleEl.textContent = `Đã dừng — ${doneN} OK, ${failN} lỗi`;
+            // 6.3.6: lỗi thật 14/11 — vnEdu lỗi nội bộ nên biểu mẫu thiếu ô Công nghệ, Tin học;
+            // cả lớp đã lưu các ô khác nhưng màn này ghi "0 OK, 37 lỗi" làm GV tưởng mất hết.
+            const chiThieuO = failures.length > 0 && failures.every(f => f.stage === 'fill_partial');
+            if (chiThieuO) {
+                const TEN = { cong_nghe: 'Công nghệ', tin_hoc: 'Tin học' };
+                const oThieu = [...new Set(failures.flatMap(f => f.missing || []))].map(k => TEN[k] || k);
+                titleEl.textContent = `Đã lưu ${doneN + failN}/${total} em, còn thiếu ô`;
+                bodyEl.innerHTML = `Các ô khác đã điền và lưu vào vnEdu. Riêng ô <strong>${escapeHtml(oThieu.join(', '))}</strong> chưa điền được`
+                    + ` vì biểu mẫu vnEdu đang không hiện đủ ô (thường do vnEdu bị lỗi khi đổi khối, lớp).`
+                    + `<br><br><strong>Cách sửa:</strong> bấm <strong>F5</strong> tải lại vnEdu, mở lại Năng lực - Phẩm chất, chọn lớp rồi bấm đẩy lại.`;
+                resumeBtn.style.display = 'none';
+                modal.style.display = 'flex';
+                return;
+            }
             const failList = failures.map(f => {
                 const TEN_O = { chung: 'Nhận xét chung', tu_chu_tu_hoc: 'Tự chủ và tự học', giao_tiep_hop_tac: 'Giao tiếp và hợp tác',
                     giai_quyet_van_de: 'GQVĐ và sáng tạo', ngon_ngu: 'Ngôn ngữ', tinh_toan: 'Tính toán', khoa_hoc: 'Khoa học',
@@ -2371,6 +2530,7 @@
         licenseNotice = await LicenseClient.getNotice();
         renderLicenseSection(licenseState);
         capNhatDaiBaoTk_(licenseState);
+        capNhatDongBanQuyenBatDau_(licenseState);
     }
     let licenseNotice = null;
 
@@ -2592,6 +2752,7 @@
                     document.getElementById('lic-reg-sdt').value = '';
                     await refreshLicenseUI();
                     closeLockModal();
+                    sauKichHoat(res.gv_ho_ten || res.sdt);
                     return;
                 }
                 showToast(res.daDangKyTruoc
@@ -2644,6 +2805,7 @@
                     showToast('✓ Đã kích hoạt cho ' + (dk.gv_ho_ten || dk.sdt));
                     await refreshLicenseUI();
                     closeLockModal();
+                    sauKichHoat(dk.gv_ho_ten || dk.sdt);
                     return;
                 }
             } else if (res.ok && res.status === 'cho_thanh_toan') {
@@ -2665,13 +2827,14 @@
     // Tránh start trùng (LicenseClient tự dọn timer cũ trong startPolling).
     function startLicensePolling_(sdt) {
         if (!sdt || !window.LicenseClient) return;
-        document.getElementById('lic-btn-check-now').style.display = 'none';
+        // 6.3.6: nút "Tôi đã chuyển khoản — kiểm tra ngay" luôn hiện (không chờ 30 phút)
 
         LicenseClient.startPolling(sdt, {
             onActivated: async (bindRes) => {
-                showToast('🎉 Đã kích hoạt thành công cho ' + (bindRes.gv_ho_ten || bindRes.sdt));
+                showToast('Đã kích hoạt thành công cho ' + (bindRes.gv_ho_ten || bindRes.sdt));
                 await refreshLicenseUI();
                 closeLockModal();
+                sauKichHoat(bindRes.gv_ho_ten || bindRes.sdt);
             },
             onGiveUp: async (errRes) => {
                 // Hết 30 phút polling, hoặc bind fail (đã active máy khác)
@@ -2708,6 +2871,7 @@
                 licUiMode = 'register';
                 await refreshLicenseUI();
                 closeLockModal();
+                sauKichHoat(res.gv_ho_ten || res.sdt);
             } else {
                 errEl.style.display = 'block';
                 errEl.textContent = mapLicenseError(res);

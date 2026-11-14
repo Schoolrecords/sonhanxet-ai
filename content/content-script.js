@@ -140,7 +140,15 @@
         iframe.style.height = h ? ('calc(100vh - ' + h + 'px)') : '';
     }
     window.addEventListener('resize', fitSidebarAboveTaskbar);
-    setInterval(fitSidebarAboveTaskbar, 2500);
+    setInterval(() => {
+        fitSidebarAboveTaskbar();
+        // 6.3.6: vnEdu dựng lại trang lúc khởi động có thể gỡ mất khung bảng bên
+        // (thẻ xanh vẫn còn) → gắn lại, nếu không bấm thẻ sẽ không thấy gì.
+        if (document.getElementById(TOGGLE_BTN_ID) && !document.getElementById(SIDEBAR_ID)) {
+            console.log('[Sổ nhận xét - AI] Khung bảng bên bị gỡ → gắn lại');
+            mountSidebar();
+        }
+    }, 2500);
 
     /** 6.2.0: vnEdu ghi "Quyền hạn: Bạn không có quyền nhập điểm" khi tài khoản không phụ trách lớp/môn. */
     function vneduBaoKhongCoQuyen() {
@@ -188,6 +196,7 @@
                     if (AI_MODULES.includes(current)) {
                         iframe.classList.remove('cogiao-ai-hidden');
                         _aiPaused = false;
+                        capNhatGoiY();
                         console.log(`[Sổ nhận xét - AI] Mount xong, đang ở module "${current}" → auto-show`);
                     }
                 } catch (e) { /* silent */ }
@@ -197,18 +206,93 @@
         createToggleButton();
     }
 
+    // 6.3.6: thẻ mở luôn hiện ở mép phải MỌI trang vnEdu (trước đây là dải 22px chữ
+    // "Đóng / Mở" rất mờ — GV kích hoạt xong không biết tiện ích nằm đâu).
+    const HINT_ID = 'cogiao-ai-hint';
+    const HINT_KEY = 'snx_launcher_seen_v1';
     function createToggleButton() {
         if (document.getElementById(TOGGLE_BTN_ID)) return;
         const btn = document.createElement('button');
         btn.id = TOGGLE_BTN_ID;
-        btn.title = 'Bấm để mở hoặc đóng Sổ nhận xét - AI';
-        // V.05: inner span xoay -90deg → text hiển thị dọc
+        btn.type = 'button';
+        btn.title = 'Sổ nhận xét - AI · Bấm để mở hoặc đóng';
+        const icon = document.createElement('img');
+        icon.className = 'toggle-icon';
+        icon.alt = '';
+        icon.src = chrome.runtime.getURL('icons/icon-48.png');
         const label = document.createElement('span');
         label.className = 'toggle-label';
-        label.textContent = 'Đóng / Mở';
+        label.textContent = 'Nhận xét AI';
+        btn.appendChild(icon);
         btn.appendChild(label);
-        btn.onclick = toggleSidebar;
+        btn.onclick = () => { anGoiY(true); toggleSidebar(); };
         document.body.appendChild(btn);
+        capNhatGoiY();
+        hienGoiYLanDau();
+    }
+
+    /** Lần đầu: một dòng chỉ vào thẻ mở. Bấm thẻ hoặc dấu × thì thôi không hiện nữa. */
+    function hienGoiYLanDau() {
+        try {
+            chrome.storage.local.get(HINT_KEY, (r) => {
+                if (r && r[HINT_KEY]) return;
+                if (document.getElementById(HINT_ID)) return;
+                const box = document.createElement('div');
+                box.id = HINT_ID;
+                box.setAttribute('role', 'status');
+                box.innerHTML = '<span class="hint-text"><b>Sổ nhận xét - AI</b> ở đây. Bấm thẻ xanh để mở.</span>' +
+                    '<button type="button" class="hint-close" title="Đã hiểu">×</button>';
+                box.querySelector('.hint-close').onclick = () => anGoiY(true);
+                document.body.appendChild(box);
+                capNhatGoiY();
+            });
+        } catch (e) { /* silent */ }
+    }
+    function anGoiY(luu) {
+        const box = document.getElementById(HINT_ID);
+        if (box) box.remove();
+        if (luu) { try { chrome.storage.local.set({ [HINT_KEY]: 1 }); } catch (e) { /* silent */ } }
+    }
+    /** Gợi ý chỉ hiện khi thanh bên đang đóng (thẻ nằm sát mép phải). */
+    function capNhatGoiY() {
+        const iframe = document.getElementById(SIDEBAR_ID);
+        const dong = !iframe || iframe.classList.contains('cogiao-ai-hidden');
+        const btn = document.getElementById(TOGGLE_BTN_ID);
+        if (btn) btn.classList.toggle('snx-mo', !dong);
+        const box = document.getElementById(HINT_ID);
+        if (box) box.style.display = dong ? '' : 'none';
+    }
+
+    // 6.3.6: báo service worker màn đang mở → dấu xanh trên biểu tượng tiện ích của tab này.
+    let _lastBadgeModule = undefined;
+    function baoManChoBieuTuong(module) {
+        if (module === _lastBadgeModule) return;
+        _lastBadgeModule = module;
+        try { chrome.runtime.sendMessage({ type: 'SNX_MODULE', module: module || null }).catch(() => {}); } catch (e) { /* silent */ }
+    }
+
+    // 6.3.6: nút "Mở giúp tôi" ở màn Bắt đầu → tự mở đúng màn vnEdu.
+    let _dangMoMan = false;
+    async function handleOpenModule(payload) {
+        const iframe = document.getElementById(SIDEBAR_ID);
+        const traLoi = (result) => iframe?.contentWindow?.postMessage({
+            type: 'COGIAO_OPEN_MODULE_RESULT', payload: { target: payload && payload.target, result }
+        }, '*');
+        const target = payload && payload.target;
+        if (!['so-nhan-xet', 'nlpc', 'scn1', 'scn2'].includes(target)) { traLoi({ success: false, reason: 'bad_target' }); return; }
+        if (_dangMoMan) { traLoi({ success: false, reason: 'busy' }); return; }
+        _dangMoMan = true;
+        try {
+            const r = await window.VneduAdapter.openVneduModule(target);
+            traLoi(r || { success: false });
+            // Màn mới mở → quét ngay cho thanh bên đổi sang màn làm việc
+            setTimeout(checkModuleChange, 800);
+            setTimeout(checkModuleChange, 2500);
+        } catch (e) {
+            traLoi({ success: false, reason: 'exception', error: e && e.message });
+        } finally {
+            _dangMoMan = false;
+        }
     }
 
     let _lastDetectedModule = null;
@@ -248,6 +332,7 @@
 
         const module = detectCurrentModule();
         _lastDetectedModule = module;  // track để MutationObserver compare
+        baoManChoBieuTuong(module);
         let payload = { module, context: {}, students: [], account: _vneduAccount };
 
         if (module === 'so-nhan-xet') {
@@ -442,16 +527,19 @@
                 const isNX = AI_MODULES.includes(current);
                 const iframe = document.getElementById(SIDEBAR_ID);
 
-                if (wasNX && !isNX && iframe && !iframe.classList.contains('cogiao-ai-hidden')) {
+                if (wasNX && !isNX && iframe && !iframe.classList.contains('cogiao-ai-hidden')
+                    && Date.now() - _moTayLuc > 6000) {   // 6.3.6: GV vừa tự bấm mở thì không đóng lại
                     // Auto-HIDE: rời NX → ẩn
                     iframe.classList.add('cogiao-ai-hidden');
                     _aiPaused = true;
+                    capNhatGoiY();
                     console.log(`[Sổ nhận xét - AI] %cAuto-hide sidebar%c: rời module NX (${_lastDetectedModule} → ${current || 'khác'})`,
                         'color:#B65000;font-weight:bold', 'color:inherit');
                 } else if (!wasNX && isNX && iframe && iframe.classList.contains('cogiao-ai-hidden')) {
                     // Auto-SHOW: vào NX → hiện (sidebar "thức dậy")
                     iframe.classList.remove('cogiao-ai-hidden');
                     _aiPaused = false;
+                    capNhatGoiY();
                     console.log(`[Sổ nhận xét - AI] %cAuto-show sidebar%c: vào module NX (${_lastDetectedModule || 'khác'} → ${current})`,
                         'color:#1D9E75;font-weight:bold', 'color:inherit');
                 }
@@ -502,19 +590,29 @@
         }
     }
 
+    let _moTayLuc = 0;   // lúc GV tự bấm mở bảng bên
     function toggleSidebar() {
         const iframe = document.getElementById(SIDEBAR_ID);
         if (iframe) {
             iframe.classList.toggle('cogiao-ai-hidden');
             // V.05: Sidebar đóng = AI tạm dừng. Mở = chạy.
             const isHidden = iframe.classList.contains('cogiao-ai-hidden');
+            if (!isHidden) _moTayLuc = Date.now();
             _aiPaused = isHidden;
             try {
                 chrome.storage.local.set({ ai_paused_v1: isHidden });
             } catch (e) { /* silent */ }
             console.log('[Sổ nhận xét - AI] Sidebar ' + (isHidden ? 'ĐÓNG → AI TẠM DỪNG' : 'MỞ → AI BẬT'));
+            capNhatGoiY();
         } else {
             mountSidebar();
+            const moi = document.getElementById(SIDEBAR_ID);
+            if (moi) {
+                moi.classList.remove('cogiao-ai-hidden');
+                _aiPaused = false;
+                try { chrome.storage.local.set({ ai_paused_v1: false }); } catch (e) { /* silent */ }
+            }
+            capNhatGoiY();
         }
     }
 
@@ -600,6 +698,10 @@
 
             case 'COGIAO_CLOSE_SIDEBAR':
                 toggleSidebar();
+                break;
+
+            case 'COGIAO_OPEN_MODULE':   // 6.3.6
+                handleOpenModule(data.payload);
                 break;
 
             case 'COGIAO_REQUEST_CACHE_STATS':
@@ -778,7 +880,8 @@
             const hasTable = document.querySelector('textarea, table.x-grid, .x-grid-cell');
             const hasContent = document.body && document.body.innerText.length > 100;
 
-            if ((hasTable || attempts > 10) && hasContent) {
+            // 6.3.6: 10 → 3 lượt (~2 s): thẻ mở hiện sớm ở màn hình chính vnEdu
+            if ((hasTable || attempts > 3) && hasContent) {
                 clearInterval(checkInterval);
                 setTimeout(mountSidebar, 500);
             }

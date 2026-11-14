@@ -2091,7 +2091,7 @@ class NLPCMapper {
                 badge: 'Đ',
                 avg: null,
                 sources: [],
-                hint: '(chưa có cache → mặc định Đạt)',
+                hint: '(chưa có điểm đã lưu, tạm lấy mức Đạt)',
                 isDefault: true
             };
         }

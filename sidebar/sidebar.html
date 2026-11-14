@@ -47,24 +47,56 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/></svg>
         <span>Cập nhật dữ liệu từ Vnedu</span>
     </button>
+    <button class="btn-viec-khac" id="btn-viec-khac" type="button" title="Về màn chọn việc: Nhận xét môn học, Năng lực - Phẩm chất, Sổ chủ nhiệm" hidden>Việc khác</button>
 </div>
 
 <div class="lic-main-warn" id="lic-main-warn" style="display:none" role="status"></div>
 
 <main class="content">
 
+    <!-- 6.3.6: Màn "Bắt đầu" — chọn việc, có đường bấm và nút tự mở đúng màn vnEdu -->
     <div id="view-empty" class="view">
-        <div class="empty-state">
-            <div class="empty-title">Chưa phát hiện trang nhập điểm</div>
-            <div class="empty-text">
-                Vui lòng mở:
-                <ul style="text-align:left; margin-top:8px;">
-                    <li>Sổ điểm → Sổ nhận xét</li>
-                    <li>Hoặc: Học bạ → Phẩm chất, Năng lực</li>
-                    <li>Hoặc: Sổ chủ nhiệm tiểu học (Mẫu 1, Mẫu 2)</li>
-                </ul>
-                <p style="margin-top: 12px; color: #888780;">Sau khi đổi lớp/môn, bấm nút <strong>"Cập nhật dữ liệu từ Vnedu"</strong> ở trên.</p>
+        <div class="start">
+            <div class="start-done" id="start-done" hidden></div>
+            <div class="start-msg" id="start-msg" role="status" hidden></div>
+            <h2 class="start-title">Thầy/cô muốn làm việc gì?</h2>
+            <p class="start-sub">Chọn một việc. Tiện ích tự mở đúng màn hình trên vnEdu, bảng bên sẽ hiện nội dung để làm.</p>
+
+            <div class="start-card">
+                <div class="start-card-head">
+                    <div class="start-card-title">Nhận xét môn học</div>
+                    <div class="start-card-desc">Viết nhận xét giữa kỳ, cuối kỳ cho cả lớp theo điểm, mức đạt từng em.</div>
+                </div>
+                <div class="start-path">Màn hình chính vnEdu ▸ biểu tượng <b>Sổ nhận xét</b> ▸ chọn lớp, môn, kỳ</div>
+                <button type="button" class="btn-primary start-btn" data-open="so-nhan-xet">Mở giúp tôi</button>
             </div>
+
+            <div class="start-card">
+                <div class="start-card-head">
+                    <div class="start-card-title">Năng lực - Phẩm chất</div>
+                    <div class="start-card-desc">Nhận xét Năng lực chung, Năng lực đặc thù, Phẩm chất ghi học bạ.</div>
+                </div>
+                <div class="start-path">Start (góc dưới bên trái) ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ <b>Phẩm chất - Năng lực ghi học bạ</b></div>
+                <button type="button" class="btn-primary start-btn" data-open="nlpc">Mở giúp tôi</button>
+            </div>
+
+            <div class="start-card">
+                <div class="start-card-head">
+                    <div class="start-card-title">Sổ chủ nhiệm</div>
+                    <div class="start-card-desc">Viết nháp các mục Sổ chủ nhiệm tiểu học, tự xếp Sơ đồ lớp.</div>
+                </div>
+                <div class="start-path">Màn hình chính vnEdu ▸ biểu tượng <b>Sổ chủ nhiệm tiểu học - Mẫu 1</b> hoặc <b>Mẫu 2</b> (theo mẫu trường dùng)</div>
+                <div class="start-btn-row">
+                    <button type="button" class="btn-primary start-btn" data-open="scn1">Mở Mẫu 1</button>
+                    <button type="button" class="btn-primary start-btn" data-open="scn2">Mở Mẫu 2</button>
+                </div>
+            </div>
+
+            <div class="start-note">
+                Đã ở đúng màn mà bảng bên chưa đổi? Bấm <b>Cập nhật dữ liệu từ Vnedu</b> ở trên.
+                Muốn đóng bảng bên: bấm dấu × ở góc trên; mở lại bằng thẻ xanh <b>Nhận xét AI</b> ở mép phải màn hình.
+            </div>
+            <div class="start-lic" id="start-lic" hidden></div>
         </div>
     </div>
 
@@ -377,9 +409,8 @@
                     </div>
                 </div>
 
-                <button class="btn-secondary lic-btn-mini" id="lic-btn-check-now"
-                        style="display:none">
-                    🔄 Kiểm tra ngay
+                <button class="btn-secondary lic-btn-mini" id="lic-btn-check-now">
+                    Tôi đã chuyển khoản — kiểm tra ngay
                 </button>
                 <button class="btn-secondary lic-btn-mini" id="lic-btn-cancel-pending">
                     Hủy đăng ký này

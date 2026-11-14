@@ -1,38 +1,37 @@
 {
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
-  "version": "6.3.5",
+  "version": "6.3.6",
   "description": "Tạo nhận xét môn học, NL/PC theo Thông tư 27/2020 và viết nháp Sổ chủ nhiệm cho GV tiểu học trên Vnedu",
   "author": "Phát triển bởi giáo viên cho giáo viên",
-
   "permissions": [
     "storage"
   ],
-
   "host_permissions": [
     "*://*.vnedu.vn/*",
     "https://script.google.com/*",
     "https://script.googleusercontent.com/*"
   ],
-
   "content_scripts": [
     {
-      "matches": ["*://*.vnedu.vn/*"],
+      "matches": [
+        "*://*.vnedu.vn/*"
+      ],
       "js": [
         "engine/engine.js",
         "content/vnedu-adapter.js",
         "content/content-script.js"
       ],
-      "css": ["content/sidebar-inject.css"],
+      "css": [
+        "content/sidebar-inject.css"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
   ],
-
   "background": {
     "service_worker": "background/service-worker.js"
   },
-
   "web_accessible_resources": [
     {
       "resources": [
@@ -46,12 +45,14 @@
         "license/qr.png",
         "content/page-error-bridge.js",
         "content/scn-bridge.js",
-        "engine/sochunhiem.js"
+        "engine/sochunhiem.js",
+        "icons/icon-48.png"
       ],
-      "matches": ["*://*.vnedu.vn/*"]
+      "matches": [
+        "*://*.vnedu.vn/*"
+      ]
     }
   ],
-
   "action": {
     "default_title": "Sổ nhận xét - AI · Click để mở/đóng bảng bên",
     "default_icon": {
@@ -59,7 +60,6 @@
       "48": "icons/icon-48.png"
     }
   },
-
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",

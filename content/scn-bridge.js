@@ -452,7 +452,11 @@
             const el = fieldElement(win, f);
             if (!el) { failed.push(it.key); continue; }
             if (f.kind === 'ck') {
-                await setCk(el, it.html || it.text || '');
+                // 6.3.6: bảng bên không gửi kèm html thì tự đổi chữ thường sang từng đoạn <p>;
+                // trước đây đưa thẳng chữ thường vào CKEditor nên các gạch đầu dòng dồn thành một đoạn.
+                const htmlCk = it.html || String(it.text || '').split('\n').map(l =>
+                    '<p>' + l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>').join('');
+                await setCk(el, htmlCk);
                 const back = htmlToText(el.getData());
                 const want = htmlToText(it.html || it.text || '');
                 if (back.replace(/\s+/g, ' ') === want.replace(/\s+/g, ' ')) filled.push(it.key); else failed.push(it.key);
