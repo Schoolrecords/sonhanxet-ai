@@ -1,0 +1,68 @@
+🎯 Sổ nhận xét - AI là gì?
+
+Sổ nhận xét - AI là tiện ích hỗ trợ giáo viên tiểu học tạo nhận xét môn học, nhận xét Năng lực - Phẩm chất và viết nháp Sổ chủ nhiệm trên hệ thống VnEdu theo tinh thần Thông tư 27/2020/TT-BGDĐT.
+
+Thay vì mất nhiều thời gian gõ nhận xét thủ công cho cả lớp, thầy cô chỉ cần vài thao tác: mở VnEdu, bấm thẻ "Nhận xét AI", chọn việc cần làm, bấm tạo nhận xét, xem trước nội dung, chỉnh sửa nếu cần và áp dụng vào VnEdu.
+
+Công cụ không thay giáo viên đánh giá học sinh. Sổ nhận xét - AI chỉ hỗ trợ gợi ý nhận xét ban đầu; giáo viên vẫn là người xem xét, điều chỉnh và quyết định nội dung cuối cùng.
+
+📚 Tiện ích hoạt động trên các trang nào?
+
+• Sổ nhận xét (môn học): màn hình chính VnEdu ▸ biểu tượng Sổ nhận xét ▸ chọn lớp, môn, kỳ.
+• Năng lực - Phẩm chất: Start ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ Phẩm chất - Năng lực ghi học bạ.
+• Sổ chủ nhiệm tiểu học (Mẫu 1, Mẫu 2): màn hình chính VnEdu ▸ biểu tượng Sổ chủ nhiệm tiểu học.
+• Không nhớ đường? Bấm "Mở giúp tôi" trong bảng bên, tiện ích tự mở đúng màn hình.
+
+✅ Định hướng nội dung nhận xét bám theo tinh thần đánh giá học sinh tiểu học tại Thông tư 27/2020/TT-BGDĐT.
+
+🔒 Cam kết về dữ liệu và quyền riêng tư
+
+• Dữ liệu học sinh được xử lý ngay trên trình duyệt của thầy cô.
+• Không gửi tên học sinh, điểm số hoặc thông tin cá nhân học sinh ra máy chủ bên ngoài.
+• Không thu thập danh sách lớp, kết quả học tập hay nội dung nhận xét của học sinh.
+• Mọi nhận xét được tạo và xem trước ngay trên máy tính của người dùng.
+• Mã nguồn mở, có thể kiểm tra để bảo đảm tính minh bạch.
+
+🛠️ Các môn học và hoạt động được hỗ trợ
+
+Tiếng Việt, Toán, Tự nhiên và Xã hội, Khoa học, Lịch sử và Địa lí, Đạo đức, Tin học, Công nghệ, Tiếng Anh, Giáo dục thể chất, Âm nhạc, Mĩ thuật, Hoạt động trải nghiệm và các nội dung giáo dục phù hợp với cấp tiểu học.
+
+🎨 Tính năng chính
+
+• Tạo nhận xét cho từng môn học và hoạt động giáo dục.
+• Tạo nhận xét NL-PC dựa trên kết quả đánh giá trong quá trình học tập.
+• Viết nháp các mục Sổ chủ nhiệm tiểu học (Mẫu 1, Mẫu 2); ô đã có chữ của giáo viên thì không ghi đè.
+• Gợi ý nhận xét theo mức độ hoàn thành, giúp nội dung rõ hơn, sát hơn, ít trùng lặp hơn.
+• Cho phép xem trước trước khi áp dụng vào VnEdu.
+• Không tự ghi đè khi giáo viên chưa duyệt.
+• Giáo viên có thể sửa, thêm, bớt nội dung trước khi lưu.
+• Thẻ xanh "Nhận xét AI" luôn nằm ở mép phải trang VnEdu: bấm là mở bảng bên.
+• Bảng bên tự hiện khi vào đúng màn hình; ở màn khác, bảng bên cho chọn việc và tự mở màn hình cần làm.
+
+💡 Cách sử dụng trong 3 bước
+
+1. Cài tiện ích, rồi ghim biểu tượng lên thanh công cụ Chrome (bấm hình mảnh ghép ▸ ghim Sổ nhận xét - AI).
+2. Mở VnEdu và đăng nhập như bình thường (trang đã mở từ trước thì bấm F5).
+3. Bấm thẻ xanh "Nhận xét AI" ở mép phải màn hình ▸ chọn việc (Nhận xét môn học, Năng lực - Phẩm chất, Sổ chủ nhiệm) ▸ bấm "Mở giúp tôi". Chọn lớp, bấm tạo nhận xét, kiểm tra rồi áp dụng.
+
+🚀 Kích hoạt và sử dụng
+
+• Cài đặt tiện ích từ Chrome Web Store.
+• Lần đầu sử dụng, thầy cô đăng ký hoặc nhập mã kích hoạt ngay trong bảng bên.
+• Khi đổi máy hoặc cài lại Windows, có thể liên hệ tác giả để được hỗ trợ reset thiết bị và sử dụng lại mã cũ.
+
+📞 Hỗ trợ và phản hồi
+
+Sản phẩm được phát triển bởi giáo viên tiểu học, xuất phát từ nhu cầu thực tế của giáo viên khi nhập nhận xét cuối kỳ trên VnEdu.
+
+Tác giả: Chung Trần
+Điện thoại/Zalo: 0913031073
+
+Mọi góp ý, phản hồi hoặc đề xuất cải tiến vui lòng liên hệ qua Zalo hoặc email của tác giả.
+
+⚠️ Lưu ý
+
+• Tiện ích chỉ hoạt động trên website VnEdu (*.vnedu.vn).
+• Thẻ xanh "Nhận xét AI" hiện trên mọi trang VnEdu khi đã đăng nhập; bảng bên tự mở khi đang ở Sổ nhận xét, trang Năng lực - Phẩm chất hoặc Sổ chủ nhiệm. Không thấy thẻ: bấm F5; biểu tượng tiện ích có chữ BẬT đỏ thì bấm vào và chọn Cho phép.
+• Nếu VnEdu thay đổi giao diện khiến tiện ích chưa nhận diện đúng màn hình, thầy cô có thể bấm nút "Cập nhật dữ liệu từ Vnedu" trong bảng bên hoặc liên hệ tác giả để được cập nhật.
+• Nội dung nhận xét do tiện ích gợi ý cần được giáo viên kiểm tra trước khi áp dụng chính thức.
