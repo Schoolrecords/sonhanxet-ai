@@ -281,6 +281,7 @@
             if (currentModule === 'so-nhan-xet') showView('so-nhan-xet');
             else if (currentModule === 'nlpc') showView('nlpc');
             else if (currentModule === 'so-chu-nhiem') showView('so-chu-nhiem');
+            else if (currentModule === 'so-theo-doi') showView('so-theo-doi');
             else showView('empty');
         };
 
@@ -455,6 +456,7 @@
             rescanBar.style.display = '';
             if (currentModule === 'so-nhan-xet') showView('so-nhan-xet');
             else if (currentModule === 'nlpc') showView('nlpc');
+            else if (currentModule === 'so-chu-nhiem' || currentModule === 'so-theo-doi') showView(currentModule);
             else showView('empty');
         }
     }
@@ -875,6 +877,9 @@
         }
 
         const moduleTruoc = currentModule;
+        // 6.4.0: đang đọc/lưu Sổ theo dõi chất lượng cả lớp → vnEdu đổi học sinh liên tục,
+        // có lúc che màn trong chốc lát; giữ nguyên màn để không mất thanh tiến độ.
+        if (moduleTruoc === 'so-theo-doi' && module !== 'so-theo-doi' && window.StclView && window.StclView.isRunning()) return;
         currentModule = module;
         currentContext = context;
         currentStudents = students || [];
@@ -883,12 +888,14 @@
         if (!module) {
             if (_giuBatDau) baoBatDau_('');   // dòng "Đang mở sẵn…" hết đúng
             _giuBatDau = false;
+            danhDauViecDangMo_();
             showView('empty');
             return;
         }
         // 6.3.6: GV vừa bấm "Việc khác" → giữ màn chọn việc, không tự nhảy về việc cũ
         if (_giuBatDau && module === moduleTruoc) return;
         _giuBatDau = false;
+        danhDauViecDangMo_();
         baoBatDau_('');   // vào việc rồi → bỏ dòng "Đã mở…" để lần sau về màn chọn việc không còn
         hienViecDangMo_(prev, next);
     }
@@ -903,6 +910,10 @@
             // 6.3.0: màn Sổ chủ nhiệm do scn-view.js lo
             try { window.ScnView && window.ScnView.update(context || {}); } catch (e) { console.warn('[Sổ chủ nhiệm]', e); }
             showView('so-chu-nhiem');
+        } else if (module === 'so-theo-doi') {
+            // 6.4.0: Sổ theo dõi chất lượng do stcl-view.js lo
+            try { window.StclView && window.StclView.update(context || {}); } catch (e) { console.warn('[Sổ theo dõi chất lượng]', e); }
+            showView('so-theo-doi');
         } else if (module === 'so-nhan-xet') {
             renderSoNhanXetView();
             showView('so-nhan-xet');
@@ -930,26 +941,47 @@
         'so-nhan-xet': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ nhận xét", rồi chọn lớp, môn, kỳ.',
         'nlpc': 'Bấm Start (góc dưới bên trái) ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ Phẩm chất - Năng lực ghi học bạ.',
         'scn1': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ chủ nhiệm tiểu học - Mẫu 1".',
-        'scn2': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ chủ nhiệm tiểu học - Mẫu 2".'
+        'scn2': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ chủ nhiệm tiểu học - Mẫu 2".',
+        'stcl': 'Ở màn hình chính vnEdu, bấm đúp biểu tượng "Sổ theo dõi chất lượng", rồi chọn Giữa kỳ hoặc Cuối kỳ ở ô Tháng.'
     };
     const TEN_VIEC = {
         'so-nhan-xet': 'Sổ nhận xét môn', 'nlpc': 'Năng lực - Phẩm chất',
-        'scn1': 'Sổ chủ nhiệm Mẫu 1', 'scn2': 'Sổ chủ nhiệm Mẫu 2'
+        'scn1': 'Sổ chủ nhiệm Mẫu 1', 'scn2': 'Sổ chủ nhiệm Mẫu 2', 'stcl': 'Sổ theo dõi chất lượng'
     };
     let _moManTimer = null;
     let _giuBatDau = false;   // GV bấm "Việc khác" khi vnEdu vẫn mở việc cũ
-    const TEN_MAN_DANG_MO = { 'so-nhan-xet': 'Sổ nhận xét môn', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm' };
+    const TEN_MAN_DANG_MO = { 'so-nhan-xet': 'Sổ nhận xét môn', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm', 'so-theo-doi': 'Sổ theo dõi chất lượng' };
 
     /** Nút "Việc khác": về màn chọn việc, kèm lối quay lại việc đang mở trên vnEdu. */
     function veManChonViec() {
         _giuBatDau = true;
         showView('empty');
-        const ten = TEN_MAN_DANG_MO[currentModule];
-        if (ten) {
-            baoBatDau_('vnEdu đang mở <b>' + ten + '</b>. <a href="#" id="start-quay-lai">Quay lại việc này</a>, hoặc chọn việc khác bên dưới.', 'info');
-            const a = document.getElementById('start-quay-lai');
-            if (a) a.onclick = (e) => { e.preventDefault(); _giuBatDau = false; baoBatDau_(''); hienViecDangMo_(); };
-        }
+        baoBatDau_('');
+        danhDauViecDangMo_();
+    }
+
+    /** 6.4.0: đánh dấu ngay trên thẻ việc vnEdu đang mở (nhãn "Đang mở", nút "Quay lại"),
+     *  thay cho hộp chữ riêng ở đầu màn. */
+    function danhDauViecDangMo_() {
+        const dangMo = _giuBatDau ? currentModule : null;
+        document.querySelectorAll('#view-empty .start-card').forEach(card => {
+            const btns = [...card.querySelectorAll('[data-open]')];
+            const t = btns[0] && btns[0].dataset.open;
+            const man = (t === 'scn1' || t === 'scn2') ? 'so-chu-nhiem' : t === 'stcl' ? 'so-theo-doi' : t;
+            const la = !!dangMo && man === dangMo;
+            card.classList.toggle('start-card-cur', la);
+            const tieuDe = card.querySelector('.start-card-title');
+            let nhan = card.querySelector('.start-cur');
+            if (la && !nhan && tieuDe) { nhan = document.createElement('span'); nhan.className = 'start-cur'; nhan.textContent = 'Đang mở'; tieuDe.appendChild(nhan); }
+            if (!la && nhan) nhan.remove();
+            btns.forEach(b => {
+                if (!b.dataset.goc) b.dataset.goc = b.textContent;
+                const quay = la && btns.length === 1;   // Sổ chủ nhiệm có 2 mẫu → giữ nút Mẫu 1/2
+                b.dataset.quay = quay ? '1' : '';
+                b.dataset.nhan = quay ? 'Quay lại' : b.dataset.goc;
+                b.textContent = b.dataset.nhan;
+            });
+        });
     }
 
     function baoBatDau_(html, loai) {
@@ -971,6 +1003,10 @@
 
     function moManVnedu(target, btn) {
         if (!DUONG_BAM[target]) return;
+        if (btn && btn.dataset.quay === '1' && _giuBatDau) {   // việc đang mở sẵn → về thẳng
+            _giuBatDau = false; danhDauViecDangMo_(); hienViecDangMo_();
+            return;
+        }
         datNutBatDau_(true, btn);
         baoBatDau_('Đang mở <b>' + TEN_VIEC[target] + '</b> trên vnEdu…', 'info');
         parent.postMessage({ type: 'COGIAO_OPEN_MODULE', payload: { target } }, '*');
@@ -987,14 +1023,16 @@
         datNutBatDau_(false);
         const target = p && p.target;
         const r = (p && p.result) || {};
-        const manCuaViec = (target === 'scn1' || target === 'scn2') ? 'so-chu-nhiem' : target;
+        const manCuaViec = (target === 'scn1' || target === 'scn2') ? 'so-chu-nhiem' : target === 'stcl' ? 'so-theo-doi' : target;
         if (r.success && _giuBatDau && currentModule === manCuaViec) {
             // Việc này vnEdu đang mở sẵn → vào thẳng màn làm việc
-            _giuBatDau = false; baoBatDau_(''); hienViecDangMo_();
+            _giuBatDau = false; danhDauViecDangMo_(); baoBatDau_(''); hienViecDangMo_();
             return;
         }
+        const conGiu = Array.isArray(r.giu) && r.giu.length
+            ? '<br>Cửa sổ <b>' + escapeHtml(r.giu.join(', ')) + '</b> còn dữ liệu chưa lưu nên tiện ích để nguyên; lưu xong thầy/cô tự đóng.' : '';
         if (r.success) {
-            baoBatDau_('Đã mở <b>' + escapeHtml(TEN_VIEC[target] || '') + '</b>. Chọn lớp (môn, kỳ nếu có) trên vnEdu, bảng bên sẽ tự hiện nội dung để làm.', 'ok');
+            baoBatDau_('Đã mở <b>' + escapeHtml(TEN_VIEC[target] || '') + '</b>. Chọn lớp (môn, kỳ nếu có) trên vnEdu, bảng bên sẽ tự hiện nội dung để làm.' + conGiu, 'ok');
             return;
         }
         const duong = DUONG_BAM[target] || '';
@@ -1010,10 +1048,11 @@
         if (!el) return;
         if (state && state.status === 'active') { el.hidden = true; el.innerHTML = ''; return; }
         const dangCho = state && state.status === 'pending';
-        el.innerHTML = (dangCho
-            ? 'Đang chờ xác nhận chuyển khoản. '
-            : 'Đang dùng thử (1 môn, 1 lớp). ') +
-            '<a href="#" id="start-lic-link">' + (dangCho ? 'Xem trạng thái kích hoạt' : 'Kích hoạt bản quyền') + '</a>';
+        // 6.4.0: thẻ mảnh — dòng trên "Kích hoạt bản quyền" (cỡ tên việc), dòng dưới tình trạng
+        el.innerHTML = '<button type="button" class="start-lic-card" id="start-lic-link">' +
+            '<span class="start-lic-text"><span class="start-lic-title">' + (dangCho ? 'Xem trạng thái kích hoạt' : 'Kích hoạt bản quyền') + '</span>' +
+            '<span class="start-lic-sub">' + (dangCho ? 'Đang chờ xác nhận chuyển khoản' : 'Đang dùng thử (1 môn, 1 lớp)') + '</span></span>' +
+            '<span class="start-lic-arrow" aria-hidden="true">›</span></button>';
         el.hidden = false;
         const a = document.getElementById('start-lic-link');
         if (a) a.onclick = (e) => { e.preventDefault(); document.getElementById('btn-settings')?.click(); };
@@ -1023,11 +1062,19 @@
     function sauKichHoat(ten) {
         const done = document.getElementById('start-done');
         if (done) {
-            done.innerHTML = '<b>Đã kích hoạt bản quyền' + (ten ? ' cho ' + escapeHtml(ten) : '') + '.</b> ' +
-                'Thầy/cô chọn việc cần làm bên dưới. Lần sau mở vnEdu, bấm thẻ xanh <b>Nhận xét AI</b> ở mép phải màn hình để mở lại bảng này.';
+            // 6.4.0: gọn — dấu tích, tên người dùng, một dòng nhắc; có nút đóng, tự ẩn sau 20 giây
+            done.innerHTML =
+                '<svg class="start-done-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1D9E75"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                '<div class="start-done-body"><div class="start-done-title">Đã kích hoạt bản quyền</div>' +
+                (ten ? '<div class="start-done-ten">' + escapeHtml(ten) + '</div>' : '') +
+                '<div class="start-done-hint">Lần sau: bấm <b>Nhận xét AI</b> ở mép phải màn hình để mở bảng này.</div></div>' +
+                '<button type="button" class="start-done-x" title="Đóng" aria-label="Đóng">×</button>';
             done.hidden = false;
+            const an = () => { done.hidden = true; };
+            done.querySelector('.start-done-x').onclick = an;
+            clearTimeout(done._t); done._t = setTimeout(an, 20000);
         }
-        const tenMan = { 'so-nhan-xet': 'Sổ nhận xét', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm' };
+        const tenMan = { 'so-nhan-xet': 'Sổ nhận xét', 'nlpc': 'Năng lực - Phẩm chất', 'so-chu-nhiem': 'Sổ chủ nhiệm', 'so-theo-doi': 'Sổ theo dõi chất lượng' };
         if (tenMan[currentModule]) {
             showView(currentModule);
             showToast('Đã kích hoạt. Tiếp tục làm ' + tenMan[currentModule] + '.');
@@ -1045,7 +1092,7 @@
         if (mw) mw.style.display = (name !== 'settings' && mw.innerHTML) ? '' : 'none';
         // 6.3.6: nút "Việc khác" chỉ hiện ở 3 màn làm việc
         const vk = document.getElementById('btn-viec-khac');
-        if (vk) vk.hidden = !['so-nhan-xet', 'nlpc', 'so-chu-nhiem'].includes(name);
+        if (vk) vk.hidden = !['so-nhan-xet', 'nlpc', 'so-chu-nhiem', 'so-theo-doi'].includes(name);
 
         const applyBar = document.getElementById('apply-bar');
         if (name === 'so-nhan-xet' && generatedNhanXet.size > 0) {
@@ -2955,6 +3002,9 @@
             const lopHienTai = ctx?.currentClass || '?';
             titleEl.textContent = `Bản miễn phí đã khóa ở lớp ${lopLocked}`;
             msgEl.innerHTML = `Máy này đã chọn cặp <strong>môn ${escapeHtml(subj)} · lớp ${escapeHtml(lopLocked)}</strong>. Thầy/cô đang mở <strong>lớp ${escapeHtml(lopHienTai)}</strong> — cần đăng ký bản quyền để dùng thêm lớp khác.`;
+        } else if (reason === 'stcl_other_class') {
+            titleEl.textContent = `Dùng thử đang ở lớp ${ctx?.freeClass || '?'}`;
+            msgEl.innerHTML = `Bản dùng thử viết Sổ theo dõi chất lượng cho <strong>1 lớp</strong> (cùng lớp dùng thử Sổ nhận xét): lớp <strong>${escapeHtml(ctx?.freeClass || '?')}</strong>. Thầy/cô đang mở <strong>lớp ${escapeHtml(ctx?.currentClass || '?')}</strong> — đăng ký bản quyền để dùng cho mọi lớp.`;
         } else if (reason === 'scn_other_class') {
             titleEl.textContent = `Dùng thử đang ở lớp ${ctx?.freeClass || '?'}`;
             msgEl.innerHTML = `Bản dùng thử viết Sổ chủ nhiệm cho <strong>1 lớp</strong> (cùng lớp dùng thử Sổ nhận xét): lớp <strong>${escapeHtml(ctx?.freeClass || '?')}</strong>. Thầy/cô đang mở <strong>lớp ${escapeHtml(ctx?.currentClass || '?')}</strong> — đăng ký bản quyền để dùng cho mọi lớp.`;

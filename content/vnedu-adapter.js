@@ -2107,6 +2107,7 @@ window.VneduAdapter = {
         const moduleLabel = module === 'nlpc' ? 'Phẩm chất - Năng lực'
             : module === 'scn1' ? 'Sổ chủ nhiệm Mẫu 1'
             : module === 'scn2' ? 'Sổ chủ nhiệm Mẫu 2'
+            : module === 'stcl' ? 'Sổ theo dõi chất lượng'
             : 'Sổ nhận xét môn';
         const overlay = this._showLoadingOverlay_(`Đang mở ${moduleLabel}...`);
 
@@ -2119,6 +2120,8 @@ window.VneduAdapter = {
                 await this._sleep_(500);
                 return { success: true, via: 'desktop_icon' };
             }
+            // 6.4.0: Sổ theo dõi chất lượng chỉ mở bằng biểu tượng ở màn hình chính
+            if (module === 'stcl') return { success: false, reason: 'no_icon' };
 
             // Step 1: Open Start menu nếu chưa mở
             const startMenuEl = document.getElementById('startmenu_container');
@@ -2326,6 +2329,7 @@ window.VneduAdapter = {
             ? []  // chuyển thẳng qua Start menu nav
             : module === 'scn1' ? ['Sổ chủ nhiệm tiểu học - Mẫu 1']
             : module === 'scn2' ? ['Sổ chủ nhiệm tiểu học - Mẫu 2']
+            : module === 'stcl' ? ['Sổ theo dõi chất lượng']
             : ['Sổ nhận xét'];  // Sổ NX môn: icon trên desktop
 
         // Search ALL leaf elements với text khớp, scope desktop area (top of body)
@@ -2336,7 +2340,7 @@ window.VneduAdapter = {
             if (text.length > 50 || text.length < 3) continue;
             // Match exact hoặc startsWith với target
             // 6.3.6: Sổ chủ nhiệm phải khớp đúng tên (Mẫu 1 / Mẫu 2 cùng phần đầu)
-            const matches = targets.some(t => text === t || (!/^Sổ chủ nhiệm/.test(t) && text.startsWith(t)));
+            const matches = targets.some(t => text === t || (!/^Sổ (chủ nhiệm|theo dõi)/.test(t) && text.startsWith(t)));
             if (!matches) continue;
             const r = el.getBoundingClientRect();
             if (r.width <= 0 || r.height <= 0) continue;

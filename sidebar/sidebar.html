@@ -60,41 +60,57 @@
             <div class="start-done" id="start-done" hidden></div>
             <div class="start-msg" id="start-msg" role="status" hidden></div>
             <h2 class="start-title">Thầy/cô muốn làm việc gì?</h2>
-            <p class="start-sub">Chọn một việc. Tiện ích tự mở đúng màn hình trên vnEdu, bảng bên sẽ hiện nội dung để làm.</p>
+            <p class="start-sub">Bấm <b>Mở</b>: tiện ích tự mở đúng màn trên vnEdu.</p>
 
-            <div class="start-card">
-                <div class="start-card-head">
-                    <div class="start-card-title">Nhận xét môn học</div>
-                    <div class="start-card-desc">Viết nhận xét giữa kỳ, cuối kỳ cho cả lớp theo điểm, mức đạt từng em.</div>
-                </div>
-                <div class="start-path">Màn hình chính vnEdu ▸ biểu tượng <b>Sổ nhận xét</b> ▸ chọn lớp, môn, kỳ</div>
-                <button type="button" class="btn-primary start-btn" data-open="so-nhan-xet">Mở giúp tôi</button>
-            </div>
-
-            <div class="start-card">
-                <div class="start-card-head">
-                    <div class="start-card-title">Năng lực - Phẩm chất</div>
-                    <div class="start-card-desc">Nhận xét Năng lực chung, Năng lực đặc thù, Phẩm chất ghi học bạ.</div>
-                </div>
-                <div class="start-path">Start (góc dưới bên trái) ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ <b>Phẩm chất - Năng lực ghi học bạ</b></div>
-                <button type="button" class="btn-primary start-btn" data-open="nlpc">Mở giúp tôi</button>
-            </div>
-
-            <div class="start-card">
-                <div class="start-card-head">
-                    <div class="start-card-title">Sổ chủ nhiệm</div>
-                    <div class="start-card-desc">Viết nháp các mục Sổ chủ nhiệm tiểu học, tự xếp Sơ đồ lớp.</div>
-                </div>
-                <div class="start-path">Màn hình chính vnEdu ▸ biểu tượng <b>Sổ chủ nhiệm tiểu học - Mẫu 1</b> hoặc <b>Mẫu 2</b> (theo mẫu trường dùng)</div>
-                <div class="start-btn-row">
-                    <button type="button" class="btn-primary start-btn" data-open="scn1">Mở Mẫu 1</button>
-                    <button type="button" class="btn-primary start-btn" data-open="scn2">Mở Mẫu 2</button>
+            <div class="start-card start-card-xanh">
+                <div class="start-row">
+                    <div class="start-card-head">
+                        <div class="start-card-title">Nhận xét môn học</div>
+                        <div class="start-card-desc">Nhận xét giữa kỳ, cuối kỳ theo điểm, mức đạt từng em.</div>
+                    </div>
+                    <button type="button" class="btn-primary start-btn" data-open="so-nhan-xet">Mở</button>
                 </div>
             </div>
+            <div class="start-card">
+                <div class="start-row">
+                    <div class="start-card-head">
+                        <div class="start-card-title">Năng lực - Phẩm chất</div>
+                        <div class="start-card-desc">Năng lực chung, năng lực đặc thù, phẩm chất ghi học bạ.</div>
+                    </div>
+                    <button type="button" class="btn-primary start-btn" data-open="nlpc">Mở</button>
+                </div>
+            </div>
+            <div class="start-card start-card-new">
+                <div class="start-row">
+                    <div class="start-card-head">
+                        <div class="start-card-title">Sổ theo dõi chất lượng <span class="start-new">Mới</span></div>
+                        <div class="start-card-desc">Cả lớp 3 ô: Môn học, Năng lực, Phẩm chất theo điểm từng em. Mở thẳng kỳ đánh giá.</div>
+                    </div>
+                    <button type="button" class="btn-primary start-btn" data-open="stcl">Mở</button>
+                </div>
+            </div>
+            <div class="start-card">
+                <div class="start-row">
+                    <div class="start-card-head">
+                        <div class="start-card-title">Sổ chủ nhiệm</div>
+                        <div class="start-card-desc">Viết nháp các mục, tự xếp Sơ đồ lớp.</div>
+                    </div>
+                    <div class="start-btn-col"><button type="button" class="btn-primary start-btn" data-open="scn1">Mẫu 1</button><button type="button" class="btn-primary start-btn" data-open="scn2">Mẫu 2</button></div>
+                </div>
+            </div>
 
-            <div class="start-note">
-                Đã ở đúng màn mà bảng bên chưa đổi? Bấm <b>Cập nhật dữ liệu từ Vnedu</b> ở trên.
-                Muốn đóng bảng bên: bấm dấu × ở góc trên; mở lại bằng thẻ xanh <b>Nhận xét AI</b> ở mép phải màn hình.
+            <div class="start-help" role="note">
+                <svg class="start-help-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.4" fill="currentColor"/></svg>
+                <div class="start-help-body">
+                    <div class="start-help-title">Gợi ý khi cần</div>
+                    <details class="start-how start-how-all"><summary>Bấm Mở không được? Xem cách mở tay trên vnEdu</summary>
+                        <div class="start-path"><b>Nhận xét môn học</b>: biểu tượng Sổ nhận xét ▸ chọn lớp, môn, kỳ</div>
+                        <div class="start-path"><b>Năng lực - Phẩm chất</b>: Start ▸ Quản lý nhà trường ▸ Quản lý học tập ▸ Phẩm chất - Năng lực ghi học bạ</div>
+                        <div class="start-path"><b>Sổ theo dõi chất lượng</b>: biểu tượng Sổ theo dõi chất lượng ▸ ô Tháng chọn Giữa kỳ hoặc Cuối kỳ</div>
+                        <div class="start-path"><b>Sổ chủ nhiệm</b>: biểu tượng Sổ chủ nhiệm tiểu học - Mẫu 1 hoặc Mẫu 2</div>
+                    </details>
+                    <div class="start-note">Bảng bên chưa đổi theo màn vnEdu? Bấm <b>Cập nhật dữ liệu từ Vnedu</b> ở trên.</div>
+                </div>
             </div>
             <div class="start-lic" id="start-lic" hidden></div>
         </div>
@@ -279,6 +295,33 @@
                 <button class="btn-primary" id="scn-btn-fill">Điền vào vnEdu</button>
                 <button class="btn-secondary scn-btn-xoa-vn" id="scn-btn-xoa-vn" title="Xóa trống trên vnEdu các ô đang đánh dấu, để viết lại từ đầu. Sau đó bấm Lưu.">Xóa chữ trên vnEdu ở ô đã đánh dấu</button>
                 <div class="scn-result" id="scn-result" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-so-theo-doi" class="view view-hidden">
+        <div class="scn-ctx" id="stcl-ctx"></div>
+        <div class="scn-note" id="stcl-note" style="display:none"></div>
+        <div class="stcl-ky" id="stcl-ky" style="display:none"></div>
+        <div id="stcl-work" style="display:none">
+            <div class="stcl-intro">Tiện ích đọc điểm, mức đạt từng em trên vnEdu rồi viết 3 ô cho cả lớp.</div>
+            <div class="scn-actions">
+                <button class="btn-primary" id="stcl-btn-read">Đọc điểm và viết nhận xét cả lớp</button>
+            </div>
+            <div class="stcl-prog" id="stcl-prog" hidden>
+                <div class="stcl-prog-text" id="stcl-prog-text"></div>
+                <div class="stcl-prog-bar"><div class="stcl-prog-fill" id="stcl-prog-fill"></div></div>
+                <button type="button" class="btn-secondary" id="stcl-stop">Dừng</button>
+            </div>
+            <div class="scn-list" id="stcl-list"></div>
+            <div class="scn-bar" id="stcl-bar" style="display:none">
+                <div class="stcl-bar-row">
+                    <label class="scn-ow"><input type="checkbox" id="stcl-overwrite"> Ghi đè ô đã có chữ trên vnEdu</label>
+                    <button type="button" class="stcl-all" id="stcl-all">Chọn/bỏ cả lớp</button>
+                </div>
+                <div class="stcl-ow-hint" id="stcl-ow-hint"></div>
+                <button class="btn-primary" id="stcl-btn-save">Lưu vào vnEdu</button>
+                <div class="scn-result" id="stcl-result" style="display:none"></div>
             </div>
         </div>
     </div>
@@ -585,5 +628,7 @@
 <script src="../engine/sochunhiem.js"></script>
 <script src="sidebar.js"></script>
 <script src="scn-view.js"></script>
+<script src="../engine/sotheodoi.js"></script>
+<script src="stcl-view.js"></script>
 </body>
 </html>

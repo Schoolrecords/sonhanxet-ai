@@ -87,19 +87,44 @@
     }
     injectScnBridge();
 
+    // 6.4.0: cầu nối Sổ theo dõi chất lượng (đọc bảng điểm, lần lượt chọn từng em, bấm Lưu của vnEdu)
+    let _stclState = { active: false };
+    try {
+        const s2 = document.createElement('script');
+        s2.src = chrome.runtime.getURL('content/stcl-bridge.js');
+        s2.onload = () => s2.remove();
+        (document.head || document.documentElement).appendChild(s2);
+    } catch (e) {
+        console.warn('[Sổ nhận xét - AI] Không inject được stcl-bridge:', e);
+    }
+
     /** Module đang mở: 2 màn cũ (adapter) hoặc Sổ chủ nhiệm (cầu nối báo). */
     function detectCurrentModule() {
         const m = window.VneduAdapter.detectModule();
         if (m) return m;
+        if (_stclState && _stclState.active) return 'so-theo-doi';
         return _scnState && _scnState.active ? 'so-chu-nhiem' : null;
     }
-    const AI_MODULES = ['so-nhan-xet', 'nlpc', 'so-chu-nhiem'];
+    const AI_MODULES = ['so-nhan-xet', 'nlpc', 'so-chu-nhiem', 'so-theo-doi'];
 
     window.addEventListener('message', (e) => {
         if (e.source !== window || !e.data) return;
         const d = e.data;
         if (d.type === '__COGIAO_SCN_STATE__' && d.state && typeof d.state === 'object') {
             _scnState = d.state;
+            return;
+        }
+        if (d.type === '__COGIAO_STCL_STATE__' && d.state && typeof d.state === 'object') {
+            _stclState = d.state;
+            return;
+        }
+        if (d.type === '__COGIAO_STCL_PROGRESS__' || d.type === '__COGIAO_STCL_RESULT__') {
+            _suppressUpdatesUntil = Date.now() + 2500;
+            const iframe = document.getElementById(SIDEBAR_ID);
+            iframe?.contentWindow?.postMessage({
+                type: d.type === '__COGIAO_STCL_PROGRESS__' ? 'COGIAO_STCL_PROGRESS' : 'COGIAO_STCL_RESULT',
+                payload: { reqId: d.reqId, kind: d.kind, i: d.i, n: d.n, item: d.item, result: d.result }
+            }, '*');
             return;
         }
         if (d.type === '__COGIAO_SCN_FILL_RESULT__' || d.type === '__COGIAO_SCN_SAVE_RESULT__' || d.type === '__COGIAO_SCN_SYNC_RESULT__' || d.type === '__COGIAO_SCN_OPEN_RESULT__' || d.type === '__COGIAO_SCN_SODO_RESULT__') {
@@ -273,18 +298,34 @@
 
     // 6.3.6: nút "Mở giúp tôi" ở màn Bắt đầu → tự mở đúng màn vnEdu.
     let _dangMoMan = false;
+    // 6.4.0: trước khi mở việc mới, đóng các cửa sổ vnEdu cũ (giữ cửa sổ còn dữ liệu chưa lưu).
+    function dongCuaSoCu(giuTrenCung) {
+        return new Promise(resolve => {
+            const reqId = 'cw' + Date.now();
+            const xong = (r) => { window.removeEventListener('message', nghe); clearTimeout(t); resolve(r); };
+            const nghe = (ev) => {
+                if (ev.source === window && ev.data && ev.data.type === '__COGIAO_CLOSE_WINS_DONE__' && ev.data.reqId === reqId) xong(ev.data.result);
+            };
+            const t = setTimeout(() => xong(null), 2000);
+            window.addEventListener('message', nghe);
+            window.postMessage({ type: '__COGIAO_CLOSE_WINS__', reqId, giuTrenCung: !!giuTrenCung }, '*');
+        }).then(async r => { if (r && r.dong && r.dong.length) await new Promise(ok => setTimeout(ok, 400)); return r; });
+    }
+
     async function handleOpenModule(payload) {
         const iframe = document.getElementById(SIDEBAR_ID);
         const traLoi = (result) => iframe?.contentWindow?.postMessage({
             type: 'COGIAO_OPEN_MODULE_RESULT', payload: { target: payload && payload.target, result }
         }, '*');
         const target = payload && payload.target;
-        if (!['so-nhan-xet', 'nlpc', 'scn1', 'scn2'].includes(target)) { traLoi({ success: false, reason: 'bad_target' }); return; }
+        if (!['so-nhan-xet', 'nlpc', 'scn1', 'scn2', 'stcl'].includes(target)) { traLoi({ success: false, reason: 'bad_target' }); return; }
         if (_dangMoMan) { traLoi({ success: false, reason: 'busy' }); return; }
         _dangMoMan = true;
         try {
+            const manCuaViec = (target === 'scn1' || target === 'scn2') ? 'so-chu-nhiem' : target === 'stcl' ? 'so-theo-doi' : target;
+            const dong = await dongCuaSoCu(_lastDetectedModule === manCuaViec);
             const r = await window.VneduAdapter.openVneduModule(target);
-            traLoi(r || { success: false });
+            traLoi(Object.assign({ success: false }, r || {}, { giu: (dong && dong.giu) || [] }));
             // Màn mới mở → quét ngay cho thanh bên đổi sang màn làm việc
             setTimeout(checkModuleChange, 800);
             setTimeout(checkModuleChange, 2500);
@@ -322,6 +363,7 @@
                 return 'nlpc:' + list.length + ':' + (sel ? sel.stt + '-' + sel.hoVaTen : 'none');
             }
             if (module === 'so-chu-nhiem') return 'scn:' + (_scnState.sig || '');
+            if (module === 'so-theo-doi') return 'stcl:' + (_stclState.sig || '');
         } catch (e) { /* im lặng — chữ ký rỗng coi như chưa có dữ liệu */ }
         return '';
     }
@@ -347,6 +389,8 @@
             }));
         } else if (module === 'so-chu-nhiem') {
             payload.context = _scnState;
+        } else if (module === 'so-theo-doi') {
+            payload.context = _stclState;
         } else if (module === 'nlpc') {
             const context = window.VneduAdapter.getNLPCContext();
             const list = window.VneduAdapter.getNLPCStudentList();
@@ -505,6 +549,8 @@
             contextKey += '|' + (ctx.lop || '');
         } else if (current === 'so-chu-nhiem') {
             contextKey += '|' + [_scnState.mau, _scnState.section, _scnState.lop, _scnState.thang].join('|');
+        } else if (current === 'so-theo-doi') {
+            contextKey += '|' + [_stclState.lop, _stclState.thangText].join('|');
         }
 
         // Chữ ký dữ liệu — đổi khi GV nhập điểm / xếp loại mà KHÔNG đổi lớp/môn
@@ -691,6 +737,19 @@
             case 'COGIAO_SCN_OPEN':
                 window.postMessage({ type: '__COGIAO_SCN_OPEN__', reqId: data.payload && data.payload.reqId, section: data.payload && data.payload.section }, '*');
                 break;
+
+            // 6.4.0 Sổ theo dõi chất lượng
+            case 'COGIAO_STCL_READ':
+            case 'COGIAO_STCL_SAVE':
+            case 'COGIAO_STCL_STOP':
+            case 'COGIAO_STCL_OPEN_KY': {
+                const p = data.payload || {};
+                _suppressUpdatesUntil = Date.now() + 2500;
+                const t = data.type.replace('COGIAO_STCL_', '');
+                window.postMessage({ type: '__COGIAO_STCL_' + t + '__', reqId: p.reqId, expect: p.expect, ids: p.ids,
+                    items: p.items, overwrite: !!p.overwrite, ky: p.ky }, '*');
+                break;
+            }
 
             case 'COGIAO_SCN_SAVE':
                 window.postMessage({ type: '__COGIAO_SCN_SAVE__', reqId: data.payload && data.payload.reqId, expect: data.payload && data.payload.expect }, '*');

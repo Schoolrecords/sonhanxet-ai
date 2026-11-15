@@ -64,3 +64,7 @@ bao-cao/
 videos/*.mp4
 videos/*.mp3
 videos/*.txt
+
+# Goi gui thu cho GV, tep dang Facebook
+GUI-ban-thu/
+videos/dang-fb/

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Sổ nhận xét - AI",
-  "version": "6.3.6",
-  "description": "Tạo nhận xét môn học, NL/PC theo Thông tư 27/2020 và viết nháp Sổ chủ nhiệm cho GV tiểu học trên Vnedu",
+  "version": "6.4.0",
+  "description": "Tạo nhận xét môn học, NL/PC theo Thông tư 27/2020 Sổ theo dõi chất lượng, viết nháp Sổ chủ nhiệm cho GV tiểu học trên Vnedu",
   "author": "Phát triển bởi giáo viên cho giáo viên",
   "permissions": [
     "storage"
@@ -45,6 +45,9 @@
         "license/qr.png",
         "content/page-error-bridge.js",
         "content/scn-bridge.js",
+        "content/stcl-bridge.js",
+        "sidebar/stcl-view.js",
+        "engine/sotheodoi.js",
         "engine/sochunhiem.js",
         "icons/icon-48.png"
       ],
